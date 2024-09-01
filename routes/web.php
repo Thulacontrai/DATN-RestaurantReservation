@@ -20,9 +20,33 @@ use App\Http\Controllers\Admin\PageController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+
+
+
+route::get("/", function () {
+    return view("client.index");
+})->name("index.client");
+route::get("/menu", function () {
+    return view("client.menu");
+})->name("menu.client");
+route::get("/booking", function () {
+    return view("client.booking");
+})->name("booking.client");
+route::get("/about", function () {
+    return view("client.about");
+})->name("about.client");
+route::get("/gallery", function () {
+    return view("client.gallery");
+})->name("gallery.client");
+route::get("/blog", function () {
+    return view("client.blog");
+})->name("blog.client");
+route::get("/contact", function () {
+    return view("client.contact");
+})->name("contact.client");
+route::get("/blog-single", function () {
+    return view("client.blog-single");
+})->name("blog-single.client")   ;
 
 
 Route::get('admin', [AdminController::class, 'index']);
