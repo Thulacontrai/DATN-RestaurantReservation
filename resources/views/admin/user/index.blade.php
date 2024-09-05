@@ -16,32 +16,34 @@
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <div class="card-title">Danh Sách Người Dùng</div>
-                            <!-- Icon Thêm Mới -->
+
                             <a href="{{ route('user.create') }}" class="btn btn-sm btn-primary d-flex align-items-center">
                                 <i class="bi bi-plus-circle me-2"></i> Thêm Mới
                             </a>
                         </div>
                         <div class="card-body">
 
-                            <!-- Form tìm kiếm -->
+
                             <form method="GET" action="#" class="mb-3">
                                 <div class="row g-2">
                                     <div class="col-auto">
                                         <input type="text" id="search-email" name="email"
-                                            class="form-control form-control-sm" placeholder="Tìm kiếm theo email">
+                                            class="form-control form-control-sm" placeholder="Tìm kiếm ">
                                     </div>
                                     <div class="col-auto">
                                         <button type="submit" class="btn btn-sm btn-primary">Tìm kiếm</button>
                                     </div>
                                 </div>
                             </form>
-                            <!-- Kết thúc Form tìm kiếm -->
+
 
                             <div class="table-responsive">
                                 <table class="table v-middle m-0">
                                     <thead>
                                         <tr>
                                             <th>ID</th>
+                                            <th>Hình Ảnh</th>
+                                            <th>Tên</th>
                                             <th>Email</th>
                                             <th>Số Điện Thoại</th>
                                             <th>Địa Chỉ</th>
@@ -54,6 +56,8 @@
                                         <!-- Dữ liệu mẫu -->
                                         <tr>
                                             <td>1</td>
+                                            <td><img src="https://via.placeholder.com/50" alt="User Image" class="img-fluid rounded-circle" width="50"></td>
+                                            <td>Nguyễn Văn A</td>
                                             <td>nguyenvana@example.com</td>
                                             <td>0912345678</td>
                                             <td>Hà Nội</td>
@@ -75,6 +79,8 @@
                                         </tr>
                                         <tr>
                                             <td>2</td>
+                                            <td><img src="https://via.placeholder.com/50" alt="User Image" class="img-fluid rounded-circle" width="50"></td>
+                                            <td>Nguyễn Thị B</td>
                                             <td>tranthib@example.com</td>
                                             <td>0987654321</td>
                                             <td>Đà Nẵng</td>
@@ -96,6 +102,8 @@
                                         </tr>
                                         <tr>
                                             <td>3</td>
+                                            <td><img src="https://via.placeholder.com/50" alt="User Image" class="img-fluid rounded-circle" width="50"></td>
+                                            <td>Hà Đăng Hoàng</td>
                                             <td>hoangc@example.com</td>
                                             <td>0922233445</td>
                                             <td>Hồ Chí Minh</td>

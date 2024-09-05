@@ -32,33 +32,28 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-
 Route::get('admin', [AdminController::class, 'index']);
 
-Route::resource('table', TableController::class);
+// Route::prefix('admin')->middleware('admin')->group(function () {
+//     Route::get('/', [DashBoardController::class, 'index'])->name('admin.index');
 
-Route::resource('reservation', ReservationController::class);
-Route::resource('reservationTable', ReservationTableController::class);
-Route::resource('reservationHistory', ReservationHistoryController::class);
+    Route::resource('table', TableController::class);
+    Route::resource('reservation', ReservationController::class);
+    Route::resource('reservationTable', ReservationTableController::class);
+    Route::resource('reservationHistory', ReservationHistoryController::class);
 
-Route::resource('category', CategoryController::class);
-Route::resource('dishes', DishesController::class);
-Route::resource('combo', ComboController::class);
-Route::resource('payment', PaymentController::class);
-Route::resource('staff', StaffController::class);
-Route::resource('user', UserController::class);
-Route::resource('ingredient', IngredientController::class);
+    Route::resource('category', CategoryController::class);
+    Route::resource('dishes', DishesController::class);
+    Route::resource('combo', ComboController::class);
+    Route::resource('payment', PaymentController::class);
+    Route::resource('staff', StaffController::class);
+    Route::resource('user', UserController::class);
+    Route::resource('ingredient', IngredientController::class);
 
+    Route::resource('customer', CustomerController::class);
+    Route::resource('dashboard', DashboardController::class);
+    Route::resource('page', PageController::class);
 
-
-Route::resource('customer', CustomerController::class);
-Route::resource('dashboard', DashboardController::class);
-Route::resource('page', PageController::class);
-
-Route::get('/logon', [AdminController::class, 'logon'])->name('logon');
-Route::post('/logon', [AdminController::class, 'postlogon'])->name('admin.logon');
-
-
-
-
-
+    Route::get('/logon', [AdminController::class, 'logon'])->name('logon');
+    Route::post('/logon', [AdminController::class, 'postlogon'])->name('admin.logon');
+// });
