@@ -1,19 +1,16 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
 
+namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
-class CartController extends Controller
+class ReservationHistoryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-       return view('admin.cart.index');
+        return view('admin.reservation.reservationHistory.index');
     }
 
     /**
@@ -21,9 +18,8 @@ class CartController extends Controller
      */
     public function create()
     {
-
+        // return view('admin.reservation.create');
     }
-
 
     /**
      * Store a newly created resource in storage.
@@ -36,10 +32,9 @@ class CartController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id = null)
+    public function show(string $id)
     {
-
-        return view('admin.cart.details');
+      
     }
 
     /**

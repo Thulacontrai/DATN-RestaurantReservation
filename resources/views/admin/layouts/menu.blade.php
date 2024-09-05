@@ -2,7 +2,7 @@
 <nav class="sidebar-wrapper">
     <!-- Sidebar brand starts -->
     <div class="sidebar-brand">
-        <a href="{{ url('admin') }}" class="logo">
+        <a href="{{ route('dashboard.index') }}" class="logo">
             <img src="../../adminn/assets/images/logo.svg" alt="Admin Dashboards" />
         </a>
     </div>
@@ -17,30 +17,17 @@
                         <i class="bi bi-house"></i>
                         <span class="menu-text">Dashboards</span>
                     </a>
-                   {{-- <div class="sidebar-submenu">
-                        <ul>
-                            <li>
-                                <a href="{{ route('dashboard.index') }}" class="current-page">Analytics</a>
-                            </li>
-                            <li>
-                                <a href="{{ url('admin/reports') }}">Reports</a>
-                            </li>
-                        </ul>
-                    </div> --}}
+
                 </li>
                 <li class="sidebar-dropdown">
                     <a href="#">
-                        <i class="bi bi-handbag"></i>
-                        <span class="menu-text">Product</span>
+                        <i class="bi bi-window-split"></i>
+                        <span class="menu-text">Quản lý bàn</span>
                     </a>
                     <div class="sidebar-submenu">
                         <ul>
                             <li>
-                                <a href="{{ route('product.index') }}">Product List</a>
-                            </li>
-
-                            <li>
-                                <a href="{{ route('product.create') }}">AddProducts</a>
+                                <a href="{{ route('table.index') }}">Danh sách bàn</a>
                             </li>
 
                         </ul>
@@ -48,39 +35,146 @@
                 </li>
                 <li class="sidebar-dropdown">
                     <a href="#">
-                        <i class="bi bi-stickies"></i>
-                        <span class="menu-text">Cart</span>
+                        <i class="bi bi-layers-half"></i>
+                        <span class="menu-text">Quản lý đặt bàn</span>
                     </a>
                     <div class="sidebar-submenu">
                         <ul>
                             <li>
-                                <a href="{{ route('cart.show', ['cart' => 1]) }}">Billing Details</a>
+                                <a href="{{ route('reservation.index') }}">Danh sách đặt bàn</a>
                             </li>
                             <li>
-                                <a href="{{ route('cart.index') }}">Shopping Cart</a>
+                                <a href="{{ route('reservationTable.index') }}">Bàn đặt trước</a>
                             </li>
+                            <li>
+                                <a href="{{ route('reservationHistory.index') }}">Lịch sử đặt bàn</a>
+                            </li>
+
                         </ul>
                     </div>
                 </li>
                 <li class="sidebar-dropdown">
                     <a href="#">
-                        <i class="bi bi-gem"></i>
-                        <span class="menu-text">Widgets</span>
+                        <i class="bi bi-folder"></i>
+                        <span class="menu-text">Quản lý Danh Mục</span>
                     </a>
                     <div class="sidebar-submenu">
                         <ul>
                             <li>
-                                <a href="{{ url('admin/widgets') }}">Widgets</a>
+                                <a href="{{ route('category.index') }}">Danh Mục</a>
                             </li>
+                        </ul>
+                    </div>
+                </li>
+
+                <li class="sidebar-dropdown">
+                    <a href="#">
+                        <i class="bi bi-journal-bookmark-fill"></i>
+                        <span class="menu-text"> Quản lý Món ăn</span>
+                    </a>
+                    <div class="sidebar-submenu">
+                        <ul>
                             <li>
-                                <a href="{{ url('admin/graph-widgets') }}">Graph Widgets</a>
+                                <a href="{{ route('dishes.index') }}">Danh sách món</a>
                             </li>
+
+                        </ul>
+                    </div>
+                </li>
+
+                <li class="sidebar-dropdown">
+                    <a href="#">
+                        <i class="bi bi-boxes"></i>
+                        <span class="menu-text">Quản lý Combo </span>
+                    </a>
+                    <div class="sidebar-submenu">
+                        <ul>
+                            <li>
+                                <a href="{{ route('combo.index') }}">Danh sách combo</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
+                <li class="sidebar-dropdown">
+                    <a href="#">
+                        <i class="bi bi-clipboard-check"></i>
+                        <span class="menu-text">Quản lý Payment</span>
+                    </a>
+                    <div class="sidebar-submenu">
+                        <ul>
+                            <li>
+                                <a href="{{ route('payment.index') }}">Danh sách Payment</a>
+                            </li>
+
                         </ul>
                     </div>
                 </li>
                 <li class="sidebar-dropdown">
                     <a href="#">
-                        <i class="bi bi-stickies"></i>
+                        <i class="bi bi-person-workspace"></i>
+                        <span class="menu-text">Quản lý nhân viên</span>
+                    </a>
+                    <div class="sidebar-submenu">
+                        <ul>
+                            <li>
+                                <a href="{{ route('staff.index') }}">Danh sách nhân viên</a>
+
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
+                <li class="sidebar-dropdown">
+                    <a href="#">
+                        <i class="bi bi-people-fill"></i>
+                        <span class="menu-text">Quản lý người dùng</span>
+                    </a>
+                    <div class="sidebar-submenu">
+                        <ul>
+                            <li>
+                                <a href="{{ route('user.index') }}">Danh sách người dùng</a>
+
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
+
+                <li class="sidebar-dropdown">
+                    <a href="#">
+                        <i class="bi bi-pci-card"></i>
+                        <span class="menu-text">Quản lý kho Ng-liệu</span>
+                    </a>
+                    <div class="sidebar-submenu">
+                        <ul>
+                            <li>
+                                <a href="{{ route('ingredient.index') }}">Danh mục kho</a>
+                            </li>
+                            <li>
+                                <a href="#">Nhà cung cấp</a>
+                            <li>
+                                <a href="#">Phiếu nhập kho</a>
+                            </li>
+                            <li>
+                                <a href="#">Combo món ăn</a>
+                            </li>
+                            <li>
+                                <a href="#">Hàng tồn kho</a>
+                            </li>
+                            <li>
+                                <a href="#">Xuất kho</a>
+                            </li>
+
+
+                        </ul>
+                    </div>
+                </li>
+
+
+                <li class="sidebar-dropdown">
+                    <a href="#">
+                        <i class="bi bi-github"></i>
                         <span class="menu-text">Pages</span>
                     </a>
                     <div class="sidebar-submenu">
@@ -90,25 +184,6 @@
                             </li>
                             <li>
                                 <a href="{{ route('page.edit', ['page' => 1]) }}">Account Settings</a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="sidebar-dropdown">
-                    <a href="#">
-                        <i class="bi bi-columns-gap"></i>
-                        <span class="menu-text">Forms</span>
-                    </a>
-                    <div class="sidebar-submenu">
-                        <ul>
-                            <li>
-                                <a href="{{ url('admin/form-inputs') }}">Form Inputs</a>
-                            </li>
-                            <li>
-                                <a href="{{ url('admin/form-checkbox-radio') }}">Checkbox &amp; Radio</a>
-                            </li>
-                            <li>
-                                <a href="{{ url('admin/form-file-input') }}">File Input</a>
                             </li>
                         </ul>
                     </div>
@@ -128,22 +203,7 @@
                         </ul>
                     </div>
                 </li>
-                <li class="sidebar-dropdown">
-                    <a href="#">
-                        <i class="bi bi-window-split"></i>
-                        <span class="menu-text">Tables</span>
-                    </a>
-                    <div class="sidebar-submenu">
-                        <ul>
-                            <li>
-                                <a href="{{ url('admin/tables') }}">Tables</a>
-                            </li>
-                            <li>
-                                <a href="{{ url('admin/data-tables') }}">Data Tables</a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
+
             </ul>
         </div>
     </div>
