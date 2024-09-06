@@ -21,6 +21,7 @@
 
         <ul class="header-actions">
             <li class="dropdown">
+
                 <a href="#" id="userSettings" class="user-settings" data-toggle="dropdown" aria-haspopup="true">
                     <span class="user-name d-none d-md-block">Abigale Heaney</span>
                     <span class="avatar">

@@ -6,11 +6,15 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
-class ProductController extends Controller
+class TableController extends Controller
 {
-    public function index()
+    /**
+     * Display a listing of the resource.
+     */
+
+     public function index()
     {
-        return view('admin.product.index');
+        return view('admin.table.index');
     }
 
     /**
@@ -18,8 +22,9 @@ class ProductController extends Controller
      */
     public function create()
     {
-        return view('admin.product.create');
+        return view('admin.table.create');
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -42,7 +47,7 @@ class ProductController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        return view('admin.table.edit');
     }
 
     /**
