@@ -1,68 +1,103 @@
 <?php
 
-
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Category;
+use App\Models\Dishes;
+use Illuminate\Http\Request;
 
 class DishesController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-
-     public function index()
+    public function index(Request $request)
     {
-        return view('admin.dish.dishes.index');
+        $query = Dishes::query();
+
+        if ($request->filled('name')) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+
+        $dishes = $query->paginate(10);
+
+        return view('admin.dish.dishes.index', compact('dishes'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        return view('admin.dish.dishes.create');
+        $categories = Category::all();
+
+        return view('admin.dish.dishes.create', compact('categories'));
     }
 
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'category_id' => 'required|integer',
+            'price' => 'required|numeric|min:0',
+            'quantity' => 'required|integer|min:0',
+            'status' => 'required|string|in:available,out_of_stock,reserved,in_use,completed,cancelled',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        Dishes::create([
+            'name' => $request->name,
+            'category_id' => $request->category_id,
+            'price' => $request->price,
+            'quantity' => $request->quantity,
+            'status' => $request->status,
+            'image' => $request->hasFile('image') ? $request->file('image')->store('dish_images', 'public') : null,
+        ]);
+
+        return redirect()->route('dishes.index')->with('success', 'Món ăn đã được thêm thành công!');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function edit($id)
     {
-        //
+        $dish = Dishes::findOrFail($id);
+        return view('admin.dish.dishes.edit', compact('dish'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(Request $request, $id)
     {
-        return view('admin.dish.dishes.edit');
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'category_id' => 'required|integer',
+            'price' => 'required|numeric|min:0',
+            'quantity' => 'required|integer|min:0',
+            'status' => 'required|string|in:available,out_of_stock,reserved,in_use,completed,cancelled',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $dish = Dishes::findOrFail($id);
+
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('dish_images', 'public');
+            $dish->image = $imagePath;
+        }
+
+        $dish->update([
+            'name' => $request->input('name'),
+            'category_id' => $request->input('category_id'),
+            'price' => $request->input('price'),
+            'quantity' => $request->input('quantity'),
+            'status' => $request->input('status'),
+        ]);
+
+        return redirect()->route('dishes.index')->with('success', 'Món ăn đã được cập nhật thành công!');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function show($id)
     {
-        //
+        $dish = Dishes::findOrFail($id);
+        return view('admin.dish.dishes.detail', compact('dish'));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+        $dish = Dishes::findOrFail($id);
+        $dish->delete();
+
+        return redirect()->route('dishes.index')->with('success', 'Món ăn đã được xóa thành công!');
     }
 }

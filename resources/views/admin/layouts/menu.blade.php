@@ -2,7 +2,7 @@
 <nav class="sidebar-wrapper">
     <!-- Sidebar brand starts -->
     <div class="sidebar-brand">
-        <a href="{{ route('dashboard.index') }}" class="logo">
+        <a href="{{ asset('admin.dashboard.index') }}" class="logo">
             <img src="../../adminn/assets/images/logo.svg" alt="Admin Dashboards" />
         </a>
     </div>
@@ -13,7 +13,7 @@
         <div class="sidebarMenuScroll">
             <ul>
                 <li class="sidebar-dropdown active">
-                    <a href="{{ route('dashboard.index') }}">
+                    <a href="{{ route('admin.dashboard.index') }}">
                         <i class="bi bi-house"></i>
                         <span class="menu-text">Dashboards</span>
                     </a>
@@ -27,7 +27,7 @@
                     <div class="sidebar-submenu">
                         <ul>
                             <li>
-                                <a href="{{ route('table.index') }}">Danh sách bàn</a>
+                                <a href="{{ route('admin.table.index') }}">Danh sách bàn</a>
                             </li>
 
                         </ul>
@@ -41,13 +41,13 @@
                     <div class="sidebar-submenu">
                         <ul>
                             <li>
-                                <a href="{{ route('reservation.index') }}">Danh sách đặt bàn</a>
+                                <a href="{{ route('admin.reservation.index') }}">Danh sách đặt bàn</a>
                             </li>
                             <li>
-                                <a href="{{ route('reservationTable.index') }}">Bàn đặt trước</a>
+                                <a href="">Bàn đặt trước</a>
                             </li>
                             <li>
-                                <a href="{{ route('reservationHistory.index') }}">Lịch sử đặt bàn</a>
+                                <a href="">Lịch sử đặt bàn</a>
                             </li>
 
                         </ul>
@@ -61,7 +61,7 @@
                     <div class="sidebar-submenu">
                         <ul>
                             <li>
-                                <a href="{{ route('category.index') }}">Danh Mục</a>
+                                <a href="{{ route('admin.category.index') }}">Danh Mục</a>
                             </li>
                         </ul>
                     </div>
@@ -75,7 +75,7 @@
                     <div class="sidebar-submenu">
                         <ul>
                             <li>
-                                <a href="{{ route('dishes.index') }}">Danh sách món</a>
+                                <a href="{{ route('admin.dishes.index') }}">Danh sách món</a>
                             </li>
 
                         </ul>
@@ -90,7 +90,7 @@
                     <div class="sidebar-submenu">
                         <ul>
                             <li>
-                                <a href="{{ route('combo.index') }}">Danh sách combo</a>
+                                <a href="{{ route('admin.combo.index') }}">Danh sách combo</a>
                             </li>
                         </ul>
                     </div>
@@ -104,9 +104,35 @@
                     <div class="sidebar-submenu">
                         <ul>
                             <li>
-                                <a href="{{ route('payment.index') }}">Danh sách Payment</a>
+                                <a href="{{ route('admin.payment.index') }}">Danh sách Payment</a>
                             </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="sidebar-dropdown">
+                    <a href="#">
+                        <i class="bi bi-receipt-cutoff"></i>
+                        <span class="menu-text">Quản lý Coupons</span>
+                    </a>
+                    <div class="sidebar-submenu">
+                        <ul>
+                            <li>
+                                <a href="{{ route('admin.coupon.index') }}">Danh sách coupon</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="sidebar-dropdown">
+                    <a href="#">
+                        <i class="bi bi-clipboard-data"></i>
+                        <span class="menu-text">Quản lý Order</span>
+                    </a>
+                    <div class="sidebar-submenu">
+                        <ul>
+                            <li>
+                                <a href="{{ route('admin.order.index') }}">Danh sách Order</a>
 
+                            </li>
                         </ul>
                     </div>
                 </li>
@@ -118,7 +144,7 @@
                     <div class="sidebar-submenu">
                         <ul>
                             <li>
-                                <a href="{{ route('staff.index') }}">Danh sách nhân viên</a>
+                                <a href="">Danh sách nhân viên</a>
 
                             </li>
                         </ul>
@@ -133,13 +159,17 @@
                     <div class="sidebar-submenu">
                         <ul>
                             <li>
-                                <a href="{{ route('user.index') }}">Danh sách người dùng</a>
+                                <a href="{{ route('admin.role.index') }}">Vai trò</a>
 
                             </li>
+                            <li>
+                                <a href="{{ route('admin.user.index') }}">Danh sách người dùng</a>
+
+                            </li>
+
                         </ul>
                     </div>
                 </li>
-
 
                 <li class="sidebar-dropdown">
                     <a href="#">
@@ -149,7 +179,7 @@
                     <div class="sidebar-submenu">
                         <ul>
                             <li>
-                                <a href="{{ route('ingredient.index') }}">Danh mục kho</a>
+                                <a href="">Danh mục kho</a>
                             </li>
                             <li>
                                 <a href="#">Nhà cung cấp</a>
@@ -165,14 +195,12 @@
                             <li>
                                 <a href="#">Xuất kho</a>
                             </li>
-
-
                         </ul>
                     </div>
                 </li>
 
 
-                <li class="sidebar-dropdown">
+                {{-- <li class="sidebar-dropdown">
                     <a href="#">
                         <i class="bi bi-github"></i>
                         <span class="menu-text">Pages</span>
@@ -180,10 +208,10 @@
                     <div class="sidebar-submenu">
                         <ul>
                             <li>
-                                <a href="{{ url('admin/profile') }}">Profile</a>
+                                <a href="">Profile</a>
                             </li>
                             <li>
-                                <a href="{{ route('page.edit', ['page' => 1]) }}">Account Settings</a>
+                                <a href="">Account Settings</a>
                             </li>
                         </ul>
                     </div>
@@ -196,13 +224,13 @@
                     <div class="sidebar-submenu">
                         <ul>
                             <li>
-                                <a href="{{ route('customer.index') }}">DS Customer</a>
+                                <a href="">DS Customer</a>
                             <li>
-                                <a href="{{ url('admin/graph-widgets') }}">Graph Widgets</a>
+                                <a href="">Graph Widgets</a>
                             </li>
                         </ul>
                     </div>
-                </li>
+                </li> --}}
 
             </ul>
         </div>

@@ -1,63 +1,83 @@
 <?php
 
-
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Coupon;
+use App\Models\Reservation;
+use App\Models\User;
+use Illuminate\Http\Request;
 
 class ReservationController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('admin.reservation.index');
+        $reservations = Reservation::with('customer')
+            ->when($request->customer_name, function ($query) use ($request) {
+                $query->whereHas('customer', function ($q) use ($request) {
+                    $q->where('name', 'like', '%' . $request->customer_name . '%');
+                });
+            })
+            ->paginate(10);
+
+        return view('admin.reservation.index', compact('reservations'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        // return view('admin.reservation.create');
+        $customers = User::all();
+        $coupons = Coupon::all();
+        return view('admin.reservation.create', compact('customers', 'coupons'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'customer_id' => 'required|exists:users,id',
+            'coupon_id' => 'nullable|exists:coupons,id',
+            'reservation_time' => 'required|date',
+            'total_amount' => 'required|numeric|min:0',
+            'note' => 'nullable|string',
+            'status' => 'required|in:Confirmed,Pending,Cancelled',
+        ]);
+
+        Reservation::create($validated);
+
+        return redirect()->route('admin.reservation.index')
+            ->with('success', 'Reservation đã được tạo thành công.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function edit($id)
     {
-        //
+        $reservation = Reservation::findOrFail($id);
+        $customers = User::all();
+        $coupons = Coupon::all();
+
+        return view('admin.reservation.edit', compact('reservation', 'customers', 'coupons'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(Request $request, $id)
     {
-        //
+        $validated = $request->validate([
+            'customer_id' => 'required|exists:users,id',
+            'coupon_id' => 'nullable|exists:coupons,id',
+            'reservation_time' => 'required|date',
+            'total_amount' => 'required|numeric|min:0',
+            'note' => 'nullable|string',
+            'status' => 'required|in:Confirmed,Pending,Cancelled',
+        ]);
+
+        $reservation = Reservation::findOrFail($id);
+        $reservation->update($validated);
+
+        return redirect()->route('admin.reservation.index')->with('success', 'Reservation updated successfully');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function destroy($id)
     {
-        //
-    }
+        $reservation = Reservation::findOrFail($id);
+        $reservation->delete();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return redirect()->route('admin.reservation.index')->with('success', 'Reservation deleted successfully');
     }
 }

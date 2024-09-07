@@ -19,33 +19,25 @@
                         </div>
                         <div class="card-body">
 
-                            <!-- Form Chỉnh Sửa -->
-                            <form method="POST" action="">
+
+                            <form method="POST" action="{{ route('admin.category.update', $category->id) }}">
                                 @csrf
-                                @method('PUT') <!-- Đặt phương thức PUT để xử lý cập nhật dữ liệu -->
+                                @method('PUT')
 
                                 <div class="mb-3">
                                     <label for="category-name" class="form-label">Tên Danh Mục</label>
                                     <input type="text" id="category-name" name="name" class="form-control"
-                                        value="" required>
+                                        value="{{ $category->name }}" required>
                                 </div>
 
                                 <div class="mb-3">
                                     <label for="category-description" class="form-label">Mô Tả</label>
-                                    <textarea id="category-description" name="description" class="form-control" rows="4"></textarea>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="category-status" class="form-label">Trạng Thái</label>
-                                    <select id="category-status" name="status" class="form-select">
-                                        <option value="active">Hoạt động</option>
-                                        <option value="inactive">Ngừng hoạt động</option>
-                                    </select>
+                                    <textarea id="category-description" name="description" class="form-control" rows="4">{{ $category->description }}</textarea>
                                 </div>
 
                                 <button type="submit" class="btn btn-sm btn-primary">Cập Nhật</button>
                             </form>
-                            <!-- Kết thúc Form Chỉnh Sửa -->
+                            >
 
                         </div>
                     </div>
@@ -53,4 +45,7 @@
             </div>
             <!-- Row end -->
 
-        @endsection
+        </div>
+    </div>
+
+@endsection

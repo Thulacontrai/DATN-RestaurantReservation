@@ -17,18 +17,20 @@
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <div class="card-title">Danh Sách Người Dùng</div>
 
-                            <a href="{{ route('user.create') }}" class="btn btn-sm btn-primary d-flex align-items-center">
+                            <a href="{{ route('admin.user.create') }}"
+                                class="btn btn-sm btn-primary d-flex align-items-center">
                                 <i class="bi bi-plus-circle me-2"></i> Thêm Mới
                             </a>
                         </div>
                         <div class="card-body">
 
-
-                            <form method="GET" action="#" class="mb-3">
+                            <!-- Tìm kiếm người dùng -->
+                            <form method="GET" action="{{ route('admin.user.index') }}" class="mb-3">
                                 <div class="row g-2">
                                     <div class="col-auto">
                                         <input type="text" id="search-email" name="email"
-                                            class="form-control form-control-sm" placeholder="Tìm kiếm ">
+                                            class="form-control form-control-sm" placeholder="Tìm kiếm theo email"
+                                            value="{{ request('email') }}">
                                     </div>
                                     <div class="col-auto">
                                         <button type="submit" class="btn btn-sm btn-primary">Tìm kiếm</button>
@@ -36,7 +38,7 @@
                                 </div>
                             </form>
 
-
+                            <!-- Bảng danh sách người dùng -->
                             <div class="table-responsive">
                                 <table class="table v-middle m-0">
                                     <thead>
@@ -53,91 +55,59 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <!-- Dữ liệu mẫu -->
-                                        <tr>
-                                            <td>1</td>
-                                            <td><img src="https://via.placeholder.com/50" alt="User Image" class="img-fluid rounded-circle" width="50"></td>
-                                            <td>Nguyễn Văn A</td>
-                                            <td>nguyenvana@example.com</td>
-                                            <td>0912345678</td>
-                                            <td>Hà Nội</td>
-                                            <td>Admin</td>
-                                            <td><span class="badge shade-green">Hoạt Động</span></td>
-                                            <td>
-                                                <div class="actions">
-                                                    <a href="#" class="viewRow" data-id="1">
-                                                        <i class="bi bi-list text-green"></i>
-                                                    </a>
-                                                    <a href="{{ route('user.edit', 1) }}" class="editRow" data-id="1">
-                                                        <i class="bi bi-pencil-square text-warning"></i>
-                                                    </a>
-                                                    <a href="#" class="deleteRow" data-id="1">
-                                                        <i class="bi bi-trash text-red"></i>
-                                                    </a>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>2</td>
-                                            <td><img src="https://via.placeholder.com/50" alt="User Image" class="img-fluid rounded-circle" width="50"></td>
-                                            <td>Nguyễn Thị B</td>
-                                            <td>tranthib@example.com</td>
-                                            <td>0987654321</td>
-                                            <td>Đà Nẵng</td>
-                                            <td>Người Dùng</td>
-                                            <td><span class="badge shade-red">Đã Khóa</span></td>
-                                            <td>
-                                                <div class="actions">
-                                                    <a href="#" class="viewRow" data-id="2">
-                                                        <i class="bi bi-list text-green"></i>
-                                                    </a>
-                                                    <a href="{{ route('user.edit', 2) }}" class="editRow" data-id="2">
-                                                        <i class="bi bi-pencil-square text-warning"></i>
-                                                    </a>
-                                                    <a href="#" class="deleteRow" data-id="2">
-                                                        <i class="bi bi-trash text-red"></i>
-                                                    </a>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>3</td>
-                                            <td><img src="https://via.placeholder.com/50" alt="User Image" class="img-fluid rounded-circle" width="50"></td>
-                                            <td>Hà Đăng Hoàng</td>
-                                            <td>hoangc@example.com</td>
-                                            <td>0922233445</td>
-                                            <td>Hồ Chí Minh</td>
-                                            <td>Người Dùng</td>
-                                            <td><span class="badge shade-yellow">Tạm Dừng</span></td>
-                                            <td>
-                                                <div class="actions">
-                                                    <a href="#" class="viewRow" data-id="3">
-                                                        <i class="bi bi-list text-green"></i>
-                                                    </a>
-                                                    <a href="{{ route('user.edit', 3) }}" class="editRow" data-id="3">
-                                                        <i class="bi bi-pencil-square text-warning"></i>
-                                                    </a>
-                                                    <a href="#" class="deleteRow" data-id="3">
-                                                        <i class="bi bi-trash text-red"></i>
-                                                    </a>
-                                                </div>
-                                            </td>
-                                        </tr>
+                                        @forelse ($users as $user)
+                                            <tr>
+                                                <td>{{ $user->id }}</td>
+                                                <td><img src="{{ $user->avatar ? asset('storage/' . $user->avatar) : 'https://via.placeholder.com/50' }}"
+                                                        alt="User Image" class="img-fluid rounded-circle" width="50">
+                                                </td>
+                                                <td>{{ $user->name }}</td>
+                                                <td>{{ $user->email }}</td>
+                                                <td>{{ $user->phone }}</td>
+                                                <td>{{ $user->address }}</td>
+                                                <td>{{ $user->role->name ?? 'N/A' }}</td>
 
+                                                <td>
+                                                    @if ($user->status == 'active')
+                                                        <span class="badge shade-green">Hoạt Động</span>
+                                                    @else
+                                                        <span class="badge shade-red">Ngừng Hoạt Động</span>
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    <div class="actions">
+                                                        <a href="{{ route('admin.user.show', $user->id) }}" class="viewRow"
+                                                            data-id="{{ $user->id }}">
+                                                            <i class="bi bi-list text-green"></i>
+                                                        </a>
+                                                        <a href="{{ route('admin.user.edit', $user->id) }}" class="editRow"
+                                                            data-id="{{ $user->id }}">
+                                                            <i class="bi bi-pencil-square text-warning"></i>
+                                                        </a>
+                                                        <form action="{{ route('admin.user.destroy', $user->id) }}"
+                                                            method="POST" style="display:inline-block;"
+                                                            onsubmit="return confirm('Bạn có chắc chắn muốn xóa?');">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="btn btn-link p-0">
+                                                                <i class="bi bi-trash text-red"></i>
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="9">Không có người dùng nào được tìm thấy.</td>
+                                            </tr>
+                                        @endforelse
                                     </tbody>
                                 </table>
                             </div>
-                            <!-- Pagination -->
+                            {{-- <!-- Pagination -->
                             <div class="pagination justify-content-center mt-3">
-                                <ul class="pagination">
-                                    <li class="page-item"><a class="page-link" href="#">Trước</a></li>
-                                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">Tiếp</a></li>
-                                </ul>
-                            </div>
-                            <!-- Kết thúc Pagination -->
+                                {{ $users->links() }}
+                            </div> --}}
 
                         </div>
                     </div>

@@ -32,8 +32,8 @@
                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="userSettings">
                     <div class="header-profile-actions">
                         <a href="{{ url('admin/profile') }}">Profile</a>
-                        <a href="{{ route('page.edit', ['page' => 1]) }}">Settings</a>
-                        <a href="{{ route('admin.logon') }}">Logout</a>
+                        <a href="#">Settings</a>
+                        <a href="#">Logout</a>
                     </div>
                 </div>
             </li>
