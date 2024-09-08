@@ -33,7 +33,7 @@ class CategoryController extends Controller
             'description' => $request->description
         ]);
 
-        return redirect()->route('category.index')->with('success', 'Category đã được thêm thành công!');
+        return redirect()->route('admin.category.index')->with('success', 'Category đã được thêm thành công!');
     }
 
     public function edit($id)
@@ -48,7 +48,7 @@ class CategoryController extends Controller
         $category = Category::findOrFail($id);
         $category->update($request->all());
 
-        return redirect()->route('category.index')->with('success', 'Category đã được cập nhật thành công!');
+        return redirect()->route('admin.category.index')->with('success', 'Category đã được cập nhật thành công!');
     }
 
     public function destroy($id)
@@ -56,6 +56,6 @@ class CategoryController extends Controller
         $category = Category::findOrFail($id);
         $category->delete();
 
-        return redirect()->route('category.index')->with('success', 'Category đã được xóa thành công!');
+        return redirect()->route('admin.category.index')->with('success', 'Category đã được xóa thành công!');
     }
 }

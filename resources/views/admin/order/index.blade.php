@@ -42,7 +42,7 @@
                                         <tr>
                                             <th>Mã Đơn Hàng</th>
                                             <th>Mã Đặt Chỗ</th>
-                                            <th>Mã Nhân Viên</th>
+                                            <th>Nhân Viên</th>
                                             <th>Bàn</th>
                                             <th>Tổng Tiền</th>
                                             <th>Số Tiền Cuối Cùng</th>
@@ -56,8 +56,8 @@
                                             <tr>
                                                 <td>{{ $order->id }}</td>
                                                 <td>{{ $order->reservation_id }}</td>
-                                                <td>{{ $order->staff_id }}</td>
-                                                <td>{{ $order->table_id }}</td>
+                                                <td>{{ $order->staff->name ?? 'Không rõ' }}</td>
+                                                <td>{{ $order->table_id ?? 'Không rõ' }}</td>
                                                 <td>{{ number_format($order->total_amount, 0, ',', '.') }} VND</td>
                                                 <td>{{ number_format($order->final_amount, 0, ',', '.') }} VND</td>
 

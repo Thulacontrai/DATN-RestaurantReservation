@@ -33,14 +33,14 @@
                                 <div class="mb-3">
                                     <label for="dish-category" class="form-label">Loại Món Ăn</label>
                                     <select id="dish-category" name="category_id" class="form-select">
-                                        <option value="1" {{ $dish->category_id == 1 ? 'selected' : '' }}>Khai Vị
-                                        </option>
-                                        <option value="2" {{ $dish->category_id == 2 ? 'selected' : '' }}>Món Chính
-                                        </option>
-                                        <option value="3" {{ $dish->category_id == 3 ? 'selected' : '' }}>Tráng Miệng
-                                        </option>
+                                        @foreach ($categories as $category)
+                                            <option value="{{ $category->id }}" {{ $dish->category_id == $category->id ? 'selected' : '' }}>
+                                                {{ $category->name }}
+                                            </option>
+                                        @endforeach
                                     </select>
                                 </div>
+
 
                                 <div class="mb-3">
                                     <label for="dish-price" class="form-label">Giá</label>

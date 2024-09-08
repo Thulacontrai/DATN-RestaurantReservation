@@ -19,7 +19,7 @@
                         </div>
 
                         <div class="card-body">
-                            <form action="{{ route('table.update', $table->id) }}" method="POST">
+                            <form action="{{ route('admin.table.update', $table->id) }}" method="POST">
                                 @csrf
                                 @method('PUT')
 

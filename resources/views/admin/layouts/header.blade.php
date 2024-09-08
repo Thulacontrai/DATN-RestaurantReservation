@@ -25,13 +25,13 @@
                 <a href="#" id="userSettings" class="user-settings" data-toggle="dropdown" aria-haspopup="true">
                     <span class="user-name d-none d-md-block">Abigale Heaney</span>
                     <span class="avatar">
-                        <img src="../adminn/assets/images/user2.png" alt="Admin Templates">
+                        <img src="{{ asset('adminn/assets/images/user2.png') }}" alt="Admin Templates">
                         <span class="status online"></span>
                     </span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="userSettings">
                     <div class="header-profile-actions">
-                        <a href="{{ url('admin/profile') }}">Profile</a>
+                        <a href="#">Profile</a>
                         <a href="#">Settings</a>
                         <a href="#">Logout</a>
                     </div>

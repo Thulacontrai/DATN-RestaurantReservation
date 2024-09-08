@@ -18,6 +18,33 @@ class Order extends Model
         'order_type',
         'status',
         'discount_amount',
-        'final_amount'
+        'final_amount',
+        'coupon_id',
     ];
+
+    
+    public function reservation()
+    {
+        return $this->belongsTo(Reservation::class);
+    }
+
+    public function staff()
+    {
+        return $this->belongsTo(User::class, 'staff_id');
+    }
+
+    public function table()
+    {
+        return $this->belongsTo(Table::class);
+    }
+
+    public function customer()
+    {
+        return $this->belongsTo(User::class, 'customer_id');
+    }
+
+    public function coupon()
+    {
+        return $this->belongsTo(Coupon::class);
+    }
 }

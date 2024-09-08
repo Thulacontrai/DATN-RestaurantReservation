@@ -2,9 +2,10 @@
 <nav class="sidebar-wrapper">
     <!-- Sidebar brand starts -->
     <div class="sidebar-brand">
-        <a href="{{ asset('admin.dashboard.index') }}" class="logo">
-            <img src="../../adminn/assets/images/logo.svg" alt="Admin Dashboards" />
+        <a href="{{ url('admin') }}" class="logo">
+            <img src="{{ asset('adminn/assets/images/logo.svg') }}" alt="Admin Dashboards" />
         </a>
+
     </div>
     <!-- Sidebar brand ends -->
 
@@ -17,7 +18,6 @@
                         <i class="bi bi-house"></i>
                         <span class="menu-text">Dashboards</span>
                     </a>
-
                 </li>
                 <li class="sidebar-dropdown">
                     <a href="#">
@@ -29,7 +29,6 @@
                             <li>
                                 <a href="{{ route('admin.table.index') }}">Danh sách bàn</a>
                             </li>
-
                         </ul>
                     </div>
                 </li>
@@ -136,7 +135,23 @@
                         </ul>
                     </div>
                 </li>
+
                 <li class="sidebar-dropdown">
+                    <a href="#">
+                        <i class="bi bi-person-workspace"></i>
+                        <span class="menu-text">Quản lý Feedback</span>
+                    </a>
+                    <div class="sidebar-submenu">
+                        <ul>
+                            <li>
+                                <a href="{{ route('admin.feedback.index') }}">Danh sách Feedback</a>
+
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
+                {{-- <li class="sidebar-dropdown">
                     <a href="#">
                         <i class="bi bi-person-workspace"></i>
                         <span class="menu-text">Quản lý nhân viên</span>
@@ -149,7 +164,7 @@
                             </li>
                         </ul>
                     </div>
-                </li>
+                </li> --}}
 
                 <li class="sidebar-dropdown">
                     <a href="#">

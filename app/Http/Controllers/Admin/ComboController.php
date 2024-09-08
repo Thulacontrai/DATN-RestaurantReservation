@@ -53,7 +53,7 @@ class ComboController extends Controller
             'quantity_dishes' => $request->quantity_dishes,
         ]);
 
-        return redirect()->route('combo.index')->with('success', 'Combo đã được thêm thành công!');
+        return redirect()->route('admin.combo.index')->with('success', 'Combo đã được thêm thành công!');
     }
 
     public function edit($id)
@@ -69,7 +69,7 @@ class ComboController extends Controller
         $combo = Combo::findOrFail($id);
         $combo->update($request->all());
 
-        return redirect()->route('combo.index')->with('success', 'Combo đã được cập nhật thành công!');
+        return redirect()->route('admin.combo.index')->with('success', 'Combo đã được cập nhật thành công!');
     }
 
     public function show($id)
@@ -89,6 +89,6 @@ class ComboController extends Controller
 
         $combo->delete();
 
-        return redirect()->route('combo.index')->with('success', 'Combo đã được xóa thành công!');
+        return redirect()->route('admin.combo.index')->with('success', 'Combo đã được xóa thành công!');
     }
 }

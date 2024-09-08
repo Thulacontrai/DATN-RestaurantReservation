@@ -17,14 +17,14 @@
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <div class="card-title">Danh Sách Đặt Bàn</div>
 
-                            <a href="{{ route('admin.reservation.create') }}"
+                            {{-- <a href="{{ route('admin.reservation.create') }}"
                                 class="btn btn-sm btn-primary d-flex align-items-center">
                                 <i class="bi bi-plus-circle me-2"></i> Thêm Mới
-                            </a>
+                            </a> --}}
                         </div>
                         <div class="card-body">
 
-
+                            <!-- Search form -->
                             <form method="GET" action="{{ route('admin.reservation.index') }}" class="mb-3">
                                 <div class="row g-2">
                                     <div class="col-auto">
@@ -38,7 +38,7 @@
                                 </div>
                             </form>
 
-
+                            <!-- Table list of reservations -->
                             <div class="table-responsive">
                                 <table class="table v-middle m-0">
                                     <thead>
@@ -57,11 +57,11 @@
                                         @forelse ($reservations as $reservation)
                                             <tr>
                                                 <td>{{ $reservation->id }}</td>
-                                                <td>{{ $reservation->customer->name }}</td>
-                                                <td>{{ $reservation->coupon_id ?? 'N/A' }}</td>
+                                                <td>{{ $reservation->customer->name ?? 'Không rõ' }}</td>
+                                                <td>{{ $reservation->guest_count ?? 'N/A' }}</td>
                                                 <td>{{ $reservation->reservation_time }}</td>
                                                 <td>{{ number_format($reservation->total_amount, 0, ',', '.') }} VND</td>
-                                                <td>{{ $reservation->note }}</td>
+                                                <td>{{ $reservation->note ?? 'Không có' }}</td>
                                                 <td>
                                                     @if ($reservation->status === 'Confirmed')
                                                         <span class="badge shade-green min-70">Đã xác nhận</span>
@@ -76,6 +76,10 @@
 
                                                 <td>
                                                     <div class="actions">
+                                                        <a href="{{ route('admin.reservation.show', $reservation->id) }}"
+                                                            class="editRow" data-id="{{ $reservation->id }}">
+                                                            <i class="bi bi-list text-green"></i>
+                                                        </a>
                                                         <a href="{{ route('admin.reservation.edit', $reservation->id) }}"
                                                             class="editRow" data-id="{{ $reservation->id }}">
                                                             <i class="bi bi-pencil-square text-warning"></i>
@@ -95,11 +99,10 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="11">Không có đặt bàn nào được tìm thấy.</td>
+                                                <td colspan="8">Không có đặt bàn nào được tìm thấy.</td>
                                             </tr>
                                         @endforelse
                                     </tbody>
-
                                 </table>
                             </div>
 
@@ -107,7 +110,7 @@
                             <div class="pagination justify-content-center mt-3">
                                 {{ $reservations->links() }}
                             </div>
-                            <!-- Kết thúc Pagination -->
+                            <!-- End Pagination -->
 
                         </div>
                     </div>

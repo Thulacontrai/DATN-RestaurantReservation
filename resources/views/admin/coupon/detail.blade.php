@@ -4,64 +4,62 @@
 
 @section('content')
 
+    <!-- Content wrapper scroll start -->
     <div class="content-wrapper-scroll">
-        <div class="content-wrapper">
 
+        <!-- Content wrapper start -->
+        <div class="content-wrapper">
             <div class="row">
                 <div class="col-sm-12 col-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title">Chi Tiết Coupon</div>
+                    <div class="card shadow-lg">
+                        <div class="card-header d-flex justify-content-between align-items-center bg-primary text-white">
+                            <h4 class="card-title mb-3 text-white">Chi Tiết Coupon</h4>
+                            <a href="{{ route('admin.coupon.index') }}" class="btn btn-sm btn-light  mb-3">Quay Lại</a>
                         </div>
                         <div class="card-body">
-                            <div class="mb-3">
-                                <label for="code" class="form-label">Mã Coupon</label>
-                                <input type="text" class="form-control" id="code" name="code" value="{{ $coupon->code }}" readonly>
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <h5 class="text-primary">Thông Tin Coupon</h5>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item"><strong>Mã Coupon:</strong> {{ $coupon->code }}</li>
+                                        <li class="list-group-item"><strong>Mô Tả:</strong> {{ $coupon->description }}</li>
+                                        <li class="list-group-item"><strong>Số Lần Sử Dụng Tối Đa:</strong> {{ $coupon->max_uses }}</li>
+                                    </ul>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <h5 class="text-primary">Chi Tiết Thời Gian</h5>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item"><strong>Thời Gian Bắt Đầu:</strong> {{ $coupon->start_time }}</li>
+                                        <li class="list-group-item"><strong>Thời Gian Kết Thúc:</strong> {{ $coupon->end_time }}</li>
+                                    </ul>
+                                </div>
                             </div>
 
-                            <div class="mb-3">
-                                <label for="description" class="form-label">Mô Tả</label>
-                                <textarea class="form-control" id="description" name="description" readonly>{{ $coupon->description }}</textarea>
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <h5 class="text-primary">Chi Tiết Giảm Giá</h5>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item"><strong>Loại Giảm Giá:</strong> {{ $coupon->discount_type }}</li>
+                                        <li class="list-group-item"><strong>Số Tiền Giảm Giá:</strong> {{ number_format($coupon->discount_amount, 0, ',', '.') }} VND</li>
+                                    </ul>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <h5 class="text-primary">Trạng Thái</h5>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item"><strong>Trạng Thái:</strong> {{ $coupon->status }}</li>
+                                    </ul>
+                                </div>
                             </div>
 
-                            <div class="mb-3">
-                                <label for="max_uses" class="form-label">Số Lần Sử Dụng Tối Đa</label>
-                                <input type="text" class="form-control" id="max_uses" name="max_uses" value="{{ $coupon->max_uses }}" readonly>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="start_time" class="form-label">Thời Gian Bắt Đầu</label>
-                                <input type="text" class="form-control" id="start_time" name="start_time" value="{{ $coupon->start_time }}" readonly>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="end_time" class="form-label">Thời Gian Kết Thúc</label>
-                                <input type="text" class="form-control" id="end_time" name="end_time" value="{{ $coupon->end_time }}" readonly>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="discount_type" class="form-label">Loại Giảm Giá</label>
-                                <input type="text" class="form-control" id="discount_type" name="discount_type" value="{{ $coupon->discount_type }}" readonly>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="discount_amount" class="form-label">Số Tiền Giảm Giá</label>
-                                <input type="text" class="form-control" id="discount_amount" name="discount_amount" value="{{ $coupon->discount_amount }}" readonly>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="status" class="form-label">Trạng Thái</label>
-                                <input type="text" class="form-control" id="status" name="status" value="{{ $coupon->status }}" readonly>
-                            </div>
-
-                            <a href="{{ route('admin.coupon.index') }}" class="btn btn-primary">Quay Lại Danh Sách</a>
-
+                            <a href="{{ route('admin.coupon.index') }}" class="btn btn-primary mt-3">Quay Lại Danh Sách</a>
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
+        <!-- Content wrapper end -->
     </div>
 
 @endsection

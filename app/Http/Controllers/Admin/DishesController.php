@@ -49,14 +49,17 @@ class DishesController extends Controller
             'image' => $request->hasFile('image') ? $request->file('image')->store('dish_images', 'public') : null,
         ]);
 
-        return redirect()->route('dishes.index')->with('success', 'Món ăn đã được thêm thành công!');
+        return redirect()->route('admin.dishes.index')->with('success', 'Món ăn đã được thêm thành công!');
     }
 
     public function edit($id)
     {
         $dish = Dishes::findOrFail($id);
-        return view('admin.dish.dishes.edit', compact('dish'));
+        $categories = Category::all();
+        return view('admin.dish.dishes.edit', compact('dish', 'categories'));
+
     }
+
 
     public function update(Request $request, $id)
     {
@@ -84,7 +87,7 @@ class DishesController extends Controller
             'status' => $request->input('status'),
         ]);
 
-        return redirect()->route('dishes.index')->with('success', 'Món ăn đã được cập nhật thành công!');
+        return redirect()->route('admin.dishes.index')->with('success', 'Món ăn đã được cập nhật thành công!');
     }
 
     public function show($id)
@@ -98,6 +101,6 @@ class DishesController extends Controller
         $dish = Dishes::findOrFail($id);
         $dish->delete();
 
-        return redirect()->route('dishes.index')->with('success', 'Món ăn đã được xóa thành công!');
+        return redirect()->route('admin.dishes.index')->with('success', 'Món ăn đã được xóa thành công!');
     }
 }

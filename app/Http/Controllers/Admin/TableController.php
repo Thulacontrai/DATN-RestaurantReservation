@@ -37,7 +37,7 @@ class TableController extends Controller
     {
         Table::create($request->validated());
 
-        return redirect()->route('table.index')->with('success', 'Bàn đã được thêm thành công!');
+        return redirect()->route('admin.table.index')->with('success', 'Bàn đã được thêm thành công!');
     }
 
     public function edit($id)
@@ -52,7 +52,7 @@ class TableController extends Controller
         $table = Table::findOrFail($id);
         $table->update($request->validated());
 
-        return redirect()->route('table.index')->with('success', 'Bàn đã được cập nhật thành công!');
+        return redirect()->route('admin.table.index')->with('success', 'Bàn đã được cập nhật thành công!');
     }
 
     public function destroy($id)
@@ -60,6 +60,6 @@ class TableController extends Controller
         $table = Table::findOrFail($id);
         $table->forceDelete();
 
-        return redirect()->route('table.index')->with('success', 'Bàn đã được xóa hoàn toàn!');
+        return redirect()->route('admin.table.index')->with('success', 'Bàn đã được xóa hoàn toàn!');
     }
 }

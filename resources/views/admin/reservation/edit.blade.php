@@ -20,7 +20,7 @@
                         <div class="card-body">
                             <form action="{{ route('admin.reservation.update', $reservation->id) }}" method="POST">
                                 @csrf
-                                @method('PUT') 
+                                @method('PUT')
 
                                 <div class="mb-3">
                                     <label for="customer_id" class="form-label">Khách hàng</label>
@@ -42,9 +42,21 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="coupon_id" class="form-label">Số lượng khách</label>
-                                    <input type="number" class="form-control" id="coupon_id" name="coupon_id"
-                                        value="{{ $reservation->coupon_id }}" required>
+                                    <label for="guest_count" class="form-label">Số lượng khách</label>
+                                    <input type="number" class="form-control" id="guest_count" name="guest_count"
+                                        value="{{ $reservation->guest_count }}" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="deposit_amount" class="form-label">Số tiền đặt cọc</label>
+                                    <input type="number" class="form-control" id="deposit_amount" name="deposit_amount"
+                                        value="{{ $reservation->deposit_amount }}" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="remaining_amount" class="form-label">Số tiền còn lại</label>
+                                    <input type="number" class="form-control" id="remaining_amount" name="remaining_amount"
+                                        value="{{ $reservation->remaining_amount }}" required>
                                 </div>
 
                                 <div class="mb-3">
@@ -63,7 +75,12 @@
                                         <option value="Cancelled"
                                             {{ $reservation->status == 'Cancelled' ? 'selected' : '' }}>Đã hủy</option>
                                     </select>
+                                </div>
 
+                                <div class="mb-3">
+                                    <label for="cancelled_reason" class="form-label">Lý do hủy (nếu có)</label>
+                                    <input type="text" class="form-control" id="cancelled_reason" name="cancelled_reason"
+                                        value="{{ $reservation->cancelled_reason }}">
                                 </div>
 
                                 <div class="mb-3">

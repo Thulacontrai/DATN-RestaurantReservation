@@ -30,15 +30,21 @@ class ReservationController extends Controller
         return view('admin.reservation.create', compact('customers', 'coupons'));
     }
 
+
+
     public function store(Request $request)
     {
         $validated = $request->validate([
             'customer_id' => 'required|exists:users,id',
             'coupon_id' => 'nullable|exists:coupons,id',
             'reservation_time' => 'required|date',
+            'guest_count' => 'required|integer|min:1',
+            'deposit_amount' => 'nullable|numeric|min:0',
             'total_amount' => 'required|numeric|min:0',
+            'remaining_amount' => 'nullable|numeric|min:0',
             'note' => 'nullable|string',
             'status' => 'required|in:Confirmed,Pending,Cancelled',
+            'cancelled_reason' => 'nullable|string|max:255'
         ]);
 
         Reservation::create($validated);
@@ -58,20 +64,38 @@ class ReservationController extends Controller
 
     public function update(Request $request, $id)
     {
-        $validated = $request->validate([
-            'customer_id' => 'required|exists:users,id',
-            'coupon_id' => 'nullable|exists:coupons,id',
-            'reservation_time' => 'required|date',
-            'total_amount' => 'required|numeric|min:0',
-            'note' => 'nullable|string',
-            'status' => 'required|in:Confirmed,Pending,Cancelled',
-        ]);
+        try {
+            $validated = $request->validate([
+                'customer_id' => 'required|exists:users,id',
+                'coupon_id' => 'nullable|exists:coupons,id',
+                'reservation_time' => 'required|date',
+                'guest_count' => 'required|integer|min:1',
+                'deposit_amount' => 'nullable|numeric|min:0',
+                'total_amount' => 'required|numeric|min:0',
+                'remaining_amount' => 'nullable|numeric|min:0',
+                'note' => 'nullable|string',
+                'status' => 'required|in:Confirmed,Pending,Cancelled',
+                'cancelled_reason' => 'nullable|string|max:255'
+            ]);
 
-        $reservation = Reservation::findOrFail($id);
-        $reservation->update($validated);
+            $reservation = Reservation::findOrFail($id);
+            $reservation->update($validated);
 
-        return redirect()->route('admin.reservation.index')->with('success', 'Reservation updated successfully');
+            return redirect()->route('admin.reservation.index')->with('success', 'Reservation updated successfully');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => $e->getMessage()]);
+        }
     }
+
+
+    public function show($id)
+    {
+        $reservation = Reservation::with('customer')->findOrFail($id);
+
+        return view('admin.reservation.show', compact('reservation'));
+    }
+
+
 
     public function destroy($id)
     {

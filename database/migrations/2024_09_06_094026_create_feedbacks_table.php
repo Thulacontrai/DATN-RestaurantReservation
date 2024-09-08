@@ -9,18 +9,24 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
-        Schema::create('feedbacks', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('reservation_id')->constrained('reservations');
-            $table->foreignId('customer_id')->constrained('users');
-            $table->text('content'); 
-            $table->integer('rating')->default(1);
-            $table->timestamps();
-        });
 
+        Schema::create('feedback', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('reservation_id');
+            $table->unsignedBigInteger('customer_id');
+            $table->text('content');
+            $table->integer('rating')->default(1)->comment('Rating từ 1 đến 5');
+            $table->timestamps();
+
+            $table->foreign('reservation_id')->references('id')->on('reservations')->onDelete('cascade');
+            $table->foreign('customer_id')->references('id')->on('users')->onDelete('cascade');
+        });
     }
+
+
+
 
     /**
      * Reverse the migrations.

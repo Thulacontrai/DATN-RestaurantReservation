@@ -23,9 +23,14 @@ return new class extends Migration
             $table->decimal('discount_amount', 10, 2)->nullable();
             $table->decimal('final_amount', 10, 2)->nullable();
             $table->timestamps();
+            $table->unsignedBigInteger('customer_id')->nullable()->after('table_id');
+            $table->enum('order_type', ['dine_in', 'take_away', 'delivery'])->after('total_amount');
+            $table->decimal('discount_amount', 10, 2)->nullable()->after('status');
 
+            $table->foreign('customer_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('coupon_id')->references('id')->on('coupons')->onDelete('set null');
             $table->foreign('reservation_id')->references('id')->on('reservations');
-            $table->foreign('staff_id')->references('id')->on('users'); 
+            $table->foreign('staff_id')->references('id')->on('users');
         });
 
     }

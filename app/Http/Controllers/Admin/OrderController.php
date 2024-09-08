@@ -35,9 +35,10 @@ class OrderController extends Controller
         return redirect()->route('admin.order.index')->with('success', 'Đơn hàng đã được thêm thành công.');
     }
 
-    public function show(Order $order)
+    public function show($id)
     {
-        return view('admin.order.detail', compact('order'));
+        $order = Order::with(['staff', 'reservation', 'table', 'customer'])->findOrFail($id);
+        return view('admin.order.show', compact('order'));
     }
 
     public function edit(Order $order)
@@ -48,20 +49,19 @@ class OrderController extends Controller
     public function update(Request $request, Order $order)
     {
         $validated = $request->validate([
-            'reservation_id' => 'required|integer',
-            'staff_id' => 'required|integer',
-            'table_id' => 'nullable|integer',
-            'customer_id' => 'nullable|integer',
-            'total_amount' => 'required|numeric',
-            'order_type' => 'required|in:dine_in,take_away,delivery',
-            'status' => 'required|in:pending,completed,cancelled',
-            'discount_amount' => 'nullable|numeric',
-            'final_amount' => 'required|numeric',
+            'reservation_id' => 'required|integer|exists:reservations,id',
+            'staff_id' => 'required|integer|exists:users,id',
+            'table_id' => 'nullable|integer|exists:tables,id',
+            'total_amount' => 'required|numeric|min:0',
+            'final_amount' => 'required|numeric|min:0',
+            'status' => 'required|in:Completed,Pending,Cancelled',
         ]);
 
         $order->update($validated);
-        return redirect()->route('admin.order.index')->with('success', 'Order updated successfully.');
+
+        return redirect()->route('admin.order.index')->with('success', 'Đơn hàng đã được cập nhật thành công.');
     }
+
 
     public function destroy(Order $order)
     {
