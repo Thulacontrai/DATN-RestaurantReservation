@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Payment;
 use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
-    public function index() {
-        return view('admin.payment.index');
+    public function index()
+    {
+        $payments = Payment::all();
+        return view('admin.payment.index', compact('payments'));
     }
 
     public function create()
@@ -16,46 +19,48 @@ class PaymentController extends Controller
         return view('admin.payment.create');
     }
 
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'reservation_id' => 'nullable|integer',
+            'bill_id' => 'nullable|integer',
+            'transaction_id' => 'nullable|integer',
+            'refund_amount' => 'nullable|numeric',
+            'amount' => 'required|numeric',
+            'transaction_status' => 'required|in:pending,completed,failed',
+            'payment_method' => 'required|in:cash,credit_card,online',
+            'status' => 'required|in:Completed,Pending,Failed',
+        ]);
+
+        Payment::create($validated);
+        return redirect()->route('admin.payment.index')->with('success', 'Payment created successfully');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(Payment $payment)
     {
-        //
+        return view('admin.payment.detail', compact('payment'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function edit(Payment $payment)
     {
-
+        return view('admin.payment.edit', compact('payment'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Payment $payment)
     {
-        //
+        $validated = $request->validate([
+            'payment_method' => 'required|in:Cash,Credit Card,Online',
+            'transaction_status' => 'required|in:pending,completed,failed',
+            'status' => 'required|in:Completed,Pending,Failed',
+        ]);
+
+        $payment->update($validated);
+        return redirect()->route('admin.payment.index')->with('success', 'Cập nhật thanh toán thành công.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(Payment $payment)
     {
-        //
+        $payment->delete();
+        return redirect()->route('admin.payment.index')->with('success', 'Payment deleted successfully');
     }
-
-
 }

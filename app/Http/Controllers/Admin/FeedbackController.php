@@ -1,0 +1,74 @@
+<?php
+
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\Feedback;
+use Illuminate\Http\Request;
+
+class FeedbackController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+            $feedbacks = Feedback::all();
+            return view('admin.feedback.index', compact('feedbacks'));
+    }
+
+
+    public function create()
+    {
+        return view('admin.feedback.create');
+    }
+
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'reservation_id' => 'required|integer',
+            'customer_id' => 'required|integer',
+            'content' => 'required|string',
+            'rating' => 'required|integer|min:1|max:5',
+        ]);
+
+        Feedback::create($validated);
+
+        return redirect()->route('admin.feedback.index')->with('success', 'Feedback added successfully.');
+    }
+
+
+    public function show(Feedback $feedback)
+    {
+        return view('admin.feedback.detail', compact('feedback'));
+    }
+
+
+    public function edit(Feedback $feedback)
+    {
+        return view('admin.feedback.edit', compact('feedback'));
+    }
+
+    public function update(Request $request, Feedback $feedback)
+    {
+        $validated = $request->validate([
+            'reservation_id' => 'required|integer',
+            'customer_id' => 'required|integer',
+            'content' => 'required|string',
+            'rating' => 'required|integer|min:1|max:5',
+        ]);
+
+        $feedback->update($validated);
+
+        return redirect()->route('admin.feedback.index')->with('success', 'Feedback updated successfully.');
+    }
+
+    public function destroy(Feedback $feedback)
+    {
+        $feedback->delete();
+
+        return redirect()->route('admin.feedback.index')->with('success', 'Feedback deleted successfully.');
+    }
+}
