@@ -5,10 +5,17 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Dishes;
+use App\Traits\TraitCRUD;
 use Illuminate\Http\Request;
 
 class DishesController extends Controller
 {
+    use TraitCRUD;
+
+    protected $model = Dishes::class;
+    protected $viewPath = 'admin.dishes';
+    protected $routePath = 'admin.dishes';
+    
     public function index(Request $request)
     {
         $query = Dishes::query();

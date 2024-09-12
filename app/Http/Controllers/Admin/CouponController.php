@@ -4,10 +4,18 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Coupon;
+use App\Traits\TraitCRUD;
 use Illuminate\Http\Request;
 
 class CouponController extends Controller
 {
+
+    use TraitCRUD;
+
+    protected $model = Coupon::class;
+    protected $viewPath = 'admin.coupon';
+    protected $routePath = 'admin.coupon'; 
+
     public function index()
     {
         $coupons = Coupon::all();

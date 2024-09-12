@@ -59,14 +59,12 @@
                                             <tr>
                                                 <td>{{ $user->id }}</td>
                                                 <td><img src="{{ $user->avatar ? asset('storage/' . $user->avatar) : 'https://via.placeholder.com/50' }}"
-                                                        alt="User Image" class="img-fluid rounded-circle" width="50">
-                                                </td>
+                                                        alt="User Image" class="img-fluid rounded-circle" width="50"></td>
                                                 <td>{{ $user->name }}</td>
                                                 <td>{{ $user->email }}</td>
                                                 <td>{{ $user->phone }}</td>
                                                 <td>{{ $user->address }}</td>
-                                                <td>{{ $user->role->name ?? 'N/A' }}</td>
-
+                                                <td>{{ optional($user->role)->role_name ?? 'N/A' }}</td>
                                                 <td>
                                                     @if ($user->status == 'active')
                                                         <span class="badge shade-green">Hoạt Động</span>
@@ -76,16 +74,13 @@
                                                 </td>
                                                 <td>
                                                     <div class="actions">
-                                                        <a href="{{ route('admin.user.show', $user->id) }}" class="viewRow"
-                                                            data-id="{{ $user->id }}">
+                                                        <a href="{{ route('admin.user.show', $user->id) }}" class="viewRow" data-id="{{ $user->id }}">
                                                             <i class="bi bi-list text-green"></i>
                                                         </a>
-                                                        <a href="{{ route('admin.user.edit', $user->id) }}" class="editRow"
-                                                            data-id="{{ $user->id }}">
+                                                        <a href="{{ route('admin.user.edit', $user->id) }}" class="editRow" data-id="{{ $user->id }}">
                                                             <i class="bi bi-pencil-square text-warning"></i>
                                                         </a>
-                                                        <form action="{{ route('admin.user.destroy', $user->id) }}"
-                                                            method="POST" style="display:inline-block;"
+                                                        <form action="{{ route('admin.user.destroy', $user->id) }}" method="POST" style="display:inline-block;"
                                                             onsubmit="return confirm('Bạn có chắc chắn muốn xóa?');">
                                                             @csrf
                                                             @method('DELETE')
@@ -102,6 +97,7 @@
                                             </tr>
                                         @endforelse
                                     </tbody>
+
                                 </table>
                             </div>
                             {{-- <!-- Pagination -->

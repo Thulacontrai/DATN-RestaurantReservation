@@ -5,10 +5,17 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Feedback;
+use App\Traits\TraitCRUD;
 use Illuminate\Http\Request;
 
 class FeedbackController extends Controller
 {
+    use TraitCRUD;
+
+    protected $model = Feedback::class;
+    protected $viewPath = 'admin.feedback';
+    protected $routePath = 'admin.feedback';
+
     /**
      * Display a listing of the resource.
      */

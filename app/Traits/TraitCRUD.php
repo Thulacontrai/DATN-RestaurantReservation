@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 trait TraitCRUD
 {
@@ -40,7 +41,9 @@ trait TraitCRUD
             abort(500, 'Model is not defined.');
         }
 
-        $this->model::create($request->all());
+        DB::transaction(function () use ($request) {
+            $this->model::create($request->all());
+        });
 
         return redirect()->route($this->routePath . '.index')->with('success', 'Item created successfully.');
     }
@@ -82,8 +85,10 @@ trait TraitCRUD
             abort(500, 'Model is not defined.');
         }
 
-        $item = $this->model::findOrFail($id);
-        $item->update($request->all());
+        DB::transaction(function () use ($request, $id) {
+            $item = $this->model::findOrFail($id);
+            $item->update($request->all());
+        });
 
         return redirect()->route($this->routePath . '.index')->with('success', 'Item updated successfully.');
     }
@@ -97,8 +102,10 @@ trait TraitCRUD
             abort(500, 'Model is not defined.');
         }
 
-        $item = $this->model::findOrFail($id);
-        $item->delete();
+        DB::transaction(function () use ($id) {
+            $item = $this->model::findOrFail($id);
+            $item->delete();
+        });
 
         return redirect()->route($this->routePath . '.index')->with('success', 'Item deleted successfully.');
     }
