@@ -8,7 +8,7 @@
                     <h2>{{ $title ?? null }}</h2>
                     <ol class="breadcrumb">
 
-                        <li class="breadcrumb-item"><a href="{{ route('index.client') }}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('client.index') }}">Home</a></li>
                         <li class="breadcrumb-item">{{ $currentPage ?? null }}</li>
 
                         <li class="breadcrumb-item active"aria-current="page">{{ $blog ?? null }}</li>
