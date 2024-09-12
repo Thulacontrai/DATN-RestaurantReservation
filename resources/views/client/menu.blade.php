@@ -5,6 +5,7 @@
     @include('client.layouts.component.subheader', [
         'backgroundImage' => 'client/03_images/background/bg-1.jpg',
         'subtitle' => 'Welcome',
+
         'title' => 'Our Menu',
         'currentPage' => 'Menu',
     ])
@@ -114,4 +115,5 @@
             </div>
         </section>
     </div>
+
 @endsection

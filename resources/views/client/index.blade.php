@@ -46,7 +46,9 @@
                         <div class="tp-caption" data-x="center" data-y="470" data-width="none" data-height="none"
                             data-whitespace="nowrap" data-transform_in="y:100px;opacity:0;s:500;e:Power2.easeOut;"
                             data-transform_out="opacity:0;y:-100;s:800;e:Power2.easeInOut;" data-start="800">
+  
                             <a href="{{ route('menu') }}" class="btn-line">View Menu</a>
+
                         </div>
                     </li>
 
@@ -247,6 +249,7 @@
             <div class="container">
                 <div class="row align-items-center wow fadeInUp">
                     <div class="col-lg-5 offset-lg-7">
+
                         <h5 class="uptitle">Special</h5>
                         <h2>Combos</h2>
 
@@ -269,6 +272,7 @@
 
                         <div class="spacer-single"></div>
                         <a href="{{ route('menu') }}" class="btn-line">View All Combos</a>
+
                     </div>
                 </div>
             </div>
@@ -299,6 +303,7 @@
                         @endif
                         <div class="spacer-single"></div>
                         <a href="{{ route('menu') }}" class="btn-line">View All Foods</a>
+
                     </div>
                 </div>
             </div>
@@ -307,7 +312,6 @@
                 <img src="client/03_images/background/bg-side-2.jpg" class="jarallax-img" alt="">
             </div>
         </section>
-
 
 
         @include('client.layouts.component.chefs')
@@ -339,6 +343,7 @@
                 </div>
             </div>
         </section>
+
 
         <!-- content begin -->
         <div id="content" class="no-bottom no-top">
@@ -478,6 +483,7 @@
             </section>
 
         </div>
+
 
 
     </div>

@@ -37,6 +37,7 @@ use App\Http\Controllers\Client\MenuController;
 */
 
 
+
 Route::get('/', [HomeController::class, 'index'])->name('client.index');
 Route::get('/menu', [MenuController::class, 'index'])->name('menu');
 Route::get('/api/menu/filter', [MenuController::class, 'filterByCategory']);
@@ -46,6 +47,7 @@ Route::get('/api/menu/filter', [MenuController::class, 'filterByCategory']);
 // route::get("/menu", function () {
 //     return view("client.menu");
 // })->name("menu.client");
+
 route::get("/booking", function () {
     return view("client.booking");
 })->name("booking.client");
@@ -64,6 +66,8 @@ route::get("/contact", function () {
 route::get("/blog-single", function () {
     return view("client.blog-single");
 })->name("blog-single.client")   ;
+
+
 
 
 
