@@ -66,7 +66,9 @@ route::get("/contact", function () {
 route::get("/blog-single", function () {
     return view("client.blog-single");
 })->name("blog-single.client")   ;
-
+route::get("deposit", function () {
+    return view("client.deposit");
+})->name("deposit.client");
 
 
 
