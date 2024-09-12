@@ -4,30 +4,25 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class CreateReservationTablesTable extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
+    public function up()
     {
         Schema::create('reservation_tables', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('reservation_id')->constrained('reservations');
-            $table->foreignId('table_id')->constrained('tables');
-            $table->enum('status', ['Assigned', 'Unassigned']);
-            $table->datetime('start_time'); 
-            $table->datetime('end_time')->nullable();
+            $table->id('table_id'); // primary key
+            $table->integer('reservation_id')->unsigned();
+            $table->enum('status', ['available', 'reserved', 'occupied', 'cleaning'])->default('available');
+            $table->time('start_time');
+            $table->time('end_time');
             $table->timestamps();
-        });
 
+            // Add foreign key reference for reservation_id if it references another table
+            $table->foreign('reservation_id')->references('id')->on('reservations')->onDelete('cascade');
+        });
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('reservation_tables');
     }
-};
+}

@@ -4,10 +4,16 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Role;
+use App\Traits\TraitCRUD;
 use Illuminate\Http\Request;
 
 class RoleController extends Controller
 {
+    use TraitCRUD;
+
+    protected $model = Role::class;
+    protected $viewPath = 'admin.role';
+    protected $routePath = 'admin.role';
 
     public function index()
     {

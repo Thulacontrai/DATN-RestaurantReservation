@@ -4,10 +4,18 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Payment;
+use App\Traits\TraitCRUD;
 use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
+
+    use TraitCRUD;
+
+    protected $model = Payment::class;
+    protected $viewPath = 'admin.payment';
+    protected $routePath = 'admin.payment';
+
     public function index()
     {
         $payments = Payment::all();

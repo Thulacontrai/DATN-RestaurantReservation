@@ -1,4 +1,3 @@
-<!-- resources/views/roles/index.blade.php -->
 @extends('admin.master')
 
 @section('title', 'Danh Sách Vai Trò')

@@ -4,10 +4,18 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Traits\TraitCRUD;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
+
+    use TraitCRUD;
+
+    protected $model = Order::class;
+    protected $viewPath = 'admin.order';
+    protected $routePath = 'admin.order';
+
     public function index()
     {
         $orders = Order::all();

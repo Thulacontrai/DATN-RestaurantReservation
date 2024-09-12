@@ -27,21 +27,26 @@
 
                         <div class="row">
 
-                            <div class="col-md-3 col-12">
+                            <div class="col-md-4 col-12">
                                 <div class="text-center">
                                     <img class="img-fluid rounded shadow-sm"
                                          src="{{ $combo->image ? asset('storage/' . $combo->image) : 'https://via.placeholder.com/150' }}"
-                                         alt="{{ $combo->name }}" style="max-width: 150px; height: auto;">
+                                         alt="{{ $combo->name }}"
+                                         style="max-width: 100%; height: auto; max-height: 250px;">
                                 </div>
                             </div>
 
-                            <div class="col-md-9 col-12">
+                            <div class="col-md-8 col-12">
                                 <h5 class="fw-bold">{{ $combo->name }}</h5>
                                 <p><strong>Giá Combo:</strong> {{ number_format($combo->price, 0, ',', '.') }} VND</p>
                                 <p><strong>Số Lượng Món Ăn:</strong> {{ $combo->quantity_dishes }} món</p>
                                 <hr>
                                 <h6>Mô tả Combo:</h6>
-                                <p class="text-muted">{!! $combo->description !!}</p>
+                                <div style="word-wrap: break-word; max-width: 100%; white-space: normal;">
+                                    <p class="text-muted">
+                                        {!! str_replace('<img', '<img style="max-width: 100%; height: auto;padding-left: 20%; max-height: 250px;"', $combo->description) !!}
+                                    </p>
+                                </div>
                             </div>
                         </div>
                         <!-- End Row -->

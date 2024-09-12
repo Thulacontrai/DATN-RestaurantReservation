@@ -7,7 +7,9 @@
                     <h5 class="uptitle">{{ $subtitle }}</h5>
                     <h2>{{ $title ?? 'Our Menu' }}</h2>
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{ route('index.client') }}">Home</a></li>
+
+                        <li class="breadcrumb-item"><a href="{{ route('menu') }}">Home</a></li>
+
                         <li class="breadcrumb-item">{{ $currentPage }}</li>
                         <li class="breadcrumb-item active"aria-current="page">{{ $blog ?? null }}</li>
                     </ol>
