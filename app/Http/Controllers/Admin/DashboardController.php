@@ -3,9 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Traits\TraitCRUD;
 
 class DashboardController extends Controller
 {
+    use TraitCRUD;
+
+
     /**
      * Display the admin dashboard.
      */

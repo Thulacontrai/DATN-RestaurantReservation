@@ -110,13 +110,13 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="form-group">
+                               <div class="form-group">
                                     <label for="password">Mật khẩu</label>
                                     <input type="password" name="password" class="form-control" required>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="password_confirmation">Xác nhận mật khẩu</label>
+                                    <label l for="password_confirmation">Xác nhận mật khẩu</label>
                                     <input type="password" name="password_confirmation" class="form-control" required>
                                 </div>
 
@@ -125,7 +125,7 @@
                             <div class="text-end">
                                 <button type="submit" class="btn btn-success">Lưu Người Dùng</button>
                             </div>
-                            
+
                         </form>
                         <!-- Kết thúc Form Thêm Mới -->
 

@@ -10,6 +10,8 @@ class Combo extends Model
 
     use HasFactory;
 
+    protected $table = 'combos'; 
+
     protected $fillable = [
         'name',
         'price',

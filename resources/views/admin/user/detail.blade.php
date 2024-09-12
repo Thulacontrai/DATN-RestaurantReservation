@@ -62,7 +62,7 @@
                             <div class="col-md-6">
                                 <div class="detail-box p-4 shadow-sm rounded bg-white">
                                     <h6 class="text-primary">Vai Trò:</h6>
-                                    <p class="h5">{{ $user->role->name ?? 'N/A' }}</p>
+                                    <p class="h5">{{ optional($user->role)->role_name ?? 'N/A' }}</p>
                                 </div>
                             </div>
                         </div>

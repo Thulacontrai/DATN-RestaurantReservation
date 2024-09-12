@@ -6,10 +6,18 @@ use App\Http\Controllers\Controller;
 use App\Models\Coupon;
 use App\Models\Reservation;
 use App\Models\User;
+use App\Traits\TraitCRUD;
 use Illuminate\Http\Request;
 
 class ReservationController extends Controller
 {
+
+    use TraitCRUD;
+
+    protected $model = Reservation::class;
+    protected $viewPath = 'admin.reservation';
+    protected $routePath = 'admin.coupon';
+
     public function index(Request $request)
     {
         $reservations = Reservation::with('customer')

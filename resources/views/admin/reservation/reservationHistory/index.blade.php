@@ -1,6 +1,6 @@
 @extends('admin.master')
 
-@section('title', 'Danh Sách Lịch Sử Đặt Chỗ')
+@section('title', 'Danh Sách Lịch Sử Đặt Bàn')
 
 @section('content')
 
@@ -21,7 +21,7 @@
                         <div class="card-body">
 
 
-                            <form method="GET" action="" class="mb-3">
+                            <form method="GET" action="{{ route('admin.reservationHistory.index') }}" class="mb-3">
                                 <div class="row g-2">
                                     <div class="col-auto">
                                         <input type="text" id="search-customer" name="customer_name"
@@ -33,7 +33,6 @@
                                 </div>
                             </form>
 
-
                             <div class="table-responsive">
                                 <table class="table v-middle m-0">
                                     <thead>
@@ -42,87 +41,69 @@
                                             <th>Mã Đặt Chỗ</th>
                                             <th>Tên Khách Hàng</th>
                                             <th>Thời Gian Thay Đổi</th>
-                                            <th>Trạng Thái Cũ</th>
-                                            <th>Trạng Thái Mới</th>
+                                            <th>Trạng Thái</th>
                                             <th>Ghi Chú</th>
                                             <th>Hành Động</th>
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        @forelse ($reservationHistories as $history)
+                                            <tr>
+                                                <td>{{ $history->id }}</td>
+                                                <td>{{ optional($history->reservation)->id ?? 'Không rõ' }}</td>
+                                                <td>{{ optional(optional($history->reservation)->customer)->name ?? 'Không rõ' }}
+                                                </td>
+                                                <td>{{ $history->change_time }}</td>
+                                                {{-- <td><span
+                                                        class="badge shade-yellow min-70">{{ optional($history->reservation)->status ?? 'Không rõ' }}</span>
+                                                </td> --}}
+                                                <td>
+                                                    @switch($history->status)
+                                                        @case('pending')
+                                                            <span class="badge shade-yellow min-70">Chờ xử lý</span>
+                                                            @break
+                                                        @case('confirmed')
+                                                            <span class="badge shade-green min-70">Đã xác nhận</span>
+                                                            @break
+                                                        @case('cancelled')
+                                                            <span class="badge shade-red min-70">Đã hủy</span>
+                                                            @break
+                                                        @case('completed')
+                                                            <span class="badge shade-blue min-70">Hoàn thành</span>
+                                                            @break
+                                                        @default
+                                                            <span class="badge shade-gray min-70">Không rõ</span>
+                                                    @endswitch
+                                                </td>
 
-                                        <tr>
-                                            <td>1</td>
-                                            <td>1001</td>
-                                            <td>Nguyễn Văn A</td>
-                                            <td>2024-09-01 17:00</td>
-                                            <td><span class="badge shade-green min-70">Chờ xử lý</span></td>
-                                            <td><span class="badge shade-green min-70">Đã xác nhận</span></td>
-                                            <td>Xác nhận thanh toán</td>
-                                            <td>
-                                                <div class="actions">
-                                                    <a href="#" class="viewRow" data-bs-toggle="modal"
-                                                        data-bs-target="#viewRow">
-                                                        <i class="bi bi-list text-green"></i>
-                                                    </a>
-                                                    <a href="#" class="deleteRow">
-                                                        <i class="bi bi-trash text-red"></i>
-                                                    </a>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>2</td>
-                                            <td>1002</td>
-                                            <td>Trần Thị B</td>
-                                            <td>2024-09-01 18:30</td>
-                                            <td><span class="badge shade-yellow min-70">Đã đặt trước</span></td>
-                                            <td><span class="badge shade-yellow min-70">Đang sử dụng</span></td>
-                                            <td>Khách đã đến</td>
-                                            <td>
-                                                <div class="actions">
-                                                    <a href="#" class="viewRow" data-bs-toggle="modal"
-                                                        data-bs-target="#viewRow">
-                                                        <i class="bi bi-list text-green"></i>
-                                                    </a>
-                                                    <a href="#" class="deleteRow">
-                                                        <i class="bi bi-trash text-red"></i>
-                                                    </a>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>3</td>
-                                            <td>1003</td>
-                                            <td>Lê Văn C</td>
-                                            <td>2024-09-01 20:15</td>
-                                            <td><span class="badge shade-red min-70">Đang sử dụng</span></td>
-                                            <td><span class="badge shade-red min-70">Hoàn thành</span></td>
-                                            <td>Thanh toán thành công</td>
-                                            <td>
-                                                <div class="actions">
-                                                    <a href="#" class="viewRow" data-bs-toggle="modal"
-                                                        data-bs-target="#viewRow">
-                                                        <i class="bi bi-list text-green"></i>
-                                                    </a>
-                                                    <a href="#" class="deleteRow">
-                                                        <i class="bi bi-trash text-red"></i>
-                                                    </a>
-                                                </div>
-                                            </td>
-                                        </tr>
-
+                                                <td>{{ $history->note }}</td>
+                                                <td>
+                                                    <div class="actions">
+                                                        <a href="#" class="viewRow" data-bs-toggle="modal"
+                                                            data-bs-target="#viewRow">
+                                                            <i class="bi bi-list text-green"></i>
+                                                        </a>
+                                                        <a href="#" class="deleteRow">
+                                                            <i class="bi bi-trash text-red"></i>
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="8">Không có lịch sử đặt chỗ nào được tìm thấy.</td>
+                                            </tr>
+                                        @endforelse
                                     </tbody>
+
+
+
                                 </table>
                             </div>
+
                             <!-- Pagination -->
                             <div class="pagination justify-content-center mt-3">
-                                <ul class="pagination">
-                                    <li class="page-item"><a class="page-link" href="#">Trước</a></li>
-                                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">Tiếp</a></li>
-                                </ul>
+                                {{-- {{ $reservationHistory->links() }} --}}
                             </div>
                             <!-- Kết thúc Pagination -->
 
@@ -170,12 +151,8 @@
                         <input type="text" class="form-control" id="changeTime" readonly>
                     </div>
                     <div class="mb-3">
-                        <label for="oldStatus" class="form-label">Trạng Thái Cũ</label>
-                        <input type="text" class="form-control" id="oldStatus" readonly>
-                    </div>
-                    <div class="mb-3">
-                        <label for="newStatus" class="form-label">Trạng Thái Mới</label>
-                        <input type="text" class="form-control" id="newStatus" readonly>
+                        <label for="Status" class="form-label">Trạng Thái </label>
+                        <input type="text" class="form-control" id="Status" readonly>
                     </div>
                     <div class="mb-3">
                         <label for="note" class="form-label">Ghi Chú</label>
@@ -191,35 +168,28 @@
 
     <!-- JavaScript để xử lý sự kiện nhấp vào hàng và hiển thị chi tiết trong modal -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const rows = document.querySelectorAll('.viewRow');
+       document.addEventListener('DOMContentLoaded', function() {
+    const rows = document.querySelectorAll('.viewRow');
 
-            rows.forEach(function(row) {
-                row.addEventListener('click', function() {
-                    const historyId = this.closest('tr').querySelector('td:nth-child(1)')
-                        .textContent;
-                    const reservationId = this.closest('tr').querySelector('td:nth-child(2)')
-                        .textContent;
-                    const customerName = this.closest('tr').querySelector('td:nth-child(3)')
-                        .textContent;
-                    const changeTime = this.closest('tr').querySelector('td:nth-child(4)')
-                        .textContent;
-                    const oldStatus = this.closest('tr').querySelector('td:nth-child(5)')
-                        .textContent.trim();
-                    const newStatus = this.closest('tr').querySelector('td:nth-child(6)')
-                        .textContent.trim();
-                    const note = this.closest('tr').querySelector('td:nth-child(7)').textContent;
+    rows.forEach(function(row) {
+        row.addEventListener('click', function() {
+            const historyId = this.closest('tr').querySelector('td:nth-child(1)').textContent;
+            const reservationId = this.closest('tr').querySelector('td:nth-child(2)').textContent;
+            const customerName = this.closest('tr').querySelector('td:nth-child(3)').textContent;
+            const changeTime = this.closest('tr').querySelector('td:nth-child(4)').textContent;
+            const newStatus = this.closest('tr').querySelector('td:nth-child(5)').textContent.trim();
+            const note = this.closest('tr').querySelector('td:nth-child(6)').textContent;
 
-                    document.getElementById('historyId').value = historyId;
-                    document.getElementById('reservationId').value = reservationId;
-                    document.getElementById('customerName').value = customerName;
-                    document.getElementById('changeTime').value = changeTime;
-                    document.getElementById('oldStatus').value = oldStatus;
-                    document.getElementById('newStatus').value = newStatus;
-                    document.getElementById('note').value = note;
-                });
-            });
+            document.getElementById('historyId').value = historyId;
+            document.getElementById('reservationId').value = reservationId;
+            document.getElementById('customerName').value = customerName;
+            document.getElementById('changeTime').value = changeTime;
+            document.getElementById('Status').value = newStatus;  // Update here
+            document.getElementById('note').value = note;
         });
+    });
+});
+
     </script>
 
 @endsection

@@ -134,7 +134,7 @@
                                         </select>
                                     </div>
 
-                                    <!-- Mật Khẩu và Xác nhận Mật Khẩu -->
+                                    {{-- <!-- Mật Khẩu và Xác nhận Mật Khẩu -->
                                     <div class="col-md-6 mb-3">
                                         <label for="password" class="form-label">Mật khẩu</label>
                                         <input type="password" id="password" name="password" class="form-control"
@@ -144,7 +144,7 @@
                                         <label for="password_confirmation" class="form-label">Xác nhận mật khẩu</label>
                                         <input type="password" id="password_confirmation" name="password_confirmation"
                                             class="form-control" required>
-                                    </div>
+                                    </div> --}}
 
                                     <div class="text-end">
                                         <button type="submit" class="btn btn-success">Cập Nhật Người Dùng</button>
