@@ -5,11 +5,19 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Role;
 use App\Models\User;
+use App\Traits\TraitCRUD;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+
+    use TraitCRUD;
+
+    protected $model = User::class;
+    protected $viewPath = 'admin.user';
+    protected $routePath = 'admin.user';
+
     public function index()
     {
         $users = User::with('role')->get();
@@ -27,7 +35,6 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
             'phone' => 'nullable|string|max:15',
             'address' => 'nullable|string|max:255',
             'gender' => 'required|in:male,female,other',
@@ -41,10 +48,10 @@ class UserController extends Controller
 
         $avatarPath = $request->hasFile('avatar') ? $request->file('avatar')->store('avatars', 'public') : null;
 
+        $defaultPassword = Hash::make('defaultpassword');
         User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
             'phone' => $request->phone,
             'address' => $request->address,
             'gender' => $request->gender,
@@ -54,10 +61,13 @@ class UserController extends Controller
             'role_id' => $request->role_id,
             'avatar' => $avatarPath,
             'status' => $request->status,
+            'password' => $defaultPassword, // Cung cấp mật khẩu mặc định
         ]);
 
         return redirect()->route('admin.user.index')->with('success', 'Người dùng đã được tạo thành công.');
     }
+
+
 
     public function show($id)
     {
@@ -88,7 +98,7 @@ class UserController extends Controller
             'hire_date' => 'nullable|date',
             'position' => 'nullable|string|max:255',
             'role_id' => 'required|integer|exists:roles,id',
-            'password' => 'required|string|min:8|confirmed',
+            // 'password' => 'required|string|min:8|confirmed',
         ]);
 
         if ($request->hasFile('avatar')) {
@@ -96,9 +106,9 @@ class UserController extends Controller
             $validated['avatar'] = $avatarPath;
         }
 
-        if ($request->filled('password')) {
-            $validated['password'] = Hash::make($request->password);
-        }
+        // if ($request->filled('password')) {
+        //     $validated['password'] = Hash::make($request->password);
+        // }
 
         $user->update($validated);
 

@@ -4,10 +4,17 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Traits\TraitCRUD;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
+
+    use TraitCRUD;
+    protected $model = Category::class;
+    protected $viewPath = 'admin.dish.category';
+    protected $routePath = 'admin.category';
+
     public function index(Request $request)
     {
         $query = Category::query();

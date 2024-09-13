@@ -43,10 +43,10 @@
                                 <a href="{{ route('admin.reservation.index') }}">Danh sách đặt bàn</a>
                             </li>
                             <li>
-                                <a href="">Bàn đặt trước</a>
+                                <a href="{{ route('admin.reservationTable.index') }}">Bàn đặt trước</a>
                             </li>
                             <li>
-                                <a href="">Lịch sử đặt bàn</a>
+                                <a href="{{ route('admin.reservationHistory.index') }}">Lịch sử đặt bàn</a>
                             </li>
 
                         </ul>
@@ -178,6 +178,10 @@
 
                             </li>
                             <li>
+                                <a href="{{ route('admin.permission.index') }}">Quyền hạn</a>
+
+                            </li>
+                            <li>
                                 <a href="{{ route('admin.user.index') }}">Danh sách người dùng</a>
 
                             </li>
@@ -194,10 +198,14 @@
                     <div class="sidebar-submenu">
                         <ul>
                             <li>
-                                <a href="">Danh mục kho</a>
+                                <a href="{{ route('admin.supplier.index') }}">Nhà cung cấp</a>
+                            <li>
+                            <li>
+                                <a href="{{ route('admin.ingredientType.index')}}">Loại Nguyên Liệu</a>
                             </li>
                             <li>
-                                <a href="#">Nhà cung cấp</a>
+                                <a href="{{ route('admin.ingredient.index')}}">Danh sách Nguyên Liệu</a>
+                            </li>
                             <li>
                                 <a href="#">Phiếu nhập kho</a>
                             </li>

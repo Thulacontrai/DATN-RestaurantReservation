@@ -64,11 +64,11 @@
                                                 <td>{{ number_format($coupon->discount_amount, 0, ',', '.') }} VND</td>
                                                 <td>
                                                     @if ($coupon->status == 'active')
-                                                        <span class="badge shade-green">Active</span>
+                                                        <span class="badge shade-green">Hoạt Động</span>
                                                     @elseif ($coupon->status == 'inactive')
-                                                        <span class="badge shade-yellow">Inactive</span>
+                                                        <span class="badge shade-yellow">Ngừng Hoạt Động</span>
                                                     @else
-                                                        <span class="badge shade-red">Expired</span>
+                                                        <span class="badge shade-red">Hết Hạn</span>
                                                     @endif
                                                 </td>
                                                 <td>
