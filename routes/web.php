@@ -77,7 +77,6 @@ route::get("deposit", function () {
 
 
 
-
 Route::get('admin', [AdminController::class, 'index']);
 Route::prefix('admin')->name('admin.')->group(function () {
 
