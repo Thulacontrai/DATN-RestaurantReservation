@@ -4,7 +4,6 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ComboController;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\DishesController;
-// use App\Http\Controllers\Admin\IngredientController;
 use App\Http\Controllers\Admin\FeedbackController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\PaymentController;
@@ -19,8 +18,8 @@ use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\ReservationController;
 use App\Http\Controllers\Admin\ReservationHistoryController;
 use App\Http\Controllers\Admin\ReservationTableController;
+use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SupplierController;
-// use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\TableController;
 use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Client\MenuController;
@@ -42,7 +41,7 @@ Route::get('/', [HomeController::class, 'index'])->name('client.index');
 Route::get('/menu', [MenuController::class, 'index'])->name('menu');
 Route::get('/api/menu/filter', [MenuController::class, 'filterByCategory']);
 
-
+Route::get('/menu/category/{category}', [MenuController::class, 'filterByCategory'])->name('menu.category');
 
 // route::get("/menu", function () {
 //     return view("client.menu");
@@ -65,7 +64,16 @@ route::get("/contact", function () {
 })->name("contact.client");
 route::get("/blog-single", function () {
     return view("client.blog-single");
+
 })->name("blog-single.client")   ;
+
+
+
+
+
+
+
+
 route::get("deposit", function () {
     return view("client.deposit");
 })->name("deposit.client");
@@ -77,6 +85,7 @@ route::get("deposit", function () {
 Route::get('pos', function () {
     return view('pos.pos');
 });
+
 
 
 Route::get('admin', [AdminController::class, 'index']);
@@ -100,7 +109,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('ingredientType', IngredientTypeController::class);
     Route::resource('ingredient', IngredientController::class);
     Route::resource('dashboard', DashboardController::class);
-    //     Route::get('/logon', [AdminController::class, 'logon'])->name('logon');
-    //     Route::post('/logon', [AdminController::class, 'postlogon'])->name('admin.logon');
+    Route::resource('accountSetting', SettingController::class);
+
+
+// // Route đến trang đăng nhập
+// Route::get('/logon', [AdminController::class, 'logon'])->name('logon');
+
+// // Route cho admin
+// Route::middleware(['auth', 'isAdmin'])->group(function () {
+//     Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+// });
 
 });

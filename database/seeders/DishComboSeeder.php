@@ -29,5 +29,6 @@ class DishComboSeeder extends Seeder
             'price' => 300000,
             'image' => 'family_meal.jpg',
         ]);
+
     }
 }

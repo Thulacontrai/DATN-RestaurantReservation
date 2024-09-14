@@ -29,7 +29,7 @@ class MenuController extends Controller
     //     } elseif ($categoryId == 2) {
     //         $items = Dishes::where('category_id', 2)->get();
     //     } elseif ($categoryId == 3) {
-    //         $items = Dishes::where('category_id', 3)->get(); 
+    //         $items = Dishes::where('category_id', 3)->get();
     //     } else {
     //         $items = Dishes::all(); // Show all items if no category is selected
     //     }

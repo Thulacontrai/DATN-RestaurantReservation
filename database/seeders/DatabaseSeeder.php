@@ -14,12 +14,31 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // for ($i=0; $i <10 ; $i++) {
-        //     Category::query()->create([
-        //         'name'=>'Danh muc' .$i
-        //     ]);
-        //    }
+        $this->call([
+            CategoriesSeeder::class,
+            CombosSeeder::class,
+            DishesSeeder::class,
+            FeedbacksSeeder::class,
+            IngredientsSeeder::class,
+            IngredientTypesSeeder::class,
+            OrderCombosSeeder::class,
+            MigrationsSeeder::class,
+            OrderDishesSeeder::class,
+            PaymentsSeeder::class,
+            PermissionsSeeder::class,
+            PersonalAccessTokensSeeder::class,
+            ReservationsSeeder::class,
+            ReservationCombosSeeder::class,
+            ReservationDishesSeeder::class,
+            ReservationHistorySeeder::class,
+            ReservationTablesSeeder::class,
+            RolesSeeder::class,
+            RolePermissionsSeeder::class,
+            SuppliersSeeder::class,
+            TablesSeeder::class,
+            UsersSeeder::class,
 
-        //   tạo mịa nó chay chứ lỗi vãi lìn ======= :)
+        ]);
+
     }
 }

@@ -104,9 +104,18 @@
                             <!-- Kết thúc Pagination -->
 
                         </div>
+
                     </div>
+                    {{-- <a href="{{ route('admin.table.trash') }}" class="btn btn-primary">
+                        <i class="fa fa-trash"></i> Thùng Rác
+                    </a> --}}
+
+
+
+
                 </div>
             </div>
+
             <!-- Row end -->
 
         </div>
