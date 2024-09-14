@@ -9,104 +9,53 @@
 
         <!-- Content wrapper start -->
         <div class="content-wrapper">
-
-            <!-- Row start -->
             <div class="row">
                 <div class="col-sm-12 col-12">
-                    <div class="card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <div class="card-title">Chi Tiết Thanh Toán</div>
-                            <a href="{{ route('admin.payment.index') }}" class="btn btn-sm btn-secondary">
-                                Quay lại
-                            </a>
+                    <div class="card shadow-lg">
+                        <div class="card-header d-flex justify-content-between align-items-center bg-primary text-white">
+                            <h4 class="card-title mb-3 text-white">Chi Tiết Thanh Toán</h4>
+                            <a href="{{ route('admin.payment.index') }}" class="btn btn-sm btn-light mb-3">Quay Lại</a>
                         </div>
                         <div class="card-body">
-                            <div class="row">
-                                <div class="col-sm-6 col-12">
-                                    <div class="mb-3">
-                                        <label class="form-label">Mã Thanh Toán (Payment ID)</label>
-                                        <input type="text" class="form-control" value="{{ $payment->id }}" readonly>
-                                    </div>
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <h5 class="text-primary">Thông Tin Thanh Toán</h5>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item"><strong>Mã Thanh Toán:</strong> {{ $payment->id }}</li>
+                                        <li class="list-group-item"><strong>Mã Hóa Đơn:</strong> {{ $payment->bill_id }}</li>
+                                        <li class="list-group-item"><strong>Số Tiền:</strong> {{ number_format($payment->transaction_amount, 0, ',', '.') }} VND</li>
+                                        <li class="list-group-item"><strong>Số Tiền Hoàn Lại:</strong> {{ number_format($payment->refund_amount, 0, ',', '.') }} VND</li>
+                                    </ul>
                                 </div>
 
-                                <div class="col-sm-6 col-12">
-                                    <div class="mb-3">
-                                        <label class="form-label">Mã Đặt Chỗ (Reservation ID)</label>
-                                        <input type="text" class="form-control" value="{{ $payment->reservation_id }}" readonly>
-                                    </div>
-                                </div>
-
-                                <div class="col-sm-6 col-12">
-                                    <div class="mb-3">
-                                        <label class="form-label">Mã Hóa Đơn (Bill ID)</label>
-                                        <input type="text" class="form-control" value="{{ $payment->bill_id }}" readonly>
-                                    </div>
-                                </div>
-
-                                <div class="col-sm-6 col-12">
-                                    <div class="mb-3">
-                                        <label class="form-label">Số Tiền (Amount)</label>
-                                        <input type="number" class="form-control" value="{{ $payment->transaction_amount }}" readonly>
-                                    </div>
-                                </div>
-
-                                <div class="col-sm-6 col-12">
-                                    <div class="mb-3">
-                                        <label class="form-label">Số Tiền Hoàn Lại (Refund Amount)</label>
-                                        <input type="number" class="form-control" value="{{ $payment->refund_amount }}" readonly>
-                                    </div>
-                                </div>
-
-                                <div class="col-sm-6 col-12">
-                                    <div class="mb-3">
-                                        <label class="form-label">Phương Thức Thanh Toán (Payment Method)</label>
-                                        <input type="text" class="form-control" value="{{ $payment->payment_method }}" readonly>
-                                    </div>
-                                </div>
-
-                                <div class="col-sm-6 col-12">
-                                    <div class="mb-3">
-                                        <label class="form-label">Trạng Thái Giao Dịch (Transaction Status)</label>
-                                        <input type="text" class="form-control" value="{{ $payment->transaction_status }}" readonly>
-                                    </div>
-                                </div>
-
-                                <div class="col-sm-6 col-12">
-                                    <div class="mb-3">
-                                        <label class="form-label">Trạng Thái (Status)</label>
-                                        <input type="text" class="form-control" value="{{ $payment->status }}" readonly>
-                                    </div>
-                                </div>
-
-                                <div class="col-sm-6 col-12">
-                                    <div class="mb-3">
-                                        <label class="form-label">Ngày Tạo (Created At)</label>
-                                        <input type="text" class="form-control" value="{{ $payment->created_at->format('Y-m-d H:i') }}" readonly>
-                                    </div>
-                                </div>
-
-                                <div class="col-sm-6 col-12">
-                                    <div class="mb-3">
-                                        <label class="form-label">Ngày Cập Nhật (Updated At)</label>
-                                        <input type="text" class="form-control" value="{{ $payment->updated_at->format('Y-m-d H:i') }}" readonly>
-                                    </div>
+                                <div class="col-md-6">
+                                    <h5 class="text-primary">Chi Tiết Đặt Chỗ</h5>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item"><strong>Mã Đặt Chỗ:</strong> {{ $payment->reservation_id }}</li>
+                                        <li class="list-group-item"><strong>Phương Thức Thanh Toán:</strong> {{ $payment->payment_method }}</li>
+                                        <li class="list-group-item"><strong>Trạng Thái Giao Dịch:</strong> {{ $payment->transaction_status }}</li>
+                                        <li class="list-group-item"><strong>Trạng Thái:</strong> {{ $payment->status }}</li>
+                                    </ul>
                                 </div>
                             </div>
-                            <div class="mt-3">
-                                <a href="{{ route('admin.payment.edit', $payment->id) }}" class="btn btn-primary">
-                                    Chỉnh Sửa
-                                </a>
+
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <h5 class="text-primary">Chi Tiết Thời Gian</h5>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item"><strong>Ngày Tạo:</strong> {{ $payment->created_at->format('Y-m-d H:i') }}</li>
+                                        <li class="list-group-item"><strong>Ngày Cập Nhật:</strong> {{ $payment->updated_at->format('Y-m-d H:i') }}</li>
+                                    </ul>
+                                </div>
                             </div>
+
+                            <a href="{{ route('admin.payment.index') }}" class="btn btn-primary mt-3">Quay Lại Danh Sách</a>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- Row end -->
-
         </div>
         <!-- Content wrapper end -->
-
     </div>
-    <!-- Content wrapper scroll end -->
 
 @endsection

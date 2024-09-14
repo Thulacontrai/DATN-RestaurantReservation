@@ -16,10 +16,10 @@
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <div class="card-title">Danh Sách Thanh Toán</div>
-                            <a href="{{ route('admin.payment.create') }}"
+                            {{-- <a href="{{ route('admin.payment.create') }}"
                                 class="btn btn-sm btn-primary d-flex align-items-center">
                                 <i class="bi bi-plus-circle me-2"></i> Thêm Mới
-                            </a>
+                            </a> --}}
                         </div>
 
                         <div class="card-body">

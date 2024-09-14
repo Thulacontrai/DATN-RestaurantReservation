@@ -10,7 +10,7 @@ class Combo extends Model
 
     use HasFactory;
 
-    protected $table = 'combos'; 
+    protected $table = 'combos';
 
     protected $fillable = [
         'name',
@@ -19,4 +19,8 @@ class Combo extends Model
         'image',
         'quantity_dishes',
     ];
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
 }

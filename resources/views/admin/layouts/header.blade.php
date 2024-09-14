@@ -31,8 +31,8 @@
                 </a>
                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="userSettings">
                     <div class="header-profile-actions">
-                        <a href="#">Profile</a>
-                        <a href="#">Settings</a>
+                        {{-- <a href="#">Profile</a> --}}
+                        <a href="{{ route('admin.accountSetting.index')}}">Settings</a>
                         <a href="#">Logout</a>
                     </div>
                 </div>
