@@ -74,7 +74,9 @@ route::get("deposit", function () {
 
 
 
-
+Route::get('pos', function () {
+    return view('pos.pos');
+});
 
 
 Route::get('admin', [AdminController::class, 'index']);
