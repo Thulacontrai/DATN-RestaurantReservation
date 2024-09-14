@@ -17,8 +17,15 @@
             <!-- mainmenu begin -->
             <nav>
                 <ul id="mainmenu">
+<<<<<<< HEAD
                     <li><a href="{{ route('client.index') }}">Home</a></li>
                     <li><a href="{{ route('menu') }}">Menu</a></li>
+=======
+
+                    <li><a href="{{ route('client.index') }}">Home</a></li>
+                    <li><a href="{{ route('menu') }}">Menu</a></li>
+
+>>>>>>> cbe690915cdab5d2fad90d57c367c9ba08085177
                     <li><a href="{{ route('booking.client') }}">Booking</a></li>
                     <li><a href="{{ route('about.client') }}">About</a>
                         <ul>
@@ -34,4 +41,10 @@
         </div>
         <!-- mainmenu close -->
     </div>
+<<<<<<< HEAD
 </div>
+=======
+
+</div>
+
+>>>>>>> cbe690915cdab5d2fad90d57c367c9ba08085177

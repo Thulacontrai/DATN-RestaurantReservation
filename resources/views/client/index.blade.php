@@ -46,7 +46,13 @@
                         <div class="tp-caption" data-x="center" data-y="470" data-width="none" data-height="none"
                             data-whitespace="nowrap" data-transform_in="y:100px;opacity:0;s:500;e:Power2.easeOut;"
                             data-transform_out="opacity:0;y:-100;s:800;e:Power2.easeInOut;" data-start="800">
+<<<<<<< HEAD
                             <a href="{{ route('menu') }}" class="btn-line">Xem thực đơn</a>
+=======
+  
+                            <a href="{{ route('menu') }}" class="btn-line">View Menu</a>
+
+>>>>>>> cbe690915cdab5d2fad90d57c367c9ba08085177
                         </div>
                     </li>
 
@@ -235,6 +241,7 @@
             <div class="container">
                 <div class="row align-items-center wow fadeInUp">
                     <div class="col-lg-5 offset-lg-7">
+<<<<<<< HEAD
 
                         <h5 class="uptitle">Đặc biệt</h5>
                         <h2>Combo</h2>
@@ -243,6 +250,16 @@
                             <div class="c1"></div>
                             <div class="c2">Nhỏ<span>Kích cỡ tiêu chuẩn</span></div>
                             <div class="c3">Lớn<span>Kích cỡ gia đình</span></div>
+=======
+
+                        <h5 class="uptitle">Special</h5>
+                        <h2>Combos</h2>
+
+                        <div class="menu-item thead">
+                            <div class="c1"></div>
+                            <div class="c2">Medium<span>Standard Size</span></div>
+                            <div class="c3">Large<span>Family Size</span></div>
+>>>>>>> cbe690915cdab5d2fad90d57c367c9ba08085177
                         </div>
 
                         @if($combos->count() > 0)
@@ -257,7 +274,11 @@
                         @endif
 
                         <div class="spacer-single"></div>
+<<<<<<< HEAD
                         <a href="{{ route('menu') }}" class="btn-line">Xem tất cả Combo</a>
+=======
+                        <a href="{{ route('menu') }}" class="btn-line">View All Combos</a>
+>>>>>>> cbe690915cdab5d2fad90d57c367c9ba08085177
 
                     </div>
                 </div>
@@ -268,7 +289,11 @@
             </div>
         </section>
 
+<<<<<<< HEAD
         <!-- phần món ăn yêu thích -->
+=======
+
+>>>>>>> cbe690915cdab5d2fad90d57c367c9ba08085177
         <section class="position-relative" data-bgcolor="rgba(255, 255, 255, .05)">
             <div class="container">
                 <div class="row align-items-center wow fadeInUp">
@@ -288,7 +313,11 @@
                             <p>Không có món ăn nào.</p>
                         @endif
                         <div class="spacer-single"></div>
+<<<<<<< HEAD
                         <a href="{{ route('menu') }}" class="btn-line">Xem tất cả món ăn</a>
+=======
+                        <a href="{{ route('menu') }}" class="btn-line">View All Foods</a>
+>>>>>>> cbe690915cdab5d2fad90d57c367c9ba08085177
 
                     </div>
                 </div>
@@ -299,6 +328,10 @@
             </div>
         </section>
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> cbe690915cdab5d2fad90d57c367c9ba08085177
         @include('client.layouts.component.chefs')
 
         <!-- Đánh giá của khách hàng -->
@@ -327,6 +360,7 @@
             </div>
         </section>
 
+<<<<<<< HEAD
         {{-- <!-- Hiển thị các món ăn -->
         <section id="dishes" class="mt-5">
             <div class="container">
@@ -366,10 +400,32 @@
                                     <div class="card-body text-center">
                                         <h5>{{ $combo->name }}</h5>
                                         <p>{{ number_format($combo->price, 0, ',', '.') }} VND</p>
+=======
+
+        <!-- content begin -->
+        <div id="content" class="no-bottom no-top">
+
+            <!-- Hiển thị Món Ăn -->
+            <section id="dishes" class="mt-5">
+                <div class="container">
+                    <h2 class="text-center">Main Dishes</h2>
+                    <div class="row">
+                        @if ($dishes->count() > 0)
+                            @foreach ($dishes as $dish)
+                                <div class="col-lg-4 col-md-6 mb-4">
+                                    <div class="card h-100">
+                                        <img src="{{ Storage::url($dish->image) }}" class="card-img-top"
+                                            alt="{{ $dish->name }}">
+                                        <div class="card-body text-center">
+                                            <h5>{{ $dish->name }}</h5>
+                                            <p>{{ number_format($dish->price, 0, ',', '.') }} VND</p>
+                                        </div>
+>>>>>>> cbe690915cdab5d2fad90d57c367c9ba08085177
                                     </div>
                                 </div>
                             @endforeach
                         @else
+<<<<<<< HEAD
                             <p class="text-center">Không có combo nào.</p>
                         @endif
                 </div>
@@ -411,10 +467,89 @@
                             <div class="col-6">
                                 <img src="client/03_images/background/bg-side-5.jpg" class="card-img-top"
                                     alt="">
+=======
+                            <p class="text-center">No dishes available.</p>
+                        @endif
+                    </div>
+                </div>
+            </section>
+
+            <!-- Hiển thị Combo -->
+            <section id="combos" class="mt-5">
+                <div class="container">
+                    <h2 class="text-center">Special Combos</h2>
+                    <div class="row">
+                        @if ($combos->count() > 0)
+                            @foreach ($combos as $combo)
+                                <div class="col-lg-4 col-md-6 mb-4">
+                                    <div class="card h-100">
+                                        <img src="{{ Storage::url($combo->image) }}" class="card-img-top"
+                                            alt="{{ $combo->name }}">
+                                        <div class="card-body text-center">
+                                            <h5>{{ $combo->name }}</h5>
+                                            <p>{{ number_format($combo->price, 0, ',', '.') }} VND</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @else
+                            <p class="text-center">No combos available.</p>
+                        @endif
+                    </div>
+                </div>
+            </section>
+
+            <!-- Call to Action -->
+            <section id="cta" aria-label="cta" class="call-to-action">
+                <div class="container">
+                    <div class="row g-4 align-items-center">
+                        <div class="col-lg-9 text-lg-start text-sm-center wow fadeIn">
+                            <h3><i class="id-color fa fa-phone mr10"></i>Call us now and get special offers!</h3>
+                        </div>
+                        <div class="col-lg-3 text-lg-end text-sm-center wow fadeIn" data-wow-delay=".2s">
+                            <a href="{{ route('booking.client') }}" class="btn-line">Call Us Now</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- section close -->
+
+            <!-- Story Section -->
+            <section data-bgcolor="rgba(255, 255, 255, .05)">
+                <div class="container">
+                    <div class="row gx-5 align-items-center">
+                        <div class="col-lg-6">
+                            <h5 class="uptitle wow fadeInUp">Discover</h5>
+                            <h2 class="wow fadeInUp">Our Story</h2>
+                            <p class="lead wow fadeInUp">At "Baresto," we believe in the power of good coffee and warm
+                                hospitality. Our journey began with a simple vision: to create a welcoming space where
+                                friends, families, and strangers alike could come together to enjoy delicious beverages,
+                                homemade treats, and meaningful connections.</p>
+
+                            <p class="wow fadeInUp">As a proud member of the community, we're committed to giving back
+                                and making a positive impact wherever we can. From supporting local artisans and farmers
+                                to hosting events that celebrate diversity and inclusion, we believe in using our
+                                platform to spread joy and goodwill in our neighborhood and beyond.</p>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <div class="row">
+                                <div class="col-6">
+                                    <img src="{{ Storage::url($dish->image) }}" class="card-img-top"
+                                        alt="{{ $dish->name }}">
+
+                                </div>
+                                <div class="col-6">
+                                    <img src="{{ Storage::url($dish->image) }}" class="card-img-top"
+                                        alt="{{ $dish->name }}">
+
+                                </div>
+>>>>>>> cbe690915cdab5d2fad90d57c367c9ba08085177
                             </div>
                         </div>
                     </div>
                 </div>
+<<<<<<< HEAD
             </div>
         </section>
 
@@ -450,6 +585,46 @@
                 </div>
             </div>
         </section>
+=======
+            </section>
+
+            <!-- Open Hours Section -->
+            <section id="section-title-1" class="text-light jarallax">
+                <img src="{{ Storage::url($combo->image) }}" class="card-img-top mb-5" alt="{{ $combo->name }}">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="text-center">
+                                <h5 class="uptitle wow fadeInUp">We are</h5>
+                                <h2 class="wow fadeInUp">Open</h2>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 wow fadeInRight" data-wow-delay="0s">
+                            <div class="text-center">
+                                <span class="id-color-2 bold">Mon - Thu</span>
+                                <div class="fs20">10:30AM - 9:30PM</div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 wow fadeInRight" data-wow-delay=".1s">
+                            <div class="text-center">
+                                <span class="id-color-2 bold">Friday</span>
+                                <div class="fs20">10:00AM - 10:30PM</div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 wow fadeInRight" data-wow-delay=".2s">
+                            <div class="text-center">
+                                <span class="id-color-2 bold">Sat - Sun</span>
+                                <div class="fs20">09:30AM - 11:00PM</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+
+>>>>>>> cbe690915cdab5d2fad90d57c367c9ba08085177
 
     </div>
 @endsection

@@ -64,15 +64,24 @@ route::get("/contact", function () {
 })->name("contact.client");
 route::get("/blog-single", function () {
     return view("client.blog-single");
+<<<<<<< HEAD
 })->name("blog-single.client");
 
 
+=======
+})->name("blog-single.client")   ;
+>>>>>>> cbe690915cdab5d2fad90d57c367c9ba08085177
 
 
 
 
 
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> cbe690915cdab5d2fad90d57c367c9ba08085177
 
 
 Route::get('admin', [AdminController::class, 'index']);
