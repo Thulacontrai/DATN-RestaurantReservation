@@ -64,24 +64,28 @@ route::get("/contact", function () {
 })->name("contact.client");
 route::get("/blog-single", function () {
     return view("client.blog-single");
-<<<<<<< HEAD
-})->name("blog-single.client");
 
-
-=======
 })->name("blog-single.client")   ;
->>>>>>> cbe690915cdab5d2fad90d57c367c9ba08085177
 
 
 
 
 
 
-<<<<<<< HEAD
-=======
 
 
->>>>>>> cbe690915cdab5d2fad90d57c367c9ba08085177
+route::get("deposit", function () {
+    return view("client.deposit");
+})->name("deposit.client");
+
+
+
+
+
+Route::get('pos', function () {
+    return view('pos.pos');
+});
+
 
 
 Route::get('admin', [AdminController::class, 'index']);

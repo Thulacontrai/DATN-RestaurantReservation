@@ -4,13 +4,13 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="text-center wow fadeInUp">
-                    <h5 class="uptitle">{{ $subtitle }}</h5>
-                    <h2>{{ $title ?? 'Our Menu' }}</h2>
+                    <h5 class="uptitle">{{ $subtitle ?? null }}</h5>
+                    <h2>{{ $title ?? null }}</h2>
                     <ol class="breadcrumb">
 
-                        <li class="breadcrumb-item"><a href="{{ route('menu') }}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('client.index') }}">Home</a></li>
+                        <li class="breadcrumb-item">{{ $currentPage ?? null }}</li>
 
-                        <li class="breadcrumb-item">{{ $currentPage }}</li>
                         <li class="breadcrumb-item active"aria-current="page">{{ $blog ?? null }}</li>
                     </ol>
                 </div>
