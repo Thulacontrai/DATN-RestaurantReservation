@@ -3,15 +3,25 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Traits\TraitCRUD;
 
 class AdminController extends Controller
 {
+    /**
+     * Display the admin dashboard.
+     */
+    use TraitCRUD;
+
     public function index()
     {
-        return view('admin.index');
+        return view('admin.dashboard.index');
     }
-    public function logon(){
+
+    /**
+     * Display the login page.
+     */
+    public function logon()
+    {
         return view('admin.logon');
     }
 }

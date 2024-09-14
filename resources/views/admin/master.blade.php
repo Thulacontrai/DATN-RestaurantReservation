@@ -77,6 +77,7 @@
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.min.js"></script>
 
         @yield('custom-js')
+        @yield('scripts')
     </div>
 </body>
 
