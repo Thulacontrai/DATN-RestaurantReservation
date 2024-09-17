@@ -268,6 +268,8 @@
             </div>
         </section>
 
+        <!-- phần món ăn yêu thích -->
+
         <section class="position-relative" data-bgcolor="rgba(255, 255, 255, .05)">
             <div class="container">
                 <div class="row align-items-center wow fadeInUp">
@@ -326,6 +328,55 @@
             </div>
         </section>
 
+        {{-- <!-- Hiển thị các món ăn -->
+        <section id="dishes" class="mt-5">
+            <div class="container">
+                <h2 class="text-center">Các món ăn chính</h2>
+                <div class="row">
+                    @if ($dishes->count() > 0)
+                        @foreach ($dishes as $dish)
+                            <div class="col-lg-4 col-md-6 mb-4">
+                                <div class="card h-100">
+                                    <img src="{{ Storage::url($dish->image) }}" class="card-img-top"
+                                        alt="{{ $dish->name }}">
+                                    <div class="card-body text-center">
+                                        <h5>{{ $dish->name }}</h5>
+                                        <p>{{ number_format($dish->price, 0, ',', '.') }} VND</p>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    @else
+                        <p class="text-center">Không có món ăn nào.</p>
+                    @endif
+                </div>
+            </div>
+        </section>
+
+        <!-- Hiển thị Combo -->
+        <section id="combos" class="mt-5">
+            <div class="container">
+                <h2 class="text-center">Combo đặc biệt</h2>
+                <div class="row">
+                    @if ($combos->count() > 0)
+                        @foreach ($combos as $combo)
+                            <div class="col-lg-4 col-md-6 mb-4">
+                                <div class="card h-100">
+                                    <img src="{{ Storage::url($combo->image) }}" class="card-img-top"
+                                        alt="{{ $combo->name }}">
+                                    <div class="card-body text-center">
+                                        <h5>{{ $combo->name }}</h5>
+                                        <p>{{ number_format($combo->price, 0, ',', '.') }} VND</p>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @else
+                            <p class="text-center">Không có combo nào.</p>
+                        @endif
+                </div>
+            </div>
+        </section> --}}
+
         <!-- Kêu gọi hành động -->
         <section id="cta" aria-label="cta" class="call-to-action">
             <div class="container">
@@ -333,8 +384,36 @@
                     <div class="col-lg-9 text-lg-start text-sm-center wow fadeIn">
                         <h3><i class="id-color fa fa-phone mr10"></i>Gọi ngay và nhận ưu đãi đặc biệt!</h3>
                     </div>
-                    <div class="col-lg-3 text-lg-end text-sm-center wow fadeIn" data-wow-delay=".2s">
+                     <div class="col-lg-3 text-lg-end text-sm-center wow fadeIn" data-wow-delay=".2s">
                         <a href="{{ route('booking.client') }}" class="btn-line">Gọi ngay</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Phần câu chuyện -->
+        <section data-bgcolor="rgba(255, 255, 255, .05)">
+            <div class="container">
+                <div class="row gx-5 align-items-center">
+                    <div class="col-lg-6">
+                        <h5 class="uptitle wow fadeInUp">Khám phá</h5>
+                        <h2 class="wow fadeInUp">Câu chuyện của chúng tôi</h2>
+                        <p class="lead wow fadeInUp">Tại "Baresto", chúng tôi tin tưởng vào sức mạnh của cà phê ngon và sự hiếu khách ấm áp. Hành trình của chúng tôi bắt đầu với một tầm nhìn đơn giản: tạo ra một không gian chào đón, nơi bạn bè, gia đình và những người lạ có thể đến và tận hưởng những món đồ uống ngon lành, bánh ngọt tự làm và những kết nối ý nghĩa.</p>
+
+                        <p class="wow fadeInUp">Là một thành viên tự hào của cộng đồng, chúng tôi cam kết đóng góp và tạo ra tác động tích cực mọi nơi chúng tôi có thể. Từ việc hỗ trợ các nghệ nhân và nông dân địa phương đến việc tổ chức các sự kiện tôn vinh sự đa dạng và hòa nhập, chúng tôi tin tưởng vào việc sử dụng nền tảng của mình để lan tỏa niềm vui và thiện chí trong khu phố và xa hơn nữa.</p>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="row">
+                            <div class="col-6">
+                                <img src="client/03_images/background/bg-side-4.jpg" class="card-img-top"
+                                    alt="">
+                            </div>
+                            <div class="col-6">
+                                <img src="client/03_images/background/bg-side-5.jpg" class="card-img-top"
+                                    alt="">
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
