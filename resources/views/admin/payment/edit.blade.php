@@ -88,6 +88,7 @@
 
                                 <div class="mt-3">
                                     <button type="submit" class="btn btn-primary">Cập nhật thanh toán</button>
+                                    <a href="{{route('admin.payment.index')}}"  class="btn btn-sm btn-secondary">Quay lại</a>
                                 </div>
                             </form>
                         </div>

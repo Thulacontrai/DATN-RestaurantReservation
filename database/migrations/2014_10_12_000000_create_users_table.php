@@ -6,39 +6,30 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateUsersTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->string('password');
-            $table->string('phone')->nullable();
-            $table->string('address')->nullable();
-            $table->enum('gender', ['male', 'female', 'other']);
-            $table->date('date_of_birth');
+            $table->id(); // bigint, auto-increment
+            $table->string('name', 255);
+            $table->string('phone', 255)->nullable(); // Thêm cột phone tại đây
+            $table->string('address', 255)->nullable();
+            $table->string('email', 255)->unique();
+            $table->enum('gender', ['male', 'female', 'other'])->nullable();
+            $table->date('date_of_birth')->nullable();
+            $table->enum('status', ['active', 'inactive'])->default('active');
             $table->date('hire_date')->nullable();
-            $table->string('position')->nullable();
-            $table->string('avatar')->nullable();
-            $table->enum('status', ['active', 'inactive']);
-            $table->foreignId('role_id')->constrained('roles')->onDelete('cascade');
-            $table->timestamps();
+            $table->string('position', 255)->nullable();
+            $table->unsignedBigInteger('role_id')->nullable();
+            $table->string('avatar', 255)->nullable();
+            $table->string('password', 255)->default('None');
+            $table->timestamps(); // created_at và updated_at
+            $table->softDeletes(); // deleted_at
         });
-
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::dropIfExists('users');
     }
 }
+

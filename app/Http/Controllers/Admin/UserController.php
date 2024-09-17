@@ -35,7 +35,7 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'phone' => 'nullable|string|max:15',
+            'phone' => 'nullable|string|max:15|unique:users',
             'address' => 'nullable|string|max:255',
             'gender' => 'required|in:male,female,other',
             'date_of_birth' => 'required|date',
@@ -61,7 +61,7 @@ class UserController extends Controller
             'role_id' => $request->role_id,
             'avatar' => $avatarPath,
             'status' => $request->status,
-            'password' => $defaultPassword, // Cung cấp mật khẩu mặc định
+            'password' => $defaultPassword,
         ]);
 
         return redirect()->route('admin.user.index')->with('success', 'Người dùng đã được tạo thành công.');
@@ -112,14 +112,43 @@ class UserController extends Controller
 
         $user->update($validated);
 
-        return redirect()->route('admin.user.index')->with('success', 'User updated successfully');
+        return redirect()->route('admin.user.index')->with('success', 'Người dùng đã cập nhật thành công');
     }
 
     public function destroy($id)
     {
         $user = User::findOrFail($id);
-        $user->delete();
 
-        return redirect()->route('admin.user.index')->with('success', 'User deleted successfully');
+        // Sử dụng customer_id thay vì user_id
+        if ($user->reservations()->count() > 0) {
+            return redirect()->route('admin.user.index')->with('error', 'Không thể xóa tài khoản khách hàng vì còn đặt bàn đang hoạt động.');
+        }
+
+        // Kiểm tra ràng buộc cha con
+        if ($user->children()->count() > 0 || $user->parent()->exists()) {
+            return redirect()->route('admin.user.index')->with('error', 'Không thể xóa tài khoản vì có mối quan hệ cha con.');
+        }
+
+        $user->delete(); // Xóa mềm
+
+        return redirect()->route('admin.user.index')->with('success', 'Người dùng đã được chuyển vào thùng rác');
+    }
+
+
+
+    public function trash()
+    {
+        $users = User::onlyTrashed()->with('role')->get();
+        return view('admin.user.trash', compact('users'));
+    }
+
+
+
+    public function restore($id)
+    {
+        $user = User::withTrashed()->findOrFail($id);
+        $user->restore();
+
+        return redirect()->route('admin.user.trash')->with('success', 'Người dùng đã được khôi phục thành công');
     }
 }

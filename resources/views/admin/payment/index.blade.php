@@ -4,6 +4,18 @@
 
 @section('content')
 
+
+    @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
     <!-- Content wrapper scroll start -->
     <div class="content-wrapper-scroll">
 
@@ -16,6 +28,10 @@
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <div class="card-title">Danh Sách Thanh Toán</div>
+                            <div class="heart-btn d-flex align-items-center" id="heartButton">
+                                <a href="{{ route('admin.payment.trash') }}">
+                                    <i class="bi bi-trash2-fill"></i></a>
+                            </div>
                             {{-- <a href="{{ route('admin.payment.create') }}"
                                 class="btn btn-sm btn-primary d-flex align-items-center">
                                 <i class="bi bi-plus-circle me-2"></i> Thêm Mới
@@ -109,10 +125,10 @@
                                                         <form action="{{ route('admin.payment.destroy', $payment->id) }}"
                                                             method="POST" style="display:inline-block;">
                                                             @csrf
-                                                            @method('DELETE')
+                                                            @method('DELETE') <a href="#">
                                                             <button type="submit" class="btn btn-link p-0 deleteRow">
                                                                 <i class="bi bi-trash text-red"></i>
-                                                            </button>
+                                                            </button></a>
                                                         </form>
                                                     </div>
                                                 </td>

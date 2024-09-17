@@ -23,11 +23,10 @@ class ReservationTableController extends Controller
 
     public function index()
     {
-        $reservationTables = ReservationTable::all(); // Lấy tất cả các bản ghi
+        $reservationTables = ReservationTable::all();
         return view('admin.reservation.reservationTable.index', compact('reservationTables')); // Truyền dữ liệu vào view
     }
 
-    // Fetch a specific record by id
     public function show($id)
     {
         try {
@@ -38,7 +37,7 @@ class ReservationTableController extends Controller
         }
     }
 
-    // Create a new reservation table
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -52,7 +51,7 @@ class ReservationTableController extends Controller
         return response()->json($data, 201);
     }
 
-    // Update an existing reservation table
+
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
@@ -69,7 +68,6 @@ class ReservationTableController extends Controller
         }
     }
 
-    // Delete a reservation table
     public function destroy($id)
     {
         try {
