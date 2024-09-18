@@ -4,6 +4,19 @@
 
 @section('content')
 
+
+    @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+    
     <!-- Content wrapper scroll start -->
     <div class="content-wrapper-scroll">
 
@@ -17,7 +30,7 @@
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <div class="card-title">Chỉnh Sửa Combo</div>
 
-                            <button class="btn btn-sm btn-dark">Quay lại</button>
+                            <a href="{{ route('admin.combo.index') }}" class="btn btn-sm btn-dark">Quay lại</a>
                         </div>
                         <div class="card-body">
                             <form action="{{ route('admin.combo.update', $combo->id) }}" method="POST"

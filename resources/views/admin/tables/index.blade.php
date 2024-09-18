@@ -4,6 +4,18 @@
 
 @section('content')
 
+
+    @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+
     <!-- Content wrapper scroll start -->
     <div class="content-wrapper-scroll">
 
@@ -16,19 +28,29 @@
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <div class="card-title">Danh Mục Bàn</div>
+
+
+                            <div class="heart-btn d-flex align-items-center" id="heartButton">
+                                <a href="{{ route('admin.tables.trash') }}">
+                                <i class="bi bi-trash2-fill"></i></a>
+                            </div>
+
                             <a href="{{ route('admin.table.create') }}"
-                                class="btn btn-sm btn-primary d-flex align-items-center">
+                                class=" btn btn-sm btn-primary d-flex align-items-center">
                                 <i class="bi bi-plus-circle me-2"></i> Thêm Mới
                             </a>
                         </div>
+
                         <div class="card-body">
                             <form method="GET" action="{{ route('admin.table.index') }}" class="mb-3">
                                 <div class="row g-2">
+
                                     <div class="col-auto">
                                         <input type="text" id="search-name" name="name"
                                             class="form-control form-control-sm" placeholder="Tìm kiếm theo tên bàn"
                                             value="{{ request('name') }}">
                                     </div>
+
                                     <div class="col-auto">
                                         <select name="table_type" id="search-table-type" class="form-select form-select-sm">
                                             <option value="">-- Loại bàn --</option>
@@ -42,6 +64,7 @@
                                         <button type="submit" class="btn btn-sm btn-primary">Tìm kiếm</button>
                                     </div>
                                 </div>
+
                             </form>
 
 
@@ -74,14 +97,14 @@
                                                             class="viewRow">
                                                             <i class="bi bi-pencil-square text-warning"></i>
                                                         </a>
-                                                        <a href="#" class="viewRow">
+                                                        <a href="#1" class="viewRow">
                                                             <form action="{{ route('admin.table.destroy', $table->id) }}"
                                                                 method="POST" style="display:inline-block;"
                                                                 onsubmit="return confirm('Bạn có chắc chắn muốn xóa?');">
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button type="submit" class="btn btn-link p-0">
-                                                                    <i class="bi bi-trash text-red"></i>
+                                                                    <i class="bi bi-trash0 text-red"></i>
                                                                 </button>
                                                             </form>
                                                         </a>
@@ -106,12 +129,6 @@
                         </div>
 
                     </div>
-                    {{-- <a href="{{ route('admin.table.trash') }}" class="btn btn-primary">
-                        <i class="fa fa-trash"></i> Thùng Rác
-                    </a> --}}
-
-
-
 
                 </div>
             </div>
@@ -125,3 +142,8 @@
     <!-- Content wrapper scroll end -->
 
 @endsection
+
+
+</style>
+
+

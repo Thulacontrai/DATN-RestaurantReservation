@@ -65,6 +65,7 @@
                                 </div>
 
                                 <button type="submit" class="btn btn-primary">Thêm Bàn</button>
+                                <a href="{{route('admin.table.index')}}"  class="btn btn-sm btn-secondary">Quay lại</a>
                             </form>
 
                         </div>

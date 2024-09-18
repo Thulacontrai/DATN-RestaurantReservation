@@ -140,9 +140,6 @@
         </section>
     </div>
 
-<<<<<<< HEAD
 
 
-=======
->>>>>>> cbe690915cdab5d2fad90d57c367c9ba08085177
 @endsection

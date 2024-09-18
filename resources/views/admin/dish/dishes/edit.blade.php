@@ -4,6 +4,18 @@
 
 @section('content')
 
+    @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+
     <!-- Content wrapper scroll start -->
     <div class="content-wrapper-scroll">
 
@@ -16,6 +28,7 @@
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <div class="card-title">Chỉnh Sửa Món Ăn</div>
+                            <a href="{{ route('admin.dishes.index') }}" class="btn btn-sm btn-secondary">Quay lại</a>
                         </div>
                         <div class="card-body">
 
@@ -34,13 +47,13 @@
                                     <label for="dish-category" class="form-label">Loại Món Ăn</label>
                                     <select id="dish-category" name="category_id" class="form-select">
                                         @foreach ($categories as $category)
-                                            <option value="{{ $category->id }}" {{ $dish->category_id == $category->id ? 'selected' : '' }}>
+                                            <option value="{{ $category->id }}"
+                                                {{ $dish->category_id == $category->id ? 'selected' : '' }}>
                                                 {{ $category->name }}
                                             </option>
                                         @endforeach
                                     </select>
                                 </div>
-
 
                                 <div class="mb-3">
                                     <label for="dish-price" class="form-label">Giá</label>
@@ -73,6 +86,13 @@
                                 </div>
 
                                 <div class="mb-3">
+                                    <label for="dish-description" class="form-label">Mô tả</label>
+                                    <textarea id="dish-description" name="description" class="form-control">{{ old('description', $dish->description) }}</textarea>
+                                </div>
+
+
+
+                                <div class="mb-3">
                                     <label for="dish-image" class="form-label">Hình Ảnh Món Ăn</label>
                                     <input type="file" id="dish-image" name="image" class="form-control">
                                     @if ($dish->image)
@@ -82,8 +102,7 @@
                                 </div>
 
                                 <div class="mb-3 d-flex justify-content-end">
-                                    <button type="submit" class="btn btn-primary">Cập Nhật Món ăn</button>
-                                    <button type="reset" class="btn btn-secondary ms-2">Hủy</button>
+                                    <button type="submit" class="btn btn-primary">Cập Nhật Món ăn</button>
                                 </div>
                             </form>
                         </div>

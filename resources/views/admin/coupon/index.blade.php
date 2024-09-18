@@ -4,6 +4,18 @@
 
 @section('content')
 
+
+    @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
     <!-- Content wrapper scroll start -->
     <div class="content-wrapper-scroll">
 
@@ -17,6 +29,10 @@
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <div class="card-title">Danh Sách Coupons</div>
 
+                            <div class="heart-btn d-flex align-items-center" id="heartButton">
+                                <a href="{{ route('admin.coupon.trash') }}">
+                                    <i class="bi bi-trash2-fill"></i></a>
+                            </div>
                             <a href="{{ route('admin.coupon.create') }}"
                                 class="btn btn-sm btn-primary d-flex align-items-center">
                                 <i class="bi bi-plus-circle me-2"></i> Thêm Mới
@@ -73,24 +89,25 @@
                                                 </td>
                                                 <td>
                                                     <div class="actions">
-                                                        <a href="{{ route('admin.coupon.show', $coupon->id) }}" class="viewRow"
-                                                            data-id="{{ $coupon->id }}">
+                                                        <a href="{{ route('admin.coupon.show', $coupon->id) }}"
+                                                            class="viewRow" data-id="{{ $coupon->id }}">
                                                             <i class="bi bi-list text-green"></i>
                                                         </a>
-                                                        <a href="{{ route('admin.coupon.edit', $coupon->id) }}" class="editRow"
-                                                            data-id="{{ $coupon->id }}">
+                                                        <a href="{{ route('admin.coupon.edit', $coupon->id) }}"
+                                                            class="editRow" data-id="{{ $coupon->id }}">
                                                             <i class="bi bi-pencil-square text-warning"></i>
                                                         </a>
-                                                    <a href="#">
-                                                        <form action="{{ route('admin.coupon.destroy', $coupon->id) }}"
-                                                            method="POST" style="display:inline-block;"
-                                                            onsubmit="return confirm('Bạn có chắc chắn muốn xóa?');">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit" class="btn btn-link p-0">
-                                                                <i class="bi bi-trash text-red"></i>
-                                                            </button>
-                                                        </form></a>
+                                                        <a href="#">
+                                                            <form action="{{ route('admin.coupon.destroy', $coupon->id) }}"
+                                                                method="POST" style="display:inline-block;"
+                                                                onsubmit="return confirm('Bạn có chắc chắn muốn xóa?');">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="btn btn-link p-0">
+                                                                    <i class="bi bi-trash text-red"></i>
+                                                                </button>
+                                                            </form>
+                                                        </a>
                                                     </div>
                                                 </td>
                                             </tr>

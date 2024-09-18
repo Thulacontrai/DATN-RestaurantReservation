@@ -2,25 +2,23 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Combo extends Model
 {
-
-    use HasFactory;
+    use SoftDeletes;
 
     protected $table = 'combos';
 
     protected $fillable = [
         'name',
-        'price',
         'description',
+        'price',
         'image',
         'quantity_dishes',
     ];
-    public function category()
-    {
-        return $this->belongsTo(Category::class);
-    }
+
+    protected $dates = ['deleted_at'];
 }
+

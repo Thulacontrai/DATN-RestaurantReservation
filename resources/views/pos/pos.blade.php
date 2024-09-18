@@ -374,7 +374,7 @@
                             <path d="M3 4.5a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5M11.5 4a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1z"/>
                             <path d="M2.354.646a.5.5 0 0 0-.801.13l-.5 1A.5.5 0 0 0 1 2v13H.5a.5.5 0 0 0 0 1h15a.5.5 0 0 0 0-1H15V2a.5.5 0 0 0-.053-.224l-.5-1a.5.5 0 0 0-.8-.13L13 1.293l-.646-.647a.5.5 0 0 0-.708 0L11 1.293l-.646-.647a.5.5 0 0 0-.708 0L9 1.293 8.354.646a.5.5 0 0 0-.708 0L7 1.293 6.354.646a.5.5 0 0 0-.708 0L5 1.293 4.354.646a.5.5 0 0 0-.708 0L3 1.293zm-.217 1.198.51.51a.5.5 0 0 0 .707 0L4 1.707l.646.647a.5.5 0 0 0 .708 0L6 1.707l.646.647a.5.5 0 0 0 .708 0L8 1.707l.646.647a.5.5 0 0 0 .708 0L10 1.707l.646.647a.5.5 0 0 0 .708 0L12 1.707l.646.647a.5.5 0 0 0 .708 0l.509-.51.137.274V15H2V2.118z"/>
                           </svg></span>View Orders</a>
-                    
+
                     <a href="javascript:void(0);" class="btn btn-primary" data-bs-toggle="modal"
                         data-bs-target="#recents"><span class="me-1 d-flex align-items-center"><svg
                                 xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
@@ -389,7 +389,7 @@
                         <div class="pos-categories tabs_wrapper">
                             <h5>Menu</h5>
                             <ul class="tabs owl-carousel pos-category">
-                                
+
                                 <li id="headphones">
                                     <a href="javascript:void(0);">
                                         <img src="https://blog.onelife.vn/wp-content/uploads/2023/09/96903f21-1.pnghttps://dreamspos.dreamstechnologies.com/html/template/assets/img/categories/category-03.png"
@@ -430,9 +430,9 @@
                                     <h6><a href="javascript:void(0);">Salad</a></h6>
                                     {{-- <span>18 Items</span> --}}
                                 </li>
-                               
-                                
-                                
+
+
+
                             </ul>
                             <div class="pos-products">
                                 <div class="d-flex align-items-center justify-content-between">
@@ -1462,7 +1462,7 @@
                             </div>
 
                             <div class="">
-                            
+
                                     <a href="javascript:void(0);" class="btn btn-info"><span
                                         class="me-1 d-flex align-items-center"><span class="me-1 d-flex align-items-center"><svg
                                             xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
@@ -1470,7 +1470,7 @@
                                             <path
                                                 d="M3 4.5h10a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2m0 1a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1zM1 2a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 2m0 12a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 14" />
                                         </svg></span>Table layout</a>
-                             
+
                             </div>
 
                             <div class="customer-info block-section">
@@ -1487,7 +1487,7 @@
                                         data-bs-target="#create"><i data-feather="user-plus"
                                             class="feather-16"></i></a>
                                 </div>
-                                
+
                             </div>
 
                             <div class="customer-info block-section">
@@ -1531,7 +1531,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    
+
                                 </form>
                             </div>
                             <div class="product-added block-section">
@@ -1701,7 +1701,7 @@
                                                 </select>
                                             </div>
                                         </div>
-                         
+
                                         <div class="col-12 col-sm-4">
                                             <div class="input-block">
                                                 <label>Discount</label>
@@ -1727,7 +1727,7 @@
                                             <td>Tax (GST 5%)</td>
                                             <td class="text-end">$40.21</td>
                                         </tr>
-                                        
+
                                         <tr>
                                             <td>Sub Total</td>
                                             <td class="text-end">$60,454</td>
@@ -1789,7 +1789,7 @@
                             </div>
                             <div class="block-section payment-method">
                                 <div class="row d-flex align-items-center justify-content-center methods">
-                                    
+
                                     <div class="col-md-6 col-lg-4 item">
                                         <div class="default-cover">
                                             <a href="javascript:void(0);">
@@ -1804,7 +1804,7 @@
 
                                     <div class="col-md-6 col-lg-4 item">
                                         <div class="default-cover">
-                                            <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#payment-completed"><span> 
+                                            <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#payment-completed"><span>
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-printer-fill" viewBox="0 0 16 16">
                                                     <path d="M5 1a2 2 0 0 0-2 2v1h10V3a2 2 0 0 0-2-2zm6 8H5a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1"/>
                                                     <path d="M0 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-1v-2a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2H2a2 2 0 0 1-2-2zm2.5 1a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1"/>
@@ -1812,7 +1812,7 @@
                                         </div>
                                     </div>
 
-                                   
+
                                 </div>
                             </div>
 
@@ -1824,7 +1824,7 @@
                                 <a href="javascript:void(0);" class="btn btn-danger btn-icon flex-fill"><span
                                         class="me-1 d-flex align-items-center"><i data-feather="trash-2"
                                             class="feather-16"></i></span>Void</a>
-                               
+
                             </div>
                         </aside>
                     </div>
@@ -1895,7 +1895,7 @@
                             <div class="col-sm-12 col-md-6">
                                 <div class="invoice-user-name"><span>Customer Id: </span><span>#LL93784</span></div>
                                 <div class="invoice-user-name"><span>Tables: </span><span>#LL93784</span></div>
-                                
+
                             </div>
                         </div>
                     </div>
@@ -1938,7 +1938,7 @@
                                             <td>Discount :</td>
                                             <td class="text-end">-$50.00</td>
                                         </tr>
-                                        
+
                                         <tr>
                                             <td>Tax (5%) :</td>
                                             <td class="text-end">$5.00</td>
