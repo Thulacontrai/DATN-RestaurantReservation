@@ -70,10 +70,38 @@ class OrderController extends Controller
         return redirect()->route('admin.order.index')->with('success', 'Đơn hàng đã được cập nhật thành công.');
     }
 
-
-    public function destroy(Order $order)
+    public function destroy($id)
     {
+        $order = Order::findOrFail($id);
+        if ($order->status == 'Pending') {
+            return redirect()->route('admin.order.index')->with('error', 'Không thể xóa đơn hàng đang trong trạng thái Đang xử lý. Vui lòng thực hiện thao tác khác.');
+        }
+
         $order->delete();
-        return redirect()->route('admin.order.index')->with('success', 'Order deleted successfully.');
+
+        return redirect()->route('admin.order.index')->with('success', 'Đơn hàng đã được xóa thành công.');
+    }
+
+
+    public function trash()
+    {
+        $orders = Order::onlyTrashed()->paginate(10);
+        return view('admin.order.trash', compact('orders'));
+    }
+
+    public function restore($id)
+    {
+        $order = Order::withTrashed()->findOrFail($id);
+        $order->restore();
+
+        return redirect()->route('admin.order.trash')->with('success', 'Đơn hàng đã được khôi phục thành công.');
+    }
+
+    public function forceDelete($id)
+    {
+        $order = Order::withTrashed()->findOrFail($id);
+        $order->forceDelete();
+
+        return redirect()->route('admin.order.trash')->with('success', 'Đơn hàng đã được xóa vĩnh viễn.');
     }
 }

@@ -18,9 +18,13 @@
             <nav>
                 <ul id="mainmenu">
 
+
                     <li><a href="{{ route('client.index') }}">Home</a></li>
                     <li><a href="{{ route('menu') }}">Menu</a></li>
 
+
+                    <li><a href="{{ route('client.index') }}">Home</a></li>
+                    <li><a href="{{ route('menu') }}">Menu</a></li>
                     <li><a href="{{ route('booking.client') }}">Booking</a></li>
                     <li><a href="{{ route('about.client') }}">About</a>
                         <ul>
@@ -36,6 +40,9 @@
         </div>
         <!-- mainmenu close -->
     </div>
+</div>
+
 
 </div>
+
 

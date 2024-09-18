@@ -3,6 +3,17 @@
 @section('title', 'Danh Mục Category')
 
 @section('content')
+@if (session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+@endif
+
+@if (session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+    @endif
     <div class="content-wrapper-scroll">
         <div class="content-wrapper">
             <div class="row">
@@ -10,6 +21,10 @@
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <div class="card-title">Danh Mục Category</div>
+                            <div class="heart-btn d-flex align-items-center" id="heartButton">
+                                <a href="{{ route('admin.category.trash') }}">
+                                <i class="bi bi-trash2-fill"></i></a>
+                            </div>
                             <a href="{{ route('admin.category.create') }}"
                                 class="btn btn-sm btn-primary d-flex align-items-center">
                                 <i class="bi bi-plus-circle me-2"></i> Thêm Mới

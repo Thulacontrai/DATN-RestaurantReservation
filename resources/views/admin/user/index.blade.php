@@ -3,7 +3,18 @@
 @section('title', 'Danh Sách Người Dùng')
 
 @section('content')
+@if (session('error'))
 
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+    @endif
+
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
     <!-- Content wrapper scroll start -->
     <div class="content-wrapper-scroll">
 
@@ -16,7 +27,10 @@
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <div class="card-title">Danh Sách Người Dùng</div>
-
+                            <div class="heart-btn d-flex align-items-center" id="heartButton">
+                                <a href="{{ route('admin.user.trash') }}">
+                                    <i class="bi bi-trash2-fill"></i></a>
+                            </div>
                             <a href="{{ route('admin.user.create') }}"
                                 class="btn btn-sm btn-primary d-flex align-items-center">
                                 <i class="bi bi-plus-circle me-2"></i> Thêm Mới
@@ -59,7 +73,8 @@
                                             <tr>
                                                 <td>{{ $user->id }}</td>
                                                 <td><img src="{{ $user->avatar ? asset('storage/' . $user->avatar) : 'https://via.placeholder.com/50' }}"
-                                                        alt="User Image" class="img-fluid rounded-circle" width="50"></td>
+                                                        alt="User Image" class="img-fluid rounded-circle" width="50">
+                                                </td>
                                                 <td>{{ $user->name }}</td>
                                                 <td>{{ $user->email }}</td>
                                                 <td>{{ $user->phone }}</td>
@@ -74,19 +89,23 @@
                                                 </td>
                                                 <td>
                                                     <div class="actions">
-                                                        <a href="{{ route('admin.user.show', $user->id) }}" class="viewRow" data-id="{{ $user->id }}">
+                                                        <a href="{{ route('admin.user.show', $user->id) }}" class="viewRow"
+                                                            data-id="{{ $user->id }}">
                                                             <i class="bi bi-list text-green"></i>
                                                         </a>
-                                                        <a href="{{ route('admin.user.edit', $user->id) }}" class="editRow" data-id="{{ $user->id }}">
+                                                        <a href="{{ route('admin.user.edit', $user->id) }}" class="editRow"
+                                                            data-id="{{ $user->id }}">
                                                             <i class="bi bi-pencil-square text-warning"></i>
                                                         </a>
-                                                        <form action="{{ route('admin.user.destroy', $user->id) }}" method="POST" style="display:inline-block;"
+                                                        <form action="{{ route('admin.user.destroy', $user->id) }}"
+                                                            method="POST" style="display:inline-block;"
                                                             onsubmit="return confirm('Bạn có chắc chắn muốn xóa?');">
                                                             @csrf
                                                             @method('DELETE')
+                                                            <a href="#">
                                                             <button type="submit" class="btn btn-link p-0">
                                                                 <i class="bi bi-trash text-red"></i>
-                                                            </button>
+                                                            </button></a>
                                                         </form>
                                                     </div>
                                                 </td>
