@@ -47,9 +47,25 @@ Route::get('/menu/category/{category}', [MenuController::class, 'filterByCategor
 //     return view("client.menu");
 // })->name("menu.client");
 
-route::get("/booking", function () {
-    return view("client.booking");
-})->name("booking.client");
+route::get(
+    "/booking",
+    [ReservationController::class, 'showTime']
+)->name("booking.client");
+route::get(
+    "/customerInformation",
+    [ReservationController::class, "showInformation"]
+)->name("customerInformation.client");
+route::post(
+    "/createReservation",
+    [ReservationController::class, "createReservation"]
+)->name("createReservation.client");
+route::get(
+    "deposit",
+    [ReservationController::class, "showDeposit"]
+)->name("deposit.client");
+
+
+
 route::get("/about", function () {
     return view("client.about");
 })->name("about.client");
@@ -65,18 +81,13 @@ route::get("/contact", function () {
 route::get("/blog-single", function () {
     return view("client.blog-single");
 
-})->name("blog-single.client")   ;
+})->name("blog-single.client");
 
 
 
 
 
 
-
-
-route::get("deposit", function () {
-    return view("client.deposit");
-})->name("deposit.client");
 
 
 
@@ -112,10 +123,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('accountSetting', SettingController::class);
 
 
-// // Route đến trang đăng nhập
+    // // Route đến trang đăng nhập
 // Route::get('/logon', [AdminController::class, 'logon'])->name('logon');
 
-// // Route cho admin
+    // // Route cho admin
 // Route::middleware(['auth', 'isAdmin'])->group(function () {
 //     Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 // });
