@@ -66,7 +66,6 @@
                     </div>
                 @endforeach
 
-                <!-- Nút quay lại và xác nhận -->
                 <div class="text-center my-4">
                     <button id="confirm-button" class="btn-line">Xác nhận</button>
                 </div>

@@ -34,7 +34,7 @@
                                             <p id="info-people">{{ $showDeposit['guest_count'] }} người</p>
                                             <p id="info-datetime">{{ $showDeposit['reservation_date'] }}
                                                 {{ $showDeposit['reservation_time'] }}</p>
-                                            <p id="info-notes">{{ $showDeposit['note'] }}</p>
+                                            <p id="info-notes">{{ $showDeposit['note'] ?? null }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -67,7 +67,7 @@
                                     <h3 class="">Phương thức thanh toán</h3>
 
                                     <div class="pt-2">
-                                        <input type="radio" name="payment" id="momo" value="momo" checked >
+                                        <input type="radio" name="payment" id="momo" value="momo" checked>
                                         <label for="momo">Momo</label>
                                         <br>
                                         <input type="radio" name="payment" id="vnpay" value="vnpay">

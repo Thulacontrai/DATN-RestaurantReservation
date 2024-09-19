@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreReservationRquest;
 use App\Models\Coupon;
 use App\Models\Reservation;
 use App\Models\User;
@@ -142,7 +143,8 @@ class ReservationController extends Controller
         $time = $request->query('time');
         return view('client.customer-information', compact('date', 'time'));
     }
-    public function createReservation(Request $request)
+
+    public function createReservation(StoreReservationRquest $request)
     {
         if ($request->guest_count >= 6) {
             $customerInformation = $request->all();
@@ -153,11 +155,11 @@ class ReservationController extends Controller
                     'name' => $request->user_name,
                     'phone' => $request->user_phone,
                     'password' => fake()->password(),
-                    'status' => 'inactive'
+                    'status' => 'inactive',
                 ]);
-                $userId = $user->id;
+
                 Reservation::create([
-                    'customer_id' => $userId,
+                    'customer_id' => $user->id,
                     'user_name' => $request->user_name,
                     'user_phone' => $request->user_phone,
                     'guest_count' => $request->guest_count,
@@ -166,9 +168,11 @@ class ReservationController extends Controller
                     'reservation_time' => $request->reservation_time,
                 ]);
             });
+
             return redirect()->route('client.index');
         }
     }
+
     public function showDeposit(Request $request)
     {
         $showDeposit = $request->customerInformation;

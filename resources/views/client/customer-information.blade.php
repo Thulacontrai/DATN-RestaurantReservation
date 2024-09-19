@@ -2,8 +2,6 @@
 @section('title', 'Booking')
 
 @section('content')
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
     @include('client.layouts.component.subheader', [
         'backgroundImage' => 'client/03_images/background/bg-2.jpg',
         'subtitle' => 'Make a',
@@ -32,16 +30,25 @@
                                 <label for="user_name">Tên khách hàng*</label>
                                 <input class="form-control" type="text" name="user_name" id="user_name"
                                     placeholder="Nhập tên khách hàng">
+                                @error('user_name')
+                                    <div class="alert alert-danger">{{ $message }}</div>
+                                @enderror
                             </div>
                             <div class="col">
                                 <label for="user_phone">Số điện thoại*</label>
                                 <input class="form-control" type="text" name="user_phone" id="user_phone"
                                     placeholder="Nhập số điện thoại">
+                                @error('user_phone')
+                                    <div class="alert alert-danger">{{ $message }}</div>
+                                @enderror
                             </div>
                             <div class="col">
                                 <label for="guest_count">Số người đặt bàn*</label>
                                 <input class="form-control" type="text" name="guest_count" id="guest_count"
                                     placeholder="Nhập số người đặt bàn">
+                                @error('guest_count')
+                                    <div class="alert alert-danger">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
                         <div class="row m-4 d-flex justify-content-center">
