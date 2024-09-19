@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Coupon extends Model
 {
+    use SoftDeletes;
 
-    use HasFactory;
+    protected $table = 'coupons';
 
     protected $fillable = [
         'code',
@@ -20,4 +21,6 @@ class Coupon extends Model
         'discount_amount',
         'status',
     ];
+
+    protected $dates = ['deleted_at'];
 }

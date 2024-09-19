@@ -58,9 +58,44 @@ class RoleController extends Controller
 
     public function destroy(Role $role)
     {
+        // Check if the role has any users associated with it
+        if ($role->users()->count() > 0) {
+            return redirect()->route('admin.role.index')->with('error', 'Role không thể xóa vì vẫn có người dùng được phân quyền này.');
+        }
 
-        $role->forceDelete();
+        $role->delete(); // Soft delete the role
 
-        return redirect()->route('admin.role.index')->with('success', 'Bàn đã được xóa hoàn toàn!');
+        return redirect()->route('admin.role.index')->with('success', 'Role đã được chuyển vào thùng rác.');
     }
+
+    public function trash()
+{
+    $roles = Role::onlyTrashed()->paginate(10); // Retrieve only soft-deleted roles
+    return view('admin.user.role.trash', compact('roles'));
+}
+
+
+public function restore($id)
+{
+    $role = Role::withTrashed()->findOrFail($id);
+    $role->restore();
+
+    return redirect()->route('admin.role.trash')->with('success', 'Role đã được khôi phục thành công.');
+}
+
+
+public function forceDelete($id)
+{
+    $role = Role::withTrashed()->findOrFail($id);
+
+
+    if ($role->users()->count() > 0) {
+        return redirect()->route('admin.role.trash')->with('error', 'Không thể xóa vai trò này vì có người dùng đang sử dụng vai trò');
+    }
+
+    $role->forceDelete();
+
+    return redirect()->route('admin.role.trash')->with('success', 'Role đã bị xóa vĩnh viễn.');
+}
+
 }

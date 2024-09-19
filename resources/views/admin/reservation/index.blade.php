@@ -89,10 +89,12 @@
                                                             method="POST" style="display:inline-block;">
                                                             @csrf
                                                             @method('DELETE')
-                                                            <button type="submit" class="btn btn-link p-0"
-                                                                onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
-                                                                <i class="bi bi-trash text-red"></i>
-                                                            </button>
+                                                            <a href="#"><button type="submit"
+                                                                    class="btn btn-link p-0"
+                                                                    onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
+
+                                                                    <i class="bi bi-trash text-red"></i>
+                                                                </button></a>
                                                         </form>
                                                     </div>
                                                 </td>

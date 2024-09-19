@@ -3,6 +3,18 @@
 @section('title', 'Chỉnh Sửa Vai Trò')
 
 @section('content')
+
+@if (session('error'))
+<div class="alert alert-danger">
+    {{ session('error') }}
+</div>
+@endif
+
+@if (session('success'))
+<div class="alert alert-success">
+    {{ session('success') }}
+</div>
+@endif
     <div class="content-wrapper-scroll">
         <div class="content-wrapper">
             <div class="row">

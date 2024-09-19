@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Reservation extends Model
 {
-    use HasFactory;
+    use SoftDeletes;
+
+    protected $table = 'reservations';
 
     protected $fillable = [
         'customer_id',
@@ -20,19 +22,20 @@ class Reservation extends Model
         'deposit_amount',
         'total_amount',
         'remaining_amount',
-        'note',
         'status',
-        'cancellation_reason',
+        'cancelled_reason',
+        'note',
     ];
 
+    protected $dates = ['deleted_at'];
 
     public function customer()
     {
         return $this->belongsTo(User::class, 'customer_id');
     }
 
-    public function coupon()
-    {
-        return $this->belongsTo(Coupon::class, 'coupon_id');
-    }
+    // public function coupon()
+    // {
+    //     return $this->belongsTo(Coupon::class, 'coupon_id');
+    // }
 }

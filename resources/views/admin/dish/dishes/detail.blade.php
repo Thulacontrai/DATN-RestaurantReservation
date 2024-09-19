@@ -16,7 +16,6 @@
                     <div class="card shadow-lg border-0 rounded-lg">
                         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                             <h5 class="card-title mb-3 text-white">Chi Tiết Món Ăn</h5>
-
                         </div>
                         <div class="card-body bg-light p-4">
                             <div class="row mb-4">
@@ -88,6 +87,16 @@
                                 </div>
                             </div>
 
+                             <!-- Description Field -->
+                             <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <div class="detail-box p-4 shadow-sm rounded bg-white">
+                                        <h6 class="text-primary">Mô tả:</h6>
+                                        <p class="h5">{{ $dish->description ?? 'Không có mô tả' }}</p>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                         <div class="card-footer bg-white">
                             <a href="{{ route('admin.dishes.edit', $dish->id) }}" class="btn btn-warning">
@@ -102,4 +111,4 @@
             </div>
             <!-- Row end -->
 
-        @endsection
+@endsection

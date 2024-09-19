@@ -22,5 +22,12 @@
 
   <!-- Main Js Required -->
   <script src="../assets/js/main.js"></script>
+  <script>
+    const button = document.getElementById('heartButton');
 
+button.addEventListener('click', function () {
+    this.classList.toggle('clicked');
+});
+
+</script>
 
