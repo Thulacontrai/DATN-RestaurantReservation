@@ -12,6 +12,16 @@ use Illuminate\Support\Facades\Storage;
 
 class ComboController extends Controller
 {
+
+    public function __construct()
+    {
+        // Gán middleware cho các phương thức
+        $this->middleware('permission:Xem combo', ['only' => ['index']]);
+        $this->middleware('permission:Tạo mới combo', ['only' => ['create']]);
+        $this->middleware('permission:Sửa combo', ['only' => ['edit']]);
+        $this->middleware('permission:Xóa combo', ['only' => ['destroy']]);
+        
+    }
     use TraitCRUD;
 
     protected $model = Combo::class;

@@ -23,6 +23,7 @@ use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\TableController;
 use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Client\MenuController;
+use App\Http\Controllers\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -105,6 +106,10 @@ Route::get('pos', function () {
 Route::get('admin', [AdminController::class, 'index']);
 Route::prefix('admin')->name('admin.')->group(function () {
 
+    Route::get('/', function () {
+    return view('auth.login');
+});
+
     Route::resource('table', TableController::class);
     // Trash - Xoá mềm - Khôi Phục
     Route::get('tables/trash', [TableController::class, 'trash'])->name('tables.trash');
@@ -162,26 +167,44 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     route::resource('feedback', FeedbackController::class);
 
-
+    //permission user
     Route::resource('user', UserController::class);
     // Trash - Xoá mềm - Khôi Phuc
     Route::get('user-trash', [UserController::class, 'trash'])->name('user.trash');
     Route::patch('user-restore/{id}', [UserController::class, 'restore'])->name('user.restore');
     Route::delete('user-force-delete/{id}', [UserController::class, 'forceDelete'])->name('user.forceDelete');
 
+    //permission role
     Route::resource('role', RoleController::class);
     // Trash - Xoá mềm - Khôi Phuc
     Route::get('role-trash', [RoleController::class, 'trash'])->name('role.trash');
     Route::patch('role-restore/{id}', [RoleController::class, 'restore'])->name('role.restore');
     Route::delete('role-force-delete/{id}', [RoleController::class, 'forceDelete'])->name('role.forceDelete');
 
-
-    Route::resource('permission', PermissionController::class);
+    // Route::resource('permission', PermissionController::class);
     Route::resource('supplier', SupplierController::class);
     Route::resource('ingredientType', IngredientTypeController::class);
     Route::resource('ingredient', IngredientController::class);
     Route::resource('dashboard', DashboardController::class);
     Route::resource('accountSetting', SettingController::class);
+
+
+    //permission route
+    Route::get('/admin/permission', [PermissionController::class, 'index'])->name('permissions.index');
+    Route::get('/admin/permission/create', [PermissionController::class, 'create'])->name('permissions.create');
+    Route::post('/admin/permission', [PermissionController::class, 'store'])->name('permissions.store');
+    Route::get('/admin/permission/{id}/edit', [PermissionController::class, 'edit'])->name('permissions.edit');
+    Route::put('/admin/permission/{id}', [PermissionController::class, 'update'])->name('permissions.update');
+    Route::delete('admin/permission/{id}', [PermissionController::class, 'destroy'])->name('permissions.destroy');
+
+    //roles route
+    // Route::get('/admin/permission', [PermissionController::class, 'index'])->name('permissions.index');
+    // Route::get('/admin/permission/create', [PermissionController::class, 'create'])->name('permissions.create');
+    // Route::post('/admin/permission', [PermissionController::class, 'store'])->name('permissions.store');
+    // Route::get('/admin/permission/{id}/edit', [PermissionController::class, 'edit'])->name('permissions.edit');
+    // Route::put('/admin/permission/{id}', [PermissionController::class, 'update'])->name('permissions.update');
+    // Route::delete('admin/permission/{id}', [PermissionController::class, 'destroy'])->name('permissions.destroy');
+
 
 
     // // Route đến trang đăng nhập
@@ -193,3 +216,17 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // });
 
 });
+
+
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+});
+
+require __DIR__.'/auth.php';
