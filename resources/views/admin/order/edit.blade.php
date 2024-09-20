@@ -4,6 +4,17 @@
 
 @section('content')
 
+    @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
     <!-- Content wrapper scroll start -->
     <div class="content-wrapper-scroll">
 
@@ -41,22 +52,27 @@
 
                                     <div class="col-md-6 mb-3">
                                         <label for="total_amount" class="form-label">Tổng Tiền</label>
-                                        <input type="number" step="0.01" class="form-control" id="total_amount" name="total_amount"
-                                            value="{{ old('total_amount', $order->total_amount) }}" required>
+                                        <input type="number" step="0.01" class="form-control" id="total_amount"
+                                            name="total_amount" value="{{ old('total_amount', $order->total_amount) }}"
+                                            required>
                                     </div>
 
                                     <div class="col-md-6 mb-3">
                                         <label for="final_amount" class="form-label">Số Tiền Cuối Cùng</label>
-                                        <input type="number" step="0.01" class="form-control" id="final_amount" name="final_amount"
-                                            value="{{ old('final_amount', $order->final_amount) }}" required>
+                                        <input type="number" step="0.01" class="form-control" id="final_amount"
+                                            name="final_amount" value="{{ old('final_amount', $order->final_amount) }}"
+                                            required>
                                     </div>
 
                                     <div class="col-md-6 mb-3">
                                         <label for="status" class="form-label">Trạng Thái</label>
                                         <select class="form-select" id="status" name="status" required>
-                                            <option value="Completed" {{ $order->status === 'Completed' ? 'selected' : '' }}>Hoàn thành</option>
-                                            <option value="Pending" {{ $order->status === 'Pending' ? 'selected' : '' }}>Đang xử lý</option>
-                                            <option value="Cancelled" {{ $order->status === 'Cancelled' ? 'selected' : '' }}>Đã hủy</option>
+                                            <option value="Completed"
+                                                {{ $order->status === 'Completed' ? 'selected' : '' }}>Hoàn thành</option>
+                                            <option value="Pending" {{ $order->status === 'Pending' ? 'selected' : '' }}>
+                                                Đang xử lý</option>
+                                            <option value="Cancelled"
+                                                {{ $order->status === 'Cancelled' ? 'selected' : '' }}>Đã hủy</option>
                                         </select>
                                     </div>
                                 </div>

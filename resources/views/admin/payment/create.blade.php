@@ -1,4 +1,4 @@
-@extends('admin.master')
+{{-- @extends('admin.master')
 
 @section('title', 'Thêm Thanh Toán Mới')
 
@@ -50,4 +50,4 @@
         </div>
     </div>
 </div>
-@endsection
+@endsection --}}

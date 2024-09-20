@@ -3,8 +3,6 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-
-use App\Models\Category;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -12,14 +10,24 @@ class DatabaseSeeder extends Seeder
     /**
      * Seed the application's database.
      */
-    public function run(): void
+    public function run()
     {
-        // for ($i=0; $i <10 ; $i++) {
-        //     Category::query()->create([
-        //         'name'=>'Danh muc' .$i
-        //     ]);
-        //    }
-
-        //   tạo mịa nó chay chứ lỗi vãi lìn ======= :)
+        // $this->call([
+        //     RoleSeeder::class,
+        //     PermissionSeeder::class,
+        //     CouponSeeder::class,
+        //     ReservationSeeder::class,
+        //     OrderSeeder::class,
+        //     FeedbackSeeder::class,
+        //     TableSeeder::class,
+        //     IngredientTypeSeeder::class,
+        //     IngredientSeeder::class,
+        //     SupplierSeeder::class,
+        //     ReservationDishesSeeder::class,
+        //     ReservationTableSeeder::class,
+        //     PaymentSeeder::class,
+        //     ReservationHistorySeeder::class,
+        // ]);
     }
+
 }

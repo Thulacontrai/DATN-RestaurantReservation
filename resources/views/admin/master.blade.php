@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="{{ asset('adminn/assets/css/animate.css') }}">
     <link rel="stylesheet" href="{{ asset('adminn/assets/fonts/bootstrap/bootstrap-icons.css') }}">
     <link rel="stylesheet" href="{{ asset('adminn/assets/css/main.min.css') }}">
+    @include('admin.layouts.css')
 
     <!-- Bootstrap 5 CSS (if needed) -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
@@ -80,5 +81,10 @@
         @yield('scripts')
     </div>
 </body>
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+
+@isset($script)
+    {{ $script }}
+@endisset
 
 </html>

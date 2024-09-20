@@ -12,7 +12,7 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $dishes = Dishes::all();
+        $dishes = Dishes::paginate(10);
         $combos = Combo::all();
 
         return view('client.index', compact('dishes', 'combos'));

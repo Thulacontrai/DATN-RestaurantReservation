@@ -3,6 +3,32 @@
 @section('title', 'Chỉnh Sửa Vai Trò')
 
 @section('content')
+
+@if (session('error'))
+<div class="alert alert-danger">
+    {{ session('error') }}
+</div>
+@endif
+
+@if (session('success'))
+<div class="alert alert-success">
+    {{ session('success') }}
+</div>
+@endif
+<style>
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr); /* 5 cột */
+        gap: 10px; /* Khoảng cách giữa các checkbox */
+    }
+    .custom-checkbox {
+        display: flex;
+        align-items: center;
+    }
+    .custom-checkbox input {
+        margin-right: 10px;
+    }
+</style>
     <div class="content-wrapper-scroll">
         <div class="content-wrapper">
             <div class="row">
@@ -17,14 +43,30 @@
                                 @method('PUT')
 
                                 <div class="mb-3">
-                                    <label for="role-name" class="form-label">Tên Vai Trò</label>
-                                    <input type="text" id="role-name" name="role_name" class="form-control" value="{{ $role->role_name }}" required>
+                                    <label for="name" class="form-label">Tên Vai Trò</label>
+                                    <input value="{{ old ('name', $role->name)}}" type="text" id="name" name="name" class="form-control" value="{{ $role->name }}" required>
+                                    @error('name')
+                                        <div class="text-danger">{{ $message }}</div>
+                                    @enderror
                                 </div>
+                                <div class="grid mb-3">
+                                    @if ($permissions->isNotEmpty())
+                                        @foreach ($permissions as $permission)
+                                            <div class="custom-control custom-checkbox mt-3">
+                                                <input {{ ($hasPermissions->contains($permission->name)) ? 'checked' : '' }} 
+                                                       type="checkbox" 
+                                                       name="permission[]" 
+                                                       value="{{ $permission->name }}" 
+                                                       id="permission-{{$permission->id}}" 
+                                                       class="custom-control-input">
+                                                <label class="custom-control-label" for="permission-{{$permission->id}}">{{ $permission->name }}</label>
+                                            </div>
+                                        @endforeach
+                                    @endif
+                                </div>
+                                
 
-                                <div class="mb-3">
-                                    <label for="description" class="form-label">Mô Tả</label>
-                                    <textarea id="description" name="description" class="form-control">{{ $role->description }}</textarea>
-                                </div>
+                                
 
                                 <button type="submit" class="btn btn-sm btn-primary">Cập Nhật</button>
                                 <a href="{{ route('admin.role.index') }}" class="btn btn-sm btn-secondary">Hủy</a>

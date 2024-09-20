@@ -12,6 +12,16 @@ use Illuminate\Support\Facades\Storage;
 
 class ComboController extends Controller
 {
+
+    public function __construct()
+    {
+        // Gán middleware cho các phương thức
+        $this->middleware('permission:Xem combo', ['only' => ['index']]);
+        $this->middleware('permission:Tạo mới combo', ['only' => ['create']]);
+        $this->middleware('permission:Sửa combo', ['only' => ['edit']]);
+        $this->middleware('permission:Xóa combo', ['only' => ['destroy']]);
+        
+    }
     use TraitCRUD;
 
     protected $model = Combo::class;
@@ -49,6 +59,12 @@ class ComboController extends Controller
             'image'            => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'quantity_dishes'  => 'required|integer|min:1',
         ]);
+
+        // Kiểm tra tên combo đã tồn tại hay chưa
+        $existingCombo = Combo::where('name', $request->name)->first();
+        if ($existingCombo) {
+            return redirect()->back()->withInput()->with('error', 'Tên combo đã tồn tại. Vui lòng đặt tên khác.');
+        }
 
         DB::transaction(function () use ($request) {
             $imagePath = null;
@@ -88,6 +104,12 @@ class ComboController extends Controller
             'quantity_dishes'  => 'required|integer|min:1',
         ]);
 
+        // Kiểm tra tên combo đã tồn tại nhưng loại trừ combo hiện tại
+        $existingCombo = Combo::where('name', $request->name)->where('id', '!=', $id)->first();
+        if ($existingCombo) {
+            return redirect()->back()->withInput()->with('error', 'Tên combo đã tồn tại. Vui lòng đặt tên khác.');
+        }
+
         DB::transaction(function () use ($request, $id) {
             $combo = $this->model::findOrFail($id);
 
@@ -113,18 +135,30 @@ class ComboController extends Controller
     }
 
 
-    public function destroy($id)
+    public function trash()
     {
-        DB::transaction(function () use ($id) {
-            $combo = $this->model::findOrFail($id);
+        $combos = Combo::onlyTrashed()->paginate(10);
+        return view($this->viewPath . '.trash', compact('combos'));
+    }
 
-            if ($combo->image) {
-                Storage::delete('public/' . $combo->image);
-            }
+    public function restore($id)
+    {
+        $combo = Combo::withTrashed()->findOrFail($id);
+        $combo->restore();
 
-            $combo->delete();
-        });
+        return redirect()->route($this->routePath . '.trash')->with('success', 'Combo đã được khôi phục thành công!');
+    }
 
-        return redirect()->route($this->routePath . '.index')->with('success', 'Combo đã được xóa thành công!');
+    public function forceDelete($id)
+    {
+        $combo = Combo::withTrashed()->findOrFail($id);
+
+        if ($combo->image) {
+            Storage::delete('public/' . $combo->image);
+        }
+
+        $combo->forceDelete(); 
+
+        return redirect()->route($this->routePath . '.trash')->with('success', 'Combo đã được xóa vĩnh viễn!');
     }
 }

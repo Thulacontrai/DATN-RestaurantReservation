@@ -4,6 +4,17 @@
 
 @section('content')
 
+    @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
     <!-- Content wrapper scroll start -->
     <div class="content-wrapper-scroll">
 
@@ -74,7 +85,8 @@
 
                                 <div class="mb-3">
                                     <label for="discount_amount" class="form-label">Số Tiền Giảm Giá</label>
-                                    <input type="number" class="form-control" id="discount_amount" name="discount_amount" step="0.01">
+                                    <input type="number" class="form-control" id="discount_amount" name="discount_amount"
+                                        step="0.01">
                                     @error('discount_amount')
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror
@@ -93,6 +105,7 @@
                                 </div>
 
                                 <button type="submit" class="btn btn-primary">Thêm Coupon</button>
+                                <a href="{{ route('admin.coupon.index') }}" class="btn btn-sm btn-secondary">Quay lại</a>
                             </form>
 
                         </div>

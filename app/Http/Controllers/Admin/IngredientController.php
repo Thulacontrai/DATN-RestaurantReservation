@@ -12,6 +12,16 @@ use Illuminate\Support\Facades\DB;
 
 class IngredientController extends Controller
 {
+    public function __construct()
+    {
+        // Gán middleware cho các phương thức
+        $this->middleware('permission:Xem nguyên liệu', ['only' => ['index']]);
+        $this->middleware('permission:Tạo mới nguyên liệu', ['only' => ['create']]);
+        $this->middleware('permission:Sửa nguyên liệu', ['only' => ['edit']]);
+        $this->middleware('permission:Xóa nguyên liệu', ['only' => ['destroy']]);
+        
+    }
+
     use TraitCRUD;
 
     protected $model = Ingredient::class;
@@ -26,11 +36,9 @@ class IngredientController extends Controller
 
     public function create()
     {
-        // Lấy danh sách nhà cung cấp và loại nguyên liệu để hiển thị trên form
         $suppliers = Supplier::all();
         $ingredientTypes = IngredientType::all();
 
-        // Truyền dữ liệu vào view
         return view('admin..ingredientType.ingredient.create', compact('suppliers', 'ingredientTypes'));
     }
 
@@ -80,12 +88,11 @@ class IngredientController extends Controller
 
     public function show($id)
     {
-        // Tìm ingredient theo id, nếu không tìm thấy sẽ trả về 404
         $ingredient = Ingredient::findOrFail($id);
 
-        // Trả về view hiển thị thông tin ingredient chi tiết
         return view('admin.ingredientType.ingredient.show', compact('ingredient'));
     }
+
 
     public function destroy($id)
     {

@@ -66,9 +66,43 @@ class PaymentController extends Controller
         return redirect()->route('admin.payment.index')->with('success', 'Cập nhật thanh toán thành công.');
     }
 
-    public function destroy(Payment $payment)
-    {
-        $payment->delete();
-        return redirect()->route('admin.payment.index')->with('success', 'Payment deleted successfully');
+    public function destroy($id)
+{
+    $payment = Payment::findOrFail($id);
+
+    if ($payment->transaction_status === 'pending') {
+        return redirect()->route($this->routePath . '.index')->with('error', 'Không thể xóa  thanh toán khi đang trong trạng thái chờ xử lý. Vui lòng thực hiện thao tác khác.');
     }
+
+    // Xóa mềm bản ghi
+    $payment->delete();
+
+    return redirect()->route($this->routePath . '.index')->with('success', 'Thanh toán đã được xóa thành công!');
+}
+
+
+    public function trash()
+{
+    $payments = Payment::onlyTrashed()->paginate(10); // Lấy tất cả các thanh toán đã bị xóa mềm
+    return view($this->viewPath . '.trash', compact('payments'));
+}
+
+
+    public function restore($id)
+    {
+        $payment = Payment::withTrashed()->findOrFail($id);
+        $payment->restore();
+
+        return redirect()->route($this->routePath . '.trash')->with('success', 'Thanh toán đã được khôi phục thành công!');
+    }
+
+    public function forceDelete($id)
+    {
+        $payment = Payment::withTrashed()->findOrFail($id);
+        $payment->forceDelete(); // Xóa vĩnh viễn bản ghi
+
+        return redirect()->route($this->routePath . '.trash')->with('success', 'Thanh toán đã được xóa vĩnh viễn!');
+    }
+
+
 }

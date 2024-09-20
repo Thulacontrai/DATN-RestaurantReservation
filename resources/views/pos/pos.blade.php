@@ -379,6 +379,7 @@
                             <path d="M2.354.646a.5.5 0 0 0-.801.13l-.5 1A.5.5 0 0 0 1 2v13H.5a.5.5 0 0 0 0 1h15a.5.5 0 0 0 0-1H15V2a.5.5 0 0 0-.053-.224l-.5-1a.5.5 0 0 0-.8-.13L13 1.293l-.646-.647a.5.5 0 0 0-.708 0L11 1.293l-.646-.647a.5.5 0 0 0-.708 0L9 1.293 8.354.646a.5.5 0 0 0-.708 0L7 1.293 6.354.646a.5.5 0 0 0-.708 0L5 1.293 4.354.646a.5.5 0 0 0-.708 0L3 1.293zm-.217 1.198.51.51a.5.5 0 0 0 .707 0L4 1.707l.646.647a.5.5 0 0 0 .708 0L6 1.707l.646.647a.5.5 0 0 0 .708 0L8 1.707l.646.647a.5.5 0 0 0 .708 0L10 1.707l.646.647a.5.5 0 0 0 .708 0L12 1.707l.646.647a.5.5 0 0 0 .708 0l.509-.51.137.274V15H2V2.118z"/>
                           </svg></span>View Orders</a>
 
+
                     
                     <a href="javascript:void(0);" class="btn btn-primary" data-bs-toggle="modal"
                         data-bs-target="#recents"><span class="me-1 d-flex align-items-center"><svg
@@ -400,8 +401,10 @@
                         <div class="pos-categories tabs_wrapper">
                             <h5>Menu</h5>
                             <ul class="tabs owl-carousel pos-category">
+
                                 
                                 <li id="mainmenu">
+
                                     <a href="javascript:void(0);">
                                         <img src="https://natashaskitchen.com/wp-content/uploads/2020/03/Pan-Seared-Steak-4.jpg"
                                         alt="">
@@ -441,9 +444,9 @@
                                     <h6><a href="javascript:void(0);">Salad</a></h6>
                                     {{-- <span>18 Items</span> --}}
                                 </li>
-                               
-                                
-                                
+
+
+
                             </ul>
                             <div class="pos-products">
                                 <div class="d-flex align-items-center justify-content-between">
@@ -705,8 +708,791 @@
                                                     <option>GST 30%</option>
                                                 </select>
                                             </div>
+                                            
                                         </div>
-                         
+
+                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                                <div class="product-info default-cover card">
+                                                    <a href="javascript:void(0);" class="img-bg">
+                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-14.png"
+                                                            alt="Products">
+                                                        <span><i data-feather="check" class="feather-16"></i></span>
+                                                    </a>
+                                                    <h6 class="cat-name"><a href="javascript:void(0);">Laptop</a></h6>
+                                                    <h6 class="product-name"><a href="javascript:void(0);">IdeaPad
+                                                            Slim 3i</a></h6>
+                                                    <div
+                                                        class="d-flex align-items-center justify-content-between price">
+                                                        <span>47 Pcs</span>
+                                                        <p>$1245</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab_content" data-tab="allcategory">
+                                        <div class="row">
+                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3">
+                                                <div class="product-info default-cover card">
+                                                    <a href="javascript:void(0);" class="img-bg">
+                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-01.png"
+                                                            alt="Products">
+                                                        <span><i data-feather="check" class="feather-16"></i></span>
+                                                    </a>
+                                                    <h6 class="cat-name"><a href="javascript:void(0);">Mobiles</a>
+                                                    </h6>
+                                                    <h6 class="product-name"><a href="javascript:void(0);">IPhone 14
+                                                            64GB</a></h6>
+                                                    <div
+                                                        class="d-flex align-items-center justify-content-between price">
+                                                        <span>30 Pcs</span>
+                                                        <p>$15800</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                                <div class="product-info default-cover card">
+                                                    <a href="javascript:void(0);" class="img-bg">
+                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-02.png"
+                                                            alt="Products">
+                                                        <span><i data-feather="check" class="feather-16"></i></span>
+                                                    </a>
+                                                    <h6 class="cat-name"><a href="javascript:void(0);">Computer</a>
+                                                    </h6>
+                                                    <h6 class="product-name"><a href="javascript:void(0);">MacBook
+                                                            Pro</a></h6>
+                                                    <div
+                                                        class="d-flex align-items-center justify-content-between price">
+                                                        <span>140 Pcs</span>
+                                                        <p>$1000</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                                <div class="product-info default-cover card">
+                                                    <a href="javascript:void(0);" class="img-bg">
+                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-03.png"
+                                                            alt="Products">
+                                                        <span><i data-feather="check" class="feather-16"></i></span>
+                                                    </a>
+                                                    <h6 class="cat-name"><a href="javascript:void(0);">Watches</a>
+                                                    </h6>
+                                                    <h6 class="product-name"><a href="javascript:void(0);">Rolex
+                                                            Tribute V3</a></h6>
+                                                    <div
+                                                        class="d-flex align-items-center justify-content-between price">
+                                                        <span>220 Pcs</span>
+                                                        <p>$6800</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                                <div class="product-info default-cover card">
+                                                    <a href="javascript:void(0);" class="img-bg">
+                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-04.png"
+                                                            alt="Products">
+                                                        <span><i data-feather="check" class="feather-16"></i></span>
+                                                    </a>
+                                                    <h6 class="cat-name"><a href="javascript:void(0);">Shoes</a></h6>
+                                                    <h6 class="product-name"><a href="javascript:void(0);">Red Nike
+                                                            Angelo</a></h6>
+                                                    <div
+                                                        class="d-flex align-items-center justify-content-between price">
+                                                        <span>78 Pcs</span>
+                                                        <p>$7800</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                                <div class="product-info default-cover card">
+                                                    <a href="javascript:void(0);" class="img-bg">
+                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-05.png"
+                                                            alt="Products">
+                                                        <span><i data-feather="check" class="feather-16"></i></span>
+                                                    </a>
+                                                    <h6 class="cat-name"><a href="javascript:void(0);">Headphones</a>
+                                                    </h6>
+                                                    <h6 class="product-name"><a href="javascript:void(0);">Airpod
+                                                            2</a></h6>
+                                                    <div
+                                                        class="d-flex align-items-center justify-content-between price">
+                                                        <span>47 Pcs</span>
+                                                        <p>$5478</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                                <div class="product-info default-cover card">
+                                                    <a href="javascript:void(0);" class="img-bg">
+                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-06.png"
+                                                            alt="Products">
+                                                        <span><i data-feather="check" class="feather-16"></i></span>
+                                                    </a>
+                                                    <h6 class="cat-name"><a href="javascript:void(0);">Shoes</a></h6>
+                                                    <h6 class="product-name"><a href="javascript:void(0);">Blue White
+                                                            OGR</a></h6>
+                                                    <div
+                                                        class="d-flex align-items-center justify-content-between price">
+                                                        <span>54 Pcs</span>
+                                                        <p>$987</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                                <div class="product-info default-cover card">
+                                                    <a href="javascript:void(0);" class="img-bg">
+                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-07.png"
+                                                            alt="Products">
+                                                        <span><i data-feather="check" class="feather-16"></i></span>
+                                                    </a>
+                                                    <h6 class="cat-name"><a href="javascript:void(0);">Laptop</a></h6>
+                                                    <h6 class="product-name"><a href="javascript:void(0);">IdeaPad
+                                                            Slim 5 Gen 7</a></h6>
+                                                    <div
+                                                        class="d-flex align-items-center justify-content-between price">
+                                                        <span>74 Pcs</span>
+                                                        <p>$1454</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                                <div class="product-info default-cover card">
+                                                    <a href="javascript:void(0);" class="img-bg">
+                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-08.png"
+                                                            alt="Products">
+                                                        <span><i data-feather="check" class="feather-16"></i></span>
+                                                    </a>
+                                                    <h6 class="cat-name"><a href="javascript:void(0);">Headphones</a>
+                                                    </h6>
+                                                    <h6 class="product-name"><a href="javascript:void(0);">SWAGME</a>
+                                                    </h6>
+                                                    <div
+                                                        class="d-flex align-items-center justify-content-between price">
+                                                        <span>14 Pcs</span>
+                                                        <p>$6587</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                                <div class="product-info default-cover card">
+                                                    <a href="javascript:void(0);" class="img-bg">
+                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-09.png"
+                                                            alt="Products">
+                                                        <span><i data-feather="check" class="feather-16"></i></span>
+                                                    </a>
+                                                    <h6 class="cat-name"><a href="javascript:void(0);">Watches</a>
+                                                    </h6>
+                                                    <h6 class="product-name"><a href="javascript:void(0);">Timex Black
+                                                            SIlver</a></h6>
+                                                    <div
+                                                        class="d-flex align-items-center justify-content-between price">
+                                                        <span>24 Pcs</span>
+                                                        <p>$1457</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                                <div class="product-info default-cover card">
+                                                    <a href="javascript:void(0);" class="img-bg">
+                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-10.png"
+                                                            alt="Products">
+                                                        <span><i data-feather="check" class="feather-16"></i></span>
+                                                    </a>
+                                                    <h6 class="cat-name"><a href="javascript:void(0);">Computer</a>
+                                                    </h6>
+                                                    <h6 class="product-name"><a href="javascript:void(0);">Tablet 1.02
+                                                            inch</a></h6>
+                                                    <div
+                                                        class="d-flex align-items-center justify-content-between price">
+                                                        <span>14 Pcs</span>
+                                                        <p>$4744</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                                <div class="product-info default-cover card">
+                                                    <a href="javascript:void(0);" class="img-bg">
+                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-11.png"
+                                                            alt="Products">
+                                                        <span><i data-feather="check" class="feather-16"></i></span>
+                                                    </a>
+                                                    <h6 class="cat-name"><a href="javascript:void(0);">Watches</a>
+                                                    </h6>
+                                                    <h6 class="product-name"><a href="javascript:void(0);">Fossil Pair
+                                                            Of 3 in 1 </a></h6>
+                                                    <div
+                                                        class="d-flex align-items-center justify-content-between price">
+                                                        <span>40 Pcs</span>
+                                                        <p>$789</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                                <div class="product-info default-cover card">
+                                                    <a href="javascript:void(0);" class="img-bg">
+                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-18.png"
+                                                            alt="Products">
+                                                        <span><i data-feather="check" class="feather-16"></i></span>
+                                                    </a>
+                                                    <h6 class="cat-name"><a href="javascript:void(0);">Shoes</a></h6>
+                                                    <h6 class="product-name"><a href="javascript:void(0);">Green Nike
+                                                            Fe</a></h6>
+                                                    <div
+                                                        class="d-flex align-items-center justify-content-between price">
+                                                        <span>78 Pcs</span>
+                                                        <p>$7847</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab_content" data-tab="headphone">
+                                        <div class="row">
+                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                                <div class="product-info default-cover card">
+                                                    <a href="javascript:void(0);" class="img-bg">
+                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-05.png"
+                                                            alt="Products">
+                                                        <span><i data-feather="check" class="feather-16"></i></span>
+                                                    </a>
+                                                    <h6 class="cat-name"><a href="javascript:void(0);">Headphones</a>
+                                                    </h6>
+                                                    <h6 class="product-name"><a href="javascript:void(0);">Airpod
+                                                            2</a></h6>
+                                                    <div
+                                                        class="d-flex align-items-center justify-content-between price">
+                                                        <span>47 Pcs</span>
+                                                        <p>$5478</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                                <div class="product-info default-cover card">
+                                                    <a href="javascript:void(0);" class="img-bg">
+                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-08.png"
+                                                            alt="Products">
+                                                        <span><i data-feather="check" class="feather-16"></i></span>
+                                                    </a>
+                                                    <h6 class="cat-name"><a href="javascript:void(0);">Headphones</a>
+                                                    </h6>
+                                                    <h6 class="product-name"><a href="javascript:void(0);">SWAGME</a>
+                                                    </h6>
+                                                    <div
+                                                        class="d-flex align-items-center justify-content-between price">
+                                                        <span>14 Pcs</span>
+                                                        <p>$6587</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab_content" data-tab="shoe">
+                                        <div class="row">
+                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                                <div class="product-info default-cover card">
+                                                    <a href="javascript:void(0);" class="img-bg">
+                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-04.png"
+                                                            alt="Products">
+                                                        <span><i data-feather="check" class="feather-16"></i></span>
+                                                    </a>
+                                                    <h6 class="cat-name"><a href="javascript:void(0);">Shoes</a></h6>
+                                                    <h6 class="product-name"><a href="javascript:void(0);">Red Nike
+                                                            Angelo</a></h6>
+                                                    <div
+                                                        class="d-flex align-items-center justify-content-between price">
+                                                        <span>78 Pcs</span>
+                                                        <p>$7800</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                                <div class="product-info default-cover card">
+                                                    <a href="javascript:void(0);" class="img-bg">
+                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-06.png"
+                                                            alt="Products">
+                                                        <span><i data-feather="check" class="feather-16"></i></span>
+                                                    </a>
+                                                    <h6 class="cat-name"><a href="javascript:void(0);">Shoes</a></h6>
+                                                    <h6 class="product-name"><a href="javascript:void(0);">Blue White
+                                                            OGR</a></h6>
+                                                    <div
+                                                        class="d-flex align-items-center justify-content-between price">
+                                                        <span>54 Pcs</span>
+                                                        <p>$987</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                                <div class="product-info default-cover card">
+                                                    <a href="javascript:void(0);" class="img-bg">
+                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-18.png"
+                                                            alt="Products">
+                                                        <span><i data-feather="check" class="feather-16"></i></span>
+                                                    </a>
+                                                    <h6 class="cat-name"><a href="javascript:void(0);">Shoes</a></h6>
+                                                    <h6 class="product-name"><a href="javascript:void(0);">Green Nike
+                                                            Fe</a></h6>
+                                                    <div
+                                                        class="d-flex align-items-center justify-content-between price">
+                                                        <span>78 Pcs</span>
+                                                        <p>$7847</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab_content" data-tab="mobile">
+                                        <div class="row">
+                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3">
+                                                <div class="product-info default-cover card">
+                                                    <a href="javascript:void(0);" class="img-bg">
+                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-01.png"
+                                                            alt="Products">
+                                                        <span><i data-feather="check" class="feather-16"></i></span>
+                                                    </a>
+                                                    <h6 class="cat-name"><a href="javascript:void(0);">Mobiles</a>
+                                                    </h6>
+                                                    <h6 class="product-name"><a href="javascript:void(0);">IPhone 14
+                                                            64GB</a></h6>
+                                                    <div
+                                                        class="d-flex align-items-center justify-content-between price">
+                                                        <span>30 Pcs</span>
+                                                        <p>$15800</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                                <div class="product-info default-cover card">
+                                                    <a href="javascript:void(0);" class="img-bg">
+                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-14.png"
+                                                            alt="Products">
+                                                        <span><i data-feather="check" class="feather-16"></i></span>
+                                                    </a>
+                                                    <h6 class="cat-name"><a href="javascript:void(0);">Mobiles</a>
+                                                    </h6>
+                                                    <h6 class="product-name"><a href="javascript:void(0);">Iphone
+                                                            11</a></h6>
+                                                    <div
+                                                        class="d-flex align-items-center justify-content-between price">
+                                                        <span>14 Pcs</span>
+                                                        <p>$3654</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab_content" data-tab="watche">
+                                        <div class="row">
+                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                                <div class="product-info default-cover card">
+                                                    <a href="javascript:void(0);" class="img-bg">
+                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-03.png"
+                                                            alt="Products">
+                                                        <span><i data-feather="check" class="feather-16"></i></span>
+                                                    </a>
+                                                    <h6 class="cat-name"><a href="javascript:void(0);">Watches</a>
+                                                    </h6>
+                                                    <h6 class="product-name"><a href="javascript:void(0);">Rolex
+                                                            Tribute V3</a></h6>
+                                                    <div
+                                                        class="d-flex align-items-center justify-content-between price">
+                                                        <span>220 Pcs</span>
+                                                        <p>$6800</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                                <div class="product-info default-cover card">
+                                                    <a href="javascript:void(0);" class="img-bg">
+                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-09.png"
+                                                            alt="Products">
+                                                        <span><i data-feather="check" class="feather-16"></i></span>
+                                                    </a>
+                                                    <h6 class="cat-name"><a href="javascript:void(0);">Watches</a>
+                                                    </h6>
+                                                    <h6 class="product-name"><a href="javascript:void(0);">Timex
+                                                            Black SIlver</a></h6>
+                                                    <div
+                                                        class="d-flex align-items-center justify-content-between price">
+                                                        <span>24 Pcs</span>
+                                                        <p>$1457</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                                <div class="product-info default-cover card">
+                                                    <a href="javascript:void(0);" class="img-bg">
+                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-11.png"
+                                                            alt="Products">
+                                                        <span><i data-feather="check" class="feather-16"></i></span>
+                                                    </a>
+                                                    <h6 class="cat-name"><a href="javascript:void(0);">Watches</a>
+                                                    </h6>
+                                                    <h6 class="product-name"><a href="javascript:void(0);">Fossil
+                                                            Pair Of 3 in 1 </a></h6>
+                                                    <div
+                                                        class="d-flex align-items-center justify-content-between price">
+                                                        <span>40 Pcs</span>
+                                                        <p>$789</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab_content" data-tab="laptop">
+                                        <div class="row">
+                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                                <div class="product-info default-cover card">
+                                                    <a href="javascript:void(0);" class="img-bg">
+                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-02.png"
+                                                            alt="Products">
+                                                        <span><i data-feather="check" class="feather-16"></i></span>
+                                                    </a>
+                                                    <h6 class="cat-name"><a href="javascript:void(0);">Computer</a>
+                                                    </h6>
+                                                    <h6 class="product-name"><a href="javascript:void(0);">MacBook
+                                                            Pro</a></h6>
+                                                    <div
+                                                        class="d-flex align-items-center justify-content-between price">
+                                                        <span>140 Pcs</span>
+                                                        <p>$1000</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                                <div class="product-info default-cover card">
+                                                    <a href="javascript:void(0);" class="img-bg">
+                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-07.png"
+                                                            alt="Products">
+                                                        <span><i data-feather="check" class="feather-16"></i></span>
+                                                    </a>
+                                                    <h6 class="cat-name"><a href="javascript:void(0);">Laptop</a>
+                                                    </h6>
+                                                    <h6 class="product-name"><a href="javascript:void(0);">IdeaPad
+                                                            Slim 5 Gen 7</a></h6>
+                                                    <div
+                                                        class="d-flex align-items-center justify-content-between price">
+                                                        <span>74 Pcs</span>
+                                                        <p>$1454</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                                <div class="product-info default-cover card">
+                                                    <a href="javascript:void(0);" class="img-bg">
+                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-10.png"
+                                                            alt="Products">
+                                                        <span><i data-feather="check" class="feather-16"></i></span>
+                                                    </a>
+                                                    <h6 class="cat-name"><a href="javascript:void(0);">Computer</a>
+                                                    </h6>
+                                                    <h6 class="product-name"><a href="javascript:void(0);">Tablet
+                                                            1.02 inch</a></h6>
+                                                    <div
+                                                        class="d-flex align-items-center justify-content-between price">
+                                                        <span>14 Pcs</span>
+                                                        <p>$4744</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                                <div class="product-info default-cover card">
+                                                    <a href="javascript:void(0);" class="img-bg">
+                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-13.png"
+                                                            alt="Products">
+                                                        <span><i data-feather="check" class="feather-16"></i></span>
+                                                    </a>
+                                                    <h6 class="cat-name"><a href="javascript:void(0);">Laptop</a>
+                                                    </h6>
+                                                    <h6 class="product-name"><a href="javascript:void(0);">Yoga Book
+                                                            9i</a></h6>
+                                                    <div
+                                                        class="d-flex align-items-center justify-content-between price">
+                                                        <span>65 Pcs</span>
+                                                        <p>$4784</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                                <div class="product-info default-cover card">
+                                                    <a href="javascript:void(0);" class="img-bg">
+                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-14.png"
+                                                            alt="Products">
+                                                        <span><i data-feather="check" class="feather-16"></i></span>
+                                                    </a>
+                                                    <h6 class="cat-name"><a href="javascript:void(0);">Laptop</a>
+                                                    </h6>
+                                                    <h6 class="product-name"><a href="javascript:void(0);">IdeaPad
+                                                            Slim 3i</a></h6>
+                                                    <div
+                                                        class="d-flex align-items-center justify-content-between price">
+                                                        <span>47 Pcs</span>
+                                                        <p>$1245</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-lg-4 ps-0">
+                        <aside class="product-order-list">
+                            <div class="head d-flex align-items-center justify-content-between w-100">
+                                <div class>
+                                    <h5>Order List</h5>
+                                    <span>Transaction ID : #65565</span>
+                                </div>
+                                <div class>
+                                    <a class="confirm-text" href="javascript:void(0);"><i data-feather="trash-2"
+                                            class="feather-16 text-danger"></i></a>
+                                    <a href="javascript:void(0);" class="text-default"><i
+                                            data-feather="more-vertical" class="feather-16"></i></a>
+                                </div>
+                            </div>
+
+                            <div class="">
+
+                                    <a href="javascript:void(0);" class="btn btn-info"><span
+                                        class="me-1 d-flex align-items-center"><span class="me-1 d-flex align-items-center"><svg
+                                            xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                            class="bi bi-view-list" viewBox="0 0 16 16">
+                                            <path
+                                                d="M3 4.5h10a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2m0 1a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1zM1 2a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 2m0 12a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 14" />
+                                        </svg></span>Table layout</a>
+
+                            </div>
+
+                            <div class="customer-info block-section">
+                                <div class="input-block d-flex align-items-center">
+                                    <a href="javascript:void(0);" class="btn btn-info"><span
+                                        class="me-1 d-flex align-items-center"><span class="me-1 d-flex align-items-center"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-basket" viewBox="0 0 16 16">
+                                            <path d="M5.757 1.071a.5.5 0 0 1 .172.686L3.383 6h9.234L10.07 1.757a.5.5 0 1 1 .858-.514L13.783 6H15a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1v4.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 13.5V9a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h1.217L5.07 1.243a.5.5 0 0 1 .686-.172zM2 9v4.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V9zM1 7v1h14V7zm3 3a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3A.5.5 0 0 1 4 10m2 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3A.5.5 0 0 1 6 10m2 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3A.5.5 0 0 1 8 10m2 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 1 .5-.5m2 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 1 .5-.5"/>
+                                          </svg></span>Takeaway</a>
+
+                                    <div class="flex-grow-1">
+                                        <input type="search" class="form-control" id="" placeholder="Enter name or email to search">
+                                    </div>
+                                    <a href="#" class="btn btn-primary btn-icon" data-bs-toggle="modal"
+                                        data-bs-target="#create"><i data-feather="user-plus"
+                                            class="feather-16"></i></a>
+                                </div>
+
+                            </div>
+
+                            <div class="customer-info block-section">
+                                <h6>Customer Information</h6>
+                                <form action="https://dreamspos.dreamstechnologies.com/html/template/pos.html">
+                                    <div class="row">
+                                        <div class="col-lg-6 col-sm-12 col-12">
+                                            <div class="input-blocks">
+                                                <label>Customer Name</label>
+                                                <input type="text" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-sm-12 col-12">
+                                            <div class="input-blocks">
+                                                <label>Email</label>
+                                                <input type="email" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-sm-12 col-12">
+                                            <div class="input-blocks">
+                                                <label>Phone</label>
+                                                <input type="string" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-sm-12 col-12">
+                                            <div class="input-blocks">
+                                                <label>Number of people</label>
+                                                <input type="number" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-sm-12 col-12">
+                                            <div class="input-blocks">
+                                                <label>Table</label>
+                                                <input type="text">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-sm-12 col-12">
+                                            <div class="input-blocks">
+                                                <label>Address</label>
+                                                <input type="text">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+                            <div class="product-added block-section">
+                                <div class="head-text d-flex align-items-center justify-content-between">
+                                    <h6 class="d-flex align-items-center mb-0">Product Added<span
+                                            class="count">2</span></h6>
+                                    <a href="javascript:void(0);"
+                                        class="d-flex align-items-center text-danger"><span class="me-1"><i
+                                                data-feather="x" class="feather-16"></i></span>Clear all</a>
+                                </div>
+                                <div class="product-wrap">
+                                    <div class="product-list d-flex align-items-center justify-content-between">
+                                        <div class="d-flex align-items-center product-info" data-bs-toggle="modal"
+                                            data-bs-target="#products">
+                                            <a href="javascript:void(0);" class="img-bg">
+                                                <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-16.png"
+                                                    alt="Products">
+                                            </a>
+                                            <div class="info">
+                                                <span>PT0005</span>
+                                                <h6><a href="javascript:void(0);">Red Nike Laser</a></h6>
+                                                <p>$2000</p>
+                                            </div>
+                                        </div>
+                                        <div class="qty-item text-center">
+                                            <a href="javascript:void(0);"
+                                                class="dec d-flex justify-content-center align-items-center"
+                                                data-bs-toggle="tooltip" data-bs-placement="top" title="minus"><i
+                                                    data-feather="minus-circle" class="feather-14"></i></a>
+                                            <input type="text" class="form-control text-center" name="qty"
+                                                value="4">
+                                            <a href="javascript:void(0);"
+                                                class="inc d-flex justify-content-center align-items-center"
+                                                data-bs-toggle="tooltip" data-bs-placement="top" title="plus"><i
+                                                    data-feather="plus-circle" class="feather-14"></i></a>
+                                        </div>
+                                        <div class="d-flex align-items-center action">
+                                            <a class="btn-icon edit-icon me-2" href="#"
+                                                data-bs-toggle="modal" data-bs-target="#edit-product">
+                                                <i data-feather="edit" class="feather-14"></i>
+                                            </a>
+                                            <a class="btn-icon delete-icon confirm-text" href="javascript:void(0);">
+                                                <i data-feather="trash-2" class="feather-14"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="product-list d-flex align-items-center justify-content-between">
+                                        <div class="d-flex align-items-center product-info" data-bs-toggle="modal"
+                                            data-bs-target="#products">
+                                            <a href="javascript:void(0);" class="img-bg">
+                                                <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-17.png"
+                                                    alt="Products">
+                                            </a>
+                                            <div class="info">
+                                                <span>PT0235</span>
+                                                <h6><a href="javascript:void(0);">Iphone 14</a></h6>
+                                                <p>$3000</p>
+                                            </div>
+                                        </div>
+                                        <div class="qty-item text-center">
+                                            <a href="javascript:void(0);"
+                                                class="dec d-flex justify-content-center align-items-center"
+                                                data-bs-toggle="tooltip" data-bs-placement="top" title="minus"><i
+                                                    data-feather="minus-circle" class="feather-14"></i></a>
+                                            <input type="text" class="form-control text-center" name="qty"
+                                                value="3">
+                                            <a href="javascript:void(0);"
+                                                class="inc d-flex justify-content-center align-items-center"
+                                                data-bs-toggle="tooltip" data-bs-placement="top" title="plus"><i
+                                                    data-feather="plus-circle" class="feather-14"></i></a>
+                                        </div>
+                                        <div class="d-flex align-items-center action">
+                                            <a class="btn-icon edit-icon me-2" href="#"
+                                                data-bs-toggle="modal" data-bs-target="#edit-product">
+                                                <i data-feather="edit" class="feather-14"></i>
+                                            </a>
+                                            <a class="btn-icon delete-icon confirm-text" href="javascript:void(0);">
+                                                <i data-feather="trash-2" class="feather-14"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="product-list d-flex align-items-center justify-content-between">
+                                        <div class="d-flex align-items-center product-info" data-bs-toggle="modal"
+                                            data-bs-target="#products">
+                                            <a href="javascript:void(0);" class="img-bg">
+                                                <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-16.png"
+                                                    alt="Products">
+                                            </a>
+                                            <div class="info">
+                                                <span>PT0005</span>
+                                                <h6><a href="javascript:void(0);">Red Nike Laser</a></h6>
+                                                <p>$2000</p>
+                                            </div>
+                                        </div>
+                                        <div class="qty-item text-center">
+                                            <a href="javascript:void(0);"
+                                                class="dec d-flex justify-content-center align-items-center"
+                                                data-bs-toggle="tooltip" data-bs-placement="top" title="minus"><i
+                                                    data-feather="minus-circle" class="feather-14"></i></a>
+                                            <input type="text" class="form-control text-center" name="qty"
+                                                value="1">
+                                            <a href="javascript:void(0);"
+                                                class="inc d-flex justify-content-center align-items-center"
+                                                data-bs-toggle="tooltip" data-bs-placement="top" title="plus"><i
+                                                    data-feather="plus-circle" class="feather-14"></i></a>
+                                        </div>
+                                        <div class="d-flex align-items-center action">
+                                            <a class="btn-icon edit-icon me-2" href="#"
+                                                data-bs-toggle="modal" data-bs-target="#edit-product">
+                                                <i data-feather="edit" class="feather-14"></i>
+                                            </a>
+                                            <a class="btn-icon delete-icon confirm-text" href="javascript:void(0);">
+                                                <i data-feather="trash-2" class="feather-14"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="product-list d-flex align-items-center justify-content-between">
+                                        <div class="d-flex align-items-center product-info" data-bs-toggle="modal"
+                                            data-bs-target="#products">
+                                            <a href="javascript:void(0);" class="img-bg">
+                                                <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-17.png"
+                                                    alt="Products">
+                                            </a>
+                                            <div class="info">
+                                                <span>PT0005</span>
+                                                <h6><a href="javascript:void(0);">Red Nike Laser</a></h6>
+                                                <p>$2000</p>
+                                            </div>
+                                        </div>
+                                        <div class="qty-item text-center">
+                                            <a href="javascript:void(0);"
+                                                class="dec d-flex justify-content-center align-items-center"
+                                                data-bs-toggle="tooltip" data-bs-placement="top" title="minus"><i
+                                                    data-feather="minus-circle" class="feather-14"></i></a>
+                                            <input type="text" class="form-control text-center" name="qty"
+                                                value="1">
+                                            <a href="javascript:void(0);"
+                                                class="inc d-flex justify-content-center align-items-center"
+                                                data-bs-toggle="tooltip" data-bs-placement="top" title="plus"><i
+                                                    data-feather="plus-circle" class="feather-14"></i></a>
+                                        </div>
+                                        <div class="d-flex align-items-center action">
+                                            <a class="btn-icon edit-icon me-2" href="#"
+                                                data-bs-toggle="modal" data-bs-target="#edit-product">
+                                                <i data-feather="edit" class="feather-14"></i>
+                                            </a>
+                                            <a class="btn-icon delete-icon confirm-text" href="javascript:void(0);">
+                                                <i data-feather="trash-2" class="feather-14"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="block-section">
+                                <div class="selling-info">
+                                    <div class="row">
+                                        <div class="col-12 col-sm-4">
+                                            <div class="input-block">
+                                                <label>Order Tax</label>
+                                                <select class="select">
+                                                    <option>GST 5%</option>
+                                                    <option>GST 10%</option>
+                                                    <option>GST 15%</option>
+                                                    <option>GST 20%</option>
+                                                    <option>GST 25%</option>
+                                                    <option>GST 30%</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
                                         <div class="col-12 col-sm-4">
                                             <div class="input-block">
                                                 <label>Discount</label>
@@ -732,7 +1518,7 @@
                                             <td>Tax (GST 5%)</td>
                                             <td class="text-end">$40.21</td>
                                         </tr>
-                                        
+
                                         <tr>
                                             <td>Sub Total</td>
                                             <td class="text-end">$60,454</td>
@@ -794,7 +1580,7 @@
                             </div>
                             <div class="block-section payment-method">
                                 <div class="row d-flex align-items-center justify-content-center methods">
-                                    
+
                                     <div class="col-md-6 col-lg-4 item">
                                         <div class="default-cover">
                                             <a href="javascript:void(0);">
@@ -809,7 +1595,7 @@
 
                                     <div class="col-md-6 col-lg-4 item">
                                         <div class="default-cover">
-                                            <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#payment-completed"><span> 
+                                            <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#payment-completed"><span>
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-printer-fill" viewBox="0 0 16 16">
                                                     <path d="M5 1a2 2 0 0 0-2 2v1h10V3a2 2 0 0 0-2-2zm6 8H5a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1"/>
                                                     <path d="M0 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-1v-2a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2H2a2 2 0 0 1-2-2zm2.5 1a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1"/>
@@ -817,7 +1603,7 @@
                                         </div>
                                     </div>
 
-                                   
+
                                 </div>
                             </div>
 
@@ -829,7 +1615,7 @@
                                 <a href="javascript:void(0);" class="btn btn-danger btn-icon flex-fill"><span
                                         class="me-1 d-flex align-items-center"><i data-feather="trash-2"
                                             class="feather-16"></i></span>Void</a>
-                               
+
                             </div>
                         </aside>
                     </div>
@@ -900,7 +1686,7 @@
                             <div class="col-sm-12 col-md-6">
                                 <div class="invoice-user-name"><span>Customer Id: </span><span>#LL93784</span></div>
                                 <div class="invoice-user-name"><span>Tables: </span><span>#LL93784</span></div>
-                                
+
                             </div>
                         </div>
                     </div>
@@ -938,7 +1724,7 @@
                                             <td>Discount :</td>
                                             <td class="text-end">-$50.00</td>
                                         </tr>
-                                        
+
                                         <tr>
                                             <td>Tax (5%) :</td>
                                             <td class="text-end">$5.00</td>

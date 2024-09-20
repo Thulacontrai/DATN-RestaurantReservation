@@ -29,11 +29,12 @@
                                             <p id="info-notes">Ghi chú</p>
                                         </div>
                                         <div class="col-7">
-                                            <p id="info-name">Nguyễn Tôn Quý</p>
-                                            <p id="info-phone">0964888888</p>
-                                            <p id="info-people">6 người</p>
-                                            <p id="info-datetime">Thứ tư, ngày 11/09/2024 19:30</p>
-                                            <p id="info-notes">Em ăn gì cũng được...</p>
+                                            <p id="info-name">{{ $showDeposit['user_name'] }}</p>
+                                            <p id="info-phone">{{ $showDeposit['user_phone'] }}</p>
+                                            <p id="info-people">{{ $showDeposit['guest_count'] }} người</p>
+                                            <p id="info-datetime">{{ $showDeposit['reservation_date'] }}
+                                                {{ $showDeposit['reservation_time'] }}</p>
+                                            <p id="info-notes">{{ $showDeposit['note'] ?? null }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -52,9 +53,9 @@
                                             <p>Tổng tiền cọc</p>
                                         </div>
                                         <div class="col-7">
-                                            <p>X</p>
-                                            <p>6</p>
-                                            <p>6X</p>
+                                            <p>100.000 đ</p>
+                                            <p>{{ $showDeposit['guest_count'] }}</p>
+                                            <p>{{ $deposit }} đ</p>
                                         </div>
                                     </div>
                                 </div>
@@ -66,7 +67,7 @@
                                     <h3 class="">Phương thức thanh toán</h3>
 
                                     <div class="pt-2">
-                                        <input type="radio" name="payment" id="momo" value="momo">
+                                        <input type="radio" name="payment" id="momo" value="momo" checked>
                                         <label for="momo">Momo</label>
                                         <br>
                                         <input type="radio" name="payment" id="vnpay" value="vnpay">
