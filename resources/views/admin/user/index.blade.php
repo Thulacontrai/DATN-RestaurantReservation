@@ -58,28 +58,26 @@
                                     <thead>
                                         <tr>
                                             <th>ID</th>
-                                            <th>Hình Ảnh</th>
                                             <th>Tên</th>
                                             <th>Email</th>
                                             <th>Số Điện Thoại</th>
-                                            <th>Địa Chỉ</th>
                                             <th>Vai Trò</th>
                                             <th>Trạng Thái</th>
+                                            <th>Ngày tạo</th>
                                             <th>Hành Động</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @forelse ($users as $user)
+                                        @if ($users->isNotEmpty())
+                                        @foreach ($users as $user)
                                             <tr>
                                                 <td>{{ $user->id }}</td>
-                                                <td><img src="{{ $user->avatar ? asset('storage/' . $user->avatar) : 'https://via.placeholder.com/50' }}"
-                                                        alt="User Image" class="img-fluid rounded-circle" width="50">
-                                                </td>
                                                 <td>{{ $user->name }}</td>
-                                                <td>{{ $user->email }}</td>
-                                                <td>{{ $user->phone }}</td>
-                                                <td>{{ $user->address }}</td>
-                                                <td>{{ optional($user->role)->role_name ?? 'N/A' }}</td>
+                                                <td>{{$user->email}}</td>
+                                                <td>{{ $user->phone ?? 'Chưa có số điện thoại' }}</td>
+
+                                                <td>{{ $user->roles ? $user->roles->pluck('name')->implode(' , ') : 'Không có vai trò' }}</td>
+
                                                 <td>
                                                     @if ($user->status == 'active')
                                                         <span class="badge shade-green">Hoạt Động</span>
@@ -87,42 +85,40 @@
                                                         <span class="badge shade-red">Ngừng Hoạt Động</span>
                                                     @endif
                                                 </td>
+                                                
+                                                <td>{{ $user->created_at }}</td>
                                                 <td>
                                                     <div class="actions">
-                                                        <a href="{{ route('admin.user.show', $user->id) }}" class="viewRow"
-                                                            data-id="{{ $user->id }}">
-                                                            <i class="bi bi-list text-green"></i>
-                                                        </a>
-                                                        <a href="{{ route('admin.user.edit', $user->id) }}" class="editRow"
-                                                            data-id="{{ $user->id }}">
+                                                        <a href="{{ route('admin.user.edit', $user->id) }}">
                                                             <i class="bi bi-pencil-square text-warning"></i>
                                                         </a>
-                                                        <form action="{{ route('admin.user.destroy', $user->id) }}"
-                                                            method="POST" style="display:inline-block;"
-                                                            onsubmit="return confirm('Bạn có chắc chắn muốn xóa?');">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <a href="#">
-                                                            <button type="submit" class="btn btn-link p-0">
-                                                                <i class="bi bi-trash text-red"></i>
-                                                            </button></a>
-                                                        </form>
+                                                        {{-- <a href="#">
+                                                            <form
+                                                                action="{{ route('admin.role.destroy', $role->id) }}"
+                                                                method="POST" style="display: inline-block;">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="border-0 bg-transparent"
+                                                                    onclick="deleteRole({{$role->id}})">
+                                                                    <i class="bi bi-trash text-red"></i>
+                                                                </button>
+                                                            </form>
+                                                        </a> --}}
                                                     </div>
                                                 </td>
                                             </tr>
-                                        @empty
-                                            <tr>
-                                                <td colspan="9">Không có người dùng nào được tìm thấy.</td>
-                                            </tr>
-                                        @endforelse
-                                    </tbody>
+                                        @endforeach
+                                    @endif
 
-                                </table>
+
+
+                                </tbody>
+                            </table>
                             </div>
-                            {{-- <!-- Pagination -->
+                          
                             <div class="pagination justify-content-center mt-3">
                                 {{ $users->links() }}
-                            </div> --}}
+                            </div>
 
                         </div>
                     </div>
