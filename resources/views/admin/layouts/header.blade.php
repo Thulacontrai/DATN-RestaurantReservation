@@ -23,7 +23,7 @@
             <li class="dropdown">
 
                 <a href="#" id="userSettings" class="user-settings" data-toggle="dropdown" aria-haspopup="true">
-                    <span class="">{{ Auth::user()->name}} ({{Auth::user()->roles->pluck('name')->implode(' , ')}})</span>
+                    <span class="user-name d-none d-md-block">Abigale Heaney</span>
                     <span class="avatar">
                         <img src="{{ asset('adminn/assets/images/user2.png') }}" alt="Admin Templates">
                         <span class="status online"></span>
@@ -33,7 +33,7 @@
                     <div class="header-profile-actions">
                         {{-- <a href="#">Profile</a> --}}
                         <a href="{{ route('admin.accountSetting.index')}}">Settings</a>
-                        <a href="login">Logout</a>
+                        <a href="#">Logout</a>
                     </div>
                 </div>
             </li>

@@ -3,89 +3,72 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-
+use App\Models\Permission;
+use App\Traits\TraitCRUD;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use Spatie\Permission\Models\Permission;
-use Illuminate\Routing\Controllers\HasMiddleware;
-use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\DB;
 
 class PermissionController extends Controller
 {
+    use TraitCRUD;
 
-    public function __construct()
-    {
-        // Gán middleware cho các phương thức
-        $this->middleware('permission:Xem quyền hạn', ['only' => ['index']]);
-        $this->middleware('permission:Tạo mới quyền hạn', ['only' => ['create']]);
-        $this->middleware('permission:Sửa quyền hạn', ['only' => ['edit']]);
-        $this->middleware('permission:Xóa quyền hạn', ['only' => ['destroy']]);
-        
-    }
+    protected $model = Permission::class;
+    protected $viewPath = 'admin.user.permission';
+    protected $routePath = 'admin.permission';
 
 
-    public function index()
-    {
-        $permissions = Permission::orderBy('created_at', 'DESC')->paginate(10);
-        return view('admin.user.permissions.index', [
-            'permissions' => $permissions
-        ]);
-    }
     public function create()
     {
-        return view('admin.user.permissions.create');
+        return view($this->viewPath . '.create');
     }
+
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|unique:permissions|min:3'
+        $request->validate([
+            'permission_name' => 'required|string|max:255',
+            'description' => 'nullable|string',
         ]);
-        if ($validator->passes()) {
-            Permission::create(['name' => $request->name]);
-            return redirect()->route('admin.permissions.index')->with('success', 'Thêm Quyền hạn thành công');
-        } else {
-            return redirect()->route('admin.permissions.create')->withInput()->withErrors($validator);
-        }
+
+        DB::transaction(function () use ($request) {
+            $this->model::create($request->all());
+        });
+
+        return redirect()->route($this->routePath . '.index')->with('success', 'Quyền hạn đã được thêm mới thành công.');
     }
+
+
+
     public function edit($id)
     {
         $permission = Permission::findOrFail($id);
-        return view('admin.user.permissions.edit', [
-            'permission' => $permission
-        ]);
+        return view($this->viewPath . '.edit', compact('permission'));
     }
-    public function update($id, Request $request)
+
+    public function update(Request $request, $id)
     {
-        $permission = Permission::findOrFail($id);
-
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|min:3|unique:permissions,name,' . $id . ',id'
+        $request->validate([
+            'permission_name' => 'required|string|max:255',
+            'description' => 'nullable|string',
         ]);
-        if ($validator->passes()) {
 
-            $permission->name = $request->name;
-            $permission->save();
-            return redirect()->route('admin.permissions.index')->with('success', 'Chỉnh sửa permission thành công');
-        } else {
-            return redirect()->route('admin.permissions.edit', $id)->withInput()->withErrors($validator);
-        }
+        DB::transaction(function () use ($request, $id) {
+            $permission = Permission::findOrFail($id);
+            $permission->update($request->all());
+        });
+
+        return redirect()->route($this->routePath . '.index')->with('success', 'Quyền hạn đã được cập nhật thành công.');
     }
+
+
+
+
     public function destroy($id)
     {
-        $permission = Permission::find($id);
+        DB::transaction(function () use ($id) {
+            $permission = Permission::findOrFail($id);
+            $permission->delete();
+        });
 
-        if ($permission === null) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Không có quyền hạn'
-            ]);
-        }
-
-        $permission->delete();
-
-        return response()->json([
-            'status' => true,
-            'message' => 'Xóa quyền hạn thành công'
-        ]);
+        return redirect()->route($this->routePath . '.index')->with('success', 'Quyền hạn đã được xóa thành công.');
     }
 }

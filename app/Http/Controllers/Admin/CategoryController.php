@@ -6,23 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Traits\TraitCRUD;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controllers\HasMiddleware;
-use Illuminate\Routing\Controllers\Middleware;
 
-class CategoryController extends Controller 
+class CategoryController extends Controller
 {
-
-    public function __construct()
-    {
-        // Gán middleware cho các phương thức
-        $this->middleware('permission:Xem danh mục', ['only' => ['index']]);
-        $this->middleware('permission:Tạo mới danh mục', ['only' => ['create']]);
-        $this->middleware('permission:Sửa danh mục', ['only' => ['edit']]);
-        $this->middleware('permission:Xóa danh mục', ['only' => ['destroy']]);
-        
-    }
-
-
     use TraitCRUD;
 
     protected $model = Category::class;

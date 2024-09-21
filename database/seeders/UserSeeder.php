@@ -39,7 +39,5 @@ class UserSeeder extends Seeder
             'avatar' => 'jane_avatar.jpg',
             'password' => Hash::make('password'),
         ]);
-
-        
     }
 }

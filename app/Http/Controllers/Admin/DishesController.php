@@ -10,17 +10,6 @@ use Illuminate\Http\Request;
 
 class DishesController extends Controller
 {
-    public function __construct()
-    {
-        // Gán middleware cho các phương thức
-        $this->middleware('permission:Xem món ăn', ['only' => ['index']]);
-        $this->middleware('permission:Tạo mới món ăn', ['only' => ['create']]);
-        $this->middleware('permission:Sửa món ăn', ['only' => ['edit']]);
-        $this->middleware('permission:Xóa món ăn', ['only' => ['destroy']]);
-        
-    }
-
-
     use TraitCRUD;
 
     protected $model = Dishes::class;

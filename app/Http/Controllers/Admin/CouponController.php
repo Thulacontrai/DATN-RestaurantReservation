@@ -10,16 +10,6 @@ use Illuminate\Http\Request;
 class CouponController extends Controller
 {
 
-    public function __construct()
-    {
-        // Gán middleware cho các phương thức
-        $this->middleware('permission:Xem mã giảm giá', ['only' => ['index']]);
-        $this->middleware('permission:Tạo mới mã giảm giá', ['only' => ['create']]);
-        $this->middleware('permission:Sửa mã giảm giá', ['only' => ['edit']]);
-        $this->middleware('permission:Xóa mã giảm giá', ['only' => ['destroy']]);
-        
-    }
-
     use TraitCRUD;
 
     protected $model = Coupon::class;

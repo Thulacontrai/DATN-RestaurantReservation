@@ -52,7 +52,6 @@
                         </ul>
                     </div>
                 </li>
-                {{-- @can('Xem và quản lý danh mục') --}}
                 <li class="sidebar-dropdown">
                     <a href="#">
                         <i class="bi bi-folder"></i>
@@ -66,7 +65,6 @@
                         </ul>
                     </div>
                 </li>
-                {{-- @endcan --}}
 
                 <li class="sidebar-dropdown">
                     <a href="#">
@@ -168,7 +166,6 @@
                     </div>
                 </li> --}}
 
-                {{-- @can('Xem và quản lý người dùng') --}}
                 <li class="sidebar-dropdown">
                     <a href="#">
                         <i class="bi bi-people-fill"></i>
@@ -181,7 +178,7 @@
 
                             </li>
                             <li>
-                                <a href="{{ route('admin.permissions.index') }}">Quyền hạn</a>
+                                <a href="{{ route('admin.permission.index') }}">Quyền hạn</a>
 
                             </li>
                             <li>
@@ -192,41 +189,39 @@
                         </ul>
                     </div>
                 </li>
-                {{-- @endcan --}}
 
-                {{-- @can('Xem và quản lý người dùng') --}}
-                    <li class="sidebar-dropdown">
-                        <a href="#">
-                            <i class="bi bi-pci-card"></i>
-                            <span class="menu-text">Quản lý kho Ng-liệu</span>
-                        </a>
-                        <div class="sidebar-submenu">
-                            <ul>
-                                <li>
-                                    <a href="{{ route('admin.supplier.index') }}">Nhà cung cấp</a>
-                                <li>
-                                <li>
-                                    <a href="{{ route('admin.ingredientType.index') }}">Loại Nguyên Liệu</a>
-                                </li>
-                                <li>
-                                    <a href="{{ route('admin.ingredient.index') }}">Danh sách Nguyên Liệu</a>
-                                </li>
-                                <li>
-                                    <a href="#">Phiếu nhập kho</a>
-                                </li>
-                                <li>
-                                    <a href="#">Combo món ăn</a>
-                                </li>
-                                <li>
-                                    <a href="#">Hàng tồn kho</a>
-                                </li>
-                                <li>
-                                    <a href="#">Xuất kho</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                {{-- @endcan --}}
+                <li class="sidebar-dropdown">
+                    <a href="#">
+                        <i class="bi bi-pci-card"></i>
+                        <span class="menu-text">Quản lý kho Ng-liệu</span>
+                    </a>
+                    <div class="sidebar-submenu">
+                        <ul>
+                            <li>
+                                <a href="{{ route('admin.supplier.index') }}">Nhà cung cấp</a>
+                            <li>
+                            <li>
+                                <a href="{{ route('admin.ingredientType.index')}}">Loại Nguyên Liệu</a>
+                            </li>
+                            <li>
+                                <a href="{{ route('admin.ingredient.index')}}">Danh sách Nguyên Liệu</a>
+                            </li>
+                            <li>
+                                <a href="#">Phiếu nhập kho</a>
+                            </li>
+                            <li>
+                                <a href="#">Combo món ăn</a>
+                            </li>
+                            <li>
+                                <a href="#">Hàng tồn kho</a>
+                            </li>
+                            <li>
+                                <a href="#">Xuất kho</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
 
                 {{-- <li class="sidebar-dropdown">
                     <a href="#">

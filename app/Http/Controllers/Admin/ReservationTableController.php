@@ -9,8 +9,6 @@ use Illuminate\Http\Request;
 
 class ReservationTableController extends Controller
 {
-    
-
     use TraitCRUD;
 
     protected $model = ReservationTable::class;

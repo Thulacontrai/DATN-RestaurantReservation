@@ -12,16 +12,6 @@ use Illuminate\Support\Facades\DB;
 
 class IngredientController extends Controller
 {
-    public function __construct()
-    {
-        // Gán middleware cho các phương thức
-        $this->middleware('permission:Xem nguyên liệu', ['only' => ['index']]);
-        $this->middleware('permission:Tạo mới nguyên liệu', ['only' => ['create']]);
-        $this->middleware('permission:Sửa nguyên liệu', ['only' => ['edit']]);
-        $this->middleware('permission:Xóa nguyên liệu', ['only' => ['destroy']]);
-        
-    }
-
     use TraitCRUD;
 
     protected $model = Ingredient::class;

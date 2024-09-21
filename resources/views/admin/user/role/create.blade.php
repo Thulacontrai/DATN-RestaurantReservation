@@ -34,25 +34,17 @@
                                 @csrf
 
                                 <div class="mb-3">
-                                    <label for="name" class="form-label">Tên Vai Trò</label>
-                                    <input type="text" name="name" id="name" class="form-control" placeholder="Nhập tên vai trò" value="{{ old('name') }}" required>
-                                    @error('name')
+                                    <label for="role_name" class="form-label">Tên Vai Trò</label>
+                                    <input type="text" name="role_name" id="role_name" class="form-control" placeholder="Nhập tên vai trò" value="{{ old('role_name') }}" required>
+                                    @error('role_name')
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
-                               
-                                <div class="grid grid-cols-4 mb-3  ">
-                                    @if ($permissions->isNotEmpty())
-                                        @foreach ($permissions as $permission)
-                                            <div class="mt-3">
-                                                <input type="checkbox" name="permission[]" value="{{ $permission->name }}" id="permission-{{$permission->id}}" class="rounded">
-                                                <label for="permission-{{$permission->id}}">{{ $permission->name }}</label>
-                                            </div>
-                                        @endforeach
-                                    @endif
-                                </div>
 
-                    
+                                <div class="mb-3">
+                                    <label for="description" class="form-label">Mô Tả</label>
+                                    <textarea name="description" id="description" class="form-control" placeholder="Nhập mô tả vai trò">{{ old('description') }}</textarea>
+                                </div>
 
                                 <button type="submit" class="btn btn-primary">Lưu Vai Trò</button>
                             </form>
