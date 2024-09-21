@@ -23,6 +23,7 @@ use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\TableController;
 use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Client\MenuController;
+use Illuminate\Support\Facades\Broadcast;
 
 /*
 |--------------------------------------------------------------------------
@@ -114,6 +115,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 
     Route::resource('reservation', ReservationController::class);
+
+    Route::get('reservations/check', [ReservationController::class, 'checkUpcomingAndOverdueReservations'])->name('reservation.check');
+
+    Broadcast::channel('reservations-channel', function ($user) {
+        return true;  // Điều kiện xác thực (nếu có)
+    });
+
+
+
+
     Route::resource('reservationTable', ReservationTableController::class);
     Route::resource('reservationHistory', ReservationHistoryController::class);
 
@@ -176,7 +187,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::delete('role-force-delete/{id}', [RoleController::class, 'forceDelete'])->name('role.forceDelete');
 
 
-    Route::resource('permission', PermissionController::class);
+    // Route::resource('permission', PermissionController::class);
     Route::resource('supplier', SupplierController::class);
     Route::resource('ingredientType', IngredientTypeController::class);
     Route::resource('ingredient', IngredientController::class);

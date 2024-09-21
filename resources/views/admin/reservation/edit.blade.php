@@ -54,18 +54,6 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="remaining_amount" class="form-label">Số tiền còn lại</label>
-                                    <input type="number" class="form-control" id="remaining_amount" name="remaining_amount"
-                                        value="{{ $reservation->remaining_amount }}" required>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="total_amount" class="form-label">Tổng tiền</label>
-                                    <input type="number" class="form-control" id="total_amount" name="total_amount"
-                                        value="{{ $reservation->total_amount }}" required>
-                                </div>
-
-                                <div class="mb-3">
                                     <label for="status" class="form-label">Trạng thái</label>
                                     <select class="form-control" id="status" name="status" required>
                                         <option value="Confirmed"

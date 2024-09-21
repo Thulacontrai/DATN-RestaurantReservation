@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'default' => env('BROADCAST_DRIVER', 'null'),
+    'default' => env('BROADCAST_DRIVER', 'pusher'),  // Đảm bảo Pusher là driver mặc định
 
     /*
     |--------------------------------------------------------------------------
