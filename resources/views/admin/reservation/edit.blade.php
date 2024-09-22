@@ -50,7 +50,7 @@
                                 <div class="mb-3">
                                     <label for="deposit_amount" class="form-label">Số tiền đặt cọc</label>
                                     <input type="number" class="form-control" id="deposit_amount" name="deposit_amount"
-                                        value="{{ $reservation->deposit_amount }}" >
+                                        value="{{ $reservation->deposit_amount }}" required>
                                 </div>
 
                                 <div class="mb-3">

@@ -27,6 +27,10 @@
     <div class="page-wrapper">
         <!-- Site wrapper -->
         <div class="main-container">
+
+            @include('admin.layouts.load')
+
+
             @include('admin.layouts.header')
 
             <!-- Left side column. contains the sidebar -->

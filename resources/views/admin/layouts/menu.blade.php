@@ -178,7 +178,7 @@
 
                             </li>
                             <li>
-                                <a href="{{ route('admin.permission.index') }}">Quyền hạn</a>
+                                <a href="#">Quyền hạn</a>
 
                             </li>
                             <li>

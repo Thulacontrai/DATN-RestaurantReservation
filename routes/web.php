@@ -23,7 +23,7 @@ use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\TableController;
 use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Client\MenuController;
-use App\Models\Reservation;
+use App\Http\Controllers\Client\PosController;
 
 /*
 |--------------------------------------------------------------------------
@@ -67,10 +67,6 @@ route::get(
     "deposit",
     [ReservationController::class, "showDeposit"]
 )->name("deposit.client");
-route::get(
-    "reservationSuccessfully",
-    [ReservationController::class, "reservationSuccessfully"]
-)->name("reservationSuccessfully.client");
 
 
 
@@ -104,6 +100,14 @@ route::get("/blog-single", function () {
 Route::get('pos', function () {
     return view('pos.pos');
 });
+// Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
+Route::get('/pos/reservations', [PosController::class, 'getUpcomingAndOverdueReservations'])->name('pos.reservations');
+
+
+
+
+
+
 
 
 
@@ -116,14 +120,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::patch('table/{id}/restore', [TableController::class, 'restore'])->name('table.restore');
     Route::delete('table/{id}/force-delete', [TableController::class, 'forceDelete'])->name('table.forceDelete');
 
-    /// xếp bàn cho khách
-    Route::get('reservation/{reservationId}/assign-tables', [ReservationController::class, 'assignTables'])->name('reservation.assignTables');
-    Route::get('reservation/assign-table', [ReservationController::class, 'assignTable'])->name('assignTable');
-    Route::post('reservation/submit-table', [ReservationController::class, 'submitTable'])->name('submit.tables');
-    Route::resource('reservation', ReservationController::class);
 
+
+    Route::resource('reservation', ReservationController::class);
     Route::resource('reservationTable', ReservationTableController::class);
     Route::resource('reservationHistory', ReservationHistoryController::class);
+
 
 
     Route::resource('category', CategoryController::class);
@@ -199,5 +201,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Route::middleware(['auth', 'isAdmin'])->group(function () {
     //     Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     // });
+
 
 });
