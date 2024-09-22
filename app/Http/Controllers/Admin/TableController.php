@@ -119,4 +119,6 @@ class TableController extends Controller
         $table->forceDelete();
         return redirect()->route('admin.tables.trash')->with('success', 'Bàn đã được xóa vĩnh viễn!');
     }
+
+   
 }

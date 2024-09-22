@@ -23,6 +23,7 @@ use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\TableController;
 use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Client\MenuController;
+use App\Models\Reservation;
 
 /*
 |--------------------------------------------------------------------------
@@ -111,9 +112,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::patch('table/{id}/restore', [TableController::class, 'restore'])->name('table.restore');
     Route::delete('table/{id}/force-delete', [TableController::class, 'forceDelete'])->name('table.forceDelete');
 
-
-
+    /// xếp bàn cho khách
+    Route::get('reservation/{reservationId}/assign-tables', [ReservationController::class,'assignTables'])->name('reservation.assignTables');
+    Route::get('reservation/assign-table', [ReservationController::class,'assignTable'])->name('assignTable');
+    Route::post('reservation/submit-table', [ReservationController::class,'submitTable'])->name('submit.tables');
     Route::resource('reservation', ReservationController::class);
+  
     Route::resource('reservationTable', ReservationTableController::class);
     Route::resource('reservationHistory', ReservationHistoryController::class);
 

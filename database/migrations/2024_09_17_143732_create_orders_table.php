@@ -28,10 +28,10 @@ return new class extends Migration
             $table->timestamps();
 
             // Khóa ngoại
-            $table->foreign('reservation_id')->references('id')->on('reservations')->onDelete('cascade');
-            $table->foreign('staff_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('table_id')->references('id')->on('tables')->onDelete('set null');
-            $table->foreign('customer_id')->references('id')->on('users')->onDelete('set null');
+            // $table->foreign('reservation_id')->references('id')->on('reservations')->onDelete('cascade');
+            // $table->foreign('staff_id')->references('id')->on('users')->onDelete('cascade');
+            // $table->foreign('table_id')->references('id')->on('tables')->onDelete('set null');
+            // $table->foreign('customer_id')->references('id')->on('users')->onDelete('set null');
         });
     }
 }
