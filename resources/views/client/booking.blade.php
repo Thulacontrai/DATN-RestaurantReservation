@@ -2,8 +2,6 @@
 @section('title', 'Booking')
 
 @section('content')
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
     @include('client.layouts.component.subheader', [
         'backgroundImage' => 'client/03_images/background/bg-2.jpg',
         'subtitle' => 'Make a',
