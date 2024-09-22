@@ -67,6 +67,10 @@ route::get(
     "deposit",
     [ReservationController::class, "showDeposit"]
 )->name("deposit.client");
+route::get(
+    "reservationSuccessfully",
+    [ReservationController::class, "reservationSuccessfully"]
+)->name("reservationSuccessfully.client");
 
 
 
@@ -113,11 +117,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::delete('table/{id}/force-delete', [TableController::class, 'forceDelete'])->name('table.forceDelete');
 
     /// xếp bàn cho khách
-    Route::get('reservation/{reservationId}/assign-tables', [ReservationController::class,'assignTables'])->name('reservation.assignTables');
-    Route::get('reservation/assign-table', [ReservationController::class,'assignTable'])->name('assignTable');
-    Route::post('reservation/submit-table', [ReservationController::class,'submitTable'])->name('submit.tables');
+    Route::get('reservation/{reservationId}/assign-tables', [ReservationController::class, 'assignTables'])->name('reservation.assignTables');
+    Route::get('reservation/assign-table', [ReservationController::class, 'assignTable'])->name('assignTable');
+    Route::post('reservation/submit-table', [ReservationController::class, 'submitTable'])->name('submit.tables');
     Route::resource('reservation', ReservationController::class);
-  
+
     Route::resource('reservationTable', ReservationTableController::class);
     Route::resource('reservationHistory', ReservationHistoryController::class);
 
