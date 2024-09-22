@@ -19,6 +19,7 @@
                         <span class="menu-text">Dashboards</span>
                     </a>
                 </li>
+                {{-- @can('Xem danh mục') --}}
                 <li class="sidebar-dropdown">
                     <a href="#">
                         <i class="bi bi-window-split"></i>
@@ -32,6 +33,8 @@
                         </ul>
                     </div>
                 </li>
+                {{-- @endcan --}}
+
                 <li class="sidebar-dropdown">
                     <a href="#">
                         <i class="bi bi-layers-half"></i>
@@ -52,7 +55,8 @@
                         </ul>
                     </div>
                 </li>
-                {{-- @can('Xem và quản lý danh mục') --}}
+
+                @can('Xem danh mục')
                 <li class="sidebar-dropdown">
                     <a href="#">
                         <i class="bi bi-folder"></i>
@@ -66,8 +70,9 @@
                         </ul>
                     </div>
                 </li>
-                {{-- @endcan --}}
+                @endcan
 
+                @can('Xem món ăn')
                 <li class="sidebar-dropdown">
                     <a href="#">
                         <i class="bi bi-journal-bookmark-fill"></i>
@@ -82,7 +87,9 @@
                         </ul>
                     </div>
                 </li>
+                @endcan
 
+                @can('Xem combo')
                 <li class="sidebar-dropdown">
                     <a href="#">
                         <i class="bi bi-boxes"></i>
@@ -96,7 +103,9 @@
                         </ul>
                     </div>
                 </li>
+                @endcan
 
+                @can('Xem thanh toán')
                 <li class="sidebar-dropdown">
                     <a href="#">
                         <i class="bi bi-clipboard-check"></i>
@@ -110,6 +119,9 @@
                         </ul>
                     </div>
                 </li>
+                @endcan
+
+                @can('Xem mã giảm giá')
                 <li class="sidebar-dropdown">
                     <a href="#">
                         <i class="bi bi-receipt-cutoff"></i>
@@ -123,6 +135,9 @@
                         </ul>
                     </div>
                 </li>
+                @endcan
+
+                @can('Xem order')
                 <li class="sidebar-dropdown">
                     <a href="#">
                         <i class="bi bi-clipboard-data"></i>
@@ -137,7 +152,9 @@
                         </ul>
                     </div>
                 </li>
+                @endcan
 
+                @can('Xem feedback')
                 <li class="sidebar-dropdown">
                     <a href="#">
                         <i class="bi bi-person-workspace"></i>
@@ -152,6 +169,7 @@
                         </ul>
                     </div>
                 </li>
+                @endcan
 
                 {{-- <li class="sidebar-dropdown">
                     <a href="#">
@@ -168,7 +186,7 @@
                     </div>
                 </li> --}}
 
-                {{-- @can('Xem và quản lý người dùng') --}}
+                @can('Xem người dùng')
                 <li class="sidebar-dropdown">
                     <a href="#">
                         <i class="bi bi-people-fill"></i>
@@ -192,7 +210,7 @@
                         </ul>
                     </div>
                 </li>
-                {{-- @endcan --}}
+                @endcan
 
                 {{-- @can('Xem và quản lý người dùng') --}}
                     <li class="sidebar-dropdown">

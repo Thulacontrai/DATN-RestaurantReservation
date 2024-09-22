@@ -9,6 +9,15 @@ use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
+    public function __construct()
+    {
+        // Gán middleware cho các phương thức
+        $this->middleware('permission:Xem order', ['only' => ['index']]);
+        $this->middleware('permission:Tạo mới order', ['only' => ['create']]);
+        $this->middleware('permission:Sửa order', ['only' => ['edit']]);
+        $this->middleware('permission:Xóa order', ['only' => ['destroy']]);
+        
+    }
 
     use TraitCRUD;
 

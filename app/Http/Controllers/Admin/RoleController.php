@@ -15,10 +15,10 @@ class RoleController extends Controller
     public function __construct()
     {
         // Gán middleware cho các phương thức
-        $this->middleware('permission:Xem người dùng', ['only' => ['index']]);
-        $this->middleware('permission:Tạo mới người dùng', ['only' => ['create']]);
-        $this->middleware('permission:sửa người dùng', ['only' => ['edit']]);
-        $this->middleware('permission:Xóa người dùng', ['only' => ['destroy']]);
+        $this->middleware('permission:Xem vai trò', ['only' => ['index']]);
+        $this->middleware('permission:Tạo mới vai trò', ['only' => ['create']]);
+        $this->middleware('permission:sửa vai trò', ['only' => ['edit']]);
+        $this->middleware('permission:Xóa vai trò', ['only' => ['destroy']]);
        
     }
 

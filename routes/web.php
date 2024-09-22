@@ -100,7 +100,9 @@ route::get("/blog-single", function () {
 Route::get('pos', function () {
     return view('pos.pos');
 });
-
+// Route::get('/', function () {
+//     return view('auth.login');
+// });
 
 
 Route::get('admin', [AdminController::class, 'index']);
@@ -217,6 +219,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 });
 
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
 Route::get('/dashboard', function () {
     return view('dashboard');
