@@ -20,8 +20,6 @@ class Reservation extends Model
         'reservation_date',
         'guest_count',
         'deposit_amount',
-        'total_amount',
-        'remaining_amount',
         'status',
         'cancelled_reason',
         'note',
@@ -34,8 +32,8 @@ class Reservation extends Model
         return $this->belongsTo(User::class, 'customer_id');
     }
 
-    // public function coupon()
-    // {
-    //     return $this->belongsTo(Coupon::class, 'coupon_id');
-    // }
+    public function coupon()
+    {
+        return $this->belongsTo(Coupon::class, 'coupon_id');
+    }
 }

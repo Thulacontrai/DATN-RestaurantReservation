@@ -17,4 +17,9 @@ class Category extends Model
     ];
 
     protected $dates = ['deleted_at'];
+
+    public function dishes()
+    {
+        return $this->hasMany(Dishes::class);
+    }
 }

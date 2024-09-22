@@ -42,8 +42,6 @@
                                     <h5 class="text-primary">Chi Tiết Thanh Toán</h5>
                                     <ul class="list-group list-group-flush">
                                         <li class="list-group-item"><strong>Số Tiền Đặt Cọc:</strong> {{ number_format($reservation->deposit_amount, 0, ',', '.') }} VND</li>
-                                        <li class="list-group-item"><strong>Tổng Tiền:</strong> {{ number_format($reservation->total_amount, 0, ',', '.') }} VND</li>
-                                        <li class="list-group-item"><strong>Số Tiền Còn Lại:</strong> {{ number_format($reservation->remaining_amount, 0, ',', '.') }} VND</li>
                                     </ul>
                                 </div>
 

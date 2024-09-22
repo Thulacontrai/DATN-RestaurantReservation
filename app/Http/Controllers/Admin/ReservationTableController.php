@@ -24,7 +24,7 @@ class ReservationTableController extends Controller
     public function index()
     {
         $reservationTables = ReservationTable::all();
-        return view('admin.reservation.reservationTable.index', compact('reservationTables')); // Truyền dữ liệu vào view
+        return view('admin.reservation.reservationTable.index', compact('reservationTables'));
     }
 
     public function show($id)

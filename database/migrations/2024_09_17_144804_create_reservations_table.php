@@ -13,13 +13,13 @@ class CreateReservationsTable extends Migration
             $table->id(); // bigint, auto-increment
             $table->unsignedBigInteger('customer_id'); // bigint, không cho phép NULL
             $table->unsignedBigInteger('coupon_id')->nullable(); // bigint, cho phép NULL
-            $table->dateTime('reservation_time'); // datetime, không cho phép NULL
-            $table->dateTime('reservation_date')->nullable(); // datetime, cho phép NULL
+            $table->integer('user_phone')->nullable(); // bigint, không
+            $table->string('user_name', 255)->nullable(); // varchar(255), không cho phép NULL
+            $table->time('reservation_time'); // datetime, không cho phép NULL
+            $table->date('reservation_date')->nullable(); // datetime, cho phép NULL
             $table->integer('guest_count')->nullable(); // int, cho phép NULL
             $table->decimal('deposit_amount', 15, 2)->nullable(); // decimal(15,2), cho phép NULL
-            $table->decimal('total_amount', 20, 2)->nullable(); // decimal(20,2), cho phép NULL
-            $table->decimal('remaining_amount', 15, 2)->nullable(); // decimal(15,2), cho phép NULL
-            $table->enum('status', ['Confirmed', 'Pending', 'Cancelled'])->default('Pending'); // enum, không cho phép NULL
+            $table->enum('status', ['Confirmed', 'Pending','checked-in','Cancelled'])->default('Pending'); // enum, không cho phép NULL
             $table->string('cancelled_reason', 255)->nullable(); // varchar(255), cho phép NULL
             $table->string('note', 255)->nullable(); // varchar(255), cho phép NULL
             $table->timestamps(); // created_at và updated_at
