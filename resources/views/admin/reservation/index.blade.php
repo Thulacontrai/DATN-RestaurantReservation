@@ -16,23 +16,15 @@
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <div class="card-title">Danh Sách Đặt Bàn</div>
-<<<<<<< HEAD
                             {{-- <!-- Thêm link đến trang kiểm tra -->
                             <a href="{{ route('admin.reservation.check') }}" class="btn btn-sm btn-primary">
                                 Kiểm Tra Đơn Đặt Bàn Sắp Đến và Quá Hạn
                             </a> --}}
-=======
-                            <!-- Thêm link đến trang kiểm tra -->
-                            <a href="{{ route('admin.reservation.check') }}" class="btn btn-sm btn-primary">
-                                Kiểm Tra Đơn Đặt Bàn Sắp Đến và Quá Hạn
-                            </a>
->>>>>>> a12e744211bdba5324b3b28a9ea438108c708317
 
 
                         </div>
                         <div class="card-body">
 
-<<<<<<< HEAD
                             @if ($upcomingReservations->isNotEmpty())
                             <div class="alert alert-info">
                                 <strong>Thông báo:</strong> Có {{ $upcomingReservations->count() }} đơn đặt bàn sắp đến hạn trong vòng 30 phút tới!
@@ -52,23 +44,6 @@
                         @endif
 
 
-=======
-                            <!-- Thông báo đặt bàn sắp đến hạn -->
-                            @if ($upcomingReservations->isNotEmpty())
-                                <div class="alert alert-info">
-                                    <strong>Thông báo:</strong> Có {{ $upcomingReservations->count() }} đơn đặt bàn sắp đến
-                                    hạn trong vòng 30 phút tới!
-                                </div>
-                            @endif
-
-                            <!-- Thông báo đơn đã quá giờ -->
-                            @if ($overdueReservations->isNotEmpty())
-                                <div class="alert alert-danger">
-                                    <strong>Thông báo:</strong> {{ $overdueReservations->count() }} đơn đặt bàn đã quá hạn
-                                    và bị hủy.
-                                </div>
-                            @endif
->>>>>>> a12e744211bdba5324b3b28a9ea438108c708317
 
                             <!-- Search form -->
                             <form method="GET" action="{{ route('admin.reservation.index') }}" class="mb-3">
@@ -101,7 +76,6 @@
                                     </thead>
                                     <tbody>
                                         @forelse ($reservations as $reservation)
-<<<<<<< HEAD
                                             <tr>
                                                 <td><input type="checkbox" id="select-all"></td>
                                                 <td>{{ $reservation->id }}</td>
@@ -121,28 +95,6 @@
                                                         <span class="badge shade-gray min-70">Không rõ</span>
                                                     @endif
                                                 </td>
-=======
-                                        <tr>
-                                            <td><input type="checkbox" id="select-all"></td>
-                                            <td>{{ $reservation->id }}</td>
-                                            <td>{{ $reservation->customer->name ?? 'Không rõ' }}</td>
-                                            <td>{{ $reservation->guest_count ?? 'N/A' }}</td>
-                                            <td>{{ $reservation->reservation_time }}</td>
-                                            {{-- <td>{{ number_format($reservation->total_amount, 0, ',', '.') }} VND</td> --}}
-                                            <td>{{ $reservation->note ?? 'Không có' }}</td>
-                                            <td>
-                                                @if ($reservation->status === 'Confirmed')
-                                                    <span class="badge shade-green min-70">Đã xác nhận</span>
-                                                @elseif ($reservation->status === 'Pending')
-                                                    <span class="badge shade-yellow min-70">Chờ xử lý</span>
-                                                @elseif ($reservation->status === 'Cancelled')
-                                                    <span class="badge shade-red min-70">Đã hủy</span>
-                                                @else
-                                                    <span class="badge shade-gray min-70">Không rõ</span>
-                                                @endif
-                                            </td>
-
->>>>>>> a12e744211bdba5324b3b28a9ea438108c708317
 
 
                                                 <td>

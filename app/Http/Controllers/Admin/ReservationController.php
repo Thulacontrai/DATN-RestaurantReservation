@@ -25,7 +25,6 @@ class ReservationController extends Controller
 
     public function index(Request $request)
     {
-<<<<<<< HEAD
         $now = Carbon::now();
 
         // Đơn sắp đến hạn trong vòng 30 phút tới
@@ -57,33 +56,10 @@ class ReservationController extends Controller
 
 
 
-=======
-        // Fetch reservations
-        $reservations = Reservation::all(); // Or add necessary conditions
-
-        // Fetch upcoming and overdue reservations as needed
-        $now = Carbon::now();
-        $upcomingReservations = Reservation::whereDate('reservation_date', $now->toDateString())
-        ->whereTime('reservation_time', '>=', $now->toTimeString())
-        ->whereTime('reservation_time', '<=', $now->copy()->addMinutes(30)->toTimeString())
-        ->where('status', 'Pending')
-        ->get();
-
-
-        $overdueReservations = Reservation::where('reservation_date', '=', $now->toDateString())
-            ->where('reservation_time', '<', $now->toTimeString())
-            ->where('status', 'Pending')
-            ->get();
-
-        return view('admin.reservation.index', compact('reservations', 'upcomingReservations', 'overdueReservations'));
-    }
-
->>>>>>> a12e744211bdba5324b3b28a9ea438108c708317
     public function checkUpcomingAndOverdueReservations()
     {
         $now = Carbon::now('Asia/Ho_Chi_Minh');
 
-<<<<<<< HEAD
         // Lấy các đơn đặt bàn sắp đến hạn (trong vòng 30 phút)
         $upcomingReservations = Reservation::whereDate('reservation_date', $now->toDateString())
             ->whereTime('reservation_time', '>=', $now->toTimeString())
@@ -109,26 +85,6 @@ class ReservationController extends Controller
     }
 
 
-=======
-        $upcomingReservations = Reservation::where('reservation_date', '=', $now->toDateString())
-            ->where('reservation_time', '>=', $now->toTimeString())
-            ->where('reservation_time', '<=', $now->copy()->addMinutes(30)->toTimeString())
-            ->where('status', 'Pending')
-            ->get();
-
-
-        // Đơn đặt bàn đã quá hạn
-        $overdueReservations = Reservation::whereDate('reservation_date', $now->toDateString())
-            ->whereTime('reservation_time', '<', $now->toTimeString())
-            ->where('status', 'Pending')
-            ->get();
-
-        return view('admin.reservation.check', compact('upcomingReservations', 'overdueReservations'));
-    }
-
-
-
->>>>>>> a12e744211bdba5324b3b28a9ea438108c708317
     public function create()
     {
         $customers = User::all();

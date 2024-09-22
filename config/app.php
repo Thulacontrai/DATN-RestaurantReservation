@@ -69,14 +69,9 @@ return [
     | ahead and set this to a sensible default for you out of the box.
     |
     */
-    
+
     'timezone' => 'Asia/Ho_Chi_Minh',
 
-<<<<<<< HEAD
-    'timezone' => 'Asia/Ho_Chi_Minh',
-
-=======
->>>>>>> a12e744211bdba5324b3b28a9ea438108c708317
 
     /*
     |--------------------------------------------------------------------------
