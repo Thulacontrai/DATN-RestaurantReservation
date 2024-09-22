@@ -23,6 +23,7 @@ use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\TableController;
 use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Client\MenuController;
+use App\Http\Controllers\Client\PosController;
 
 /*
 |--------------------------------------------------------------------------
@@ -99,6 +100,14 @@ route::get("/blog-single", function () {
 Route::get('pos', function () {
     return view('pos.pos');
 });
+// Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
+Route::get('/pos/reservations', [PosController::class, 'getUpcomingAndOverdueReservations'])->name('pos.reservations');
+
+
+
+
+
+
 
 
 
@@ -116,6 +125,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('reservation', ReservationController::class);
     Route::resource('reservationTable', ReservationTableController::class);
     Route::resource('reservationHistory', ReservationHistoryController::class);
+
 
 
     Route::resource('category', CategoryController::class);
@@ -191,5 +201,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Route::middleware(['auth', 'isAdmin'])->group(function () {
     //     Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     // });
+
 
 });

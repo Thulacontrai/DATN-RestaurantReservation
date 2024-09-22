@@ -16,13 +16,34 @@
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <div class="card-title">Danh Sách Đặt Bàn</div>
-
-                            {{-- <a href="{{ route('admin.reservation.create') }}"
-                                class="btn btn-sm btn-primary d-flex align-items-center">
-                                <i class="bi bi-plus-circle me-2"></i> Thêm Mới
+                            {{-- <!-- Thêm link đến trang kiểm tra -->
+                            <a href="{{ route('admin.reservation.check') }}" class="btn btn-sm btn-primary">
+                                Kiểm Tra Đơn Đặt Bàn Sắp Đến và Quá Hạn
                             </a> --}}
+
+
                         </div>
                         <div class="card-body">
+
+                            @if ($upcomingReservations->isNotEmpty())
+                            <div class="alert alert-info">
+                                <strong>Thông báo:</strong> Có {{ $upcomingReservations->count() }} đơn đặt bàn sắp đến hạn trong vòng 30 phút tới!
+                            </div>
+                        @endif
+
+                        @if ($waitingReservations->isNotEmpty())
+                            <div class="alert alert-warning">
+                                <strong>Thông báo:</strong> Có {{ $waitingReservations->count() }} đơn đặt bàn đang chờ khách thêm 15 phút.
+                            </div>
+                        @endif
+
+                        @if ($overdueReservations->isNotEmpty())
+                            <div class="alert alert-danger">
+                                <strong>Thông báo:</strong> {{ $overdueReservations->count() }} đơn đặt bàn đã quá hạn và bị hủy.
+                            </div>
+                        @endif
+
+
 
                             <!-- Search form -->
                             <form method="GET" action="{{ route('admin.reservation.index') }}" class="mb-3">
@@ -43,11 +64,11 @@
                                 <table class="table v-middle m-0">
                                     <thead>
                                         <tr>
+                                            <th><input type="checkbox" id="select-all"></th>
                                             <th>Mã Đặt Chỗ</th>
                                             <th>Tên Khách Hàng</th>
                                             <th>Số Lượng Khách</th>
                                             <th>Thời Gian Đặt</th>
-                                            <th>Tổng Tiền</th>
                                             <th>Ghi Chú</th>
                                             <th>Trạng Thái</th>
                                             <th>Hành Động</th>
@@ -56,11 +77,12 @@
                                     <tbody>
                                         @forelse ($reservations as $reservation)
                                             <tr>
+                                                <td><input type="checkbox" id="select-all"></td>
                                                 <td>{{ $reservation->id }}</td>
                                                 <td>{{ $reservation->customer->name ?? 'Không rõ' }}</td>
                                                 <td>{{ $reservation->guest_count ?? 'N/A' }}</td>
                                                 <td>{{ $reservation->reservation_time }}</td>
-                                                <td>{{ number_format($reservation->total_amount, 0, ',', '.') }} VND</td>
+                                                {{-- <td>{{ number_format($reservation->total_amount, 0, ',', '.') }} VND</td> --}}
                                                 <td>{{ $reservation->note ?? 'Không có' }}</td>
                                                 <td>
                                                     @if ($reservation->status === 'Confirmed')
@@ -73,6 +95,7 @@
                                                         <span class="badge shade-gray min-70">Không rõ</span>
                                                     @endif
                                                 </td>
+
 
                                                 <td>
                                                     <div class="actions">
@@ -92,7 +115,6 @@
                                                             <a href="#"><button type="submit"
                                                                     class="btn btn-link p-0"
                                                                     onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
-
                                                                     <i class="bi bi-trash text-red"></i>
                                                                 </button></a>
                                                         </form>
@@ -110,7 +132,7 @@
 
                             <!-- Pagination -->
                             <div class="pagination justify-content-center mt-3">
-                                {{ $reservations->links() }}
+                                {{-- {{ $reservations->links() }} --}}
                             </div>
                             <!-- End Pagination -->
 
