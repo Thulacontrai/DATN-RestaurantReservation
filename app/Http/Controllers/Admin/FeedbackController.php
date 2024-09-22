@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 class FeedbackController extends Controller
 {
 
+
     public function __construct()
     {
         // Gán middleware cho các phương thức
@@ -20,6 +21,7 @@ class FeedbackController extends Controller
         $this->middleware('permission:Xóa feedback', ['only' => ['destroy']]);
         
     }
+
     use TraitCRUD;
 
     protected $model = Feedback::class;

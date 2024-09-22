@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 class ReservationHistoryController extends Controller
 {
 
+
     public function __construct()
     {
         // Gán middleware cho các phương thức

@@ -13,16 +13,6 @@ use Illuminate\Support\Facades\DB;
 
 class TableController extends Controller
 {
-    public function __construct()
-    {
-        // Gán middleware cho các phương thức
-        $this->middleware('permission:Xem đặt bàn', ['only' => ['index']]);
-        $this->middleware('permission:Tạo mới đặt bàn', ['only' => ['create']]);
-        $this->middleware('permission:Sửa đặt bàn', ['only' => ['edit']]);
-        $this->middleware('permission:Xóa đặt bàn', ['only' => ['destroy']]);
-        
-    }
-
     use TraitCRUD;
 
     protected $model = Table::class;
@@ -129,4 +119,6 @@ class TableController extends Controller
         $table->forceDelete();
         return redirect()->route('admin.tables.trash')->with('success', 'Bàn đã được xóa vĩnh viễn!');
     }
+
+   
 }

@@ -4,6 +4,16 @@
 
 @section('content')
 
+@if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
+@if (session('success'))
+<div class="alert alert-success">
+    {{ session('success') }}
+</div>
+@endif
     <!-- Content wrapper scroll start -->
     <div class="content-wrapper-scroll">
 
@@ -47,7 +57,8 @@
                                             <th>Tên Khách Hàng</th>
                                             <th>Số Lượng Khách</th>
                                             <th>Thời Gian Đặt</th>
-                                            <th>Tổng Tiền</th>
+                                            <th>Bàn</th>
+                                            <th>Tiền cọc</th>
                                             <th>Ghi Chú</th>
                                             <th>Trạng Thái</th>
                                             <th>Hành Động</th>
@@ -59,7 +70,12 @@
                                                 <td>{{ $reservation->id }}</td>
                                                 <td>{{ $reservation->customer->name ?? 'Không rõ' }}</td>
                                                 <td>{{ $reservation->guest_count ?? 'N/A' }}</td>
-                                                <td>{{ $reservation->reservation_time }}</td>
+                                                <td>{{ $reservation->reservation_date }} 
+                                                    <br> {{ $reservation->reservation_time }}
+                                                </td>
+                                                <td>@foreach ($reservation->tables as $table )
+                                                    {{$table->table_number}},
+                                                @endforeach</td>
                                                 <td>{{ number_format($reservation->total_amount, 0, ',', '.') }} VND</td>
                                                 <td>{{ $reservation->note ?? 'Không có' }}</td>
                                                 <td>
@@ -83,6 +99,10 @@
                                                         <a href="{{ route('admin.reservation.edit', $reservation->id) }}"
                                                             class="editRow" data-id="{{ $reservation->id }}">
                                                             <i class="bi bi-pencil-square text-warning"></i>
+                                                        </a>
+                                                        <a href="{{ route('admin.reservation.assignTables', $reservation->id) }}"
+                                                            class="editRow" data-id="{{ $reservation->id }}">
+                                                            <i class="bi bi-box-arrow-in-right"></i>
                                                         </a>
                                                         <form
                                                             action="{{ route('admin.reservation.destroy', $reservation->id) }}"

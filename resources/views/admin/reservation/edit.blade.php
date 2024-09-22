@@ -50,19 +50,7 @@
                                 <div class="mb-3">
                                     <label for="deposit_amount" class="form-label">Số tiền đặt cọc</label>
                                     <input type="number" class="form-control" id="deposit_amount" name="deposit_amount"
-                                        value="{{ $reservation->deposit_amount }}" required>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="remaining_amount" class="form-label">Số tiền còn lại</label>
-                                    <input type="number" class="form-control" id="remaining_amount" name="remaining_amount"
-                                        value="{{ $reservation->remaining_amount }}" required>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="total_amount" class="form-label">Tổng tiền</label>
-                                    <input type="number" class="form-control" id="total_amount" name="total_amount"
-                                        value="{{ $reservation->total_amount }}" required>
+                                        value="{{ $reservation->deposit_amount }}" >
                                 </div>
 
                                 <div class="mb-3">
