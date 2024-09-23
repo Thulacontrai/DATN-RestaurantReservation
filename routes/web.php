@@ -86,8 +86,10 @@ route::get("/blog-single", function () {
     return view("client.blog-single");
 
 })->name("blog-single.client");
-
-
+route::get(
+    "reservationSuccessfully",
+    [ReservationController::class, "reservationSuccessfully"]
+)->name("reservationSuccessfully.client");
 
 
 

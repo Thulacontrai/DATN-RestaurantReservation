@@ -191,6 +191,7 @@ class ReservationController extends Controller
 
     public function createReservation(StoreReservationRquest $request)
     {
+        $reservation = $request->all();
         if ($request->guest_count >= 6) {
             $customerInformation = $request->all();
             return redirect()->route('deposit.client', compact('customerInformation'));
@@ -214,10 +215,14 @@ class ReservationController extends Controller
                 ]);
             });
 
-            return redirect()->route('client.index');
+            return redirect()->route('reservationSuccessfully.client', compact('reservation'));
         }
     }
-
+    public function reservationSuccessfully(Request $request)
+    {
+        $reservation = $request->reservation;
+        return view('client.reservation-successfully', compact('reservation'));
+    }
     public function showDeposit(Request $request)
     {
         $showDeposit = $request->customerInformation;
