@@ -42,8 +42,7 @@ class OnlineCheckoutController extends Controller
             $redirectUrl = route("reservationSuccessfully.client");
             $ipnUrl = route("reservationSuccessfully.client");
             $note = $request->user_note ?? null;
-            $extraData = "{'user_name':'$request->user_name','user_phone':'$request->user_phone','reservation_time':'$request->reservation_time','reservation_date':'$request->reservation_date','guest_count':'$request->guest_count','note':'$note','deposit_amount':'$request->deposit_amount'}";
-
+            $extraData = "{'user_name':'$request->user_name','user_phone':'$request->user_phone','reservation_time':'$request->reservation_time','reservation_date':'$request->reservation_date','guest_count':'$request->guest_count','note':'$note','deposit_amount':'$request->deposit'}";
             $requestId = time() . "";
             $requestType = "payWithATM";
             //before sign HMAC SHA256 signature
