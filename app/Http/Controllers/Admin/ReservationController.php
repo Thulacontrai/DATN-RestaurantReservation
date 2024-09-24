@@ -220,13 +220,19 @@ class ReservationController extends Controller
     }
     public function reservationSuccessfully(Request $request)
     {
-        $reservation = $request->reservation;
+        if ($request->query('extraData')) {
+            $reservation = $request->query('extraData');
+            $data = str_replace("'", '"', $reservation);
+            $reservation = json_decode($data, true);
+        } else {
+            $reservation = $request->reservation;
+        }
         return view('client.reservation-successfully', compact('reservation'));
     }
     public function showDeposit(Request $request)
     {
         $showDeposit = $request->customerInformation;
-        $deposit = number_format($showDeposit['guest_count'] * 100000);
+        $deposit = $showDeposit['guest_count'] * 100000;
         return view('client.deposit', compact('showDeposit', 'deposit'));
     }
 }
