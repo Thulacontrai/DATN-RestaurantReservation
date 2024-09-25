@@ -36,4 +36,9 @@ class Reservation extends Model
     {
         return $this->belongsTo(Coupon::class, 'coupon_id');
     }
+    public function tables()
+    {
+        return $this->belongsToMany(Table::class, 'reservation_table');
+                   
+    }
 }
