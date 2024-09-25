@@ -116,6 +116,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('reservation/{reservationId}/assign-tables', [ReservationController::class,'assignTables'])->name('reservation.assignTables');
     Route::get('reservation/assign-table', [ReservationController::class,'assignTable'])->name('assignTable');
     Route::post('reservation/submit-table', [ReservationController::class,'submitTable'])->name('submit.tables');
+    Route::post('reservation/submit-move-table', [ReservationController::class,'submitMoveTable'])->name('submit.Movetables');
     Route::resource('reservation', ReservationController::class);
   
     Route::resource('reservationTable', ReservationTableController::class);

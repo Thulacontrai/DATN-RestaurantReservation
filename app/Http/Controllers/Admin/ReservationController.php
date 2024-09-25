@@ -7,6 +7,7 @@ use App\Http\Requests\StoreReservationRquest;
 use App\Models\Coupon;
 use App\Models\Reservation;
 use App\Models\Table;
+use App\Models\ReservationTable;
 use App\Models\User;
 use App\Traits\TraitCRUD;
 use Carbon\Carbon;
@@ -35,8 +36,8 @@ class ReservationController extends Controller
                 });
             })
             ->paginate(10);
-        
-        
+
+
 
         return view('admin.reservation.index', compact('reservations'));
     }
@@ -139,7 +140,6 @@ class ReservationController extends Controller
         for ($hour = $startHour; $hour < $endHour; $hour++) {
             $timeSlots[] = Carbon::createFromTime($hour, 0)->format('H:i:s');
             $timeSlots[] = Carbon::createFromTime($hour, 30)->format('H:i:s');
-
         }
         return view('client.booking', compact('days', 'timeSlots', 'now'));
     }
@@ -186,21 +186,24 @@ class ReservationController extends Controller
     }
 
 
-    public function assignTables($reservationId){
-        $tables=Table::all();
-        
+    public function assignTables($reservationId)
+    {
+        $tables = Table::all();
 
-        return view('admin.reservation.table_layout', compact('tables','reservationId'));
+
+        return view('admin.reservation.table_layout', compact('tables', 'reservationId'));
     }
-    public function assignTable(Request  $request){
-        $reservationId=1;
-        $tables=Table::all();
+    public function assignTable(Request  $request)
+    {
+        dd($request->all());
+        $reservationId = 1;
+        $tables = Table::all();
         foreach ($tables as $table) {
             // Kiểm tra xem bàn có đang được đặt hay không
             $isReserved = Reservation::whereHas('tables', function ($query) use ($table) {
                 $query->where('table_id', $table->id)
-                      ->where('start_time', '<=', now()->toTimeString())
-                      ->where('end_time', '>=', now()->toTimeString());
+                    ->where('start_time', '<=', now()->toTimeString())
+                    ->where('end_time', '>=', now()->toTimeString());
             })->exists();
             dd($isReserved);
             if ($isReserved) {
@@ -211,69 +214,81 @@ class ReservationController extends Controller
             }
         }
 
-        return view('admin.reservation.table_layout', compact('tables','reservationId'));
+        return view('admin.reservation.table_layout', compact('tables', 'reservationId'));
     }
-    public function submitTable(Request  $request){
-        // dd($request->all()); 
-        
+    public function submitTable(Request  $request)
+    {
+
         try {
             // Bắt đầu transaction
-        DB::beginTransaction();
-        $reservation = Reservation::query()->findOrFail($request->get('reservation_id'));
-        // dd($reservation);
-        $reservation_date=$reservation->reservation_date;//ngày nhận bàn 
-        $reservation_time=$reservation->reservation_time;//giờ nhận bàn
-        $reservationDuration=60;//thời gian sử dụng ướ   tính
-        
-        //tính thời gian kết thúc ước tính 
-        $endTime = Carbon::createFromFormat('H:i:s',$reservation_time)->addMinutes($reservationDuration)->toTimeString();
+            DB::beginTransaction();
+            $reservation = Reservation::query()->findOrFail($request->get('reservation_id'));
+            // dd($reservation);
+            $reservation_date = $reservation->reservation_date; //ngày nhận bàn 
+            $reservation_time = $reservation->reservation_time; //giờ nhận bàn
+            $reservationDuration = 60; //thời gian sử dụng ướ   tính
 
-        // dd([$reservation_date,$reservation_time,$reservationDuration,$endTime,$request->tables]);
-        $tables=$request->get('tables');
-        // dd($tables);
-        foreach ($tables as $tableId) {
-            // Kiểm tra trạng thái của bàn trong khoảng thời gian này
-            $conflictReservations = Reservation::whereHas('tables', function($query) use ($tableId, $reservation_date, $reservation_time, $endTime) {
-                $query->where('table_id', $tableId)
-                      ->where('reservation_date', $reservation_date)
-                      ->where(function($q) use ($reservation_time, $endTime) {
-                          $q->where('start_time', '<', $endTime)
-                            ->where('end_time', '>', $reservation_time);
-                      });
-            })->count();
+            //tính thời gian kết thúc ước tính 
+            $endTime = Carbon::createFromFormat('H:i:s', $reservation_time)->addMinutes($reservationDuration)->toTimeString();
+
+            // dd([$reservation_date,$reservation_time,$reservationDuration,$endTime,$request->tables]);
+            $tables = $request->get('tables');
+            // dd($tables);
+            foreach ($tables as $tableId) {
+                // Kiểm tra trạng thái của bàn trong khoảng thời gian này
+                $conflictReservations = Reservation::whereHas('tables', function ($query) use ($tableId, $reservation_date, $reservation_time, $endTime) {
+                    $query->where('table_id', $tableId)
+                        ->where('reservation_date', $reservation_date)
+                        ->where(function ($q) use ($reservation_time, $endTime) {
+                            $q->where('start_time', '<', $endTime)
+                                ->where('end_time', '>', $reservation_time);
+                        });
+                })->count();
                 // dd($conflictReservations);
-            if ($conflictReservations > 0) {
-                return confirm('bàn đã được đặt ');
-                continue;
-            }
-            
-            // Cập nhật thông tin đặt bàn vào bảng reservation_table
-            $reservation->tables()->attach($tableId,[
-                'reservation_date' => $reservation_date,
-                'start_time' => $reservation_time,
-                // 'end_time' => $endTime,
-                'status' => 'reserved'
-            ]);
-        //   dd([$reservation_date,$reservation_time,$reservationDuration,$endTime,$request->tables]);
-            // Cập nhật trạng thái bàn trong bảng tables
-            Table::where('id', $tableId)->update(['status' => 'reserved']);
-            // echo "Đã xếp bàn $tableId cho đơn đặt bàn $reservation->reservation_id.\n";
-        }
+                if ($conflictReservations > 0) {
+                    return confirm('bàn đã được đặt ');
+                    continue;
+                }
 
-       
-        $reservation->update(['status' => 'confirmed']);
-        DB::commit();
-        return redirect()->route('admin.reservation.index')->with('success', 'Table đã được đặt thành công.');
-        
-        
-    } catch (\Exception $e) {
-        // Nếu có lỗi xảy ra, rollback và ghi log lỗi
-        DB::rollBack();
-        // Log::error('Error in table assignment: ' . $e->getMessage());
-        return redirect()->back()->withErrors([
-            'error' => 'Có lỗi xảy ra khi đặt bàn. Vui lòng thử lại sau.'
-        ]);
+                // Cập nhật thông tin đặt bàn vào bảng reservation_table
+                $reservation->tables()->attach($tableId, [
+                    'reservation_date' => $reservation_date,
+                    'start_time' => $reservation_time,
+                    // 'end_time' => $endTime,
+                    'status' => 'reserved'
+                ]);
+                //   dd([$reservation_date,$reservation_time,$reservationDuration,$endTime,$request->tables]);
+                // Cập nhật trạng thái bàn trong bảng tables
+                Table::where('id', $tableId)->update(['status' => 'reserved']);
+                // echo "Đã xếp bàn $tableId cho đơn đặt bàn $reservation->reservation_id.\n";
+            }
+
+
+            $reservation->update(['status' => 'confirmed']);
+            DB::commit();
+            return redirect()->route('admin.reservation.index')->with('success', 'Table đã được đặt thành công.');
+        } catch (\Exception $e) {
+            // Nếu có lỗi xảy ra, rollback và ghi log lỗi
+            DB::rollBack();
+            // Log::error('Error in table assignment: ' . $e->getMessage());
+            return redirect()->back()->withErrors([
+                'error' => 'Có lỗi xảy ra khi đặt bàn. Vui lòng thử lại sau.'
+            ]);
+        }
     }
 
+    public function submitMoveTable(Request $request) {
+        $tableId = $request->input('dataId');
+        $reservationId = $request->input('reservationId');
+        $reservationData = ReservationTable::where('reservation_id', $reservationId)->first();
+        if($reservationData){
+            Table::where('id', $reservationData->table_id)->update(['status' => 'Available']);
+        }
+        ReservationTable::where('reservation_id', $reservationId)->update([ 'table_id' => $tableId ]);
+        Table::where('id', $tableId)->update(['status' => 'Reserved']);
+        return response()->json([
+            'success' => true,
+            'message' => 'Chuyển bàn thành công'
+        ]);
     }
 }
