@@ -22,6 +22,7 @@ class FeedbackController extends Controller
         
     }
 
+
     use TraitCRUD;
 
     protected $model = Feedback::class;

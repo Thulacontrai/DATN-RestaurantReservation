@@ -18,6 +18,7 @@ class ReservationHistoryController extends Controller
         $this->middleware('permission:Tạo mới lịch sử đặt bàn', ['only' => ['create']]);
         $this->middleware('permission:Sửa lịch sử đặt bàn', ['only' => ['edit']]);
         $this->middleware('permission:Xóa lịch sử đặt bàn', ['only' => ['destroy']]);
+
     }
 
     use TraitCRUD;

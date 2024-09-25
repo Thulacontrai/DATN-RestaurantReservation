@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 
 class ReservationTableController extends Controller
 {
+    
+
     use TraitCRUD;
 
     protected $model = ReservationTable::class;
@@ -24,7 +26,7 @@ class ReservationTableController extends Controller
     public function index()
     {
         $reservationTables = ReservationTable::all();
-        return view('admin.reservation.reservationTable.index', compact('reservationTables')); // Truyền dữ liệu vào view
+        return view('admin.reservation.reservationTable.index', compact('reservationTables'));
     }
 
     public function show($id)

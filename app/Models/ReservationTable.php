@@ -7,16 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 class ReservationTable extends Model
 {
     protected $table = 'reservations_table';
-    
-    public $incrementing = false;
 
+    public $incrementing = false;
     protected $primaryKey = ['table_id', 'reservation_id'];
-    
 
     protected $fillable = [
         'reservation_id',
-        'table_id',
         'status',
+        'table_id',
         'start_time',
         'end_time',
     ];

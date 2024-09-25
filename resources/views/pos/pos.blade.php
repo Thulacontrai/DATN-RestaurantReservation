@@ -46,9 +46,11 @@
 </head>
 <style>
     .bi-app:active {
-      fill: red; /* Change color when clicked */
+        fill: red;
+        /* Change color when clicked */
     }
-  </style>
+</style>
+
 <body>
     <div id="global-loader">
         <div class="whirly-loader"> </div>
@@ -374,13 +376,17 @@
             <div class="content pos-design p-0">
                 <div class="btn-row d-sm-flex align-items-center">
                     <a href="javascript:void(0);" class="btn btn-secondary mb-xs-3" data-bs-toggle="modal"
-                        data-bs-target="#orders"><span class="me-1 d-flex align-items-center"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-receipt-cutoff" viewBox="0 0 16 16">
-                            <path d="M3 4.5a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5M11.5 4a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1z"/>
-                            <path d="M2.354.646a.5.5 0 0 0-.801.13l-.5 1A.5.5 0 0 0 1 2v13H.5a.5.5 0 0 0 0 1h15a.5.5 0 0 0 0-1H15V2a.5.5 0 0 0-.053-.224l-.5-1a.5.5 0 0 0-.8-.13L13 1.293l-.646-.647a.5.5 0 0 0-.708 0L11 1.293l-.646-.647a.5.5 0 0 0-.708 0L9 1.293 8.354.646a.5.5 0 0 0-.708 0L7 1.293 6.354.646a.5.5 0 0 0-.708 0L5 1.293 4.354.646a.5.5 0 0 0-.708 0L3 1.293zm-.217 1.198.51.51a.5.5 0 0 0 .707 0L4 1.707l.646.647a.5.5 0 0 0 .708 0L6 1.707l.646.647a.5.5 0 0 0 .708 0L8 1.707l.646.647a.5.5 0 0 0 .708 0L10 1.707l.646.647a.5.5 0 0 0 .708 0L12 1.707l.646.647a.5.5 0 0 0 .708 0l.509-.51.137.274V15H2V2.118z"/>
-                          </svg></span>View Orders</a>
+                        data-bs-target="#orders"><span class="me-1 d-flex align-items-center"><svg
+                                xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                class="bi bi-receipt-cutoff" viewBox="0 0 16 16">
+                                <path
+                                    d="M3 4.5a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5M11.5 4a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1z" />
+                                <path
+                                    d="M2.354.646a.5.5 0 0 0-.801.13l-.5 1A.5.5 0 0 0 1 2v13H.5a.5.5 0 0 0 0 1h15a.5.5 0 0 0 0-1H15V2a.5.5 0 0 0-.053-.224l-.5-1a.5.5 0 0 0-.8-.13L13 1.293l-.646-.647a.5.5 0 0 0-.708 0L11 1.293l-.646-.647a.5.5 0 0 0-.708 0L9 1.293 8.354.646a.5.5 0 0 0-.708 0L7 1.293 6.354.646a.5.5 0 0 0-.708 0L5 1.293 4.354.646a.5.5 0 0 0-.708 0L3 1.293zm-.217 1.198.51.51a.5.5 0 0 0 .707 0L4 1.707l.646.647a.5.5 0 0 0 .708 0L6 1.707l.646.647a.5.5 0 0 0 .708 0L8 1.707l.646.647a.5.5 0 0 0 .708 0L10 1.707l.646.647a.5.5 0 0 0 .708 0L12 1.707l.646.647a.5.5 0 0 0 .708 0l.509-.51.137.274V15H2V2.118z" />
+                            </svg></span>View Orders</a>
 
 
-                    
+
                     <a href="javascript:void(0);" class="btn btn-primary" data-bs-toggle="modal"
                         data-bs-target="#recents"><span class="me-1 d-flex align-items-center"><svg
                                 xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
@@ -389,12 +395,16 @@
                                 <path
                                     d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2z" />
                             </svg></span>Transaction</a>
-                    
-                            <a href="javascript:void(0);" class="btn btn-secondary mb-xs-3" data-bs-toggle="modal"
-                            data-bs-target="#booking"><span class="me-1 d-flex align-items-center"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-receipt-cutoff" viewBox="0 0 16 16">
-                                <path d="M3 4.5a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5M11.5 4a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1z"/>
-                                <path d="M2.354.646a.5.5 0 0 0-.801.13l-.5 1A.5.5 0 0 0 1 2v13H.5a.5.5 0 0 0 0 1h15a.5.5 0 0 0 0-1H15V2a.5.5 0 0 0-.053-.224l-.5-1a.5.5 0 0 0-.8-.13L13 1.293l-.646-.647a.5.5 0 0 0-.708 0L11 1.293l-.646-.647a.5.5 0 0 0-.708 0L9 1.293 8.354.646a.5.5 0 0 0-.708 0L7 1.293 6.354.646a.5.5 0 0 0-.708 0L5 1.293 4.354.646a.5.5 0 0 0-.708 0L3 1.293zm-.217 1.198.51.51a.5.5 0 0 0 .707 0L4 1.707l.646.647a.5.5 0 0 0 .708 0L6 1.707l.646.647a.5.5 0 0 0 .708 0L8 1.707l.646.647a.5.5 0 0 0 .708 0L10 1.707l.646.647a.5.5 0 0 0 .708 0L12 1.707l.646.647a.5.5 0 0 0 .708 0l.509-.51.137.274V15H2V2.118z"/>
-                              </svg></span>Đặt trước</a>
+
+                    <a href="javascript:void(0);" class="btn btn-secondary mb-xs-3" data-bs-toggle="modal"
+                        data-bs-target="#booking"><span class="me-1 d-flex align-items-center"><svg
+                                xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                class="bi bi-receipt-cutoff" viewBox="0 0 16 16">
+                                <path
+                                    d="M3 4.5a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5M11.5 4a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1z" />
+                                <path
+                                    d="M2.354.646a.5.5 0 0 0-.801.13l-.5 1A.5.5 0 0 0 1 2v13H.5a.5.5 0 0 0 0 1h15a.5.5 0 0 0 0-1H15V2a.5.5 0 0 0-.053-.224l-.5-1a.5.5 0 0 0-.8-.13L13 1.293l-.646-.647a.5.5 0 0 0-.708 0L11 1.293l-.646-.647a.5.5 0 0 0-.708 0L9 1.293 8.354.646a.5.5 0 0 0-.708 0L7 1.293 6.354.646a.5.5 0 0 0-.708 0L5 1.293 4.354.646a.5.5 0 0 0-.708 0L3 1.293zm-.217 1.198.51.51a.5.5 0 0 0 .707 0L4 1.707l.646.647a.5.5 0 0 0 .708 0L6 1.707l.646.647a.5.5 0 0 0 .708 0L8 1.707l.646.647a.5.5 0 0 0 .708 0L10 1.707l.646.647a.5.5 0 0 0 .708 0L12 1.707l.646.647a.5.5 0 0 0 .708 0l.509-.51.137.274V15H2V2.118z" />
+                            </svg></span>Đặt trước</a>
                 </div>
                 <div class="row align-items-start pos-wrapper">
                     <div class="col-md-12 col-lg-8">
@@ -402,12 +412,12 @@
                             <h5>Menu</h5>
                             <ul class="tabs owl-carousel pos-category">
 
-                                
+
                                 <li id="mainmenu">
 
                                     <a href="javascript:void(0);">
                                         <img src="https://natashaskitchen.com/wp-content/uploads/2020/03/Pan-Seared-Steak-4.jpg"
-                                        alt="">
+                                            alt="">
                                     </a>
                                     <h6><a href="javascript:void(0);">Steak</a></h6>
                                     {{-- <span>4 Items</span> --}}
@@ -415,7 +425,7 @@
                                 <li id="drinks">
                                     <a href="javascript:void(0);">
                                         <img src="https://blog.onelife.vn/wp-content/uploads/2023/09/96903f21-1.png"
-                                        alt="">
+                                            alt="">
                                     </a>
                                     <h6><a href="javascript:void(0);">Drinks</a></h6>
                                     {{-- <span>14 Items</span> --}}
@@ -423,7 +433,7 @@
                                 <li id="combo">
                                     <a href="javascript:void(0);">
                                         <img src="https://bizweb.dktcdn.net/100/405/121/products/8dcccb6d-5848-4fb1-8765-6227d8a91055.jpg?v=1686775184043"
-                                        alt="">
+                                            alt="">
                                     </a>
                                     <h6><a href="javascript:void(0);">Combo</a></h6>
                                     {{-- <span>7 Items</span> --}}
@@ -431,7 +441,7 @@
                                 <li id="dessert">
                                     <a href="javascript:void(0);">
                                         <img src="https://blog.onelife.vn/wp-content/uploads/2023/09/96903f21-1.png"
-                                        alt="">
+                                            alt="">
                                     </a>
                                     <h6><a href="javascript:void(0);">Dessert</a></h6>
                                     {{-- <span>16 Items</span> --}}
@@ -439,7 +449,7 @@
                                 <li id="salad">
                                     <a href="javascript:void(0);">
                                         <img src="https://www.foodandwine.com/thmb/IuZPWAXBp4YaT9hn1YLHhuijT3k=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/FAW-recipes-big-italian-salad-hero-83e6ea846722478f8feb1eea33158b00.jpg"
-                                        alt="">
+                                            alt="">
                                     </a>
                                     <h6><a href="javascript:void(0);">Salad</a></h6>
                                     {{-- <span>18 Items</span> --}}
@@ -464,7 +474,8 @@
                                                     </a>
                                                     <h6 class="cat-name"><a href="javascript:void(0);">Steak</a>
                                                     </h6>
-                                                    <h6 class="product-name"><a href="javascript:void(0);">Sous Vide Steak</a></h6>
+                                                    <h6 class="product-name"><a href="javascript:void(0);">Sous Vide
+                                                            Steak</a></h6>
                                                     <div
                                                         class="d-flex align-items-center justify-content-between price">
                                                         <span>30 Pcs</span>
@@ -481,7 +492,8 @@
                                                     </a>
                                                     <h6 class="cat-name"><a href="javascript:void(0);">Salad</a>
                                                     </h6>
-                                                    <h6 class="product-name"><a href="javascript:void(0);">Salad trái cây</a></h6>
+                                                    <h6 class="product-name"><a href="javascript:void(0);">Salad trái
+                                                            cây</a></h6>
                                                     <div
                                                         class="d-flex align-items-center justify-content-between price">
                                                         <span>140 Pcs</span>
@@ -489,10 +501,10 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                           
+
                                         </div>
                                     </div>
-                                   
+
                                 </div>
                             </div>
                         </div>
@@ -513,42 +525,48 @@
                             </div>
 
                             <div class="">
-                            
-                                    <a href="javascript:void(0);" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#table"><span
-                                        class="me-1 d-flex align-items-center"><span class="me-1 d-flex align-items-center"><svg
-                                            xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                            class="bi bi-view-list" viewBox="0 0 16 16">
-                                            <path
-                                                d="M3 4.5h10a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2m0 1a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1zM1 2a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 2m0 12a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 14" />
-                                        </svg></span>Table layout</a>
-                             
+
+                                <a href="javascript:void(0);" class="btn btn-info" data-bs-toggle="modal"
+                                    data-bs-target="#table"><span class="me-1 d-flex align-items-center"><span
+                                            class="me-1 d-flex align-items-center"><svg
+                                                xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                fill="currentColor" class="bi bi-view-list" viewBox="0 0 16 16">
+                                                <path
+                                                    d="M3 4.5h10a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2m0 1a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1zM1 2a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 2m0 12a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 14" />
+                                            </svg></span>Table layout</a>
+
                             </div>
 
                             <div class="customer-info block-section">
                                 <div class="input-block d-flex align-items-center">
                                     <a href="javascript:void(0);" class="btn btn-info"><span
-                                        class="me-1 d-flex align-items-center"><span class="me-1 d-flex align-items-center"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-basket" viewBox="0 0 16 16">
-                                            <path d="M5.757 1.071a.5.5 0 0 1 .172.686L3.383 6h9.234L10.07 1.757a.5.5 0 1 1 .858-.514L13.783 6H15a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1v4.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 13.5V9a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h1.217L5.07 1.243a.5.5 0 0 1 .686-.172zM2 9v4.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V9zM1 7v1h14V7zm3 3a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3A.5.5 0 0 1 4 10m2 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3A.5.5 0 0 1 6 10m2 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3A.5.5 0 0 1 8 10m2 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 1 .5-.5m2 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 1 .5-.5"/>
-                                          </svg></span>Takeaway</a>
+                                            class="me-1 d-flex align-items-center"><span
+                                                class="me-1 d-flex align-items-center"><svg
+                                                    xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                    fill="currentColor" class="bi bi-basket" viewBox="0 0 16 16">
+                                                    <path
+                                                        d="M5.757 1.071a.5.5 0 0 1 .172.686L3.383 6h9.234L10.07 1.757a.5.5 0 1 1 .858-.514L13.783 6H15a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1v4.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 13.5V9a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h1.217L5.07 1.243a.5.5 0 0 1 .686-.172zM2 9v4.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V9zM1 7v1h14V7zm3 3a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3A.5.5 0 0 1 4 10m2 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3A.5.5 0 0 1 6 10m2 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3A.5.5 0 0 1 8 10m2 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 1 .5-.5m2 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 1 .5-.5" />
+                                                </svg></span>Takeaway</a>
 
                                     <div class="flex-grow-1">
-                                        <input type="search" class="form-control" id="" placeholder="Enter name or email to search">
+                                        <input type="search" class="form-control" id=""
+                                            placeholder="Enter name or email to search">
                                     </div>
                                     <a href="#" class="btn btn-primary btn-icon" data-bs-toggle="modal"
                                         data-bs-target="#create"><i data-feather="user-plus"
                                             class="feather-16"></i></a>
                                 </div>
-                                
+
                             </div>
 
-                           
+
                             <div class="product-added block-section">
                                 <div class="head-text d-flex align-items-center justify-content-between">
                                     <h6 class="d-flex align-items-center mb-0">Product Added<span
                                             class="count">2</span></h6>
-                                    <a href="javascript:void(0);"
-                                        class="d-flex align-items-center text-danger"><span class="me-1"><i
-                                                data-feather="x" class="feather-16"></i></span>Clear all</a>
+                                    <a href="javascript:void(0);" class="d-flex align-items-center text-danger"><span
+                                            class="me-1"><i data-feather="x" class="feather-16"></i></span>Clear
+                                        all</a>
                                 </div>
                                 <div class="product-wrap">
                                     <div class="product-list d-flex align-items-center justify-content-between">
@@ -577,8 +595,8 @@
                                                     data-feather="plus-circle" class="feather-14"></i></a>
                                         </div>
                                         <div class="d-flex align-items-center action">
-                                            <a class="btn-icon edit-icon me-2" href="#"
-                                                data-bs-toggle="modal" data-bs-target="#edit-product">
+                                            <a class="btn-icon edit-icon me-2" href="#" data-bs-toggle="modal"
+                                                data-bs-target="#edit-product">
                                                 <i data-feather="edit" class="feather-14"></i>
                                             </a>
                                             <a class="btn-icon delete-icon confirm-text" href="javascript:void(0);">
@@ -612,8 +630,8 @@
                                                     data-feather="plus-circle" class="feather-14"></i></a>
                                         </div>
                                         <div class="d-flex align-items-center action">
-                                            <a class="btn-icon edit-icon me-2" href="#"
-                                                data-bs-toggle="modal" data-bs-target="#edit-product">
+                                            <a class="btn-icon edit-icon me-2" href="#" data-bs-toggle="modal"
+                                                data-bs-target="#edit-product">
                                                 <i data-feather="edit" class="feather-14"></i>
                                             </a>
                                             <a class="btn-icon delete-icon confirm-text" href="javascript:void(0);">
@@ -708,920 +726,901 @@
                                                     <option>GST 30%</option>
                                                 </select>
                                             </div>
-                                            
+
                                         </div>
 
-                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
-                                                <div class="product-info default-cover card">
-                                                    <a href="javascript:void(0);" class="img-bg">
-                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-14.png"
-                                                            alt="Products">
-                                                        <span><i data-feather="check" class="feather-16"></i></span>
-                                                    </a>
-                                                    <h6 class="cat-name"><a href="javascript:void(0);">Laptop</a></h6>
-                                                    <h6 class="product-name"><a href="javascript:void(0);">IdeaPad
-                                                            Slim 3i</a></h6>
-                                                    <div
-                                                        class="d-flex align-items-center justify-content-between price">
-                                                        <span>47 Pcs</span>
-                                                        <p>$1245</p>
-                                                    </div>
+                                        <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                            <div class="product-info default-cover card">
+                                                <a href="javascript:void(0);" class="img-bg">
+                                                    <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-14.png"
+                                                        alt="Products">
+                                                    <span><i data-feather="check" class="feather-16"></i></span>
+                                                </a>
+                                                <h6 class="cat-name"><a href="javascript:void(0);">Laptop</a></h6>
+                                                <h6 class="product-name"><a href="javascript:void(0);">IdeaPad
+                                                        Slim 3i</a></h6>
+                                                <div class="d-flex align-items-center justify-content-between price">
+                                                    <span>47 Pcs</span>
+                                                    <p>$1245</p>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="tab_content" data-tab="allcategory">
-                                        <div class="row">
-                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3">
-                                                <div class="product-info default-cover card">
-                                                    <a href="javascript:void(0);" class="img-bg">
-                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-01.png"
-                                                            alt="Products">
-                                                        <span><i data-feather="check" class="feather-16"></i></span>
-                                                    </a>
-                                                    <h6 class="cat-name"><a href="javascript:void(0);">Mobiles</a>
-                                                    </h6>
-                                                    <h6 class="product-name"><a href="javascript:void(0);">IPhone 14
-                                                            64GB</a></h6>
-                                                    <div
-                                                        class="d-flex align-items-center justify-content-between price">
-                                                        <span>30 Pcs</span>
-                                                        <p>$15800</p>
-                                                    </div>
+                                </div>
+                                <div class="tab_content" data-tab="allcategory">
+                                    <div class="row">
+                                        <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3">
+                                            <div class="product-info default-cover card">
+                                                <a href="javascript:void(0);" class="img-bg">
+                                                    <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-01.png"
+                                                        alt="Products">
+                                                    <span><i data-feather="check" class="feather-16"></i></span>
+                                                </a>
+                                                <h6 class="cat-name"><a href="javascript:void(0);">Mobiles</a>
+                                                </h6>
+                                                <h6 class="product-name"><a href="javascript:void(0);">IPhone 14
+                                                        64GB</a></h6>
+                                                <div class="d-flex align-items-center justify-content-between price">
+                                                    <span>30 Pcs</span>
+                                                    <p>$15800</p>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
-                                                <div class="product-info default-cover card">
-                                                    <a href="javascript:void(0);" class="img-bg">
-                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-02.png"
-                                                            alt="Products">
-                                                        <span><i data-feather="check" class="feather-16"></i></span>
-                                                    </a>
-                                                    <h6 class="cat-name"><a href="javascript:void(0);">Computer</a>
-                                                    </h6>
-                                                    <h6 class="product-name"><a href="javascript:void(0);">MacBook
-                                                            Pro</a></h6>
-                                                    <div
-                                                        class="d-flex align-items-center justify-content-between price">
-                                                        <span>140 Pcs</span>
-                                                        <p>$1000</p>
-                                                    </div>
+                                        </div>
+                                        <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                            <div class="product-info default-cover card">
+                                                <a href="javascript:void(0);" class="img-bg">
+                                                    <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-02.png"
+                                                        alt="Products">
+                                                    <span><i data-feather="check" class="feather-16"></i></span>
+                                                </a>
+                                                <h6 class="cat-name"><a href="javascript:void(0);">Computer</a>
+                                                </h6>
+                                                <h6 class="product-name"><a href="javascript:void(0);">MacBook
+                                                        Pro</a></h6>
+                                                <div class="d-flex align-items-center justify-content-between price">
+                                                    <span>140 Pcs</span>
+                                                    <p>$1000</p>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
-                                                <div class="product-info default-cover card">
-                                                    <a href="javascript:void(0);" class="img-bg">
-                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-03.png"
-                                                            alt="Products">
-                                                        <span><i data-feather="check" class="feather-16"></i></span>
-                                                    </a>
-                                                    <h6 class="cat-name"><a href="javascript:void(0);">Watches</a>
-                                                    </h6>
-                                                    <h6 class="product-name"><a href="javascript:void(0);">Rolex
-                                                            Tribute V3</a></h6>
-                                                    <div
-                                                        class="d-flex align-items-center justify-content-between price">
-                                                        <span>220 Pcs</span>
-                                                        <p>$6800</p>
-                                                    </div>
+                                        </div>
+                                        <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                            <div class="product-info default-cover card">
+                                                <a href="javascript:void(0);" class="img-bg">
+                                                    <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-03.png"
+                                                        alt="Products">
+                                                    <span><i data-feather="check" class="feather-16"></i></span>
+                                                </a>
+                                                <h6 class="cat-name"><a href="javascript:void(0);">Watches</a>
+                                                </h6>
+                                                <h6 class="product-name"><a href="javascript:void(0);">Rolex
+                                                        Tribute V3</a></h6>
+                                                <div class="d-flex align-items-center justify-content-between price">
+                                                    <span>220 Pcs</span>
+                                                    <p>$6800</p>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
-                                                <div class="product-info default-cover card">
-                                                    <a href="javascript:void(0);" class="img-bg">
-                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-04.png"
-                                                            alt="Products">
-                                                        <span><i data-feather="check" class="feather-16"></i></span>
-                                                    </a>
-                                                    <h6 class="cat-name"><a href="javascript:void(0);">Shoes</a></h6>
-                                                    <h6 class="product-name"><a href="javascript:void(0);">Red Nike
-                                                            Angelo</a></h6>
-                                                    <div
-                                                        class="d-flex align-items-center justify-content-between price">
-                                                        <span>78 Pcs</span>
-                                                        <p>$7800</p>
-                                                    </div>
+                                        </div>
+                                        <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                            <div class="product-info default-cover card">
+                                                <a href="javascript:void(0);" class="img-bg">
+                                                    <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-04.png"
+                                                        alt="Products">
+                                                    <span><i data-feather="check" class="feather-16"></i></span>
+                                                </a>
+                                                <h6 class="cat-name"><a href="javascript:void(0);">Shoes</a></h6>
+                                                <h6 class="product-name"><a href="javascript:void(0);">Red Nike
+                                                        Angelo</a></h6>
+                                                <div class="d-flex align-items-center justify-content-between price">
+                                                    <span>78 Pcs</span>
+                                                    <p>$7800</p>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
-                                                <div class="product-info default-cover card">
-                                                    <a href="javascript:void(0);" class="img-bg">
-                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-05.png"
-                                                            alt="Products">
-                                                        <span><i data-feather="check" class="feather-16"></i></span>
-                                                    </a>
-                                                    <h6 class="cat-name"><a href="javascript:void(0);">Headphones</a>
-                                                    </h6>
-                                                    <h6 class="product-name"><a href="javascript:void(0);">Airpod
-                                                            2</a></h6>
-                                                    <div
-                                                        class="d-flex align-items-center justify-content-between price">
-                                                        <span>47 Pcs</span>
-                                                        <p>$5478</p>
-                                                    </div>
+                                        </div>
+                                        <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                            <div class="product-info default-cover card">
+                                                <a href="javascript:void(0);" class="img-bg">
+                                                    <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-05.png"
+                                                        alt="Products">
+                                                    <span><i data-feather="check" class="feather-16"></i></span>
+                                                </a>
+                                                <h6 class="cat-name"><a href="javascript:void(0);">Headphones</a>
+                                                </h6>
+                                                <h6 class="product-name"><a href="javascript:void(0);">Airpod
+                                                        2</a></h6>
+                                                <div class="d-flex align-items-center justify-content-between price">
+                                                    <span>47 Pcs</span>
+                                                    <p>$5478</p>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
-                                                <div class="product-info default-cover card">
-                                                    <a href="javascript:void(0);" class="img-bg">
-                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-06.png"
-                                                            alt="Products">
-                                                        <span><i data-feather="check" class="feather-16"></i></span>
-                                                    </a>
-                                                    <h6 class="cat-name"><a href="javascript:void(0);">Shoes</a></h6>
-                                                    <h6 class="product-name"><a href="javascript:void(0);">Blue White
-                                                            OGR</a></h6>
-                                                    <div
-                                                        class="d-flex align-items-center justify-content-between price">
-                                                        <span>54 Pcs</span>
-                                                        <p>$987</p>
-                                                    </div>
+                                        </div>
+                                        <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                            <div class="product-info default-cover card">
+                                                <a href="javascript:void(0);" class="img-bg">
+                                                    <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-06.png"
+                                                        alt="Products">
+                                                    <span><i data-feather="check" class="feather-16"></i></span>
+                                                </a>
+                                                <h6 class="cat-name"><a href="javascript:void(0);">Shoes</a></h6>
+                                                <h6 class="product-name"><a href="javascript:void(0);">Blue White
+                                                        OGR</a></h6>
+                                                <div class="d-flex align-items-center justify-content-between price">
+                                                    <span>54 Pcs</span>
+                                                    <p>$987</p>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
-                                                <div class="product-info default-cover card">
-                                                    <a href="javascript:void(0);" class="img-bg">
-                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-07.png"
-                                                            alt="Products">
-                                                        <span><i data-feather="check" class="feather-16"></i></span>
-                                                    </a>
-                                                    <h6 class="cat-name"><a href="javascript:void(0);">Laptop</a></h6>
-                                                    <h6 class="product-name"><a href="javascript:void(0);">IdeaPad
-                                                            Slim 5 Gen 7</a></h6>
-                                                    <div
-                                                        class="d-flex align-items-center justify-content-between price">
-                                                        <span>74 Pcs</span>
-                                                        <p>$1454</p>
-                                                    </div>
+                                        </div>
+                                        <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                            <div class="product-info default-cover card">
+                                                <a href="javascript:void(0);" class="img-bg">
+                                                    <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-07.png"
+                                                        alt="Products">
+                                                    <span><i data-feather="check" class="feather-16"></i></span>
+                                                </a>
+                                                <h6 class="cat-name"><a href="javascript:void(0);">Laptop</a></h6>
+                                                <h6 class="product-name"><a href="javascript:void(0);">IdeaPad
+                                                        Slim 5 Gen 7</a></h6>
+                                                <div class="d-flex align-items-center justify-content-between price">
+                                                    <span>74 Pcs</span>
+                                                    <p>$1454</p>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
-                                                <div class="product-info default-cover card">
-                                                    <a href="javascript:void(0);" class="img-bg">
-                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-08.png"
-                                                            alt="Products">
-                                                        <span><i data-feather="check" class="feather-16"></i></span>
-                                                    </a>
-                                                    <h6 class="cat-name"><a href="javascript:void(0);">Headphones</a>
-                                                    </h6>
-                                                    <h6 class="product-name"><a href="javascript:void(0);">SWAGME</a>
-                                                    </h6>
-                                                    <div
-                                                        class="d-flex align-items-center justify-content-between price">
-                                                        <span>14 Pcs</span>
-                                                        <p>$6587</p>
-                                                    </div>
+                                        </div>
+                                        <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                            <div class="product-info default-cover card">
+                                                <a href="javascript:void(0);" class="img-bg">
+                                                    <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-08.png"
+                                                        alt="Products">
+                                                    <span><i data-feather="check" class="feather-16"></i></span>
+                                                </a>
+                                                <h6 class="cat-name"><a href="javascript:void(0);">Headphones</a>
+                                                </h6>
+                                                <h6 class="product-name"><a href="javascript:void(0);">SWAGME</a>
+                                                </h6>
+                                                <div class="d-flex align-items-center justify-content-between price">
+                                                    <span>14 Pcs</span>
+                                                    <p>$6587</p>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
-                                                <div class="product-info default-cover card">
-                                                    <a href="javascript:void(0);" class="img-bg">
-                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-09.png"
-                                                            alt="Products">
-                                                        <span><i data-feather="check" class="feather-16"></i></span>
-                                                    </a>
-                                                    <h6 class="cat-name"><a href="javascript:void(0);">Watches</a>
-                                                    </h6>
-                                                    <h6 class="product-name"><a href="javascript:void(0);">Timex Black
-                                                            SIlver</a></h6>
-                                                    <div
-                                                        class="d-flex align-items-center justify-content-between price">
-                                                        <span>24 Pcs</span>
-                                                        <p>$1457</p>
-                                                    </div>
+                                        </div>
+                                        <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                            <div class="product-info default-cover card">
+                                                <a href="javascript:void(0);" class="img-bg">
+                                                    <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-09.png"
+                                                        alt="Products">
+                                                    <span><i data-feather="check" class="feather-16"></i></span>
+                                                </a>
+                                                <h6 class="cat-name"><a href="javascript:void(0);">Watches</a>
+                                                </h6>
+                                                <h6 class="product-name"><a href="javascript:void(0);">Timex Black
+                                                        SIlver</a></h6>
+                                                <div class="d-flex align-items-center justify-content-between price">
+                                                    <span>24 Pcs</span>
+                                                    <p>$1457</p>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
-                                                <div class="product-info default-cover card">
-                                                    <a href="javascript:void(0);" class="img-bg">
-                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-10.png"
-                                                            alt="Products">
-                                                        <span><i data-feather="check" class="feather-16"></i></span>
-                                                    </a>
-                                                    <h6 class="cat-name"><a href="javascript:void(0);">Computer</a>
-                                                    </h6>
-                                                    <h6 class="product-name"><a href="javascript:void(0);">Tablet 1.02
-                                                            inch</a></h6>
-                                                    <div
-                                                        class="d-flex align-items-center justify-content-between price">
-                                                        <span>14 Pcs</span>
-                                                        <p>$4744</p>
-                                                    </div>
+                                        </div>
+                                        <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                            <div class="product-info default-cover card">
+                                                <a href="javascript:void(0);" class="img-bg">
+                                                    <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-10.png"
+                                                        alt="Products">
+                                                    <span><i data-feather="check" class="feather-16"></i></span>
+                                                </a>
+                                                <h6 class="cat-name"><a href="javascript:void(0);">Computer</a>
+                                                </h6>
+                                                <h6 class="product-name"><a href="javascript:void(0);">Tablet 1.02
+                                                        inch</a></h6>
+                                                <div class="d-flex align-items-center justify-content-between price">
+                                                    <span>14 Pcs</span>
+                                                    <p>$4744</p>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
-                                                <div class="product-info default-cover card">
-                                                    <a href="javascript:void(0);" class="img-bg">
-                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-11.png"
-                                                            alt="Products">
-                                                        <span><i data-feather="check" class="feather-16"></i></span>
-                                                    </a>
-                                                    <h6 class="cat-name"><a href="javascript:void(0);">Watches</a>
-                                                    </h6>
-                                                    <h6 class="product-name"><a href="javascript:void(0);">Fossil Pair
-                                                            Of 3 in 1 </a></h6>
-                                                    <div
-                                                        class="d-flex align-items-center justify-content-between price">
-                                                        <span>40 Pcs</span>
-                                                        <p>$789</p>
-                                                    </div>
+                                        </div>
+                                        <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                            <div class="product-info default-cover card">
+                                                <a href="javascript:void(0);" class="img-bg">
+                                                    <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-11.png"
+                                                        alt="Products">
+                                                    <span><i data-feather="check" class="feather-16"></i></span>
+                                                </a>
+                                                <h6 class="cat-name"><a href="javascript:void(0);">Watches</a>
+                                                </h6>
+                                                <h6 class="product-name"><a href="javascript:void(0);">Fossil Pair
+                                                        Of 3 in 1 </a></h6>
+                                                <div class="d-flex align-items-center justify-content-between price">
+                                                    <span>40 Pcs</span>
+                                                    <p>$789</p>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
-                                                <div class="product-info default-cover card">
-                                                    <a href="javascript:void(0);" class="img-bg">
-                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-18.png"
-                                                            alt="Products">
-                                                        <span><i data-feather="check" class="feather-16"></i></span>
-                                                    </a>
-                                                    <h6 class="cat-name"><a href="javascript:void(0);">Shoes</a></h6>
-                                                    <h6 class="product-name"><a href="javascript:void(0);">Green Nike
-                                                            Fe</a></h6>
-                                                    <div
-                                                        class="d-flex align-items-center justify-content-between price">
-                                                        <span>78 Pcs</span>
-                                                        <p>$7847</p>
-                                                    </div>
+                                        </div>
+                                        <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                            <div class="product-info default-cover card">
+                                                <a href="javascript:void(0);" class="img-bg">
+                                                    <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-18.png"
+                                                        alt="Products">
+                                                    <span><i data-feather="check" class="feather-16"></i></span>
+                                                </a>
+                                                <h6 class="cat-name"><a href="javascript:void(0);">Shoes</a></h6>
+                                                <h6 class="product-name"><a href="javascript:void(0);">Green Nike
+                                                        Fe</a></h6>
+                                                <div class="d-flex align-items-center justify-content-between price">
+                                                    <span>78 Pcs</span>
+                                                    <p>$7847</p>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="tab_content" data-tab="headphone">
-                                        <div class="row">
-                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
-                                                <div class="product-info default-cover card">
-                                                    <a href="javascript:void(0);" class="img-bg">
-                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-05.png"
-                                                            alt="Products">
-                                                        <span><i data-feather="check" class="feather-16"></i></span>
-                                                    </a>
-                                                    <h6 class="cat-name"><a href="javascript:void(0);">Headphones</a>
-                                                    </h6>
-                                                    <h6 class="product-name"><a href="javascript:void(0);">Airpod
-                                                            2</a></h6>
-                                                    <div
-                                                        class="d-flex align-items-center justify-content-between price">
-                                                        <span>47 Pcs</span>
-                                                        <p>$5478</p>
-                                                    </div>
+                                </div>
+                                <div class="tab_content" data-tab="headphone">
+                                    <div class="row">
+                                        <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                            <div class="product-info default-cover card">
+                                                <a href="javascript:void(0);" class="img-bg">
+                                                    <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-05.png"
+                                                        alt="Products">
+                                                    <span><i data-feather="check" class="feather-16"></i></span>
+                                                </a>
+                                                <h6 class="cat-name"><a href="javascript:void(0);">Headphones</a>
+                                                </h6>
+                                                <h6 class="product-name"><a href="javascript:void(0);">Airpod
+                                                        2</a></h6>
+                                                <div class="d-flex align-items-center justify-content-between price">
+                                                    <span>47 Pcs</span>
+                                                    <p>$5478</p>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
-                                                <div class="product-info default-cover card">
-                                                    <a href="javascript:void(0);" class="img-bg">
-                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-08.png"
-                                                            alt="Products">
-                                                        <span><i data-feather="check" class="feather-16"></i></span>
-                                                    </a>
-                                                    <h6 class="cat-name"><a href="javascript:void(0);">Headphones</a>
-                                                    </h6>
-                                                    <h6 class="product-name"><a href="javascript:void(0);">SWAGME</a>
-                                                    </h6>
-                                                    <div
-                                                        class="d-flex align-items-center justify-content-between price">
-                                                        <span>14 Pcs</span>
-                                                        <p>$6587</p>
-                                                    </div>
+                                        </div>
+                                        <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                            <div class="product-info default-cover card">
+                                                <a href="javascript:void(0);" class="img-bg">
+                                                    <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-08.png"
+                                                        alt="Products">
+                                                    <span><i data-feather="check" class="feather-16"></i></span>
+                                                </a>
+                                                <h6 class="cat-name"><a href="javascript:void(0);">Headphones</a>
+                                                </h6>
+                                                <h6 class="product-name"><a href="javascript:void(0);">SWAGME</a>
+                                                </h6>
+                                                <div class="d-flex align-items-center justify-content-between price">
+                                                    <span>14 Pcs</span>
+                                                    <p>$6587</p>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="tab_content" data-tab="shoe">
-                                        <div class="row">
-                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
-                                                <div class="product-info default-cover card">
-                                                    <a href="javascript:void(0);" class="img-bg">
-                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-04.png"
-                                                            alt="Products">
-                                                        <span><i data-feather="check" class="feather-16"></i></span>
-                                                    </a>
-                                                    <h6 class="cat-name"><a href="javascript:void(0);">Shoes</a></h6>
-                                                    <h6 class="product-name"><a href="javascript:void(0);">Red Nike
-                                                            Angelo</a></h6>
-                                                    <div
-                                                        class="d-flex align-items-center justify-content-between price">
-                                                        <span>78 Pcs</span>
-                                                        <p>$7800</p>
-                                                    </div>
+                                </div>
+                                <div class="tab_content" data-tab="shoe">
+                                    <div class="row">
+                                        <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                            <div class="product-info default-cover card">
+                                                <a href="javascript:void(0);" class="img-bg">
+                                                    <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-04.png"
+                                                        alt="Products">
+                                                    <span><i data-feather="check" class="feather-16"></i></span>
+                                                </a>
+                                                <h6 class="cat-name"><a href="javascript:void(0);">Shoes</a></h6>
+                                                <h6 class="product-name"><a href="javascript:void(0);">Red Nike
+                                                        Angelo</a></h6>
+                                                <div class="d-flex align-items-center justify-content-between price">
+                                                    <span>78 Pcs</span>
+                                                    <p>$7800</p>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
-                                                <div class="product-info default-cover card">
-                                                    <a href="javascript:void(0);" class="img-bg">
-                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-06.png"
-                                                            alt="Products">
-                                                        <span><i data-feather="check" class="feather-16"></i></span>
-                                                    </a>
-                                                    <h6 class="cat-name"><a href="javascript:void(0);">Shoes</a></h6>
-                                                    <h6 class="product-name"><a href="javascript:void(0);">Blue White
-                                                            OGR</a></h6>
-                                                    <div
-                                                        class="d-flex align-items-center justify-content-between price">
-                                                        <span>54 Pcs</span>
-                                                        <p>$987</p>
-                                                    </div>
+                                        </div>
+                                        <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                            <div class="product-info default-cover card">
+                                                <a href="javascript:void(0);" class="img-bg">
+                                                    <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-06.png"
+                                                        alt="Products">
+                                                    <span><i data-feather="check" class="feather-16"></i></span>
+                                                </a>
+                                                <h6 class="cat-name"><a href="javascript:void(0);">Shoes</a></h6>
+                                                <h6 class="product-name"><a href="javascript:void(0);">Blue White
+                                                        OGR</a></h6>
+                                                <div class="d-flex align-items-center justify-content-between price">
+                                                    <span>54 Pcs</span>
+                                                    <p>$987</p>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
-                                                <div class="product-info default-cover card">
-                                                    <a href="javascript:void(0);" class="img-bg">
-                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-18.png"
-                                                            alt="Products">
-                                                        <span><i data-feather="check" class="feather-16"></i></span>
-                                                    </a>
-                                                    <h6 class="cat-name"><a href="javascript:void(0);">Shoes</a></h6>
-                                                    <h6 class="product-name"><a href="javascript:void(0);">Green Nike
-                                                            Fe</a></h6>
-                                                    <div
-                                                        class="d-flex align-items-center justify-content-between price">
-                                                        <span>78 Pcs</span>
-                                                        <p>$7847</p>
-                                                    </div>
+                                        </div>
+                                        <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                            <div class="product-info default-cover card">
+                                                <a href="javascript:void(0);" class="img-bg">
+                                                    <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-18.png"
+                                                        alt="Products">
+                                                    <span><i data-feather="check" class="feather-16"></i></span>
+                                                </a>
+                                                <h6 class="cat-name"><a href="javascript:void(0);">Shoes</a></h6>
+                                                <h6 class="product-name"><a href="javascript:void(0);">Green Nike
+                                                        Fe</a></h6>
+                                                <div class="d-flex align-items-center justify-content-between price">
+                                                    <span>78 Pcs</span>
+                                                    <p>$7847</p>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="tab_content" data-tab="mobile">
-                                        <div class="row">
-                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3">
-                                                <div class="product-info default-cover card">
-                                                    <a href="javascript:void(0);" class="img-bg">
-                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-01.png"
-                                                            alt="Products">
-                                                        <span><i data-feather="check" class="feather-16"></i></span>
-                                                    </a>
-                                                    <h6 class="cat-name"><a href="javascript:void(0);">Mobiles</a>
-                                                    </h6>
-                                                    <h6 class="product-name"><a href="javascript:void(0);">IPhone 14
-                                                            64GB</a></h6>
-                                                    <div
-                                                        class="d-flex align-items-center justify-content-between price">
-                                                        <span>30 Pcs</span>
-                                                        <p>$15800</p>
-                                                    </div>
+                                </div>
+                                <div class="tab_content" data-tab="mobile">
+                                    <div class="row">
+                                        <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3">
+                                            <div class="product-info default-cover card">
+                                                <a href="javascript:void(0);" class="img-bg">
+                                                    <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-01.png"
+                                                        alt="Products">
+                                                    <span><i data-feather="check" class="feather-16"></i></span>
+                                                </a>
+                                                <h6 class="cat-name"><a href="javascript:void(0);">Mobiles</a>
+                                                </h6>
+                                                <h6 class="product-name"><a href="javascript:void(0);">IPhone 14
+                                                        64GB</a></h6>
+                                                <div class="d-flex align-items-center justify-content-between price">
+                                                    <span>30 Pcs</span>
+                                                    <p>$15800</p>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
-                                                <div class="product-info default-cover card">
-                                                    <a href="javascript:void(0);" class="img-bg">
-                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-14.png"
-                                                            alt="Products">
-                                                        <span><i data-feather="check" class="feather-16"></i></span>
-                                                    </a>
-                                                    <h6 class="cat-name"><a href="javascript:void(0);">Mobiles</a>
-                                                    </h6>
-                                                    <h6 class="product-name"><a href="javascript:void(0);">Iphone
-                                                            11</a></h6>
-                                                    <div
-                                                        class="d-flex align-items-center justify-content-between price">
-                                                        <span>14 Pcs</span>
-                                                        <p>$3654</p>
-                                                    </div>
+                                        </div>
+                                        <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                            <div class="product-info default-cover card">
+                                                <a href="javascript:void(0);" class="img-bg">
+                                                    <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-14.png"
+                                                        alt="Products">
+                                                    <span><i data-feather="check" class="feather-16"></i></span>
+                                                </a>
+                                                <h6 class="cat-name"><a href="javascript:void(0);">Mobiles</a>
+                                                </h6>
+                                                <h6 class="product-name"><a href="javascript:void(0);">Iphone
+                                                        11</a></h6>
+                                                <div class="d-flex align-items-center justify-content-between price">
+                                                    <span>14 Pcs</span>
+                                                    <p>$3654</p>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="tab_content" data-tab="watche">
-                                        <div class="row">
-                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
-                                                <div class="product-info default-cover card">
-                                                    <a href="javascript:void(0);" class="img-bg">
-                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-03.png"
-                                                            alt="Products">
-                                                        <span><i data-feather="check" class="feather-16"></i></span>
-                                                    </a>
-                                                    <h6 class="cat-name"><a href="javascript:void(0);">Watches</a>
-                                                    </h6>
-                                                    <h6 class="product-name"><a href="javascript:void(0);">Rolex
-                                                            Tribute V3</a></h6>
-                                                    <div
-                                                        class="d-flex align-items-center justify-content-between price">
-                                                        <span>220 Pcs</span>
-                                                        <p>$6800</p>
-                                                    </div>
+                                </div>
+                                <div class="tab_content" data-tab="watche">
+                                    <div class="row">
+                                        <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                            <div class="product-info default-cover card">
+                                                <a href="javascript:void(0);" class="img-bg">
+                                                    <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-03.png"
+                                                        alt="Products">
+                                                    <span><i data-feather="check" class="feather-16"></i></span>
+                                                </a>
+                                                <h6 class="cat-name"><a href="javascript:void(0);">Watches</a>
+                                                </h6>
+                                                <h6 class="product-name"><a href="javascript:void(0);">Rolex
+                                                        Tribute V3</a></h6>
+                                                <div class="d-flex align-items-center justify-content-between price">
+                                                    <span>220 Pcs</span>
+                                                    <p>$6800</p>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
-                                                <div class="product-info default-cover card">
-                                                    <a href="javascript:void(0);" class="img-bg">
-                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-09.png"
-                                                            alt="Products">
-                                                        <span><i data-feather="check" class="feather-16"></i></span>
-                                                    </a>
-                                                    <h6 class="cat-name"><a href="javascript:void(0);">Watches</a>
-                                                    </h6>
-                                                    <h6 class="product-name"><a href="javascript:void(0);">Timex
-                                                            Black SIlver</a></h6>
-                                                    <div
-                                                        class="d-flex align-items-center justify-content-between price">
-                                                        <span>24 Pcs</span>
-                                                        <p>$1457</p>
-                                                    </div>
+                                        </div>
+                                        <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                            <div class="product-info default-cover card">
+                                                <a href="javascript:void(0);" class="img-bg">
+                                                    <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-09.png"
+                                                        alt="Products">
+                                                    <span><i data-feather="check" class="feather-16"></i></span>
+                                                </a>
+                                                <h6 class="cat-name"><a href="javascript:void(0);">Watches</a>
+                                                </h6>
+                                                <h6 class="product-name"><a href="javascript:void(0);">Timex
+                                                        Black SIlver</a></h6>
+                                                <div class="d-flex align-items-center justify-content-between price">
+                                                    <span>24 Pcs</span>
+                                                    <p>$1457</p>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
-                                                <div class="product-info default-cover card">
-                                                    <a href="javascript:void(0);" class="img-bg">
-                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-11.png"
-                                                            alt="Products">
-                                                        <span><i data-feather="check" class="feather-16"></i></span>
-                                                    </a>
-                                                    <h6 class="cat-name"><a href="javascript:void(0);">Watches</a>
-                                                    </h6>
-                                                    <h6 class="product-name"><a href="javascript:void(0);">Fossil
-                                                            Pair Of 3 in 1 </a></h6>
-                                                    <div
-                                                        class="d-flex align-items-center justify-content-between price">
-                                                        <span>40 Pcs</span>
-                                                        <p>$789</p>
-                                                    </div>
+                                        </div>
+                                        <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                            <div class="product-info default-cover card">
+                                                <a href="javascript:void(0);" class="img-bg">
+                                                    <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-11.png"
+                                                        alt="Products">
+                                                    <span><i data-feather="check" class="feather-16"></i></span>
+                                                </a>
+                                                <h6 class="cat-name"><a href="javascript:void(0);">Watches</a>
+                                                </h6>
+                                                <h6 class="product-name"><a href="javascript:void(0);">Fossil
+                                                        Pair Of 3 in 1 </a></h6>
+                                                <div class="d-flex align-items-center justify-content-between price">
+                                                    <span>40 Pcs</span>
+                                                    <p>$789</p>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="tab_content" data-tab="laptop">
-                                        <div class="row">
-                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
-                                                <div class="product-info default-cover card">
-                                                    <a href="javascript:void(0);" class="img-bg">
-                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-02.png"
-                                                            alt="Products">
-                                                        <span><i data-feather="check" class="feather-16"></i></span>
-                                                    </a>
-                                                    <h6 class="cat-name"><a href="javascript:void(0);">Computer</a>
-                                                    </h6>
-                                                    <h6 class="product-name"><a href="javascript:void(0);">MacBook
-                                                            Pro</a></h6>
-                                                    <div
-                                                        class="d-flex align-items-center justify-content-between price">
-                                                        <span>140 Pcs</span>
-                                                        <p>$1000</p>
-                                                    </div>
+                                </div>
+                                <div class="tab_content" data-tab="laptop">
+                                    <div class="row">
+                                        <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                            <div class="product-info default-cover card">
+                                                <a href="javascript:void(0);" class="img-bg">
+                                                    <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-02.png"
+                                                        alt="Products">
+                                                    <span><i data-feather="check" class="feather-16"></i></span>
+                                                </a>
+                                                <h6 class="cat-name"><a href="javascript:void(0);">Computer</a>
+                                                </h6>
+                                                <h6 class="product-name"><a href="javascript:void(0);">MacBook
+                                                        Pro</a></h6>
+                                                <div class="d-flex align-items-center justify-content-between price">
+                                                    <span>140 Pcs</span>
+                                                    <p>$1000</p>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
-                                                <div class="product-info default-cover card">
-                                                    <a href="javascript:void(0);" class="img-bg">
-                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-07.png"
-                                                            alt="Products">
-                                                        <span><i data-feather="check" class="feather-16"></i></span>
-                                                    </a>
-                                                    <h6 class="cat-name"><a href="javascript:void(0);">Laptop</a>
-                                                    </h6>
-                                                    <h6 class="product-name"><a href="javascript:void(0);">IdeaPad
-                                                            Slim 5 Gen 7</a></h6>
-                                                    <div
-                                                        class="d-flex align-items-center justify-content-between price">
-                                                        <span>74 Pcs</span>
-                                                        <p>$1454</p>
-                                                    </div>
+                                        </div>
+                                        <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                            <div class="product-info default-cover card">
+                                                <a href="javascript:void(0);" class="img-bg">
+                                                    <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-07.png"
+                                                        alt="Products">
+                                                    <span><i data-feather="check" class="feather-16"></i></span>
+                                                </a>
+                                                <h6 class="cat-name"><a href="javascript:void(0);">Laptop</a>
+                                                </h6>
+                                                <h6 class="product-name"><a href="javascript:void(0);">IdeaPad
+                                                        Slim 5 Gen 7</a></h6>
+                                                <div class="d-flex align-items-center justify-content-between price">
+                                                    <span>74 Pcs</span>
+                                                    <p>$1454</p>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
-                                                <div class="product-info default-cover card">
-                                                    <a href="javascript:void(0);" class="img-bg">
-                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-10.png"
-                                                            alt="Products">
-                                                        <span><i data-feather="check" class="feather-16"></i></span>
-                                                    </a>
-                                                    <h6 class="cat-name"><a href="javascript:void(0);">Computer</a>
-                                                    </h6>
-                                                    <h6 class="product-name"><a href="javascript:void(0);">Tablet
-                                                            1.02 inch</a></h6>
-                                                    <div
-                                                        class="d-flex align-items-center justify-content-between price">
-                                                        <span>14 Pcs</span>
-                                                        <p>$4744</p>
-                                                    </div>
+                                        </div>
+                                        <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                            <div class="product-info default-cover card">
+                                                <a href="javascript:void(0);" class="img-bg">
+                                                    <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-10.png"
+                                                        alt="Products">
+                                                    <span><i data-feather="check" class="feather-16"></i></span>
+                                                </a>
+                                                <h6 class="cat-name"><a href="javascript:void(0);">Computer</a>
+                                                </h6>
+                                                <h6 class="product-name"><a href="javascript:void(0);">Tablet
+                                                        1.02 inch</a></h6>
+                                                <div class="d-flex align-items-center justify-content-between price">
+                                                    <span>14 Pcs</span>
+                                                    <p>$4744</p>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
-                                                <div class="product-info default-cover card">
-                                                    <a href="javascript:void(0);" class="img-bg">
-                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-13.png"
-                                                            alt="Products">
-                                                        <span><i data-feather="check" class="feather-16"></i></span>
-                                                    </a>
-                                                    <h6 class="cat-name"><a href="javascript:void(0);">Laptop</a>
-                                                    </h6>
-                                                    <h6 class="product-name"><a href="javascript:void(0);">Yoga Book
-                                                            9i</a></h6>
-                                                    <div
-                                                        class="d-flex align-items-center justify-content-between price">
-                                                        <span>65 Pcs</span>
-                                                        <p>$4784</p>
-                                                    </div>
+                                        </div>
+                                        <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                            <div class="product-info default-cover card">
+                                                <a href="javascript:void(0);" class="img-bg">
+                                                    <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-13.png"
+                                                        alt="Products">
+                                                    <span><i data-feather="check" class="feather-16"></i></span>
+                                                </a>
+                                                <h6 class="cat-name"><a href="javascript:void(0);">Laptop</a>
+                                                </h6>
+                                                <h6 class="product-name"><a href="javascript:void(0);">Yoga Book
+                                                        9i</a></h6>
+                                                <div class="d-flex align-items-center justify-content-between price">
+                                                    <span>65 Pcs</span>
+                                                    <p>$4784</p>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
-                                                <div class="product-info default-cover card">
-                                                    <a href="javascript:void(0);" class="img-bg">
-                                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-14.png"
-                                                            alt="Products">
-                                                        <span><i data-feather="check" class="feather-16"></i></span>
-                                                    </a>
-                                                    <h6 class="cat-name"><a href="javascript:void(0);">Laptop</a>
-                                                    </h6>
-                                                    <h6 class="product-name"><a href="javascript:void(0);">IdeaPad
-                                                            Slim 3i</a></h6>
-                                                    <div
-                                                        class="d-flex align-items-center justify-content-between price">
-                                                        <span>47 Pcs</span>
-                                                        <p>$1245</p>
-                                                    </div>
+                                        </div>
+                                        <div class="col-sm-2 col-md-6 col-lg-3 col-xl-3 pe-2">
+                                            <div class="product-info default-cover card">
+                                                <a href="javascript:void(0);" class="img-bg">
+                                                    <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-14.png"
+                                                        alt="Products">
+                                                    <span><i data-feather="check" class="feather-16"></i></span>
+                                                </a>
+                                                <h6 class="cat-name"><a href="javascript:void(0);">Laptop</a>
+                                                </h6>
+                                                <h6 class="product-name"><a href="javascript:void(0);">IdeaPad
+                                                        Slim 3i</a></h6>
+                                                <div class="d-flex align-items-center justify-content-between price">
+                                                    <span>47 Pcs</span>
+                                                    <p>$1245</p>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 col-lg-4 ps-0">
+                <aside class="product-order-list">
+                    <div class="head d-flex align-items-center justify-content-between w-100">
+                        <div class>
+                            <h5>Order List</h5>
+                            <span>Transaction ID : #65565</span>
+                        </div>
+                        <div class>
+                            <a class="confirm-text" href="javascript:void(0);"><i data-feather="trash-2"
+                                    class="feather-16 text-danger"></i></a>
+                            <a href="javascript:void(0);" class="text-default"><i data-feather="more-vertical"
+                                    class="feather-16"></i></a>
+                        </div>
+                    </div>
+
+                    <div class="">
+
+                        <a href="javascript:void(0);" class="btn btn-info"><span
+                                class="me-1 d-flex align-items-center"><span
+                                    class="me-1 d-flex align-items-center"><svg xmlns="http://www.w3.org/2000/svg"
+                                        width="16" height="16" fill="currentColor" class="bi bi-view-list"
+                                        viewBox="0 0 16 16">
+                                        <path
+                                            d="M3 4.5h10a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2m0 1a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1zM1 2a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 2m0 12a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 14" />
+                                    </svg></span>Table layout</a>
+
+                    </div>
+
+                    <div class="customer-info block-section">
+                        <div class="input-block d-flex align-items-center">
+                            <a href="javascript:void(0);" class="btn btn-info"><span
+                                    class="me-1 d-flex align-items-center"><span
+                                        class="me-1 d-flex align-items-center"><svg xmlns="http://www.w3.org/2000/svg"
+                                            width="16" height="16" fill="currentColor" class="bi bi-basket"
+                                            viewBox="0 0 16 16">
+                                            <path
+                                                d="M5.757 1.071a.5.5 0 0 1 .172.686L3.383 6h9.234L10.07 1.757a.5.5 0 1 1 .858-.514L13.783 6H15a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1v4.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 13.5V9a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h1.217L5.07 1.243a.5.5 0 0 1 .686-.172zM2 9v4.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V9zM1 7v1h14V7zm3 3a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3A.5.5 0 0 1 4 10m2 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3A.5.5 0 0 1 6 10m2 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3A.5.5 0 0 1 8 10m2 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 1 .5-.5m2 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 1 .5-.5" />
+                                        </svg></span>Takeaway</a>
+
+                            <div class="flex-grow-1">
+                                <input type="search" class="form-control" id=""
+                                    placeholder="Enter name or email to search">
+                            </div>
+                            <a href="#" class="btn btn-primary btn-icon" data-bs-toggle="modal"
+                                data-bs-target="#create"><i data-feather="user-plus" class="feather-16"></i></a>
+                        </div>
+
+                    </div>
+
+                    <div class="customer-info block-section">
+                        <h6>Customer Information</h6>
+                        <form action="https://dreamspos.dreamstechnologies.com/html/template/pos.html">
+                            <div class="row">
+                                <div class="col-lg-6 col-sm-12 col-12">
+                                    <div class="input-blocks">
+                                        <label>Customer Name</label>
+                                        <input type="text" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-sm-12 col-12">
+                                    <div class="input-blocks">
+                                        <label>Email</label>
+                                        <input type="email" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-sm-12 col-12">
+                                    <div class="input-blocks">
+                                        <label>Phone</label>
+                                        <input type="string" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-sm-12 col-12">
+                                    <div class="input-blocks">
+                                        <label>Number of people</label>
+                                        <input type="number" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-sm-12 col-12">
+                                    <div class="input-blocks">
+                                        <label>Table</label>
+                                        <input type="text">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-sm-12 col-12">
+                                    <div class="input-blocks">
+                                        <label>Address</label>
+                                        <input type="text">
+                                    </div>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                    <div class="product-added block-section">
+                        <div class="head-text d-flex align-items-center justify-content-between">
+                            <h6 class="d-flex align-items-center mb-0">Product Added<span class="count">2</span></h6>
+                            <a href="javascript:void(0);" class="d-flex align-items-center text-danger"><span
+                                    class="me-1"><i data-feather="x" class="feather-16"></i></span>Clear all</a>
+                        </div>
+                        <div class="product-wrap">
+                            <div class="product-list d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center product-info" data-bs-toggle="modal"
+                                    data-bs-target="#products">
+                                    <a href="javascript:void(0);" class="img-bg">
+                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-16.png"
+                                            alt="Products">
+                                    </a>
+                                    <div class="info">
+                                        <span>PT0005</span>
+                                        <h6><a href="javascript:void(0);">Red Nike Laser</a></h6>
+                                        <p>$2000</p>
+                                    </div>
+                                </div>
+                                <div class="qty-item text-center">
+                                    <a href="javascript:void(0);"
+                                        class="dec d-flex justify-content-center align-items-center"
+                                        data-bs-toggle="tooltip" data-bs-placement="top" title="minus"><i
+                                            data-feather="minus-circle" class="feather-14"></i></a>
+                                    <input type="text" class="form-control text-center" name="qty"
+                                        value="4">
+                                    <a href="javascript:void(0);"
+                                        class="inc d-flex justify-content-center align-items-center"
+                                        data-bs-toggle="tooltip" data-bs-placement="top" title="plus"><i
+                                            data-feather="plus-circle" class="feather-14"></i></a>
+                                </div>
+                                <div class="d-flex align-items-center action">
+                                    <a class="btn-icon edit-icon me-2" href="#" data-bs-toggle="modal"
+                                        data-bs-target="#edit-product">
+                                        <i data-feather="edit" class="feather-14"></i>
+                                    </a>
+                                    <a class="btn-icon delete-icon confirm-text" href="javascript:void(0);">
+                                        <i data-feather="trash-2" class="feather-14"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="product-list d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center product-info" data-bs-toggle="modal"
+                                    data-bs-target="#products">
+                                    <a href="javascript:void(0);" class="img-bg">
+                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-17.png"
+                                            alt="Products">
+                                    </a>
+                                    <div class="info">
+                                        <span>PT0235</span>
+                                        <h6><a href="javascript:void(0);">Iphone 14</a></h6>
+                                        <p>$3000</p>
+                                    </div>
+                                </div>
+                                <div class="qty-item text-center">
+                                    <a href="javascript:void(0);"
+                                        class="dec d-flex justify-content-center align-items-center"
+                                        data-bs-toggle="tooltip" data-bs-placement="top" title="minus"><i
+                                            data-feather="minus-circle" class="feather-14"></i></a>
+                                    <input type="text" class="form-control text-center" name="qty"
+                                        value="3">
+                                    <a href="javascript:void(0);"
+                                        class="inc d-flex justify-content-center align-items-center"
+                                        data-bs-toggle="tooltip" data-bs-placement="top" title="plus"><i
+                                            data-feather="plus-circle" class="feather-14"></i></a>
+                                </div>
+                                <div class="d-flex align-items-center action">
+                                    <a class="btn-icon edit-icon me-2" href="#" data-bs-toggle="modal"
+                                        data-bs-target="#edit-product">
+                                        <i data-feather="edit" class="feather-14"></i>
+                                    </a>
+                                    <a class="btn-icon delete-icon confirm-text" href="javascript:void(0);">
+                                        <i data-feather="trash-2" class="feather-14"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="product-list d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center product-info" data-bs-toggle="modal"
+                                    data-bs-target="#products">
+                                    <a href="javascript:void(0);" class="img-bg">
+                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-16.png"
+                                            alt="Products">
+                                    </a>
+                                    <div class="info">
+                                        <span>PT0005</span>
+                                        <h6><a href="javascript:void(0);">Red Nike Laser</a></h6>
+                                        <p>$2000</p>
+                                    </div>
+                                </div>
+                                <div class="qty-item text-center">
+                                    <a href="javascript:void(0);"
+                                        class="dec d-flex justify-content-center align-items-center"
+                                        data-bs-toggle="tooltip" data-bs-placement="top" title="minus"><i
+                                            data-feather="minus-circle" class="feather-14"></i></a>
+                                    <input type="text" class="form-control text-center" name="qty"
+                                        value="1">
+                                    <a href="javascript:void(0);"
+                                        class="inc d-flex justify-content-center align-items-center"
+                                        data-bs-toggle="tooltip" data-bs-placement="top" title="plus"><i
+                                            data-feather="plus-circle" class="feather-14"></i></a>
+                                </div>
+                                <div class="d-flex align-items-center action">
+                                    <a class="btn-icon edit-icon me-2" href="#" data-bs-toggle="modal"
+                                        data-bs-target="#edit-product">
+                                        <i data-feather="edit" class="feather-14"></i>
+                                    </a>
+                                    <a class="btn-icon delete-icon confirm-text" href="javascript:void(0);">
+                                        <i data-feather="trash-2" class="feather-14"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="product-list d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center product-info" data-bs-toggle="modal"
+                                    data-bs-target="#products">
+                                    <a href="javascript:void(0);" class="img-bg">
+                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-17.png"
+                                            alt="Products">
+                                    </a>
+                                    <div class="info">
+                                        <span>PT0005</span>
+                                        <h6><a href="javascript:void(0);">Red Nike Laser</a></h6>
+                                        <p>$2000</p>
+                                    </div>
+                                </div>
+                                <div class="qty-item text-center">
+                                    <a href="javascript:void(0);"
+                                        class="dec d-flex justify-content-center align-items-center"
+                                        data-bs-toggle="tooltip" data-bs-placement="top" title="minus"><i
+                                            data-feather="minus-circle" class="feather-14"></i></a>
+                                    <input type="text" class="form-control text-center" name="qty"
+                                        value="1">
+                                    <a href="javascript:void(0);"
+                                        class="inc d-flex justify-content-center align-items-center"
+                                        data-bs-toggle="tooltip" data-bs-placement="top" title="plus"><i
+                                            data-feather="plus-circle" class="feather-14"></i></a>
+                                </div>
+                                <div class="d-flex align-items-center action">
+                                    <a class="btn-icon edit-icon me-2" href="#" data-bs-toggle="modal"
+                                        data-bs-target="#edit-product">
+                                        <i data-feather="edit" class="feather-14"></i>
+                                    </a>
+                                    <a class="btn-icon delete-icon confirm-text" href="javascript:void(0);">
+                                        <i data-feather="trash-2" class="feather-14"></i>
+                                    </a>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-12 col-lg-4 ps-0">
-                        <aside class="product-order-list">
-                            <div class="head d-flex align-items-center justify-content-between w-100">
-                                <div class>
-                                    <h5>Order List</h5>
-                                    <span>Transaction ID : #65565</span>
-                                </div>
-                                <div class>
-                                    <a class="confirm-text" href="javascript:void(0);"><i data-feather="trash-2"
-                                            class="feather-16 text-danger"></i></a>
-                                    <a href="javascript:void(0);" class="text-default"><i
-                                            data-feather="more-vertical" class="feather-16"></i></a>
-                                </div>
-                            </div>
-
-                            <div class="">
-
-                                    <a href="javascript:void(0);" class="btn btn-info"><span
-                                        class="me-1 d-flex align-items-center"><span class="me-1 d-flex align-items-center"><svg
-                                            xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                            class="bi bi-view-list" viewBox="0 0 16 16">
-                                            <path
-                                                d="M3 4.5h10a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2m0 1a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1zM1 2a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 2m0 12a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 14" />
-                                        </svg></span>Table layout</a>
-
-                            </div>
-
-                            <div class="customer-info block-section">
-                                <div class="input-block d-flex align-items-center">
-                                    <a href="javascript:void(0);" class="btn btn-info"><span
-                                        class="me-1 d-flex align-items-center"><span class="me-1 d-flex align-items-center"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-basket" viewBox="0 0 16 16">
-                                            <path d="M5.757 1.071a.5.5 0 0 1 .172.686L3.383 6h9.234L10.07 1.757a.5.5 0 1 1 .858-.514L13.783 6H15a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1v4.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 13.5V9a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h1.217L5.07 1.243a.5.5 0 0 1 .686-.172zM2 9v4.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V9zM1 7v1h14V7zm3 3a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3A.5.5 0 0 1 4 10m2 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3A.5.5 0 0 1 6 10m2 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3A.5.5 0 0 1 8 10m2 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 1 .5-.5m2 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 1 .5-.5"/>
-                                          </svg></span>Takeaway</a>
-
-                                    <div class="flex-grow-1">
-                                        <input type="search" class="form-control" id="" placeholder="Enter name or email to search">
+                    <div class="block-section">
+                        <div class="selling-info">
+                            <div class="row">
+                                <div class="col-12 col-sm-4">
+                                    <div class="input-block">
+                                        <label>Order Tax</label>
+                                        <select class="select">
+                                            <option>GST 5%</option>
+                                            <option>GST 10%</option>
+                                            <option>GST 15%</option>
+                                            <option>GST 20%</option>
+                                            <option>GST 25%</option>
+                                            <option>GST 30%</option>
+                                        </select>
                                     </div>
-                                    <a href="#" class="btn btn-primary btn-icon" data-bs-toggle="modal"
-                                        data-bs-target="#create"><i data-feather="user-plus"
-                                            class="feather-16"></i></a>
                                 </div>
 
-                            </div>
-
-                            <div class="customer-info block-section">
-                                <h6>Customer Information</h6>
-                                <form action="https://dreamspos.dreamstechnologies.com/html/template/pos.html">
-                                    <div class="row">
-                                        <div class="col-lg-6 col-sm-12 col-12">
-                                            <div class="input-blocks">
-                                                <label>Customer Name</label>
-                                                <input type="text" class="form-control">
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6 col-sm-12 col-12">
-                                            <div class="input-blocks">
-                                                <label>Email</label>
-                                                <input type="email" class="form-control">
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6 col-sm-12 col-12">
-                                            <div class="input-blocks">
-                                                <label>Phone</label>
-                                                <input type="string" class="form-control">
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6 col-sm-12 col-12">
-                                            <div class="input-blocks">
-                                                <label>Number of people</label>
-                                                <input type="number" class="form-control">
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6 col-sm-12 col-12">
-                                            <div class="input-blocks">
-                                                <label>Table</label>
-                                                <input type="text">
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6 col-sm-12 col-12">
-                                            <div class="input-blocks">
-                                                <label>Address</label>
-                                                <input type="text">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </form>
-                            </div>
-                            <div class="product-added block-section">
-                                <div class="head-text d-flex align-items-center justify-content-between">
-                                    <h6 class="d-flex align-items-center mb-0">Product Added<span
-                                            class="count">2</span></h6>
-                                    <a href="javascript:void(0);"
-                                        class="d-flex align-items-center text-danger"><span class="me-1"><i
-                                                data-feather="x" class="feather-16"></i></span>Clear all</a>
-                                </div>
-                                <div class="product-wrap">
-                                    <div class="product-list d-flex align-items-center justify-content-between">
-                                        <div class="d-flex align-items-center product-info" data-bs-toggle="modal"
-                                            data-bs-target="#products">
-                                            <a href="javascript:void(0);" class="img-bg">
-                                                <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-16.png"
-                                                    alt="Products">
-                                            </a>
-                                            <div class="info">
-                                                <span>PT0005</span>
-                                                <h6><a href="javascript:void(0);">Red Nike Laser</a></h6>
-                                                <p>$2000</p>
-                                            </div>
-                                        </div>
-                                        <div class="qty-item text-center">
-                                            <a href="javascript:void(0);"
-                                                class="dec d-flex justify-content-center align-items-center"
-                                                data-bs-toggle="tooltip" data-bs-placement="top" title="minus"><i
-                                                    data-feather="minus-circle" class="feather-14"></i></a>
-                                            <input type="text" class="form-control text-center" name="qty"
-                                                value="4">
-                                            <a href="javascript:void(0);"
-                                                class="inc d-flex justify-content-center align-items-center"
-                                                data-bs-toggle="tooltip" data-bs-placement="top" title="plus"><i
-                                                    data-feather="plus-circle" class="feather-14"></i></a>
-                                        </div>
-                                        <div class="d-flex align-items-center action">
-                                            <a class="btn-icon edit-icon me-2" href="#"
-                                                data-bs-toggle="modal" data-bs-target="#edit-product">
-                                                <i data-feather="edit" class="feather-14"></i>
-                                            </a>
-                                            <a class="btn-icon delete-icon confirm-text" href="javascript:void(0);">
-                                                <i data-feather="trash-2" class="feather-14"></i>
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <div class="product-list d-flex align-items-center justify-content-between">
-                                        <div class="d-flex align-items-center product-info" data-bs-toggle="modal"
-                                            data-bs-target="#products">
-                                            <a href="javascript:void(0);" class="img-bg">
-                                                <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-17.png"
-                                                    alt="Products">
-                                            </a>
-                                            <div class="info">
-                                                <span>PT0235</span>
-                                                <h6><a href="javascript:void(0);">Iphone 14</a></h6>
-                                                <p>$3000</p>
-                                            </div>
-                                        </div>
-                                        <div class="qty-item text-center">
-                                            <a href="javascript:void(0);"
-                                                class="dec d-flex justify-content-center align-items-center"
-                                                data-bs-toggle="tooltip" data-bs-placement="top" title="minus"><i
-                                                    data-feather="minus-circle" class="feather-14"></i></a>
-                                            <input type="text" class="form-control text-center" name="qty"
-                                                value="3">
-                                            <a href="javascript:void(0);"
-                                                class="inc d-flex justify-content-center align-items-center"
-                                                data-bs-toggle="tooltip" data-bs-placement="top" title="plus"><i
-                                                    data-feather="plus-circle" class="feather-14"></i></a>
-                                        </div>
-                                        <div class="d-flex align-items-center action">
-                                            <a class="btn-icon edit-icon me-2" href="#"
-                                                data-bs-toggle="modal" data-bs-target="#edit-product">
-                                                <i data-feather="edit" class="feather-14"></i>
-                                            </a>
-                                            <a class="btn-icon delete-icon confirm-text" href="javascript:void(0);">
-                                                <i data-feather="trash-2" class="feather-14"></i>
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <div class="product-list d-flex align-items-center justify-content-between">
-                                        <div class="d-flex align-items-center product-info" data-bs-toggle="modal"
-                                            data-bs-target="#products">
-                                            <a href="javascript:void(0);" class="img-bg">
-                                                <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-16.png"
-                                                    alt="Products">
-                                            </a>
-                                            <div class="info">
-                                                <span>PT0005</span>
-                                                <h6><a href="javascript:void(0);">Red Nike Laser</a></h6>
-                                                <p>$2000</p>
-                                            </div>
-                                        </div>
-                                        <div class="qty-item text-center">
-                                            <a href="javascript:void(0);"
-                                                class="dec d-flex justify-content-center align-items-center"
-                                                data-bs-toggle="tooltip" data-bs-placement="top" title="minus"><i
-                                                    data-feather="minus-circle" class="feather-14"></i></a>
-                                            <input type="text" class="form-control text-center" name="qty"
-                                                value="1">
-                                            <a href="javascript:void(0);"
-                                                class="inc d-flex justify-content-center align-items-center"
-                                                data-bs-toggle="tooltip" data-bs-placement="top" title="plus"><i
-                                                    data-feather="plus-circle" class="feather-14"></i></a>
-                                        </div>
-                                        <div class="d-flex align-items-center action">
-                                            <a class="btn-icon edit-icon me-2" href="#"
-                                                data-bs-toggle="modal" data-bs-target="#edit-product">
-                                                <i data-feather="edit" class="feather-14"></i>
-                                            </a>
-                                            <a class="btn-icon delete-icon confirm-text" href="javascript:void(0);">
-                                                <i data-feather="trash-2" class="feather-14"></i>
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <div class="product-list d-flex align-items-center justify-content-between">
-                                        <div class="d-flex align-items-center product-info" data-bs-toggle="modal"
-                                            data-bs-target="#products">
-                                            <a href="javascript:void(0);" class="img-bg">
-                                                <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/products/pos-product-17.png"
-                                                    alt="Products">
-                                            </a>
-                                            <div class="info">
-                                                <span>PT0005</span>
-                                                <h6><a href="javascript:void(0);">Red Nike Laser</a></h6>
-                                                <p>$2000</p>
-                                            </div>
-                                        </div>
-                                        <div class="qty-item text-center">
-                                            <a href="javascript:void(0);"
-                                                class="dec d-flex justify-content-center align-items-center"
-                                                data-bs-toggle="tooltip" data-bs-placement="top" title="minus"><i
-                                                    data-feather="minus-circle" class="feather-14"></i></a>
-                                            <input type="text" class="form-control text-center" name="qty"
-                                                value="1">
-                                            <a href="javascript:void(0);"
-                                                class="inc d-flex justify-content-center align-items-center"
-                                                data-bs-toggle="tooltip" data-bs-placement="top" title="plus"><i
-                                                    data-feather="plus-circle" class="feather-14"></i></a>
-                                        </div>
-                                        <div class="d-flex align-items-center action">
-                                            <a class="btn-icon edit-icon me-2" href="#"
-                                                data-bs-toggle="modal" data-bs-target="#edit-product">
-                                                <i data-feather="edit" class="feather-14"></i>
-                                            </a>
-                                            <a class="btn-icon delete-icon confirm-text" href="javascript:void(0);">
-                                                <i data-feather="trash-2" class="feather-14"></i>
-                                            </a>
-                                        </div>
+                                <div class="col-12 col-sm-4">
+                                    <div class="input-block">
+                                        <label>Discount</label>
+                                        <select class="select">
+                                            <option>10%</option>
+                                            <option>10%</option>
+                                            <option>15%</option>
+                                            <option>20%</option>
+                                            <option>25%</option>
+                                            <option>30%</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
-                            <div class="block-section">
-                                <div class="selling-info">
-                                    <div class="row">
-                                        <div class="col-12 col-sm-4">
-                                            <div class="input-block">
-                                                <label>Order Tax</label>
-                                                <select class="select">
-                                                    <option>GST 5%</option>
-                                                    <option>GST 10%</option>
-                                                    <option>GST 15%</option>
-                                                    <option>GST 20%</option>
-                                                    <option>GST 25%</option>
-                                                    <option>GST 30%</option>
-                                                </select>
-                                            </div>
-                                        </div>
+                        </div>
+                        <div class="order-total">
+                            <table class="table table-responsive table-borderless">
+                                <tr>
+                                    <td>Temporarily calculated</td>
+                                    <td class="text-end">$60,454</td>
+                                </tr>
+                                <tr>
+                                    <td>Tax (GST 5%)</td>
+                                    <td class="text-end">$40.21</td>
+                                </tr>
 
-                                        <div class="col-12 col-sm-4">
-                                            <div class="input-block">
-                                                <label>Discount</label>
-                                                <select class="select">
-                                                    <option>10%</option>
-                                                    <option>10%</option>
-                                                    <option>15%</option>
-                                                    <option>20%</option>
-                                                    <option>25%</option>
-                                                    <option>30%</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="order-total">
-                                    <table class="table table-responsive table-borderless">
-                                        <tr>
-                                            <td>Temporarily calculated</td>
-                                            <td class="text-end">$60,454</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Tax (GST 5%)</td>
-                                            <td class="text-end">$40.21</td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>Sub Total</td>
-                                            <td class="text-end">$60,454</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="danger">Discount (10%)</td>
-                                            <td class="danger text-end">$15.21</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Total</td>
-                                            <td class="text-end">$64,024.5</td>
-                                        </tr>
-                                    </table>
-                                </div>
-                            </div>
-                            <div class="block-section payment-method">
-                                <h6>Payment Method</h6>
-                                <div class="row d-flex align-items-center justify-content-center methods">
-                                    <div class="col-md-6 col-lg-4 item">
-                                        <div class="default-cover">
-                                            <a href="javascript:void(0);">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16"
-                                                    height="16" fill="currentColor" class="bi bi-cash-stack"
-                                                    viewBox="0 0 16 16">
-                                                    <path
-                                                        d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4" />
-                                                    <path
-                                                        d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2z" />
-                                                </svg>
-                                                <span>Cash</span>
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 col-lg-4 item">
-                                        <div class="default-cover">
-                                            <a href="javascript:void(0);">
-                                                <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/icons/credit-card.svg"
-                                                    alt="Payment Method">
-                                                <span>Debit Card</span>
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 col-lg-4 item">
-                                        <div class="default-cover">
-                                            <a href="javascript:void(0);">
-                                                <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/icons/qr-scan.svg"
-                                                    alt="Payment Method">
-                                                <span>Scan</span>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="d-grid btn-block">
-                                <a class="btn btn-secondary" href="javascript:void(0);">
-                                    Grand Total : $64,024.5
-                                </a>
-                            </div>
-                            <div class="block-section payment-method">
-                                <div class="row d-flex align-items-center justify-content-center methods">
-
-                                    <div class="col-md-6 col-lg-4 item">
-                                        <div class="default-cover">
-                                            <a href="javascript:void(0);">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-printer" viewBox="0 0 16 16">
-                                                    <path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1"/>
-                                                    <path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1"/>
-                                                  </svg>
-                                                <span>Temporary printing</span>
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-6 col-lg-4 item">
-                                        <div class="default-cover">
-                                            <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#payment-completed"><span>
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-printer-fill" viewBox="0 0 16 16">
-                                                    <path d="M5 1a2 2 0 0 0-2 2v1h10V3a2 2 0 0 0-2-2zm6 8H5a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1"/>
-                                                    <path d="M0 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-1v-2a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2H2a2 2 0 0 1-2-2zm2.5 1a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1"/>
-                                                  </svg></i></span>Print invoice</a>
-                                        </div>
-                                    </div>
-
-
-                                </div>
-                            </div>
-
-                            <div class="btn-row d-sm-flex align-items-center justify-content-between">
-                                <a href="javascript:void(0);" class="btn btn-info btn-icon flex-fill"
-                                    data-bs-toggle="modal" data-bs-target="#hold-order"><span
-                                        class="me-1 d-flex align-items-center"><i data-feather="pause"
-                                            class="feather-16"></i></span>Hold</a>
-                                <a href="javascript:void(0);" class="btn btn-danger btn-icon flex-fill"><span
-                                        class="me-1 d-flex align-items-center"><i data-feather="trash-2"
-                                            class="feather-16"></i></span>Void</a>
-
-                            </div>
-                        </aside>
+                                <tr>
+                                    <td>Sub Total</td>
+                                    <td class="text-end">$60,454</td>
+                                </tr>
+                                <tr>
+                                    <td class="danger">Discount (10%)</td>
+                                    <td class="danger text-end">$15.21</td>
+                                </tr>
+                                <tr>
+                                    <td>Total</td>
+                                    <td class="text-end">$64,024.5</td>
+                                </tr>
+                            </table>
+                        </div>
                     </div>
-                </div>
+                    <div class="block-section payment-method">
+                        <h6>Payment Method</h6>
+                        <div class="row d-flex align-items-center justify-content-center methods">
+                            <div class="col-md-6 col-lg-4 item">
+                                <div class="default-cover">
+                                    <a href="javascript:void(0);">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                            fill="currentColor" class="bi bi-cash-stack" viewBox="0 0 16 16">
+                                            <path
+                                                d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4" />
+                                            <path
+                                                d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2z" />
+                                        </svg>
+                                        <span>Cash</span>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-4 item">
+                                <div class="default-cover">
+                                    <a href="javascript:void(0);">
+                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/icons/credit-card.svg"
+                                            alt="Payment Method">
+                                        <span>Debit Card</span>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-4 item">
+                                <div class="default-cover">
+                                    <a href="javascript:void(0);">
+                                        <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/icons/qr-scan.svg"
+                                            alt="Payment Method">
+                                        <span>Scan</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid btn-block">
+                        <a class="btn btn-secondary" href="javascript:void(0);">
+                            Grand Total : $64,024.5
+                        </a>
+                    </div>
+                    <div class="block-section payment-method">
+                        <div class="row d-flex align-items-center justify-content-center methods">
+
+                            <div class="col-md-6 col-lg-4 item">
+                                <div class="default-cover">
+                                    <a href="javascript:void(0);">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                            fill="currentColor" class="bi bi-printer" viewBox="0 0 16 16">
+                                            <path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1" />
+                                            <path
+                                                d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1" />
+                                        </svg>
+                                        <span>Temporary printing</span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 col-lg-4 item">
+                                <div class="default-cover">
+                                    <a href="javascript:void(0);" data-bs-toggle="modal"
+                                        data-bs-target="#payment-completed"><span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                fill="currentColor" class="bi bi-printer-fill"
+                                                viewBox="0 0 16 16">
+                                                <path
+                                                    d="M5 1a2 2 0 0 0-2 2v1h10V3a2 2 0 0 0-2-2zm6 8H5a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1" />
+                                                <path
+                                                    d="M0 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-1v-2a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2H2a2 2 0 0 1-2-2zm2.5 1a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1" />
+                                            </svg></i></span>Print invoice</a>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+
+                    <div class="btn-row d-sm-flex align-items-center justify-content-between">
+                        <a href="javascript:void(0);" class="btn btn-info btn-icon flex-fill"
+                            data-bs-toggle="modal" data-bs-target="#hold-order"><span
+                                class="me-1 d-flex align-items-center"><i data-feather="pause"
+                                    class="feather-16"></i></span>Hold</a>
+                        <a href="javascript:void(0);" class="btn btn-danger btn-icon flex-fill"><span
+                                class="me-1 d-flex align-items-center"><i data-feather="trash-2"
+                                    class="feather-16"></i></span>Void</a>
+
+                    </div>
+                </aside>
             </div>
         </div>
+    </div>
+    </div>
     </div>
 
 
@@ -1712,7 +1711,7 @@
                                 <td>2</td>
                                 <td class="text-end">$100</td>
                             </tr>
-                           
+
                             <tr>
                                 <td colspan="4">
                                     <table class="table-borderless w-100 table-fit">
@@ -1808,7 +1807,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                         </div>
                         <div class="modal-footer d-sm-flex justify-content-end">
                             <button type="button" class="btn btn-secondary"
@@ -1833,96 +1832,136 @@
 
                 <div>
                     <div>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90" fill="currentColor" class="bi bi-app b1" viewBox="0 0 16 16">
-                        <path d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z"/>
-                        <text x="8" y="10" font-size="3" text-anchor="middle" fill="black">Bàn 1</text>
-                      </svg>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90" fill="currentColor" class="bi bi-app" viewBox="0 0 16 16">
-                        <path d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z"/>
-                        <text x="8" y="10" font-size="3" text-anchor="middle" fill="black">Bàn 2</text>
-                      </svg>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90" fill="currentColor" class="bi bi-app" viewBox="0 0 16 16">
-                        <path d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z"/>
-                        <text x="8" y="10" font-size="3" text-anchor="middle" fill="black">Bàn 3</text>
-                      </svg>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90" fill="currentColor" class="bi bi-app" viewBox="0 0 16 16">
-                        <path d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z"/>
-                        <text x="8" y="10" font-size="3" text-anchor="middle" fill="black">Bàn 4</text>
-                      </svg>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90" fill="currentColor" class="bi bi-app" viewBox="0 0 16 16">
-                        <path d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z"/>
-                        <text x="8" y="10" font-size="3" text-anchor="middle" fill="black">Bàn 5</text>
-                      </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90"
+                            fill="currentColor" class="bi bi-app b1" viewBox="0 0 16 16">
+                            <path
+                                d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z" />
+                            <text x="8" y="10" font-size="3" text-anchor="middle" fill="black">Bàn 1</text>
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90"
+                            fill="currentColor" class="bi bi-app" viewBox="0 0 16 16">
+                            <path
+                                d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z" />
+                            <text x="8" y="10" font-size="3" text-anchor="middle" fill="black">Bàn 2</text>
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90"
+                            fill="currentColor" class="bi bi-app" viewBox="0 0 16 16">
+                            <path
+                                d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z" />
+                            <text x="8" y="10" font-size="3" text-anchor="middle" fill="black">Bàn 3</text>
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90"
+                            fill="currentColor" class="bi bi-app" viewBox="0 0 16 16">
+                            <path
+                                d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z" />
+                            <text x="8" y="10" font-size="3" text-anchor="middle" fill="black">Bàn 4</text>
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90"
+                            fill="currentColor" class="bi bi-app" viewBox="0 0 16 16">
+                            <path
+                                d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z" />
+                            <text x="8" y="10" font-size="3" text-anchor="middle" fill="black">Bàn 5</text>
+                        </svg>
                     </div>
 
                     <div>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90" fill="currentColor" class="bi bi-app b1" viewBox="0 0 16 16">
-                            <path d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z"/>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90"
+                            fill="currentColor" class="bi bi-app b1" viewBox="0 0 16 16">
+                            <path
+                                d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z" />
                             <text x="8" y="10" font-size="3" text-anchor="middle" fill="black">Bàn 6</text>
-                          </svg>
-                          <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90" fill="currentColor" class="bi bi-app" viewBox="0 0 16 16">
-                            <path d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z"/>
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90"
+                            fill="currentColor" class="bi bi-app" viewBox="0 0 16 16">
+                            <path
+                                d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z" />
                             <text x="8" y="10" font-size="3" text-anchor="middle" fill="black">Bàn 7</text>
-                          </svg>
-                          <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90" fill="currentColor" class="bi bi-app" viewBox="0 0 16 16">
-                            <path d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z"/>
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90"
+                            fill="currentColor" class="bi bi-app" viewBox="0 0 16 16">
+                            <path
+                                d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z" />
                             <text x="8" y="10" font-size="3" text-anchor="middle" fill="black">Bàn 8</text>
-                          </svg>
-                          <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90" fill="currentColor" class="bi bi-app" viewBox="0 0 16 16">
-                            <path d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z"/>
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90"
+                            fill="currentColor" class="bi bi-app" viewBox="0 0 16 16">
+                            <path
+                                d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z" />
                             <text x="8" y="10" font-size="3" text-anchor="middle" fill="black">Bàn 9</text>
-                          </svg>
-                          <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90" fill="currentColor" class="bi bi-app" viewBox="0 0 16 16">
-                            <path d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z"/>
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90"
+                            fill="currentColor" class="bi bi-app" viewBox="0 0 16 16">
+                            <path
+                                d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z" />
                             <text x="8" y="10" font-size="3" text-anchor="middle" fill="black">Bàn 10</text>
-                          </svg>
-                        </div>
+                        </svg>
+                    </div>
 
-                        <div>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90" fill="currentColor" class="bi bi-app b1" viewBox="0 0 16 16">
-                                <path d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z"/>
-                                <text x="8" y="10" font-size="3" text-anchor="middle" fill="black">Bàn 11</text>
-                              </svg>
-                              <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90" fill="currentColor" class="bi bi-app" viewBox="0 0 16 16">
-                                <path d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z"/>
-                                <text x="8" y="10" font-size="3" text-anchor="middle" fill="black">Bàn 12</text>
-                              </svg>
-                              <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90" fill="currentColor" class="bi bi-app" viewBox="0 0 16 16">
-                                <path d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z"/>
-                                <text x="8" y="10" font-size="3" text-anchor="middle" fill="black">Bàn 13</text>
-                              </svg>
-                              <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90" fill="currentColor" class="bi bi-app" viewBox="0 0 16 16">
-                                <path d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z"/>
-                                <text x="8" y="10" font-size="3" text-anchor="middle" fill="black">Bàn 14</text>
-                              </svg>
-                              <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90" fill="currentColor" class="bi bi-app" viewBox="0 0 16 16">
-                                <path d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z"/>
-                                <text x="8" y="10" font-size="3" text-anchor="middle" fill="black">Bàn 15</text>
-                              </svg>
-                            </div>
+                    <div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90"
+                            fill="currentColor" class="bi bi-app b1" viewBox="0 0 16 16">
+                            <path
+                                d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z" />
+                            <text x="8" y="10" font-size="3" text-anchor="middle" fill="black">Bàn 11</text>
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90"
+                            fill="currentColor" class="bi bi-app" viewBox="0 0 16 16">
+                            <path
+                                d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z" />
+                            <text x="8" y="10" font-size="3" text-anchor="middle" fill="black">Bàn 12</text>
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90"
+                            fill="currentColor" class="bi bi-app" viewBox="0 0 16 16">
+                            <path
+                                d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z" />
+                            <text x="8" y="10" font-size="3" text-anchor="middle" fill="black">Bàn 13</text>
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90"
+                            fill="currentColor" class="bi bi-app" viewBox="0 0 16 16">
+                            <path
+                                d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z" />
+                            <text x="8" y="10" font-size="3" text-anchor="middle" fill="black">Bàn 14</text>
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90"
+                            fill="currentColor" class="bi bi-app" viewBox="0 0 16 16">
+                            <path
+                                d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z" />
+                            <text x="8" y="10" font-size="3" text-anchor="middle" fill="black">Bàn 15</text>
+                        </svg>
+                    </div>
 
-                            <div>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90" fill="currentColor" class="bi bi-app b1" viewBox="0 0 16 16">
-                                    <path d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z"/>
-                                    <text x="8" y="10" font-size="3" text-anchor="middle" fill="black">Bàn 16</text>
-                                  </svg>
-                                  <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90" fill="currentColor" class="bi bi-app" viewBox="0 0 16 16">
-                                    <path d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z"/>
-                                    <text x="8" y="10" font-size="3" text-anchor="middle" fill="black">Bàn 17</text>
-                                  </svg>
-                                  <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90" fill="currentColor" class="bi bi-app" viewBox="0 0 16 16">
-                                    <path d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z"/>
-                                    <text x="8" y="10" font-size="3" text-anchor="middle" fill="black">Bàn 18</text>
-                                  </svg>
-                                  <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90" fill="currentColor" class="bi bi-app" viewBox="0 0 16 16">
-                                    <path d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z"/>
-                                    <text x="8" y="10" font-size="3" text-anchor="middle" fill="black">Bàn 19</text>
-                                  </svg>
-                                  <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90" fill="currentColor" class="bi bi-app" viewBox="0 0 16 16">
-                                    <path d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z"/>
-                                    <text x="8" y="10" font-size="3" text-anchor="middle" fill="black">Bàn 20</text>
-                                  </svg>
-                                </div>
+                    <div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90"
+                            fill="currentColor" class="bi bi-app b1" viewBox="0 0 16 16">
+                            <path
+                                d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z" />
+                            <text x="8" y="10" font-size="3" text-anchor="middle" fill="black">Bàn 16</text>
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90"
+                            fill="currentColor" class="bi bi-app" viewBox="0 0 16 16">
+                            <path
+                                d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z" />
+                            <text x="8" y="10" font-size="3" text-anchor="middle" fill="black">Bàn 17</text>
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90"
+                            fill="currentColor" class="bi bi-app" viewBox="0 0 16 16">
+                            <path
+                                d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z" />
+                            <text x="8" y="10" font-size="3" text-anchor="middle" fill="black">Bàn 18</text>
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90"
+                            fill="currentColor" class="bi bi-app" viewBox="0 0 16 16">
+                            <path
+                                d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z" />
+                            <text x="8" y="10" font-size="3" text-anchor="middle" fill="black">Bàn 19</text>
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90"
+                            fill="currentColor" class="bi bi-app" viewBox="0 0 16 16">
+                            <path
+                                d="M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z" />
+                            <text x="8" y="10" font-size="3" text-anchor="middle" fill="black">Bàn 20</text>
+                        </svg>
+                    </div>
 
                 </div>
             </div>
@@ -2624,6 +2663,7 @@
     </div>
 
 
+    <!-- POS Orders Modal -->
     <div class="modal fade pos-modal" id="orders" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-md modal-dialog-centered" role="document">
             <div class="modal-content">
@@ -2637,990 +2677,680 @@
                     <div class="tabs-sets">
                         <ul class="nav nav-tabs" id="myTabs" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link active" id="table-order-tab" data-bs-toggle="tab"
-                                    data-bs-target="#table-order" type="button" aria-controls="table-order"
-                                    aria-selected="true" role="tab">Table order</button>
-                            </li>
-                            
-                            
-                        </ul>
-                        <div class="tab-content">
-                            <div class="tab-pane fade show active" id="onhold" role="tabpanel"
-                                aria-labelledby="onhold-tab">
-                                <div class="table-top">
-                                    <div class="search-set w-100 search-order">
-                                        <div class="search-input w-100">
-                                            <a class="btn btn-searchset d-flex align-items-center h-100"><img
-                                                    src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/icons/search-white.svg"
-                                                    alt="img"></a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="order-body">
-                                    <div class="default-cover p-4 mb-4">
-                                        <span class="badge bg-secondary d-inline-block mb-4">Order ID : #666659</span>
-                                        <div class="row">
-                                            <div class="col-sm-12 col-md-6 record mb-3">
-                                                <table>
-                                                    <tr>
-                                                        <td>Customer</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">Botsford</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Table</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">Bàn 5</td>
-                                                    </tr>
-                                                    <tr class="mb-3">
-                                                        <td>People</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">5</td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                            <div class="col-sm-12 col-md-6 record mb-3">
-                                                <table>
-                                                    <tr>
-                                                        <td>Prepayment</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">$900</td>
-                                                    </tr>
-                                                    
-                                                    <tr>
-                                                        <td>Date</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">29-08-2023 13:39:11</td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <p class="p-4">Customer need to recheck the product once</p>
-                                        <div class="btn-row d-sm-flex align-items-center justify-content-between">
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-info btn-icon flex-fill" data-bs-toggle="modal" data-bs-target="#open">Open</a>
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-danger btn-icon flex-fill">Products</a>
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-success btn-icon flex-fill">Print</a>
-                                        </div>
-                                    </div>
-                                    <div class="default-cover p-4 mb-4">
-                                        <span class="badge bg-secondary d-inline-block mb-4">Order ID : #666660</span>
-                                        <div class="row">
-                                            <div class="col-sm-12 col-md-6 record mb-3">
-                                                <table>
-                                                    <tr>
-                                                        <td>Customer</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">Botsford</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Table</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">Bàn 5</td>
-                                                    </tr>
-                                                    <tr class="mb-3">
-                                                        <td>People</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">5</td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                            <div class="col-sm-12 col-md-6 record mb-3">
-                                                <table>
-                                                    <tr>
-                                                        <td>Prepayment</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">$900</td>
-                                                    </tr>
-                                                    
-                                                    <tr>
-                                                        <td>Date</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">29-08-2023 13:39:11</td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <p class="p-4">Customer need to recheck the product once</p>
-                                        <div class="btn-row d-flex align-items-center justify-content-between">
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-info btn-icon flex-fill">Open</a>
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-danger btn-icon flex-fill">Products</a>
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-success btn-icon flex-fill">Print</a>
-                                        </div>
-                                    </div>
-                                    <div class="default-cover p-4">
-                                        <span class="badge bg-secondary d-inline-block mb-4">Order ID : #666661</span>
-                                        <div class="row">
-                                            <div class="col-sm-12 col-md-6 record mb-3">
-                                                <table>
-                                                    <tr>
-                                                        <td>Customer</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">Botsford</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Table</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">Bàn 5</td>
-                                                    </tr>
-                                                    <tr class="mb-3">
-                                                        <td>People</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">5</td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                            <div class="col-sm-12 col-md-6 record mb-3">
-                                                <table>
-                                                    <tr>
-                                                        <td>Prepayment</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">$900</td>
-                                                    </tr>
-                                                    
-                                                    <tr>
-                                                        <td>Date</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">29-08-2023 13:39:11</td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <p class="p-4 mb-4">Customer need to recheck the product once</p>
-                                        <div class="btn-row d-flex align-items-center justify-content-between">
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-info btn-icon flex-fill">Open</a>
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-danger btn-icon flex-fill">Products</a>
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-success btn-icon flex-fill">Print</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="tab-pane fade" id="unpaid" role="tabpanel">
-                                <div class="table-top">
-                                    <div class="search-set w-100 search-order">
-                                        <div class="search-input">
-                                            <a class="btn btn-searchset d-flex align-items-center h-100"><img
-                                                    src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/icons/search-white.svg"
-                                                    alt="img"></a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="order-body">
-                                    <div class="default-cover p-4 mb-4">
-                                        <span class="badge bg-info d-inline-block mb-4">Order ID : #666662</span>
-                                        <div class="row">
-                                            <div class="col-sm-12 col-md-6 record mb-3">
-                                                <table>
-                                                    <tr>
-                                                        <td>Customer</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">Botsford</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Table</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">Bàn 5</td>
-                                                    </tr>
-                                                    <tr class="mb-3">
-                                                        <td>People</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">5</td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                            <div class="col-sm-12 col-md-6 record mb-3">
-                                                <table>
-                                                    <tr>
-                                                        <td>Prepayment</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">$900</td>
-                                                    </tr>
-                                                    
-                                                    <tr>
-                                                        <td>Date</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">29-08-2023 13:39:11</td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <p class="p-4">Customer need to recheck the product once</p>
-                                        <div class="btn-row d-flex align-items-center justify-content-between">
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-info btn-icon flex-fill">Open</a>
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-danger btn-icon flex-fill">Products</a>
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-success btn-icon flex-fill">Print</a>
-                                        </div>
-                                    </div>
-                                    <div class="default-cover p-4 mb-4">
-                                        <span class="badge bg-info d-inline-block mb-4">Order ID : #666663</span>
-                                        <div class="row">
-                                            <div class="col-sm-12 col-md-6 record mb-3">
-                                                <table>
-                                                    <tr>
-                                                        <td>Customer</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">Botsford</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Table</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">Bàn 5</td>
-                                                    </tr>
-                                                    <tr class="mb-3">
-                                                        <td>People</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">5</td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                            <div class="col-sm-12 col-md-6 record mb-3">
-                                                <table>
-                                                    <tr>
-                                                        <td>Prepayment</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">$900</td>
-                                                    </tr>
-                                                    
-                                                    <tr>
-                                                        <td>Date</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">29-08-2023 13:39:11</td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <p class="p-4">Customer need to recheck the product once</p>
-                                        <div class="btn-row d-flex align-items-center justify-content-between">
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-info btn-icon flex-fill">Open</a>
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-danger btn-icon flex-fill">Products</a>
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-success btn-icon flex-fill">Print</a>
-                                        </div>
-                                    </div>
-                                    <div class="default-cover p-4 mb-4">
-                                        <span class="badge bg-info d-inline-block mb-4">Order ID : #666664</span>
-                                        <div class="row">
-                                            <div class="col-sm-12 col-md-6 record mb-3">
-                                                <table>
-                                                    <tr>
-                                                        <td>Customer</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">Botsford</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Table</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">Bàn 5</td>
-                                                    </tr>
-                                                    <tr class="mb-3">
-                                                        <td>People</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">5</td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                            <div class="col-sm-12 col-md-6 record mb-3">
-                                                <table>
-                                                    <tr>
-                                                        <td>Prepayment</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">$900</td>
-                                                    </tr>
-                                                    
-                                                    <tr>
-                                                        <td>Date</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">29-08-2023 13:39:11</td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <p class="p-4 mb-4">Customer need to recheck the product once</p>
-                                        <div class="btn-row d-flex align-items-center justify-content-between">
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-info btn-icon flex-fill">Open</a>
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-danger btn-icon flex-fill">Products</a>
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-success btn-icon flex-fill">Print</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="tab-pane fade" id="paid" role="tabpanel">
-                                <div class="table-top">
-                                    <div class="search-set w-100 search-order">
-                                        <div class="search-input">
-                                            <a class="btn btn-searchset d-flex align-items-center h-100"><img
-                                                    src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/icons/search-white.svg"
-                                                    alt="img"></a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="order-body">
-                                    <div class="default-cover p-4 mb-4">
-                                        <span class="badge bg-primary d-inline-block mb-4">Order ID : #666665</span>
-                                        <div class="row">
-                                            <div class="col-sm-12 col-md-6 record mb-3">
-                                                <table>
-                                                    <tr>
-                                                        <td>Customer</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">Botsford</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Table</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">Bàn 5</td>
-                                                    </tr>
-                                                    <tr class="mb-3">
-                                                        <td>People</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">5</td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                            <div class="col-sm-12 col-md-6 record mb-3">
-                                                <table>
-                                                    <tr>
-                                                        <td>Prepayment</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">$900</td>
-                                                    </tr>
-                                                    
-                                                    <tr>
-                                                        <td>Date</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">29-08-2023 13:39:11</td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <p class="p-4">Customer need to recheck the product once</p>
-                                        <div class="btn-row d-flex align-items-center justify-content-between">
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-info btn-icon flex-fill">Open</a>
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-danger btn-icon flex-fill">Products</a>
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-success btn-icon flex-fill">Print</a>
-                                        </div>
-                                    </div>
-                                    <div class="default-cover p-4 mb-4">
-                                        <span class="badge bg-primary d-inline-block mb-4">Order ID : #666666</span>
-                                        <div class="row">
-                                            <div class="col-sm-12 col-md-6 record mb-3">
-                                                <table>
-                                                    <tr>
-                                                        <td>Customer</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">Botsford</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Table</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">Bàn 5</td>
-                                                    </tr>
-                                                    <tr class="mb-3">
-                                                        <td>People</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">5</td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                            <div class="col-sm-12 col-md-6 record mb-3">
-                                                <table>
-                                                    <tr>
-                                                        <td>Prepayment</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">$900</td>
-                                                    </tr>
-                                                    
-                                                    <tr>
-                                                        <td>Date</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">29-08-2023 13:39:11</td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <p class="p-4">Customer need to recheck the product once</p>
-                                        <div class="btn-row d-flex align-items-center justify-content-between">
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-info btn-icon flex-fill">Open</a>
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-danger btn-icon flex-fill">Products</a>
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-success btn-icon flex-fill">Print</a>
-                                        </div>
-                                    </div>
-                                    <div class="default-cover p-4 mb-4">
-                                        <span class="badge bg-primary d-inline-block mb-4">Order ID : #666667</span>
-                                        <div class="row">
-                                            <div class="col-sm-12 col-md-6 record mb-3">
-                                                <table>
-                                                    <tr>
-                                                        <td>Customer</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">Botsford</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Table</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">Bàn 5</td>
-                                                    </tr>
-                                                    <tr class="mb-3">
-                                                        <td>People</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">5</td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                            <div class="col-sm-12 col-md-6 record mb-3">
-                                                <table>
-                                                    <tr>
-                                                        <td>Prepayment</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">$900</td>
-                                                    </tr>
-                                                    
-                                                    <tr>
-                                                        <td>Date</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">29-08-2023 13:39:11</td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <p class="p-4 mb-4">Customer need to recheck the product once</p>
-                                        <div class="btn-row d-flex align-items-center justify-content-between">
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-info btn-icon flex-fill">Open</a>
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-danger btn-icon flex-fill">Products</a>
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-success btn-icon flex-fill">Print</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade pos-modal" id="booking" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-md modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header p-4">
-                    <h5 class="modal-title">Orders</h5>
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body p-4">
-                    <div class="tabs-sets">
-                        <ul class="nav nav-tabs" id="myTabs" role="tablist">
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link active" id="table-order-tab" data-bs-toggle="tab"
-                                    data-bs-target="#table-order" type="button" aria-controls="table-order"
+                                <button class="nav-link active" id="upcoming-tab" data-bs-toggle="tab"
+                                    data-bs-target="#upcoming" type="button" aria-controls="upcoming"
                                     aria-selected="true" role="tab">Sắp đến</button>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="Pre-order-tab" data-bs-toggle="tab"
-                                    data-bs-target="#Pre-order" type="button" aria-controls="Pre-order"
-                                    aria-selected="true" role="tab">Quá giờ</button>
+                                <button class="nav-link" id="overdue-tab" data-bs-toggle="tab"
+                                    data-bs-target="#overdue" type="button" aria-controls="overdue"
+                                    aria-selected="false" role="tab">Quá giờ</button>
                             </li>
-                            
-                          <a href="javascript:void(0);"
-                                                class="btn btn-info btn-icon flex-fill" data-bs-toggle="modal" data-bs-target="#booking-new">Thêm mới</a>
-                            
-                            
                         </ul>
+
                         <div class="tab-content">
-                            <div class="tab-pane fade show active" id="onhold" role="tabpanel"
-                                aria-labelledby="onhold-tab">
-                                <div class="table-top">
-                                    <div class="search-set w-100 search-order">
-                                        <div class="search-input w-100">
-                                            <a class="btn btn-searchset d-flex align-items-center h-100"><img
-                                                    src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/icons/search-white.svg"
-                                                    alt="img"></a>
-                                        </div>
-                                    </div>
-                                </div>
+                            <!-- Đơn sắp đến -->
+                            <div class="tab-pane fade show active" id="upcoming" role="tabpanel"
+                                aria-labelledby="upcoming-tab">
                                 <div class="order-body">
-                                    <div class="default-cover p-4 mb-4">
-                                        <span class="badge bg-secondary d-inline-block mb-4">Order ID : #666659</span>
-                                        <div class="row">
-                                            <div class="col-sm-12 col-md-6 record mb-3">
-                                                <table>
-                                                    <tr>
-                                                        <td>Customer</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">Botsford</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Table</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">Bàn 5</td>
-                                                    </tr>
-                                                    <tr class="mb-3">
-                                                        <td>People</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">5</td>
-                                                    </tr>
-                                                </table>
+                                    @if (isset($upcomingOrders) && $upcomingOrders->isNotEmpty())
+                                        @foreach ($upcomingOrders as $order)
+                                            <div class="default-cover p-4 mb-4">
+                                                <span class="badge bg-secondary d-inline-block mb-4">Order ID :
+                                                    #{{ $order->id }}</span>
+                                                <div class="row">
+                                                    <div class="col-sm-12 col-md-6 record mb-3">
+                                                        <table>
+                                                            <tr>
+                                                                <td>Khách hàng</td>
+                                                                <td class="colon">:</td>
+                                                                <td class="text">
+                                                                    {{ $order->customer->name ?? 'Không rõ' }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Bàn</td>
+                                                                <td class="colon">:</td>
+                                                                <td class="text">{{ $order->table_number ?? 'N/A' }}
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Số lượng khách</td>
+                                                                <td class="colon">:</td>
+                                                                <td class="text">{{ $order->guest_count ?? 'N/A' }}
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                    <div class="col-sm-12 col-md-6 record mb-3">
+                                                        <table>
+                                                            <tr>
+                                                                <td>Đặt cọc</td>
+                                                                <td class="colon">:</td>
+                                                                <td class="text">
+                                                                    ${{ number_format($order->prepayment ?? 0, 2) }}
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Ngày đặt</td>
+                                                                <td class="colon">:</td>
+                                                                <td class="text">{{ $order->reservation_date }}
+                                                                    {{ $order->reservation_time }}</td>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                <div
+                                                    class="btn-row d-sm-flex align-items-center justify-content-between">
+                                                    <a href="javascript:void(0);"
+                                                        class="btn btn-info btn-icon flex-fill">Mở</a>
+                                                    <a href="javascript:void(0);"
+                                                        class="btn btn-danger btn-icon flex-fill">Sản phẩm</a>
+                                                    <a href="javascript:void(0);"
+                                                        class="btn btn-success btn-icon flex-fill">In</a>
+                                                </div>
                                             </div>
-                                            <div class="col-sm-12 col-md-6 record mb-3">
-                                                <table>
-                                                    <tr>
-                                                        <td>Prepayment</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">$900</td>
-                                                    </tr>
-                                                    
-                                                    <tr>
-                                                        <td>Date</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">29-08-2023 13:39:11</td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <p class="p-4">Customer need to recheck the product once</p>
-                                        <div class="btn-row d-sm-flex align-items-center justify-content-between">
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-info btn-icon flex-fill" data-bs-toggle="modal" data-bs-target="#open">Open</a>
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-danger btn-icon flex-fill">Products</a>
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-success btn-icon flex-fill">Print</a>
-                                        </div>
-                                    </div>
-                                    <div class="default-cover p-4 mb-4">
-                                        <span class="badge bg-secondary d-inline-block mb-4">Order ID : #666660</span>
-                                        <div class="row">
-                                            <div class="col-sm-12 col-md-6 record mb-3">
-                                                <table>
-                                                    <tr>
-                                                        <td>Customer</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">Botsford</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Table</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">Bàn 5</td>
-                                                    </tr>
-                                                    <tr class="mb-3">
-                                                        <td>People</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">5</td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                            <div class="col-sm-12 col-md-6 record mb-3">
-                                                <table>
-                                                    <tr>
-                                                        <td>Prepayment</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">$900</td>
-                                                    </tr>
-                                                    
-                                                    <tr>
-                                                        <td>Date</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">29-08-2023 13:39:11</td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <p class="p-4">Customer need to recheck the product once</p>
-                                        <div class="btn-row d-flex align-items-center justify-content-between">
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-info btn-icon flex-fill">Open</a>
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-danger btn-icon flex-fill">Products</a>
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-success btn-icon flex-fill">Print</a>
-                                        </div>
-                                    </div>
-                                    <div class="default-cover p-4">
-                                        <span class="badge bg-secondary d-inline-block mb-4">Order ID : #666661</span>
-                                        <div class="row">
-                                            <div class="col-sm-12 col-md-6 record mb-3">
-                                                <table>
-                                                    <tr>
-                                                        <td>Customer</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">Botsford</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Table</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">Bàn 5</td>
-                                                    </tr>
-                                                    <tr class="mb-3">
-                                                        <td>People</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">5</td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                            <div class="col-sm-12 col-md-6 record mb-3">
-                                                <table>
-                                                    <tr>
-                                                        <td>Prepayment</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">$900</td>
-                                                    </tr>
-                                                    
-                                                    <tr>
-                                                        <td>Date</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">29-08-2023 13:39:11</td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <p class="p-4 mb-4">Customer need to recheck the product once</p>
-                                        <div class="btn-row d-flex align-items-center justify-content-between">
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-info btn-icon flex-fill">Open</a>
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-danger btn-icon flex-fill">Products</a>
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-success btn-icon flex-fill">Print</a>
-                                        </div>
-                                    </div>
+                                        @endforeach
+                                    @else
+                                        <p>Không có đơn đặt bàn nào sắp đến.</p>
+                                    @endif
                                 </div>
                             </div>
-                            <div class="tab-pane fade" id="unpaid" role="tabpanel">
-                                <div class="table-top">
-                                    <div class="search-set w-100 search-order">
-                                        <div class="search-input">
-                                            <a class="btn btn-searchset d-flex align-items-center h-100"><img
-                                                    src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/icons/search-white.svg"
-                                                    alt="img"></a>
-                                        </div>
-                                    </div>
-                                </div>
+
+                            <!-- Đơn quá hạn -->
+                            <div class="tab-pane fade" id="overdue" role="tabpanel"
+                                aria-labelledby="overdue-tab">
                                 <div class="order-body">
-                                    <div class="default-cover p-4 mb-4">
-                                        <span class="badge bg-info d-inline-block mb-4">Order ID : #666662</span>
-                                        <div class="row">
-                                            <div class="col-sm-12 col-md-6 record mb-3">
-                                                <table>
-                                                    <tr>
-                                                        <td>Customer</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">Botsford</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Table</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">Bàn 5</td>
-                                                    </tr>
-                                                    <tr class="mb-3">
-                                                        <td>People</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">5</td>
-                                                    </tr>
-                                                </table>
+                                    @if (isset($overdueOrders) && $overdueOrders->isNotEmpty())
+                                        @foreach ($overdueOrders as $order)
+                                            <div class="default-cover p-4 mb-4">
+                                                <span class="badge bg-danger d-inline-block mb-4">Order ID :
+                                                    #{{ $order->id }}</span>
+                                                <div class="row">
+                                                    <div class="col-sm-12 col-md-6 record mb-3">
+                                                        <table>
+                                                            <tr>
+                                                                <td>Khách hàng</td>
+                                                                <td class="colon">:</td>
+                                                                <td class="text">
+                                                                    {{ $order->customer->name ?? 'Không rõ' }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Bàn</td>
+                                                                <td class="colon">:</td>
+                                                                <td class="text">{{ $order->table_number ?? 'N/A' }}
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Số lượng khách</td>
+                                                                <td class="colon">:</td>
+                                                                <td class="text">{{ $order->guest_count ?? 'N/A' }}
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                    <div class="col-sm-12 col-md-6 record mb-3">
+                                                        <table>
+                                                            <tr>
+                                                                <td>Đặt cọc</td>
+                                                                <td class="colon">:</td>
+                                                                <td class="text">
+                                                                    ${{ number_format($order->prepayment ?? 0, 2) }}
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Ngày đặt</td>
+                                                                <td class="colon">:</td>
+                                                                <td class="text">{{ $order->reservation_date }}
+                                                                    {{ $order->reservation_time }}</td>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                <div
+                                                    class="btn-row d-sm-flex align-items-center justify-content-between">
+                                                    <a href="javascript:void(0);"
+                                                        class="btn btn-info btn-icon flex-fill">Mở</a>
+                                                    <a href="javascript:void(0);"
+                                                        class="btn btn-danger btn-icon flex-fill">Sản phẩm</a>
+                                                    <a href="javascript:void(0);"
+                                                        class="btn btn-success btn-icon flex-fill">In</a>
+                                                </div>
                                             </div>
-                                            <div class="col-sm-12 col-md-6 record mb-3">
-                                                <table>
-                                                    <tr>
-                                                        <td>Prepayment</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">$900</td>
-                                                    </tr>
-                                                    
-                                                    <tr>
-                                                        <td>Date</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">29-08-2023 13:39:11</td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <p class="p-4">Customer need to recheck the product once</p>
-                                        <div class="btn-row d-flex align-items-center justify-content-between">
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-info btn-icon flex-fill">Open</a>
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-danger btn-icon flex-fill">Products</a>
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-success btn-icon flex-fill">Print</a>
-                                        </div>
-                                    </div>
-                                    <div class="default-cover p-4 mb-4">
-                                        <span class="badge bg-info d-inline-block mb-4">Order ID : #666663</span>
-                                        <div class="row">
-                                            <div class="col-sm-12 col-md-6 record mb-3">
-                                                <table>
-                                                    <tr>
-                                                        <td>Customer</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">Botsford</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Table</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">Bàn 5</td>
-                                                    </tr>
-                                                    <tr class="mb-3">
-                                                        <td>People</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">5</td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                            <div class="col-sm-12 col-md-6 record mb-3">
-                                                <table>
-                                                    <tr>
-                                                        <td>Prepayment</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">$900</td>
-                                                    </tr>
-                                                    
-                                                    <tr>
-                                                        <td>Date</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">29-08-2023 13:39:11</td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <p class="p-4">Customer need to recheck the product once</p>
-                                        <div class="btn-row d-flex align-items-center justify-content-between">
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-info btn-icon flex-fill">Open</a>
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-danger btn-icon flex-fill">Products</a>
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-success btn-icon flex-fill">Print</a>
-                                        </div>
-                                    </div>
-                                    <div class="default-cover p-4 mb-4">
-                                        <span class="badge bg-info d-inline-block mb-4">Order ID : #666664</span>
-                                        <div class="row">
-                                            <div class="col-sm-12 col-md-6 record mb-3">
-                                                <table>
-                                                    <tr>
-                                                        <td>Customer</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">Botsford</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Table</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">Bàn 5</td>
-                                                    </tr>
-                                                    <tr class="mb-3">
-                                                        <td>People</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">5</td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                            <div class="col-sm-12 col-md-6 record mb-3">
-                                                <table>
-                                                    <tr>
-                                                        <td>Prepayment</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">$900</td>
-                                                    </tr>
-                                                    
-                                                    <tr>
-                                                        <td>Date</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">29-08-2023 13:39:11</td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <p class="p-4 mb-4">Customer need to recheck the product once</p>
-                                        <div class="btn-row d-flex align-items-center justify-content-between">
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-info btn-icon flex-fill">Open</a>
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-danger btn-icon flex-fill">Products</a>
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-success btn-icon flex-fill">Print</a>
-                                        </div>
-                                    </div>
+                                        @endforeach
+                                    @else
+                                        <p>Không có đơn đặt bàn nào quá hạn.</p>
+                                    @endif
                                 </div>
                             </div>
-                            <div class="tab-pane fade" id="paid" role="tabpanel">
-                                <div class="table-top">
-                                    <div class="search-set w-100 search-order">
-                                        <div class="search-input">
-                                            <a class="btn btn-searchset d-flex align-items-center h-100"><img
-                                                    src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/icons/search-white.svg"
-                                                    alt="img"></a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="order-body">
-                                    <div class="default-cover p-4 mb-4">
-                                        <span class="badge bg-primary d-inline-block mb-4">Order ID : #666665</span>
-                                        <div class="row">
-                                            <div class="col-sm-12 col-md-6 record mb-3">
-                                                <table>
-                                                    <tr>
-                                                        <td>Customer</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">Botsford</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Table</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">Bàn 5</td>
-                                                    </tr>
-                                                    <tr class="mb-3">
-                                                        <td>People</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">5</td>
-                                                    </tr>
-                                                </table>
+                        </div>
+                    </div>
+
+
+                </div>
+
+
+                <div class="modal fade pos-modal" id="booking" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-md modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header p-4">
+                                <h5 class="modal-title">Orders</h5>
+                                <button type="button" class="close" data-bs-dismiss="modal"
+                                    aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                            <div class="modal-body p-4">
+                                <div class="tabs-sets">
+                                    <ul class="nav nav-tabs" id="myTabs" role="tablist">
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link active" id="table-order-tab"
+                                                data-bs-toggle="tab" data-bs-target="#table-order" type="button"
+                                                aria-controls="table-order" aria-selected="true"
+                                                role="tab">Sắp đến</button>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link" id="Pre-order-tab" data-bs-toggle="tab"
+                                                data-bs-target="#Pre-order" type="button"
+                                                aria-controls="Pre-order" aria-selected="true" role="tab">Quá
+                                                giờ</button>
+                                        </li>
+
+                                        <a href="javascript:void(0);" class="btn btn-info btn-icon flex-fill"
+                                            data-bs-toggle="modal" data-bs-target="#booking-new">Thêm mới</a>
+
+
+                                    </ul>
+                                    <div class="tab-content">
+                                        <div class="tab-pane fade show active" id="onhold" role="tabpanel"
+                                            aria-labelledby="onhold-tab">
+                                            <div class="table-top">
+                                                <div class="search-set w-100 search-order">
+                                                    <div class="search-input w-100">
+                                                        <a class="btn btn-searchset d-flex align-items-center h-100"><img
+                                                                src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/icons/search-white.svg"
+                                                                alt="img"></a>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div class="col-sm-12 col-md-6 record mb-3">
-                                                <table>
-                                                    <tr>
-                                                        <td>Prepayment</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">$900</td>
-                                                    </tr>
-                                                    
-                                                    <tr>
-                                                        <td>Date</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">29-08-2023 13:39:11</td>
-                                                    </tr>
-                                                </table>
+                                            <div class="order-body">
+                                                <div class="default-cover p-4 mb-4">
+                                                    <span class="badge bg-secondary d-inline-block mb-4">Order ID :
+                                                        #666659</span>
+                                                    <div class="row">
+                                                        <div class="col-sm-12 col-md-6 record mb-3">
+                                                            <table>
+                                                                <tr>
+                                                                    <td>Customer</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">Botsford</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Table</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">Bàn 5</td>
+                                                                </tr>
+                                                                <tr class="mb-3">
+                                                                    <td>People</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">5</td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                        <div class="col-sm-12 col-md-6 record mb-3">
+                                                            <table>
+                                                                <tr>
+                                                                    <td>Prepayment</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">$900</td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td>Date</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">29-08-2023 13:39:11</td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                    <p class="p-4">Customer need to recheck the product once</p>
+                                                    <div
+                                                        class="btn-row d-sm-flex align-items-center justify-content-between">
+                                                        <a href="javascript:void(0);"
+                                                            class="btn btn-info btn-icon flex-fill"
+                                                            data-bs-toggle="modal" data-bs-target="#open">Open</a>
+                                                        <a href="javascript:void(0);"
+                                                            class="btn btn-danger btn-icon flex-fill">Products</a>
+                                                        <a href="javascript:void(0);"
+                                                            class="btn btn-success btn-icon flex-fill">Print</a>
+                                                    </div>
+                                                </div>
+                                                <div class="default-cover p-4 mb-4">
+                                                    <span class="badge bg-secondary d-inline-block mb-4">Order ID :
+                                                        #666660</span>
+                                                    <div class="row">
+                                                        <div class="col-sm-12 col-md-6 record mb-3">
+                                                            <table>
+                                                                <tr>
+                                                                    <td>Customer</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">Botsford</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Table</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">Bàn 5</td>
+                                                                </tr>
+                                                                <tr class="mb-3">
+                                                                    <td>People</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">5</td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                        <div class="col-sm-12 col-md-6 record mb-3">
+                                                            <table>
+                                                                <tr>
+                                                                    <td>Prepayment</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">$900</td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td>Date</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">29-08-2023 13:39:11</td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                    <p class="p-4">Customer need to recheck the product once</p>
+                                                    <div
+                                                        class="btn-row d-flex align-items-center justify-content-between">
+                                                        <a href="javascript:void(0);"
+                                                            class="btn btn-info btn-icon flex-fill">Open</a>
+                                                        <a href="javascript:void(0);"
+                                                            class="btn btn-danger btn-icon flex-fill">Products</a>
+                                                        <a href="javascript:void(0);"
+                                                            class="btn btn-success btn-icon flex-fill">Print</a>
+                                                    </div>
+                                                </div>
+                                                <div class="default-cover p-4">
+                                                    <span class="badge bg-secondary d-inline-block mb-4">Order ID :
+                                                        #666661</span>
+                                                    <div class="row">
+                                                        <div class="col-sm-12 col-md-6 record mb-3">
+                                                            <table>
+                                                                <tr>
+                                                                    <td>Customer</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">Botsford</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Table</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">Bàn 5</td>
+                                                                </tr>
+                                                                <tr class="mb-3">
+                                                                    <td>People</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">5</td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                        <div class="col-sm-12 col-md-6 record mb-3">
+                                                            <table>
+                                                                <tr>
+                                                                    <td>Prepayment</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">$900</td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td>Date</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">29-08-2023 13:39:11</td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                    <p class="p-4 mb-4">Customer need to recheck the product once</p>
+                                                    <div
+                                                        class="btn-row d-flex align-items-center justify-content-between">
+                                                        <a href="javascript:void(0);"
+                                                            class="btn btn-info btn-icon flex-fill">Open</a>
+                                                        <a href="javascript:void(0);"
+                                                            class="btn btn-danger btn-icon flex-fill">Products</a>
+                                                        <a href="javascript:void(0);"
+                                                            class="btn btn-success btn-icon flex-fill">Print</a>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                        <p class="p-4">Customer need to recheck the product once</p>
-                                        <div class="btn-row d-flex align-items-center justify-content-between">
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-info btn-icon flex-fill">Open</a>
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-danger btn-icon flex-fill">Products</a>
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-success btn-icon flex-fill">Print</a>
-                                        </div>
-                                    </div>
-                                    <div class="default-cover p-4 mb-4">
-                                        <span class="badge bg-primary d-inline-block mb-4">Order ID : #666666</span>
-                                        <div class="row">
-                                            <div class="col-sm-12 col-md-6 record mb-3">
-                                                <table>
-                                                    <tr>
-                                                        <td>Customer</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">Botsford</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Table</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">Bàn 5</td>
-                                                    </tr>
-                                                    <tr class="mb-3">
-                                                        <td>People</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">5</td>
-                                                    </tr>
-                                                </table>
+                                        <div class="tab-pane fade" id="unpaid" role="tabpanel">
+                                            <div class="table-top">
+                                                <div class="search-set w-100 search-order">
+                                                    <div class="search-input">
+                                                        <a class="btn btn-searchset d-flex align-items-center h-100"><img
+                                                                src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/icons/search-white.svg"
+                                                                alt="img"></a>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div class="col-sm-12 col-md-6 record mb-3">
-                                                <table>
-                                                    <tr>
-                                                        <td>Prepayment</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">$900</td>
-                                                    </tr>
-                                                    
-                                                    <tr>
-                                                        <td>Date</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">29-08-2023 13:39:11</td>
-                                                    </tr>
-                                                </table>
+                                            <div class="order-body">
+                                                <div class="default-cover p-4 mb-4">
+                                                    <span class="badge bg-info d-inline-block mb-4">Order ID :
+                                                        #666662</span>
+                                                    <div class="row">
+                                                        <div class="col-sm-12 col-md-6 record mb-3">
+                                                            <table>
+                                                                <tr>
+                                                                    <td>Customer</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">Botsford</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Table</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">Bàn 5</td>
+                                                                </tr>
+                                                                <tr class="mb-3">
+                                                                    <td>People</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">5</td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                        <div class="col-sm-12 col-md-6 record mb-3">
+                                                            <table>
+                                                                <tr>
+                                                                    <td>Prepayment</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">$900</td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td>Date</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">29-08-2023 13:39:11</td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                    <p class="p-4">Customer need to recheck the product once</p>
+                                                    <div
+                                                        class="btn-row d-flex align-items-center justify-content-between">
+                                                        <a href="javascript:void(0);"
+                                                            class="btn btn-info btn-icon flex-fill">Open</a>
+                                                        <a href="javascript:void(0);"
+                                                            class="btn btn-danger btn-icon flex-fill">Products</a>
+                                                        <a href="javascript:void(0);"
+                                                            class="btn btn-success btn-icon flex-fill">Print</a>
+                                                    </div>
+                                                </div>
+                                                <div class="default-cover p-4 mb-4">
+                                                    <span class="badge bg-info d-inline-block mb-4">Order ID :
+                                                        #666663</span>
+                                                    <div class="row">
+                                                        <div class="col-sm-12 col-md-6 record mb-3">
+                                                            <table>
+                                                                <tr>
+                                                                    <td>Customer</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">Botsford</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Table</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">Bàn 5</td>
+                                                                </tr>
+                                                                <tr class="mb-3">
+                                                                    <td>People</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">5</td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                        <div class="col-sm-12 col-md-6 record mb-3">
+                                                            <table>
+                                                                <tr>
+                                                                    <td>Prepayment</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">$900</td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td>Date</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">29-08-2023 13:39:11</td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                    <p class="p-4">Customer need to recheck the product once</p>
+                                                    <div
+                                                        class="btn-row d-flex align-items-center justify-content-between">
+                                                        <a href="javascript:void(0);"
+                                                            class="btn btn-info btn-icon flex-fill">Open</a>
+                                                        <a href="javascript:void(0);"
+                                                            class="btn btn-danger btn-icon flex-fill">Products</a>
+                                                        <a href="javascript:void(0);"
+                                                            class="btn btn-success btn-icon flex-fill">Print</a>
+                                                    </div>
+                                                </div>
+                                                <div class="default-cover p-4 mb-4">
+                                                    <span class="badge bg-info d-inline-block mb-4">Order ID :
+                                                        #666664</span>
+                                                    <div class="row">
+                                                        <div class="col-sm-12 col-md-6 record mb-3">
+                                                            <table>
+                                                                <tr>
+                                                                    <td>Customer</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">Botsford</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Table</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">Bàn 5</td>
+                                                                </tr>
+                                                                <tr class="mb-3">
+                                                                    <td>People</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">5</td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                        <div class="col-sm-12 col-md-6 record mb-3">
+                                                            <table>
+                                                                <tr>
+                                                                    <td>Prepayment</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">$900</td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td>Date</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">29-08-2023 13:39:11</td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                    <p class="p-4 mb-4">Customer need to recheck the product once</p>
+                                                    <div
+                                                        class="btn-row d-flex align-items-center justify-content-between">
+                                                        <a href="javascript:void(0);"
+                                                            class="btn btn-info btn-icon flex-fill">Open</a>
+                                                        <a href="javascript:void(0);"
+                                                            class="btn btn-danger btn-icon flex-fill">Products</a>
+                                                        <a href="javascript:void(0);"
+                                                            class="btn btn-success btn-icon flex-fill">Print</a>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                        <p class="p-4">Customer need to recheck the product once</p>
-                                        <div class="btn-row d-flex align-items-center justify-content-between">
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-info btn-icon flex-fill">Open</a>
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-danger btn-icon flex-fill">Products</a>
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-success btn-icon flex-fill">Print</a>
-                                        </div>
-                                    </div>
-                                    <div class="default-cover p-4 mb-4">
-                                        <span class="badge bg-primary d-inline-block mb-4">Order ID : #666667</span>
-                                        <div class="row">
-                                            <div class="col-sm-12 col-md-6 record mb-3">
-                                                <table>
-                                                    <tr>
-                                                        <td>Customer</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">Botsford</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Table</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">Bàn 5</td>
-                                                    </tr>
-                                                    <tr class="mb-3">
-                                                        <td>People</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">5</td>
-                                                    </tr>
-                                                </table>
+                                        <div class="tab-pane fade" id="paid" role="tabpanel">
+                                            <div class="table-top">
+                                                <div class="search-set w-100 search-order">
+                                                    <div class="search-input">
+                                                        <a class="btn btn-searchset d-flex align-items-center h-100"><img
+                                                                src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/icons/search-white.svg"
+                                                                alt="img"></a>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div class="col-sm-12 col-md-6 record mb-3">
-                                                <table>
-                                                    <tr>
-                                                        <td>Prepayment</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">$900</td>
-                                                    </tr>
-                                                    
-                                                    <tr>
-                                                        <td>Date</td>
-                                                        <td class="colon">:</td>
-                                                        <td class="text">29-08-2023 13:39:11</td>
-                                                    </tr>
-                                                </table>
+                                            <div class="order-body">
+                                                <div class="default-cover p-4 mb-4">
+                                                    <span class="badge bg-primary d-inline-block mb-4">Order ID :
+                                                        #666665</span>
+                                                    <div class="row">
+                                                        <div class="col-sm-12 col-md-6 record mb-3">
+                                                            <table>
+                                                                <tr>
+                                                                    <td>Customer</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">Botsford</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Table</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">Bàn 5</td>
+                                                                </tr>
+                                                                <tr class="mb-3">
+                                                                    <td>People</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">5</td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                        <div class="col-sm-12 col-md-6 record mb-3">
+                                                            <table>
+                                                                <tr>
+                                                                    <td>Prepayment</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">$900</td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td>Date</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">29-08-2023 13:39:11</td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                    <p class="p-4">Customer need to recheck the product once</p>
+                                                    <div
+                                                        class="btn-row d-flex align-items-center justify-content-between">
+                                                        <a href="javascript:void(0);"
+                                                            class="btn btn-info btn-icon flex-fill">Open</a>
+                                                        <a href="javascript:void(0);"
+                                                            class="btn btn-danger btn-icon flex-fill">Products</a>
+                                                        <a href="javascript:void(0);"
+                                                            class="btn btn-success btn-icon flex-fill">Print</a>
+                                                    </div>
+                                                </div>
+                                                <div class="default-cover p-4 mb-4">
+                                                    <span class="badge bg-primary d-inline-block mb-4">Order ID :
+                                                        #666666</span>
+                                                    <div class="row">
+                                                        <div class="col-sm-12 col-md-6 record mb-3">
+                                                            <table>
+                                                                <tr>
+                                                                    <td>Customer</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">Botsford</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Table</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">Bàn 5</td>
+                                                                </tr>
+                                                                <tr class="mb-3">
+                                                                    <td>People</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">5</td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                        <div class="col-sm-12 col-md-6 record mb-3">
+                                                            <table>
+                                                                <tr>
+                                                                    <td>Prepayment</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">$900</td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td>Date</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">29-08-2023 13:39:11</td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                    <p class="p-4">Customer need to recheck the product once</p>
+                                                    <div
+                                                        class="btn-row d-flex align-items-center justify-content-between">
+                                                        <a href="javascript:void(0);"
+                                                            class="btn btn-info btn-icon flex-fill">Open</a>
+                                                        <a href="javascript:void(0);"
+                                                            class="btn btn-danger btn-icon flex-fill">Products</a>
+                                                        <a href="javascript:void(0);"
+                                                            class="btn btn-success btn-icon flex-fill">Print</a>
+                                                    </div>
+                                                </div>
+                                                <div class="default-cover p-4 mb-4">
+                                                    <span class="badge bg-primary d-inline-block mb-4">Order ID :
+                                                        #666667</span>
+                                                    <div class="row">
+                                                        <div class="col-sm-12 col-md-6 record mb-3">
+                                                            <table>
+                                                                <tr>
+                                                                    <td>Customer</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">Botsford</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Table</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">Bàn 5</td>
+                                                                </tr>
+                                                                <tr class="mb-3">
+                                                                    <td>People</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">5</td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                        <div class="col-sm-12 col-md-6 record mb-3">
+                                                            <table>
+                                                                <tr>
+                                                                    <td>Prepayment</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">$900</td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td>Date</td>
+                                                                    <td class="colon">:</td>
+                                                                    <td class="text">29-08-2023 13:39:11</td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                    <p class="p-4 mb-4">Customer need to recheck the product once</p>
+                                                    <div
+                                                        class="btn-row d-flex align-items-center justify-content-between">
+                                                        <a href="javascript:void(0);"
+                                                            class="btn btn-info btn-icon flex-fill">Open</a>
+                                                        <a href="javascript:void(0);"
+                                                            class="btn btn-danger btn-icon flex-fill">Products</a>
+                                                        <a href="javascript:void(0);"
+                                                            class="btn btn-success btn-icon flex-fill">Print</a>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <p class="p-4 mb-4">Customer need to recheck the product once</p>
-                                        <div class="btn-row d-flex align-items-center justify-content-between">
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-info btn-icon flex-fill">Open</a>
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-danger btn-icon flex-fill">Products</a>
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-success btn-icon flex-fill">Print</a>
                                         </div>
                                     </div>
                                 </div>
@@ -3628,193 +3358,203 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
 
-    <div class="modal fade modal-default pos-modal" id="booking-new" tabindex="-1" aria-labelledby="booking-new">
-        <div class="modal-dialog modal-xl modal-dialog-centered" >
-            <div class="modal-content">
-                <div class="modal-header p-4">
-                    <h5 class="modal-title">Thêm mới đơn</h5>
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body p-4">
-                    <div class="tabs-sets">
-                        <div class="tab-content">
-                            <div class="tab-pane fade show active" id="booking-onhold" role="tabpanel"
-                                aria-labelledby="onhold-tab">
-                                <div class="table-top">
-                                    <div class="search-set w-100 search-order">
-                                        <div class="search-input w-100">
-                                            <a class="btn btn-searchset d-flex align-items-center h-100"><img
-                                                    src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/icons/search-white.svg"
-                                                    alt="img"></a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="order-body">
-                                    <div class="default-cover p-4 mb-4">
-                                        <span class="badge bg-secondary d-inline-block mb-4">Order ID : #666659</span>
-                                        <div class="row">
-                                            <div class="col-sm-12 col-md-6 record mb-3">
-                                                <form>
-                                                    <label>Thời gian nhận bàn</label>
-                                                    <input type="date" class="form-control">
-                                                    <br>
-                                                    <label >Số điện thoại</label>
-                                                    <input type="string" class="form-control">
-                                                    <label >Bàn</label>
-                                                    <input type="text" class="form-control">
-                                                    <label >Cọc trước</label>
-                                                    <input type="number" class="form-control">
-                                                </form>
-                                            </div>
-                                            <div class="col-sm-12 col-md-6 record mb-3">
-                                                <form>
-                                                    <label>Số khách</label>
-                                                    <input type="number" class="form-control">
-                                                    <br>
-                                                    <label >Khách hàng</label>
-                                                    <input type="string" class="form-control">
-                                                    <label >Ghi chú</label>
-                                                    <input type="text" class="form-control">
-                                                </form>
-                                            </div>
-                                        </div>
-                                       
-                                        <div class="btn-row d-sm-flex align-items-center justify-content-between">
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-info btn-icon flex-fill">Hủy đơn</a>
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-danger btn-icon flex-fill">Xác nhận</a>
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-success btn-icon flex-fill">Print</a>
-                                        </div>
-                                    </div>
-                            
+                <div class="modal fade modal-default pos-modal" id="booking-new" tabindex="-1"
+                    aria-labelledby="booking-new">
+                    <div class="modal-dialog modal-xl modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header p-4">
+                                <h5 class="modal-title">Thêm mới đơn</h5>
+                                <button type="button" class="close" data-bs-dismiss="modal"
+                                    aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
                             </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+                            <div class="modal-body p-4">
+                                <div class="tabs-sets">
+                                    <div class="tab-content">
+                                        <div class="tab-pane fade show active" id="booking-onhold" role="tabpanel"
+                                            aria-labelledby="onhold-tab">
+                                            <div class="table-top">
+                                                <div class="search-set w-100 search-order">
+                                                    <div class="search-input w-100">
+                                                        <a class="btn btn-searchset d-flex align-items-center h-100"><img
+                                                                src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/icons/search-white.svg"
+                                                                alt="img"></a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="order-body">
+                                                <div class="default-cover p-4 mb-4">
+                                                    <span class="badge bg-secondary d-inline-block mb-4">Order ID :
+                                                        #666659</span>
+                                                    <div class="row">
+                                                        <div class="col-sm-12 col-md-6 record mb-3">
+                                                            <form>
+                                                                <label>Thời gian nhận bàn</label>
+                                                                <input type="date" class="form-control">
+                                                                <br>
+                                                                <label>Số điện thoại</label>
+                                                                <input type="string" class="form-control">
+                                                                <label>Bàn</label>
+                                                                <input type="text" class="form-control">
+                                                                <label>Cọc trước</label>
+                                                                <input type="number" class="form-control">
+                                                            </form>
+                                                        </div>
+                                                        <div class="col-sm-12 col-md-6 record mb-3">
+                                                            <form>
+                                                                <label>Số khách</label>
+                                                                <input type="number" class="form-control">
+                                                                <br>
+                                                                <label>Khách hàng</label>
+                                                                <input type="string" class="form-control">
+                                                                <label>Ghi chú</label>
+                                                                <input type="text" class="form-control">
+                                                            </form>
+                                                        </div>
+                                                    </div>
 
-    <div class="modal fade modal-default pos-modal" id="open" tabindex="-1" aria-labelledby="open">
-        <div class="modal-dialog modal-xl modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header p-4">
-                    <h5 class="modal-title">Orders detail</h5>
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body p-4">
-                    <div class="tabs-sets">
-                        <div class="tab-content">
-                            <!-- Unique ID for 'Open' modal -->
-                            <div class="tab-pane fade show active" id="open-order-onhold" role="tabpanel"
-                                aria-labelledby="open-order-onhold-tab">
-                                <div class="table-top">
-                                    <div class="search-set w-100 search-order">
-                                        <div class="search-input w-100">
-                                            <a class="btn btn-searchset d-flex align-items-center h-100">
-                                                <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/icons/search-white.svg" alt="img">
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="order-body">
-                                    <!-- Order details for 'Open' -->
-                                    <div class="default-cover p-4 mb-4">
-                                        <span class="badge bg-secondary d-inline-block mb-4">Order ID : #666659</span>
-                                        <div class="row">
-                                            <div class="col-sm-12 col-md-6 record mb-3">
-                                                <form>
-                                                    <label>Thời gian nhận bàn</label>
-                                                    <input type="date" class="form-control">
-                                                    <br>
-                                                    <label>Số điện thoại</label>
-                                                    <input type="string" class="form-control">
-                                                    <label>Bàn</label>
-                                                    <input type="text" class="form-control">
-                                                    <label>Cọc trước</label>
-                                                    <input type="number" class="form-control">
-                                                </form>
+                                                    <div
+                                                        class="btn-row d-sm-flex align-items-center justify-content-between">
+                                                        <a href="javascript:void(0);"
+                                                            class="btn btn-info btn-icon flex-fill">Hủy đơn</a>
+                                                        <a href="javascript:void(0);"
+                                                            class="btn btn-danger btn-icon flex-fill">Xác nhận</a>
+                                                        <a href="javascript:void(0);"
+                                                            class="btn btn-success btn-icon flex-fill">Print</a>
+                                                    </div>
+                                                </div>
+
                                             </div>
-                                            <div class="col-sm-12 col-md-6 record mb-3">
-                                                <form>
-                                                    <label>Số khách</label>
-                                                    <input type="number" class="form-control">
-                                                    <br>
-                                                    <label>Khách hàng</label>
-                                                    <input type="string" class="form-control">
-                                                    <label>Ghi chú</label>
-                                                    <input type="text" class="form-control">
-                                                </form>
-                                            </div>
-                                        </div>
-                                        <div class="btn-row d-sm-flex align-items-center justify-content-between">
-                                            <a href="javascript:void(0);" class="btn btn-info btn-icon flex-fill">Hủy đơn</a>
-                                            <a href="javascript:void(0);" class="btn btn-danger btn-icon flex-fill">Xác nhận</a>
-                                            <a href="javascript:void(0);" class="btn btn-success btn-icon flex-fill">Print</a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    
+                    <div class="modal fade modal-default pos-modal" id="open" tabindex="-1"
+                        aria-labelledby="open">
+                        <div class="modal-dialog modal-xl modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header p-4">
+                                    <h5 class="modal-title">Orders detail</h5>
+                                    <button type="button" class="close" data-bs-dismiss="modal"
+                                        aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body p-4">
+                                    <div class="tabs-sets">
+                                        <div class="tab-content">
+                                            <!-- Unique ID for 'Open' modal -->
+                                            <div class="tab-pane fade show active" id="open-order-onhold"
+                                                role="tabpanel" aria-labelledby="open-order-onhold-tab">
+                                                <div class="table-top">
+                                                    <div class="search-set w-100 search-order">
+                                                        <div class="search-input w-100">
+                                                            <a
+                                                                class="btn btn-searchset d-flex align-items-center h-100">
+                                                                <img src="https://dreamspos.dreamstechnologies.com/html/template/assets/img/icons/search-white.svg"
+                                                                    alt="img">
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="order-body">
+                                                    <!-- Order details for 'Open' -->
+                                                    <div class="default-cover p-4 mb-4">
+                                                        <span class="badge bg-secondary d-inline-block mb-4">Order ID
+                                                            : #666659</span>
+                                                        <div class="row">
+                                                            <div class="col-sm-12 col-md-6 record mb-3">
+                                                                <form>
+                                                                    <label>Thời gian nhận bàn</label>
+                                                                    <input type="date" class="form-control">
+                                                                    <br>
+                                                                    <label>Số điện thoại</label>
+                                                                    <input type="string" class="form-control">
+                                                                    <label>Bàn</label>
+                                                                    <input type="text" class="form-control">
+                                                                    <label>Cọc trước</label>
+                                                                    <input type="number" class="form-control">
+                                                                </form>
+                                                            </div>
+                                                            <div class="col-sm-12 col-md-6 record mb-3">
+                                                                <form>
+                                                                    <label>Số khách</label>
+                                                                    <input type="number" class="form-control">
+                                                                    <br>
+                                                                    <label>Khách hàng</label>
+                                                                    <input type="string" class="form-control">
+                                                                    <label>Ghi chú</label>
+                                                                    <input type="text" class="form-control">
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                        <div
+                                                            class="btn-row d-sm-flex align-items-center justify-content-between">
+                                                            <a href="javascript:void(0);"
+                                                                class="btn btn-info btn-icon flex-fill">Hủy đơn</a>
+                                                            <a href="javascript:void(0);"
+                                                                class="btn btn-danger btn-icon flex-fill">Xác nhận</a>
+                                                            <a href="javascript:void(0);"
+                                                                class="btn btn-success btn-icon flex-fill">Print</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-    <div class="customizer-links" id="setdata">
-        <ul class="sticky-sidebar">
-            <li class="sidebar-icons">
-                <a href="#" class="navigation-add" data-bs-toggle="tooltip" data-bs-placement="left"
-                    data-bs-original-title="Theme">
-                    <i data-feather="settings" class="feather-five"></i>
-                </a>
-            </li>
-        </ul>
-    </div>
 
-    <script data-cfasync="false"
-        src="https://dreamspos.dreamstechnologies.com/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js">
-    </script>
-    <script src="https://dreamspos.dreamstechnologies.com/html/template/assets/js/jquery-3.7.1.min.js" type="97f6f52f4f9bb8ed1ab84bbb-text/javascript"></script>
 
-    <script src="https://dreamspos.dreamstechnologies.com/html/template/assets/js/feather.min.js" type="97f6f52f4f9bb8ed1ab84bbb-text/javascript"></script>
+                    <div class="customizer-links" id="setdata">
+                        <ul class="sticky-sidebar">
+                            <li class="sidebar-icons">
+                                <a href="#" class="navigation-add" data-bs-toggle="tooltip"
+                                    data-bs-placement="left" data-bs-original-title="Theme">
+                                    <i data-feather="settings" class="feather-five"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
 
-    <script src="https://dreamspos.dreamstechnologies.com/html/template/assets/js/jquery.slimscroll.min.js" type="97f6f52f4f9bb8ed1ab84bbb-text/javascript"></script>
+                    <script data-cfasync="false"
+                        src="https://dreamspos.dreamstechnologies.com/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js">
+                    </script>
+                    <script src="https://dreamspos.dreamstechnologies.com/html/template/assets/js/jquery-3.7.1.min.js" type="97f6f52f4f9bb8ed1ab84bbb-text/javascript"></script>
 
-    <script src="https://dreamspos.dreamstechnologies.com/html/template/assets/js/jquery.dataTables.min.js" type="97f6f52f4f9bb8ed1ab84bbb-text/javascript"></script>
-    <script src="https://dreamspos.dreamstechnologies.com/html/template/assets/js/dataTables.bootstrap5.min.js" type="97f6f52f4f9bb8ed1ab84bbb-text/javascript"></script>
+                    <script src="https://dreamspos.dreamstechnologies.com/html/template/assets/js/feather.min.js" type="97f6f52f4f9bb8ed1ab84bbb-text/javascript"></script>
 
-    <script src="https://dreamspos.dreamstechnologies.com/html/template/assets/js/bootstrap.bundle.min.js" type="97f6f52f4f9bb8ed1ab84bbb-text/javascript"></script>
+                    <script src="https://dreamspos.dreamstechnologies.com/html/template/assets/js/jquery.slimscroll.min.js" type="97f6f52f4f9bb8ed1ab84bbb-text/javascript"></script>
 
-    <script src="https://dreamspos.dreamstechnologies.com/html/template/assets/plugins/apexchart/apexcharts.min.js" type="97f6f52f4f9bb8ed1ab84bbb-text/javascript"></script>
-    <script src="https://dreamspos.dreamstechnologies.com/html/template/assets/plugins/apexchart/chart-data.js" type="97f6f52f4f9bb8ed1ab84bbb-text/javascript"></script>
+                    <script src="https://dreamspos.dreamstechnologies.com/html/template/assets/js/jquery.dataTables.min.js" type="97f6f52f4f9bb8ed1ab84bbb-text/javascript"></script>
+                    <script src="https://dreamspos.dreamstechnologies.com/html/template/assets/js/dataTables.bootstrap5.min.js" type="97f6f52f4f9bb8ed1ab84bbb-text/javascript"></script>
 
-    <script src="https://dreamspos.dreamstechnologies.com/html/template/assets/js/moment.min.js" type="97f6f52f4f9bb8ed1ab84bbb-text/javascript"></script>
-    <script src="https://dreamspos.dreamstechnologies.com/html/template/assets/plugins/daterangepicker/daterangepicker.js" type="97f6f52f4f9bb8ed1ab84bbb-text/javascript"></script>
+                    <script src="https://dreamspos.dreamstechnologies.com/html/template/assets/js/bootstrap.bundle.min.js" type="97f6f52f4f9bb8ed1ab84bbb-text/javascript"></script>
 
-    <script src="https://dreamspos.dreamstechnologies.com/html/template/assets/plugins/owlcarousel/owl.carousel.min.js" type="97f6f52f4f9bb8ed1ab84bbb-text/javascript"></script>
+                    <script src="https://dreamspos.dreamstechnologies.com/html/template/assets/plugins/apexchart/apexcharts.min.js" type="97f6f52f4f9bb8ed1ab84bbb-text/javascript"></script>
+                    <script src="https://dreamspos.dreamstechnologies.com/html/template/assets/plugins/apexchart/chart-data.js" type="97f6f52f4f9bb8ed1ab84bbb-text/javascript"></script>
 
-    <script src="https://dreamspos.dreamstechnologies.com/html/template/assets/plugins/select2/js/select2.min.js" type="97f6f52f4f9bb8ed1ab84bbb-text/javascript"></script>
+                    <script src="https://dreamspos.dreamstechnologies.com/html/template/assets/js/moment.min.js" type="97f6f52f4f9bb8ed1ab84bbb-text/javascript"></script>
+                    <script src="https://dreamspos.dreamstechnologies.com/html/template/assets/plugins/daterangepicker/daterangepicker.js" type="97f6f52f4f9bb8ed1ab84bbb-text/javascript"></script>
 
-    <script src="https://dreamspos.dreamstechnologies.com/html/template/assets/plugins/sweetalert/sweetalert2.all.min.js" type="97f6f52f4f9bb8ed1ab84bbb-text/javascript"></script>
-    <script src="https://dreamspos.dreamstechnologies.com/html/template/assets/plugins/sweetalert/sweetalerts.min.js" type="97f6f52f4f9bb8ed1ab84bbb-text/javascript"></script>
-    <script src="https://dreamspos.dreamstechnologies.com/html/template/assets/js/theme-script.js" type="97f6f52f4f9bb8ed1ab84bbb-text/javascript"></script>
-    <script src="https://dreamspos.dreamstechnologies.com/html/template/assets/js/script.js" type="97f6f52f4f9bb8ed1ab84bbb-text/javascript"></script>
-    <script src="https://dreamspos.dreamstechnologies.com/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js"
-        data-cf-settings="97f6f52f4f9bb8ed1ab84bbb-|49" defer></script>
+                    <script src="https://dreamspos.dreamstechnologies.com/html/template/assets/plugins/owlcarousel/owl.carousel.min.js" type="97f6f52f4f9bb8ed1ab84bbb-text/javascript"></script>
+
+                    <script src="https://dreamspos.dreamstechnologies.com/html/template/assets/plugins/select2/js/select2.min.js" type="97f6f52f4f9bb8ed1ab84bbb-text/javascript"></script>
+
+                    <script src="https://dreamspos.dreamstechnologies.com/html/template/assets/plugins/sweetalert/sweetalert2.all.min.js" type="97f6f52f4f9bb8ed1ab84bbb-text/javascript"></script>
+                    <script src="https://dreamspos.dreamstechnologies.com/html/template/assets/plugins/sweetalert/sweetalerts.min.js" type="97f6f52f4f9bb8ed1ab84bbb-text/javascript"></script>
+                    <script src="https://dreamspos.dreamstechnologies.com/html/template/assets/js/theme-script.js" type="97f6f52f4f9bb8ed1ab84bbb-text/javascript"></script>
+                    <script src="https://dreamspos.dreamstechnologies.com/html/template/assets/js/script.js" type="97f6f52f4f9bb8ed1ab84bbb-text/javascript"></script>
+                    <script src="https://dreamspos.dreamstechnologies.com/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js"
+                        data-cf-settings="97f6f52f4f9bb8ed1ab84bbb-|49" defer></script>
 </body>
 
 <!-- Mirrored from dreamspos.dreamstechnologies.com/html/template/pos.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 10 Sep 2024 13:19:49 GMT -->
