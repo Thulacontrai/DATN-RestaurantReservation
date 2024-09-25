@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Client\OnlineCheckoutController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\IngredientController;
@@ -68,6 +69,10 @@ route::get(
     "deposit",
     [ReservationController::class, "showDeposit"]
 )->name("deposit.client");
+route::post(
+    "MOMOCheckout",
+    action: [OnlineCheckoutController::class, "onlineCheckout"]
+)->name("MOMOCheckout.client");
 
 
 

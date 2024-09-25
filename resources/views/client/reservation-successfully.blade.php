@@ -30,6 +30,11 @@
                             <tr>
                                 <td colspan="2">Ghi chú thêm: {{ $reservation['note'] ?? null }}</td>
                             </tr>
+                            @if (isset($reservation['deposit_amount']))
+                                <tr>
+                                    <td colspan="2">Tiền cọc: {{ number_format($reservation['deposit_amount']) }} đ</td>
+                                </tr>
+                            @endif
                         </table>
                         <p class="text-center m-4 text-warning bold">
                             Lưu ý: Chỉ sau khi nhận được tin nhắn xác nhận của bộ phận chăm sóc khách hàng thì yêu
