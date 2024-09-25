@@ -10,6 +10,16 @@ use Illuminate\Http\Request;
 class PaymentController extends Controller
 {
 
+    public function __construct()
+    {
+        // Gán middleware cho các phương thức
+        $this->middleware('permission:Xem thanh toán', ['only' => ['index']]);
+        $this->middleware('permission:Tạo mới thanh toán', ['only' => ['create']]);
+        $this->middleware('permission:Sửa thanh toán', ['only' => ['edit']]);
+        $this->middleware('permission:Xóa thanh toán', ['only' => ['destroy']]);
+        
+    }
+
     use TraitCRUD;
 
     protected $model = Payment::class;

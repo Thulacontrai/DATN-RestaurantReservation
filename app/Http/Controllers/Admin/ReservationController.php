@@ -18,6 +18,7 @@ use Whoops\Exception\Formatter;
 
 class ReservationController extends Controller
 {
+
     use TraitCRUD;
      // public function __construct()
     // {

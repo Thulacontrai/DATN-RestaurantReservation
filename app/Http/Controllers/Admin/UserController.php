@@ -9,6 +9,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Role;
 
+use Illuminate\Support\Facades\Validator;
+use Spatie\Permission\Models\Role;
+
+
 class UserController extends Controller
 {
 
@@ -38,7 +42,14 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+
+
+        $roles = Role::orderBy('name', 'ASC')->get();
+        return view('admin.user.create',[
+            'roles' => $roles
+        ]);
+
+
     }
 
     /**
@@ -46,8 +57,41 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+         
+        $validator = Validator::make($request->all(),[
+            'name' => 'required|min:3',
+            'email' => 'required|email|unique:users,email', // Bỏ qua email hiện tại
+            'phone' => 'nullable|digits_between:10,15', // Thêm validation cho phone nếu cần
+            'status' => 'required|in:active,inactive',
+            'password' => 'required|min:5|same:confirm_password',
+            'confirm_password' => 'required',
+
+        ]);
+    
+        if ($validator->fails()) {
+            return redirect()->route('admin.user.create')->withInput()->withErrors($validator);
+        }
+    
+        // Chỉ cập nhật thông tin nếu có thay đổi\
+        $user = new User();
+        $user->name = $request->name;
+        if ($request->email != $user->email) {
+            $user->email = $request->email; // Chỉ cập nhật email nếu có thay đổi
+        }
+        $user->phone = $request->phone; // Cập nhật phone
+        $user->status = $request->status; // Cập nhật trạng thái
+        $user->password = Hash::make($request->password); 
+        $user->status = $request->status; 
+        $user->save();
+    
+        $user->syncRoles($request->role); // Cập nhật vai trò
+    
+        return redirect()->route('admin.user.index')->with('success', 'Thêm Người dùng Thành công');
+
+
     }
+    
 
     /**
      * Display the specified resource.
