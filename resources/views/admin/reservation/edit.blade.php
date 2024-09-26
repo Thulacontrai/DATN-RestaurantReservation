@@ -18,20 +18,27 @@
                             <div class="card-title">Chỉnh Sửa Đặt Bàn</div>
                         </div>
                         <div class="card-body">
+                            <!-- Display validation errors -->
+                            @if($errors->any())
+                                <div class="alert alert-danger">
+                                    <ul>
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
+
                             <form action="{{ route('admin.reservation.update', $reservation->id) }}" method="POST">
                                 @csrf
                                 @method('PUT')
 
                                 <div class="mb-3">
-                                    <label for="customer_id" class="form-label">Khách hàng</label>
-                                    <select class="form-control" id="customer_id" name="customer_id" required>
-                                        @foreach ($customers as $customer)
-                                            <option value="{{ $customer->id }}"
-                                                {{ $reservation->customer_id == $customer->id ? 'selected' : '' }}>
-                                                {{ $customer->name }}</option>
-                                        @endforeach
-                                    </select>
+                                    <label for="customer_name" class="form-label">Khách hàng</label>
+                                    <input type="text" class="form-control" id="customer_name" name="customer_name"
+                                        value="{{ $reservation->customer->name ?? '' }}" required readonly>
                                 </div>
+
 
                                 <div class="mb-3">
                                     <label for="reservation_time" class="form-label">Thời gian đặt</label>
@@ -47,10 +54,10 @@
                                         value="{{ $reservation->guest_count }}" required>
                                 </div>
 
-                                <div class="mb-3">
+                                <div class="mb-3" id="deposit_section">
                                     <label for="deposit_amount" class="form-label">Số tiền đặt cọc</label>
                                     <input type="number" class="form-control" id="deposit_amount" name="deposit_amount"
-                                        value="{{ $reservation->deposit_amount }}" >
+                                        value="{{ $reservation->deposit_amount }}" readonly>
                                 </div>
 
                                 <div class="mb-3">
@@ -88,5 +95,28 @@
         </div>
     </div>
     <!-- Content wrapper scroll end -->
+
+    <script>
+        // Calculate deposit based on number of guests
+        document.addEventListener('DOMContentLoaded', function () {
+            const guestCountInput = document.getElementById('guest_count');
+            const depositInput = document.getElementById('deposit_amount');
+            const depositPerPerson = 100000; // 100.000 VND per person
+
+            function calculateDeposit() {
+                const guestCount = parseInt(guestCountInput.value);
+                if (guestCount >= 6) {
+                    depositInput.value = guestCount * depositPerPerson;
+                } else {
+                    depositInput.value = 0;
+                }
+            }
+
+            guestCountInput.addEventListener('input', calculateDeposit);
+
+            // Call the function on page load to calculate deposit based on initial value
+            calculateDeposit();
+        });
+    </script>
 
 @endsection
