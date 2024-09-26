@@ -125,9 +125,9 @@ Route::get('/pos/reservations', [PosController::class, 'getUpcomingAndOverdueRes
 Route::get('admin', [AdminController::class, 'index']);
 Route::prefix('admin')->name('admin.')->group(function () {
 
-//     Route::get('/', function () {
-//     return view('auth.login');
-// });
+    Route::get('/', function () {
+    return view('auth.login');
+});
 
     Route::resource('table', TableController::class);
     // Trash - Xoá mềm - Khôi Phục
