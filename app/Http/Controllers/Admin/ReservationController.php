@@ -20,15 +20,15 @@ class ReservationController extends Controller
 {
 
     use TraitCRUD;
-     // public function __construct()
-    // {
-    //     // Gán middleware cho các phương thức
-    //     $this->middleware('permission:Xem đặt bàn', ['only' => ['index']]);
-    //     $this->middleware('permission:Tạo mới đặt bàn', ['only' => ['create']]);
-    //     $this->middleware('permission:Sửa đặt bàn', ['only' => ['edit']]);
-    //     $this->middleware('permission:Xóa đặt bàn', ['only' => ['destroy']]);
+     public function __construct()
+    {
+        // Gán middleware cho các phương thức
+        $this->middleware('permission:Xem đặt bàn', ['only' => ['index']]);
+        $this->middleware('permission:Tạo mới đặt bàn', ['only' => ['create']]);
+        $this->middleware('permission:Sửa đặt bàn', ['only' => ['edit']]);
+        $this->middleware('permission:Xóa đặt bàn', ['only' => ['destroy']]);
         
-    // }
+    }
 
 
     protected $model = Reservation::class;
@@ -222,37 +222,6 @@ class ReservationController extends Controller
     }
 
 
-    // public function createReservation(StoreReservationRquest $request)
-    // {
-    //     // Kiểm tra xem người dùng với số điện thoại này đã tồn tại hay chưa
-    //     $existingUser = User::where('phone', $request->user_phone)->first();
-
-    //     if ($existingUser) {
-    //         // Người dùng đã tồn tại, sử dụng người dùng hiện có để tạo đặt bàn
-    //         $user = $existingUser;
-    //     } else {
-    //         // Người dùng không tồn tại, tạo mới
-    //         $user = User::create([
-    //             'name' => $request->user_name,
-    //             'phone' => $request->user_phone,
-    //             'password' => bcrypt(fake()->password()), // Tạo mật khẩu giả
-    //             'status' => 'inactive',
-    //         ]);
-    //     }
-    //     // Tạo mới đặt bàn và đảm bảo trạng thái được thiết lập đúng
-    //     $reservation= Reservation::create([
-    //         'customer_id' => $user->id,
-    //         'user_name' => $request->user_name,
-    //         'user_phone' => $request->user_phone,
-    //         'guest_count' => $request->guest_count,
-    //         'note' => $request->note,
-    //         'reservation_date' => $request->reservation_date,
-    //         'reservation_time' => $request->reservation_time,
-    //         'status' => 'Pending', // Trạng thái mặc định khi tạo mới là 'Pending'
-    //     ]);
-    //     // dd($reservation);
-    //     return redirect()->route('reservationSuccessfully.client',compact('reservation'));
-    // }
 
      public function createReservation(StoreReservationRquest $request)
     {
@@ -320,11 +289,7 @@ class ReservationController extends Controller
         $deposit = $showDeposit['guest_count'] * 100000;
         return view('client.deposit', compact('showDeposit', 'deposit'));
     }
-    public function reservationSuccessfully(Request $request)
-    {
-        $reservation = $request->reservation;
-        return view('client.reservation-successfully', compact('reservation'));
-    }
+   
 
 
     public function assignTables($reservationId){

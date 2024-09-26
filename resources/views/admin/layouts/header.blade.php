@@ -23,7 +23,7 @@
             <li class="dropdown">
 
                 <a href="#" id="userSettings" class="user-settings" data-toggle="dropdown" aria-haspopup="true">
-                    {{-- <span class="">{{ Auth::user()->name}} ({{Auth::user()->roles->pluck('name')->implode(' , ')}})</span> --}}
+                    <span class="">{{ Auth::user()->name}} ({{Auth::user()->roles->pluck('name')->implode(' , ')}})</span>
                     <span class="avatar">
                         <img src="{{ asset('adminn/assets/images/user2.png') }}" alt="Admin Templates">
                         <span class="status online"></span>
