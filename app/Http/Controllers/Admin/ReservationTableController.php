@@ -26,7 +26,7 @@ class ReservationTableController extends Controller
     public function index()
     {
         $reservationTables = ReservationTable::all();
-        return view('admin.reservation.reservationTable.index', compact('reservationTables'));
+        return view('admin.reservation.reservationTable.index', compact('reservationTables')); // Truyền dữ liệu vào view
     }
 
     public function show($id)
@@ -54,7 +54,7 @@ class ReservationTableController extends Controller
     }
 
 
-    public function update(Request $request, $id)
+    public function update(Request $request, ReservationTable $reservationTable)
     {
         $validated = $request->validate([
             'status' => 'in:available,reserved,occupied,cleaning',
@@ -63,20 +63,35 @@ class ReservationTableController extends Controller
         ]);
 
         try {
-            $data = $this->reservationTable->updateRecord($id, $validated);
-            return response()->json($data);
+            $data = $reservationTable->fill($validated)->save();
+            return response()->json([
+                'data'      => $data,
+                'success'   => true,
+                'message'   => 'Cập nhật thành công',
+            ]);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 404);
+            return response()->json([
+                'success'   => false,
+                'message' => 'Cập nhật thất bại',
+                'error' => $e->getMessage()
+            ], 404);
         }
     }
 
-    public function destroy($id)
+    public function destroy(ReservationTable $reservationTable)
     {
         try {
-            $this->reservationTable->deleteRecord($id);
-            return response()->json(['message' => 'Record deleted successfully.']);
+            $reservationTable->delete();
+            return response()->json([
+                'success'   => true,
+                'message'   => 'Xóa thành công',
+            ]);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 404);
+            return response()->json([
+                'success'   => false,
+                'message' => 'Xóa thất bại',
+                'error' => $e->getMessage()
+            ], 404);
         }
     }
 }

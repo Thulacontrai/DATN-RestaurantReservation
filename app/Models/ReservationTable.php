@@ -8,13 +8,11 @@ class ReservationTable extends Model
 {
     protected $table = 'reservations_table';
 
-    public $incrementing = false;
-    protected $primaryKey = ['table_id', 'reservation_id'];
+    protected $primaryKey = 'table_id';
 
     protected $fillable = [
         'reservation_id',
         'status',
-        'table_id',
         'start_time',
         'end_time',
     ];
@@ -23,9 +21,9 @@ class ReservationTable extends Model
     {
         return $this->belongsTo(Reservation::class);
     }
-    public function tables()
+
+    public function resolveRouteBinding($value, $field = null)
     {
-        return $this->belongsToMany(Table::class, 'reservation_table')
-            ->withPivot('start_date', 'start_time', 'end_time', 'status');
+        return $this->where('table_id', $value)->first();
     }
 }

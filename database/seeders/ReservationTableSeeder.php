@@ -9,7 +9,7 @@ class ReservationTableSeeder extends Seeder
 {
     public function run()
     {
-        DB::table('reservation_table')->insert([
+        DB::table('reservations_table')->insert([
             [
                 'reservation_id' => 1,
                 'status' => 'reserved',

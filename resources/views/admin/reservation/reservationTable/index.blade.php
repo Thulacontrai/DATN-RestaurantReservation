@@ -47,13 +47,13 @@
                                 </thead>
                                 <tbody>
                                     @foreach($reservationTables as $table)
-                                    <tr>
+                                    <tr class="res-{{ $table->table_id }}">
                                         <td>{{ $table->table_id }}</td>
                                         <td>{{ $table->reservation_id }}</td>
                                         <td>{{ $table->start_time }}</td>
                                         <td>{{ $table->end_time }}</td>
                                         <td>
-                                            <span class="badge {{ $table->status == 'reserved' ? 'shade-green' : ($table->status == 'occupied' ? 'shade-yellow' : 'shade-red') }} min-70">
+                                            <span class="status-old-{{$table->table_id}} badge {{ $table->status == 'reserved' ? 'shade-green' : ($table->status == 'occupied' ? 'shade-yellow' : 'shade-red') }} min-70">
                                                 @if($table->status == 'available')
                                                     có sẵn
                                                 @elseif($table->status == 'reserved')
@@ -160,6 +160,9 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                <input type="text" hidden id="table_id">
+                <input type="text" class="form-control" id="startTimeView" hidden>
+                <input type="text" class="form-control" id="endTimeView" hidden>
                 <div class="mb-3">
                     <label for="status" class="form-label">Trạng Thái</label>
                     <select class="form-select" id="status" name="status">
@@ -183,6 +186,7 @@
         const viewButtons = document.querySelectorAll('.viewRow');
         const updateButtons = document.querySelectorAll('.updateStatusBtn');
         const saveStatusButton = document.querySelector('.saveStatusBtn');
+        const deleteRowButton = document.querySelector('.deleteRow');
 
         const tableIdViewField = document.getElementById('tableIdView');
         const reservationIdViewField = document.getElementById('reservationIdView');
@@ -191,6 +195,25 @@
         const statusViewField = document.getElementById('statusView');
 
         const statusSelect = document.getElementById('status');
+        const tableIdUpdate = document.getElementById('table_id');
+
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+
+        const headers = {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        };
 
         // Xem chi tiết bàn
         viewButtons.forEach(function(button) {
@@ -231,7 +254,9 @@
             button.addEventListener('click', function() {
                 const row = this.closest('tr');
                 const status = row.querySelector('td:nth-child(5)').textContent.trim();
-
+                const tableId = row.querySelector('td:nth-child(1)').textContent;
+                const startTime = row.querySelector('td:nth-child(3)').textContent;
+                const endTime = row.querySelector('td:nth-child(4)').textContent;
                 switch(status) {
                     case 'Có sẵn':
                         statusSelect.value = 'available';
@@ -246,14 +271,103 @@
                         statusSelect.value = 'cleaning';
                         break;
                 }
+
+                tableIdUpdate.value = tableId;
+                startTimeViewField.value = startTime;
+                endTimeViewField.value = endTime;
             });
         });
 
-        saveStatusButton.addEventListener('click', function() {
+        saveStatusButton.addEventListener('click', async function() {
             // Logic lưu trạng thái mới
             const selectedStatus = statusSelect.value;
-            console.log('Trạng thái mới:', selectedStatus);
+            let url = "{{ route('admin.reservationTable.update', ['reservationTable' => ':id']) }}";
+            url = url.replace(':id', tableIdUpdate.value)
+           
+            const response = await axios['put'](url, {
+                headers: headers,
+                status: selectedStatus,
+                start_time: startTimeViewField.value,
+                end_time: endTimeViewField.value
+            });
+
+            if(response.data.success) {
+                alertSuccess(response.data.message);
+                $('#updateStatusModal').modal('hide');
+                // $(`.status-old-${tableIdUpdate.value}`).text(switchStatus(selectedStatus)); // ko load trang nhưng sai màu
+                location.reload(); // load trang đúng màu
+            } else {
+                alertError(response.data.message);
+            }
+            
         });
+
+        $(document).on('click', '.deleteRow', async function () {
+            const row = this.closest('tr');
+            const tableId = row.querySelector('td:nth-child(1)').textContent;
+            let url = "{{ route('admin.reservationTable.destroy', ['reservationTable' => ':id']) }}";
+            url = url.replace(':id', tableId)
+           
+            Swal.fire({
+                title: 'Bạn có chắc muốn xóa không?',
+                showCancelButton: true,
+                icon: "warning",
+                reverseButtons: true,
+                confirmButtonText: "Đồng ý",
+                cancelButtonText: "Hủy",
+                customClass: {
+                    title: 'd-flex',
+                    actions: 'w-100 justify-content-center'
+                },
+                allowOutsideClick: () => !Swal.isLoading()
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    const response = await axios['delete'](url, {
+                        headers: headers,
+                    });
+                    if(response.data.success) {
+                        $(`.res-${tableId}`).remove();
+                        alertSuccess(response.data.message);
+                    } else {
+                        alertError(response.data.message);
+                    }
+                }
+            });
+
+        })
+
+        const switchStatus = (status) => {
+            switch(status) {
+                case 'available':
+                    return 'Có sẵn';
+                case 'reserved':
+                    return 'Đã đặt';
+                case 'occupied':
+                    return 'Đang sử dụng';
+                case 'cleaning':
+                    return 'Đang dọn dẹp';
+            }
+        }
+
+        const alertSuccess = (message) => {
+            Toast.fire({
+                icon: "success",
+                title: 'Thành công',
+                text: message,
+                showCloseButton: true,
+                timer: 1500
+            });
+        }
+
+        const alertError = (message) => {
+            Toast.fire({
+                icon: "error",
+                title: 'Thất bại',
+                text: message,
+                showCloseButton: true,
+                timer: 1500
+            });
+        }
     });
 </script>
 

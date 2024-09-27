@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>@yield('title')</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 
     <!-- Meta -->
@@ -27,10 +28,6 @@
     <div class="page-wrapper">
         <!-- Site wrapper -->
         <div class="main-container">
-
-            @include('admin.layouts.load')
-
-
             @include('admin.layouts.header')
 
             <!-- Left side column. contains the sidebar -->
@@ -86,7 +83,8 @@
     </div>
 </body>
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 @isset($script)
     {{ $script }}
 @endisset
