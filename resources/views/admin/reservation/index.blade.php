@@ -4,6 +4,7 @@
 
 @section('content')
 
+
     <!-- Content wrapper scroll start -->
     <div class="content-wrapper-scroll">
 
@@ -167,12 +168,21 @@
                                 {{ $reservations->links() }}
                             </div>
                         </div>
+
+                        <!-- End Pagination -->
+
                     </div>
                 </div>
             </div>
+
             <!-- Row end -->
+
         </div>
+        <!-- Row end -->
     </div>
+
+</div>
+
 
     <!-- Content wrapper scroll end -->
 @endsection
@@ -212,10 +222,12 @@
         font-weight: bold;
         padding: 0.5em 1em;
         border-radius: 0.25rem;
+
     }
 </style>
 
 <script>
+
     document.addEventListener('DOMContentLoaded', function() {
         const toastElList = [].slice.call(document.querySelectorAll('.toast'));
         const toastList = toastElList.map(function(toastEl) {
@@ -250,6 +262,7 @@
 
         dateFilter.addEventListener('change', function() {
             console.log("Ngày đã được thay đổi: ", this.value);
+
         });
     });
 </script>

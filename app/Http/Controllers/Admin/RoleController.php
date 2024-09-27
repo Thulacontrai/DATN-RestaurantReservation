@@ -3,99 +3,118 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Role;
-use App\Traits\TraitCRUD;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
+
 
 class RoleController extends Controller
 {
-    use TraitCRUD;
+
+
+
+    public function __construct()
+    {
+        // Gán middleware cho các phương thức
+        $this->middleware('permission:Xem vai trò', ['only' => ['index']]);
+        $this->middleware('permission:Tạo mới vai trò', ['only' => ['create']]);
+        $this->middleware('permission:sửa vai trò', ['only' => ['edit']]);
+        $this->middleware('permission:Xóa vai trò', ['only' => ['destroy']]);
+       
+    }
 
     protected $model = Role::class;
     protected $viewPath = 'admin.role';
     protected $routePath = 'admin.role';
 
+
+
     public function index()
     {
-        $roles = Role::paginate(10);
-        return view('admin.user.role.index', compact('roles'));
+        $roles = Role::orderBy('name', 'ASC')->paginate(10);
+        return view('admin.user.role.index', [
+            'roles' => $roles
+        ]);
     }
-
     public function create()
     {
-        return view('admin.user.role.create');
+        $permissions = Permission::orderBy('name', 'DESC')->get();
+        return view('admin.user.role.create', [
+            'permissions' => $permissions
+        ]);
     }
-
     public function store(Request $request)
     {
-        $request->validate([
-            'role_name' => 'required|string|max:255|unique:roles',
-            'description' => 'nullable|string',
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|unique:roles|min:3'
         ]);
+        if ($validator->passes()) {
+            // dd($request->permission);
+            $role = Role::create(['name' => $request->name]);
 
-        Role::create($request->all());
+            if (!empty($request->permission)) {
+                foreach ($request->permission as $name) {
+                    $role->givePermissionTo($name);
+                }
+            }
 
-        return redirect()->route('admin.role.index')->with('success', 'Role đã được tạo thành công.');
-    }
-
-    public function edit(Role $role)
-    {
-        return view('admin.user.role.edit', compact('role'));
-    }
-
-    public function update(Request $request, Role $role)
-    {
-        $request->validate([
-            'role_name' => 'required|string|max:255|unique:roles,role_name,' . $role->id,
-            'description' => 'nullable|string',
-        ]);
-
-        $role->update($request->all());
-
-        return redirect()->route('admin.role.index')->with('success', 'Role đã được cập nhật thành công.');
-    }
-
-
-    public function destroy(Role $role)
-    {
-        // Check if the role has any users associated with it
-        if ($role->users()->count() > 0) {
-            return redirect()->route('admin.role.index')->with('error', 'Role không thể xóa vì vẫn có người dùng được phân quyền này.');
+            return redirect()->route('admin.role.index')->with('success', 'Thêm vai trò thành công');
+        } else {
+            return redirect()->route('admin.role.create')->withInput()->withErrors($validator);
         }
-
-        $role->delete(); // Soft delete the role
-
-        return redirect()->route('admin.role.index')->with('success', 'Role đã được chuyển vào thùng rác.');
     }
 
-    public function trash()
-{
-    $roles = Role::onlyTrashed()->paginate(10); // Retrieve only soft-deleted roles
-    return view('admin.user.role.trash', compact('roles'));
-}
 
 
-public function restore($id)
-{
-    $role = Role::withTrashed()->findOrFail($id);
-    $role->restore();
-
-    return redirect()->route('admin.role.trash')->with('success', 'Role đã được khôi phục thành công.');
-}
-
-
-public function forceDelete($id)
-{
-    $role = Role::withTrashed()->findOrFail($id);
-
-
-    if ($role->users()->count() > 0) {
-        return redirect()->route('admin.role.trash')->with('error', 'Không thể xóa vai trò này vì có người dùng đang sử dụng vai trò');
+    public function edit($id)
+    {
+        $role = Role::findOrFail($id);
+        $hasPermissions = $role->permissions->pluck('name');
+        $permissions = Permission::orderBy('name', 'DESC')->get();
+        // dd($hasPermissions);
+        return view('admin.user.role.edit', [
+            'permissions' => $permissions,
+            'hasPermissions' => $hasPermissions,
+            'role' => $role
+        ]);
     }
 
-    $role->forceDelete();
+    public function update($id, Request $request)
+    {
+        $role = Role::findOrFail($id);
 
-    return redirect()->route('admin.role.trash')->with('success', 'Role đã bị xóa vĩnh viễn.');
-}
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|unique:roles,name,' . $id . ',id'
+        ]);
+        if ($validator->passes()) {
+            // dd($request->name);
+            // $role = Role::create(['name' => $request->name]);
+
+            $role->name = $request->name;
+            $role->save();
+
+            if (!empty($request->permission)) {
+                $role->syncPermissions($request->permission);
+            }else{
+                $role->syncPermissions([]);
+            }
+
+            return redirect()->route('admin.role.index')->with('success', 'Sửa vai trò thành công');
+        } else {
+            return redirect()->route('admin.role.edit', $id)->withInput()->withErrors($validator);
+        }
+    }
+    public function destroy(Role $role) {
+        if ($role == null) {
+            return response()->json(['status' => false, 'message' => 'Không có vai trò.']);
+        }
+    
+        $role->delete();
+        session()->flash('success', 'Xóa thành công.');
+    
+        return response()->json(['status' => true, 'message' => 'Xóa thành công.']);
+    }
+    
 
 }

@@ -6,14 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class ReservationTable extends Model
 {
+
     // Correct table name
     protected $table = 'reservation_tables';
+    public $incrementing = false;
+    protected $primaryKey = ['table_id', 'reservation_id'];
+
 
     // Define fillable fields
     protected $fillable = [
         'reservation_id',
         'table_id',
         'status',
+        'table_id',
         'start_time',
         'end_time',
     ];
@@ -28,5 +33,10 @@ class ReservationTable extends Model
     public function reservation()
     {
         return $this->belongsTo(Reservation::class, 'reservation_id');
+    }
+    public function tables()
+    {
+        return $this->belongsToMany(Table::class, 'reservation_table')
+            ->withPivot('start_date', 'start_time', 'end_time', 'status');
     }
 }
