@@ -6,7 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class ReservationTable extends Model
 {
-    protected $table = 'reservations_table';
+
+    protected $table = 'reservation_table';
+    
+
 
     protected $primaryKey = 'table_id';
 

@@ -87,13 +87,18 @@
                                         <td>{{ $reservation->id }}</td>
                                         <td>{{ $reservation->customer->name ?? 'Không rõ' }}</td>
                                         <td>{{ $reservation->guest_count ?? 'N/A' }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($reservation->reservation_time)->format('H:i:s') }}</td>
-                                        <td>{{ $reservation->reservation_date }} 
-                                            <br> {{ $reservation->reservation_time }}
+                                        <td>
+                                            {{-- {{ \Carbon\Carbon::parse($reservation->reservation_time)->format('H:i:s') }} --}}
+                                           {{ $reservation->reservation_date }} 
+                                                <br> {{ $reservation->reservation_time }}
+                                           
                                         </td>
+
                                         <td>@foreach ($reservation->tables as $table )
                                             {{$table->table_number}},
                                         @endforeach</td>
+                                        <td>{{ number_format($reservation->deposit_amount) }}đ
+                                        </td>
                                         <td>{{ $reservation->note ?? 'Không có' }}</td>
                                         <td>
                                             @if ($reservation->status === 'Confirmed')
