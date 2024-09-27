@@ -27,6 +27,7 @@ use App\Http\Controllers\Client\MenuController;
 use App\Http\Controllers\Client\PosController;
 use App\Http\Controllers\ProfileController;
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -98,6 +99,7 @@ route::get(
 )->name("reservationSuccessfully.client");
 
 
+Route::get('/customerInformation', [ReservationController::class, 'showInformation'])->name('customer.information');
 
 
 
@@ -106,12 +108,18 @@ route::get(
 
 
 
-Route::get('pos', function () {
-    return view('pos.pos');
-});
+Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
 
-// Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
-Route::get('/pos/reservations', [PosController::class, 'getUpcomingAndOverdueReservations'])->name('pos.reservations');
+
+
+
+
+
+
+
+
+
+
 
 
 

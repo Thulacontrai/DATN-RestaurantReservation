@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Events\UpcomingReservationEvent;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreReservationRquest;
 use App\Models\Coupon;
 use App\Models\Reservation;
 use App\Models\Table;
 use App\Models\ReservationTable;
 use App\Models\User;
-use App\Traits\TraitCRUD;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+
+
+
 use Illuminate\Support\Facades\Log;
 use Whoops\Exception\Formatter;
 
@@ -30,15 +30,69 @@ class ReservationController extends Controller
         $this->middleware('permission:Xóa đặt bàn', ['only' => ['destroy']]);
         
     }
-
-
     protected $model = Reservation::class;
     protected $viewPath = 'admin.reservation';
-    protected $routePath = 'admin.coupon';
+    protected $routePath = 'admin.reservation';
 
     public function index(Request $request)
     {
 
+        $this->updateOverdueReservations(); // Cập nhật các đơn quá hạn
+
+        $query = Reservation::query();
+
+        // Lọc theo tên khách hàng
+        if ($request->filled('customer_name')) {
+            $query->whereHas('customer', function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->customer_name . '%');
+            });
+        }
+
+        // Lọc theo trạng thái
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Lọc theo ngày
+        if ($request->filled('date')) {
+            $query->whereDate('reservation_time', $request->date);
+        }
+
+        // Lọc theo thông báo
+        if ($request->filled('notification_type')) {
+            $now = Carbon::now();
+            switch ($request->notification_type) {
+                case 'upcoming': // Sắp đến hạn 30 phút
+                    $query->whereBetween('reservation_time', [$now->toTimeString(), $now->copy()->addMinutes(30)->toTimeString()])
+                        ->where('status', 'Pending');
+                    break;
+
+                case 'waiting': // Chờ khách đến trong vòng 15 phút
+                    $query->whereBetween('reservation_time', [$now->copy()->subMinutes(15)->toTimeString(), $now->toTimeString()])
+                        ->where('status', 'Pending');
+                    break;
+
+                case 'overdue': // Quá hạn và bị hủy
+                    $query->where('reservation_time', '<', $now->copy()->subMinutes(15)->toTimeString())
+                        ->where('status', 'Cancelled');
+                    break;
+            }
+        }
+
+        // Lấy danh sách đặt bàn với phân trang
+        $reservations = $query->paginate(10);
+
+        // Truyền các biến tới view
+        return view('admin.reservation.index', [
+            'upcomingReservations' => $this->getUpcomingReservations(),
+            'waitingReservations' => $this->getWaitingReservations(),
+            'overdueReservations' => $this->getOverdueReservations(),
+            'reservations' => $reservations,
+        ]);
+    }
+
+    // Cập nhật trạng thái đặt bàn quá hạn
+    private function updateOverdueReservations()
         $reservations = Reservation::with('customer')
             ->when($request->customer_name, function ($query) use ($request) {
                 $query->whereHas('customer', function ($q) use ($request) {
@@ -46,9 +100,6 @@ class ReservationController extends Controller
                 });
             })
             ->paginate(10);
-
-
-
 
         $now = Carbon::now();
 
@@ -88,26 +139,50 @@ class ReservationController extends Controller
 
     public function checkUpcomingAndOverdueReservations()
     {
-        $now = Carbon::now('Asia/Ho_Chi_Minh');
+        $now = Carbon::now();
 
-        // Lấy các đơn đặt bàn sắp đến hạn (trong vòng 30 phút)
-        $upcomingReservations = Reservation::whereDate('reservation_date', $now->toDateString())
-            ->whereTime('reservation_time', '>=', $now->toTimeString())
-            ->whereTime('reservation_time', '<=', $now->copy()->addMinutes(30)->toTimeString())
+        Reservation::where('reservation_date', '=', $now->toDateString())
+            ->where('reservation_time', '<', $now->copy()->subMinutes(15)->toTimeString())
+            ->where('status', 'Pending')
+            ->update(['status' => 'Cancelled']);
+    }
+
+    // Lấy danh sách đặt bàn sắp đến hạn
+    private function getUpcomingReservations()
+    {
+        $now = Carbon::now();
+
+        return Reservation::where('reservation_date', '=', $now->toDateString())
+            ->where('reservation_time', '>=', $now->toTimeString())
+            ->where('reservation_time', '<=', $now->copy()->addMinutes(30)->toTimeString())
+            ->where('status', 'Pending')
+
+            ->get();
+    }
+
+    // Lấy danh sách đặt bàn đang chờ
+    private function getWaitingReservations()
+    {
+        $now = Carbon::now();
+
+        return Reservation::where('reservation_date', '=', $now->toDateString())
+            ->where('reservation_time', '<', $now->toTimeString())
+            ->where('reservation_time', '>=', $now->copy()->subMinutes(15)->toTimeString())
             ->where('status', 'Pending')
             ->get();
+    }
 
-        // Lấy các đơn đặt bàn đã quá hạn trong vòng 30 phút, thêm 15 phút chờ
-        $waitingReservations = Reservation::whereDate('reservation_date', $now->toDateString())
-            ->whereTime('reservation_time', '<', $now->toTimeString())
-            ->whereTime('reservation_time', '>=', $now->copy()->subMinutes(15)->toTimeString()) // Cộng thêm 15 phút chờ
-            ->where('status', 'Pending')
+    // Lấy danh sách đặt bàn đã quá hạn
+    private function getOverdueReservations()
+    {
+        $now = Carbon::now();
+
+        return Reservation::where('reservation_date', '=', $now->toDateString())
+            ->where('reservation_time', '<', $now->copy()->subMinutes(15)->toTimeString())
+            ->where('status', 'Cancelled')
             ->get();
+    }
 
-        // Chuyển trạng thái các đơn đã quá hạn 15 phút và hủy
-        $overdueReservations = Reservation::whereDate('reservation_date', $now->toDateString())
-            ->whereTime('reservation_time', '<', $now->copy()->subMinutes(15)->toTimeString()) // Sau 15 phút chờ
-            ->where('status', 'Pending')
             ->update(['status' => 'Cancelled']); // Cập nhật trạng thái thành 'Hủy'
 
         return view('admin.reservation.check', compact('upcomingReservations', 'waitingReservations', 'overdueReservations'));
@@ -122,14 +197,14 @@ class ReservationController extends Controller
             'guest_count' => 'required|integer|min:1',
             'deposit_amount' => 'nullable|numeric|min:0',
             'note' => 'nullable|string',
-            'status' => 'in:Pending', // Đặt trạng thái mặc định là 'Pending'
+
+            'status' => 'in:Pending',
             'cancelled_reason' => 'nullable|string|max:255'
         ]);
 
         Reservation::create($validated);
 
-        return redirect()->route('admin.reservation.index')
-            ->with('success', 'Reservation đã được tạo thành công.');
+        return redirect()->route('admin.reservation.index')->with('success', 'Reservation đã được tạo thành công.');
     }
 
     public function edit($id)
@@ -146,7 +221,7 @@ class ReservationController extends Controller
         DB::beginTransaction();
         try {
             $validated = $request->validate([
-                'customer_name' => 'required|string|max:255', // Customer name input
+                'customer_name' => 'required|string|max:255',
                 'reservation_time' => 'required|date_format:Y-m-d\TH:i',
                 'guest_count' => 'required|integer|min:1',
                 'note' => 'nullable|string',
@@ -154,15 +229,12 @@ class ReservationController extends Controller
                 'cancelled_reason' => 'nullable|string|max:255',
             ]);
 
-            // Calculate deposit based on guest count
-            $guestCount = $request->input('guest_count');
-            if ($guestCount >= 6) {
-                $validated['deposit_amount'] = $guestCount * 100000; // 100.000 VND per person
-            } else {
-                $validated['deposit_amount'] = 0; // No deposit for fewer than 6 guests
-            }
 
-            // Convert the datetime-local format to MySQL-compatible format
+            $validated['deposit_amount'] = $request->input('guest_count') >= 6
+                ? $request->input('guest_count') * 100000
+                : 0;
+
+
             $validated['reservation_time'] = Carbon::createFromFormat('Y-m-d\TH:i', $request->reservation_time)
                 ->format('Y-m-d H:i:s');
 
@@ -181,17 +253,9 @@ class ReservationController extends Controller
     }
 
 
-
-
-
-
-
-
-
     public function show($id)
     {
         $reservation = Reservation::with('customer')->findOrFail($id);
-
         return view('admin.reservation.show', compact('reservation'));
     }
 
@@ -222,7 +286,6 @@ class ReservationController extends Controller
         $time = $request->query('time');
         return view('client.customer-information', compact('date', 'time'));
     }
-
 
 
     public function destroy($id)
@@ -407,4 +470,5 @@ class ReservationController extends Controller
         ]);
 
     }
+
 }
