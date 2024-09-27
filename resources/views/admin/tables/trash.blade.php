@@ -15,6 +15,7 @@
             {{ session('success') }}
         </div>
     @endif
+
     <div class="content-wrapper-scroll">
         <div class="content-wrapper">
             <div class="row">
@@ -49,24 +50,22 @@
                                                     <div class="actions">
                                                         <!-- Restore -->
                                                         <form action="{{ route('admin.table.restore', $table->id) }}"
-                                                            method="POST" style="display:inline-block;"
-                                                            onsubmit="return confirm('Bạn có chắc chắn muốn Khôi phục lại không ?');">
+                                                              method="POST" style="display:inline-block;"
+                                                              onsubmit="return confirm('Bạn có chắc chắn muốn khôi phục không?');">
                                                             @csrf
                                                             @method('PATCH')
-                                                            <button type="submit" class="btn btn-link p-0">
-                                                                <a href="#">
-                                                                    <i class="bi bi-arrow-clockwise text-green"></i></a>
+                                                            <button type="submit" class="btn btn-link p-0" title="Khôi phục">
+                                                                <i class="bi bi-arrow-clockwise text-green"></i>
                                                             </button>
                                                         </form>
                                                         <!-- Permanently delete -->
                                                         <form action="{{ route('admin.table.forceDelete', $table->id) }}"
-                                                            method="POST" style="display:inline-block;"
-                                                            onsubmit="return confirm('Bạn có chắc chắn muốn xóa vĩnh viễn?');">
+                                                              method="POST" style="display:inline-block;"
+                                                              onsubmit="return confirm('Bạn có chắc chắn muốn xóa vĩnh viễn?');">
                                                             @csrf
                                                             @method('DELETE')
-                                                            <button type="submit" class="btn btn-link p-0">
-                                                                <a href="#">
-                                                                    <i class="bi bi-trash text-red"></i> </a>
+                                                            <button type="submit" class="btn btn-link p-0" title="Xóa vĩnh viễn">
+                                                                <i class="bi bi-trash text-red"></i>
                                                             </button>
                                                         </form>
                                                     </div>
@@ -74,8 +73,7 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="5" class="text-center">Không có bàn nào trong thùng rác.
-                                                </td>
+                                                <td colspan="5" class="text-center">Không có bàn nào trong thùng rác.</td>
                                             </tr>
                                         @endforelse
                                     </tbody>
@@ -84,7 +82,6 @@
 
                             <div class="pagination justify-content-center mt-3">
                                 {{ $tables->links() }}
-
                             </div>
 
                         </div>

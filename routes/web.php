@@ -23,7 +23,7 @@ use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\TableController;
 use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Client\MenuController;
-use App\Http\Controllers\Client\PosController;
+use App\Http\Controllers\Pos\PosController;
 
 /*
 |--------------------------------------------------------------------------
@@ -89,6 +89,7 @@ route::get("/blog-single", function () {
 
 
 
+Route::get('/customerInformation', [ReservationController::class, 'showInformation'])->name('customer.information');
 
 
 
@@ -97,11 +98,26 @@ route::get("/blog-single", function () {
 
 
 
-Route::get('pos', function () {
-    return view('pos.pos');
-});
-// Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
-Route::get('/pos/reservations', [PosController::class, 'getUpcomingAndOverdueReservations'])->name('pos.reservations');
+Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
+
+
+
+// Route to fetch reservations for POS (upcoming and overdue)
+// Route::get('/pos/reservations', [PosController::class, 'getUpcomingAndOverdueReservations'])->name('pos.reservations');
+
+// Route::get('/reservation/details/{id}', [PosController::class, 'getReservationDetails'])->name('reservation.details');
+
+// Route::post('/reservation/update-status/{id}', [ReservationController::class, 'updateStatus']);
+
+
+// Route::post('/reservation/update-status/{id}', 'ReservationController@updateStatus');
+
+
+
+
+
+
+
 
 
 

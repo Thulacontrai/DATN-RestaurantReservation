@@ -34,17 +34,24 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'email' => 'nullable|string|email|max:255|unique:users', // Email không bắt buộc
             'phone' => 'nullable|string|max:15|unique:users',
-            'address' => 'nullable|string|max:255',
+            'address' => 'nullable|string|max:255', // Địa chỉ không bắt buộc
             'gender' => 'required|in:male,female,other',
             'date_of_birth' => 'required|date',
             'hire_date' => 'nullable|date',
             'position' => 'nullable|string|max:255',
             'status' => 'required|in:active,inactive',
-            'role_id' => 'required|integer|exists:roles,id',
+            'role_id' => 'nullable|integer|exists:roles,id', // Role không bắt buộc
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
+
+        // Kiểm tra nếu không có email và địa chỉ thì gán role mặc định là 'Customer'
+        if (empty($request->email) && empty($request->address)) {
+            $roleId = Role::where('role_name', 'Customer')->first()->id;
+        } else {
+            $roleId = $request->role_id;
+        }
 
         $avatarPath = $request->hasFile('avatar') ? $request->file('avatar')->store('avatars', 'public') : null;
 
@@ -58,7 +65,7 @@ class UserController extends Controller
             'date_of_birth' => $request->date_of_birth,
             'hire_date' => $request->hire_date,
             'position' => $request->position,
-            'role_id' => $request->role_id,
+            'role_id' => $roleId, // Gán vai trò đã xác định ở trên
             'avatar' => $avatarPath,
             'status' => $request->status,
             'password' => $defaultPassword,

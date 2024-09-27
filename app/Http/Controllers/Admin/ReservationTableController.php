@@ -23,9 +23,13 @@ class ReservationTableController extends Controller
 
     public function index()
     {
+        // Fetch all data from the reservation_tables table
         $reservationTables = ReservationTable::all();
+
+        // Return the view with the fetched data
         return view('admin.reservation.reservationTable.index', compact('reservationTables'));
     }
+
 
     public function show($id)
     {
