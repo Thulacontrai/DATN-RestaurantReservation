@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Table;
 use App\Http\Requests\StoreTableRequest;
 use App\Http\Requests\UpdateTableRequest;
+use App\Traits\TraitCRUD;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
