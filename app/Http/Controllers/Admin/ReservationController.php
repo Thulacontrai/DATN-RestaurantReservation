@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreReservationRquest;
 use App\Models\Coupon;
 use App\Models\Reservation;
 use App\Models\Table;
 use App\Models\ReservationTable;
 use App\Models\User;
+use App\Traits\TraitCRUD;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -37,7 +39,7 @@ class ReservationController extends Controller
     public function index(Request $request)
     {
 
-        $this->updateOverdueReservations(); // Cập nhật các đơn quá hạn
+        // $this->updateOverdueReservations(); // Cập nhật các đơn quá hạn
 
         $query = Reservation::query();
 
@@ -92,7 +94,7 @@ class ReservationController extends Controller
     }
 
     // Cập nhật trạng thái đặt bàn quá hạn
-    private function updateOverdueReservations()
+    private function updateOverdueReservations(Request $request){
         $reservations = Reservation::with('customer')
             ->when($request->customer_name, function ($query) use ($request) {
                 $query->whereHas('customer', function ($q) use ($request) {
@@ -143,7 +145,7 @@ class ReservationController extends Controller
 
         Reservation::where('reservation_date', '=', $now->toDateString())
             ->where('reservation_time', '<', $now->copy()->subMinutes(15)->toTimeString())
-            ->where('status', 'Pending')
+            ->where('status', 'Confirmed')
             ->update(['status' => 'Cancelled']);
     }
 
@@ -155,7 +157,7 @@ class ReservationController extends Controller
         return Reservation::where('reservation_date', '=', $now->toDateString())
             ->where('reservation_time', '>=', $now->toTimeString())
             ->where('reservation_time', '<=', $now->copy()->addMinutes(30)->toTimeString())
-            ->where('status', 'Pending')
+            ->where('status', 'Confirmed')
 
             ->get();
     }
@@ -168,7 +170,7 @@ class ReservationController extends Controller
         return Reservation::where('reservation_date', '=', $now->toDateString())
             ->where('reservation_time', '<', $now->toTimeString())
             ->where('reservation_time', '>=', $now->copy()->subMinutes(15)->toTimeString())
-            ->where('status', 'Pending')
+            ->where('status', 'Confirmed')
             ->get();
     }
 
@@ -181,9 +183,7 @@ class ReservationController extends Controller
             ->where('reservation_time', '<', $now->copy()->subMinutes(15)->toTimeString())
             ->where('status', 'Cancelled')
             ->get();
-    }
-
-            ->update(['status' => 'Cancelled']); // Cập nhật trạng thái thành 'Hủy'
+            // ->update(['status' => 'Cancelled']); // Cập nhật trạng thái thành 'Hủy'
 
         return view('admin.reservation.check', compact('upcomingReservations', 'waitingReservations', 'overdueReservations'));
     }
@@ -444,7 +444,7 @@ class ReservationController extends Controller
 
             $reservation->update(['status' => 'confirmed']);
             DB::commit();
-            return redirect()->route('admin.reservation.index')->with('success', 'Table đã được đặt thành công.');
+            return redirect()->route('admin.reservation.index')->with('success', 'Xếp bàn thành công.');
         } catch (\Exception $e) {
             // Nếu có lỗi xảy ra, rollback và ghi log lỗi
             DB::rollBack();
