@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreReservationRquest;
 use App\Models\Coupon;
 use App\Models\Reservation;
 use App\Models\Table;
 use App\Models\ReservationTable;
 use App\Models\User;
+use App\Traits\TraitCRUD;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -29,20 +31,15 @@ class ReservationController extends Controller
         $this->middleware('permission:Sửa đặt bàn', ['only' => ['edit']]);
         $this->middleware('permission:Xóa đặt bàn', ['only' => ['destroy']]);
         
-
     }
     protected $model = Reservation::class;
     protected $viewPath = 'admin.reservation';
     protected $routePath = 'admin.reservation';
 
-
     public function index(Request $request)
     {
 
-
-        $now = Carbon::now();
-
-        $this->updateOverdueReservations(); // Cập nhật các đơn quá hạn
+        $this->updateOverdueReservations($request); // Cập nhật các đơn quá hạn
 
         $query = Reservation::query();
 
@@ -97,7 +94,7 @@ class ReservationController extends Controller
     }
 
     // Cập nhật trạng thái đặt bàn quá hạn
-    private function updateOverdueReservations(Request $request){
+    public function updateOverdueReservations(Request $request){
         $reservations = Reservation::with('customer')
             ->when($request->customer_name, function ($query) use ($request) {
                 $query->whereHas('customer', function ($q) use ($request) {
@@ -107,43 +104,40 @@ class ReservationController extends Controller
             ->paginate(10);
 
         $now = Carbon::now();
+
+        // Cập nhật các đơn quá hạn thành 'Cancelled'
+        Reservation::where('reservation_date', '=', $now->toDateString())
+            ->where('reservation_time', '<', $now->copy()->subMinutes(15)->toTimeString())
+            ->where('status', 'Confirmed')
+            ->update(['status' => 'Cancelled']);
+
+        // Đơn sắp đến hạn trong vòng 30 phút tới
+        $upcomingReservations = Reservation::where('reservation_date', '=', $now->toDateString())
+            ->where('reservation_time', '>=', $now->toTimeString())
+            ->where('reservation_time', '<=', $now->copy()->addMinutes(30)->toTimeString())
+            ->where('status', 'Confirmed')
+            ->get();
+
+        // Đơn đang chờ khách trong 15 phút
+        $waitingReservations = Reservation::where('reservation_date', '=', $now->toDateString())
+            ->where('reservation_time', '<', $now->toTimeString())
+            ->where('reservation_time', '>=', $now->copy()->subMinutes(15)->toTimeString())
+            ->where('status', 'Confirmed')
+            ->get();
+
+        // Đơn đã quá hạn
+        $overdueReservations = Reservation::where('reservation_date', '=', $now->toDateString())
+            ->where('reservation_time', '<', $now->copy()->subMinutes(15)->toTimeString())
+            ->where('status', 'Cancelled')
+            ->get();
+
+        // Lấy tất cả danh sách đặt bàn
+        $reservations = Reservation::all();
+        $reservations = Reservation::paginate(10);
+
+        // Truyền các biến tới view
+        return view('admin.reservation.index', compact('upcomingReservations', 'waitingReservations', 'overdueReservations', 'reservations'));
     }
-
-
-    //     // Cập nhật các đơn quá hạn thành 'Cancelled'
-    //     Reservation::where('reservation_date', '=', $now->toDateString())
-    //         ->where('reservation_time', '<', $now->copy()->subMinutes(15)->toTimeString())
-    //         ->where('status', 'Pending')
-    //         ->update(['status' => 'Cancelled']);
-
-    //     // Đơn sắp đến hạn trong vòng 30 phút tới
-    //     $upcomingReservations = Reservation::where('reservation_date', '=', $now->toDateString())
-    //         ->where('reservation_time', '>=', $now->toTimeString())
-    //         ->where('reservation_time', '<=', $now->copy()->addMinutes(30)->toTimeString())
-    //         ->where('status', 'Pending')
-    //         ->get();
-
-    //     // Đơn đang chờ khách trong 15 phút
-    //     $waitingReservations = Reservation::where('reservation_date', '=', $now->toDateString())
-    //         ->where('reservation_time', '<', $now->toTimeString())
-    //         ->where('reservation_time', '>=', $now->copy()->subMinutes(15)->toTimeString())
-    //         ->where('status', 'Pending')
-    //         ->get();
-
-    //     // Đơn đã quá hạn
-    //     $overdueReservations = Reservation::where('reservation_date', '=', $now->toDateString())
-    //         ->where('reservation_time', '<', $now->copy()->subMinutes(15)->toTimeString())
-    //         ->where('status', 'Cancelled')
-    //         ->get();
-
-    //     // Lấy tất cả danh sách đặt bàn
-    //     $reservations = Reservation::all();
-    //     $reservations = Reservation::paginate(10);
-
-    //     // Truyền các biến tới view
-    //     return view('admin.reservation.index', compact('upcomingReservations', 'waitingReservations', 'overdueReservations', 'reservations'));
-    // }
-
 
     public function checkUpcomingAndOverdueReservations()
     {
@@ -151,7 +145,7 @@ class ReservationController extends Controller
 
         Reservation::where('reservation_date', '=', $now->toDateString())
             ->where('reservation_time', '<', $now->copy()->subMinutes(15)->toTimeString())
-            ->where('status', 'Pending')
+            ->where('status', 'Confirmed')
             ->update(['status' => 'Cancelled']);
     }
 
@@ -163,7 +157,7 @@ class ReservationController extends Controller
         return Reservation::where('reservation_date', '=', $now->toDateString())
             ->where('reservation_time', '>=', $now->toTimeString())
             ->where('reservation_time', '<=', $now->copy()->addMinutes(30)->toTimeString())
-            ->where('status', 'Pending')
+            ->where('status', 'Confirmed')
 
             ->get();
     }
@@ -176,7 +170,7 @@ class ReservationController extends Controller
         return Reservation::where('reservation_date', '=', $now->toDateString())
             ->where('reservation_time', '<', $now->toTimeString())
             ->where('reservation_time', '>=', $now->copy()->subMinutes(15)->toTimeString())
-            ->where('status', 'Pending')
+            ->where('status', 'Confirmed')
             ->get();
     }
 
@@ -189,12 +183,10 @@ class ReservationController extends Controller
             ->where('reservation_time', '<', $now->copy()->subMinutes(15)->toTimeString())
             ->where('status', 'Cancelled')
             ->get();
-
             // ->update(['status' => 'Cancelled']); // Cập nhật trạng thái thành 'Hủy'
 
         return view('admin.reservation.check', compact('upcomingReservations', 'waitingReservations', 'overdueReservations'));
     }
-
 
     public function store(Request $request)
     {
@@ -205,26 +197,23 @@ class ReservationController extends Controller
             'guest_count' => 'required|integer|min:1',
             'deposit_amount' => 'nullable|numeric|min:0',
             'note' => 'nullable|string',
-
             'status' => 'in:Pending',
             'cancelled_reason' => 'nullable|string|max:255'
         ]);
 
-
-    //     Reservation::create($validated);
+        Reservation::create($validated);
 
         return redirect()->route('admin.reservation.index')->with('success', 'Reservation đã được tạo thành công.');
     }
 
+    public function edit($id)
+    {
+        $reservation = Reservation::findOrFail($id);
+        $customers = User::all();
+        $coupons = Coupon::all();
 
-    // public function edit($id)
-    // {
-    //     $reservation = Reservation::findOrFail($id);
-    //     $customers = User::all();
-    //     $coupons = Coupon::all();
-
-    //     return view('admin.reservation.edit', compact('reservation', 'customers', 'coupons'));
-    // }
+        return view('admin.reservation.edit', compact('reservation', 'customers', 'coupons'));
+    }
 
     public function update(Request $request, $id)
     {
@@ -248,22 +237,19 @@ class ReservationController extends Controller
             $validated['reservation_time'] = Carbon::createFromFormat('Y-m-d\TH:i', $request->reservation_time)
                 ->format('Y-m-d H:i:s');
 
+            $reservation = Reservation::findOrFail($id);
+            $reservation->update($validated);
 
-    //         $reservation = Reservation::findOrFail($id);
-    //         $reservation->update($validated);
-
-    //         DB::commit();
-    //         return redirect()->route('admin.reservation.index')->with('success', 'Reservation updated successfully');
-    //     } catch (\Illuminate\Validation\ValidationException $e) {
-    //         DB::rollBack();
-    //         return back()->withErrors($e->errors());
-    //     } catch (\Throwable $e) {
-    //         DB::rollBack();
-    //         return back()->withErrors(['error' => "An error occurred while updating the reservation: " . $e->getMessage()]);
+            DB::commit();
+            return redirect()->route('admin.reservation.index')->with('success', 'Reservation updated successfully');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            DB::rollBack();
+            return back()->withErrors($e->errors());
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return back()->withErrors(['error' => "An error occurred while updating the reservation: " . $e->getMessage()]);
         }
     }
-
-
 
 
     public function show($id)
@@ -274,33 +260,31 @@ class ReservationController extends Controller
 
 
 
+    public function showTime()
+    {
+        $now = Carbon::now('Asia/Ho_Chi_Minh')->copy()->addHours(2);
 
-    // public function showTime()
-    // {
-    //     $now = Carbon::now('Asia/Ho_Chi_Minh')->copy()->addHours(2);
-
-    //     Carbon::setLocale('vi');
-    //     $today = Carbon::today();
-    //     $days = [];
-    //     for ($i = 0; $i < 3; $i++) {
-    //         $days[] = $today->copy()->addDays($i);
-    //     }
-    //     $timeSlots = [];
-    //     $startHour = 11;
-    //     $endHour = 21;
-    //     for ($hour = $startHour; $hour < $endHour; $hour++) {
-    //         $timeSlots[] = Carbon::createFromTime($hour, 0)->format('H:i:s');
-    //         $timeSlots[] = Carbon::createFromTime($hour, 30)->format('H:i:s');
-    //     }
-    //     return view('client.booking', compact('days', 'timeSlots', 'now'));
-    // }
-    // public function showInformation(Request $request)
-    // {
-    //     $date = $request->query('date');
-    //     $time = $request->query('time');
-    //     return view('client.customer-information', compact('date', 'time'));
-    // }
-
+        Carbon::setLocale('vi');
+        $today = Carbon::today();
+        $days = [];
+        for ($i = 0; $i < 3; $i++) {
+            $days[] = $today->copy()->addDays($i);
+        }
+        $timeSlots = [];
+        $startHour = 11;
+        $endHour = 21;
+        for ($hour = $startHour; $hour < $endHour; $hour++) {
+            $timeSlots[] = Carbon::createFromTime($hour, 0)->format('H:i:s');
+            $timeSlots[] = Carbon::createFromTime($hour, 30)->format('H:i:s');
+        }
+        return view('client.booking', compact('days', 'timeSlots', 'now'));
+    }
+    public function showInformation(Request $request)
+    {
+        $date = $request->query('date');
+        $time = $request->query('time');
+        return view('client.customer-information', compact('date', 'time'));
+    }
 
 
     public function destroy($id)
@@ -308,72 +292,70 @@ class ReservationController extends Controller
         $reservation = Reservation::findOrFail($id);
         $reservation->delete();
 
-
         return redirect()->route('admin.reservation.index')->with('success', 'Reservation deleted successfully');
     }
 
 
 
-    //  public function createReservation(StoreReservationRquest $request)
-    // {
-    //     $reservation = $request->all();
-    //     if ($request->guest_count >= 6) {
-    //         $customerInformation = $request->all();
-    //         return redirect()->route('deposit.client', compact('customerInformation'));
+     public function createReservation(StoreReservationRquest $request)
+    {
+        $reservation = $request->all();
+        if ($request->guest_count >= 6) {
+            $customerInformation = $request->all();
+            return redirect()->route('deposit.client', compact('customerInformation'));
 
-    //     } else {
-    //         DB::transaction(function () use ($request) {
-    //             $user = User::create([
-    //                 'name' => $request->user_name,
-    //                 'phone' => $request->user_phone,
-    //                 'password' => fake()->password(),
-    //                 'status' => 'inactive',
-    //             ]);
+        } else {
+            DB::transaction(function () use ($request) {
+                $user = User::create([
+                    'name' => $request->user_name,
+                    'phone' => $request->user_phone,
+                    'password' => fake()->password(),
+                    'status' => 'inactive',
+                ]);
 
-    //             Reservation::create([
-    //                 'customer_id' => $user->id,
-    //                 'user_name' => $request->user_name,
-    //                 'user_phone' => $request->user_phone,
-    //                 'guest_count' => $request->guest_count,
-    //                 'note' => $request->note,
-    //                 'reservation_date' => $request->reservation_date,
-    //                 'reservation_time' => $request->reservation_time,
-    //             ]);
-    //         });
+                Reservation::create([
+                    'customer_id' => $user->id,
+                    'user_name' => $request->user_name,
+                    'user_phone' => $request->user_phone,
+                    'guest_count' => $request->guest_count,
+                    'note' => $request->note,
+                    'reservation_date' => $request->reservation_date,
+                    'reservation_time' => $request->reservation_time,
+                ]);
+            });
 
-    //         return redirect()->route('reservationSuccessfully.client', compact('reservation'));
-    //     }
-    // }
-    // public function reservationSuccessfully(Request $request)
-    // {
-    //     if ($request->query('extraData')) {
-    //         $reservation = $request->query('extraData');
-    //         $data = str_replace("'", '"', $reservation);
-    //         $reservation = json_decode($data, true);
-    //         DB::transaction(function () use ($reservation) {
-    //             $user = User::create([
-    //                 'name' => $reservation['user_name'],
-    //                 'phone' => $reservation['user_phone'],
-    //                 'password' => fake()->password(),
-    //                 'status' => 'inactive',
-    //             ]);
-    //             Reservation::create([
-    //                 'customer_id' => $user['id'],
-    //                 'user_name' => $reservation['user_name'],
-    //                 'user_phone' => $reservation['user_phone'],
-    //                 'guest_count' => $reservation['guest_count'],
-    //                 'deposit_amount' => $reservation['deposit_amount'],
-    //                 'note' => $reservation['note'],
-    //                 'reservation_date' => $reservation['reservation_date'],
-    //                 'reservation_time' => $reservation['reservation_time'],
-    //             ]);
-    //         });
-    //     } else {
-    //         $reservation = $request->reservation;
-    //     }
-    //     return view('client.reservation-successfully', compact('reservation'));
-    // }
-
+            return redirect()->route('reservationSuccessfully.client', compact('reservation'));
+        }
+    }
+    public function reservationSuccessfully(Request $request)
+    {
+        if ($request->query('extraData')) {
+            $reservation = $request->query('extraData');
+            $data = str_replace("'", '"', $reservation);
+            $reservation = json_decode($data, true);
+            DB::transaction(function () use ($reservation) {
+                $user = User::create([
+                    'name' => $reservation['user_name'],
+                    'phone' => $reservation['user_phone'],
+                    'password' => fake()->password(),
+                    'status' => 'inactive',
+                ]);
+                Reservation::create([
+                    'customer_id' => $user['id'],
+                    'user_name' => $reservation['user_name'],
+                    'user_phone' => $reservation['user_phone'],
+                    'guest_count' => $reservation['guest_count'],
+                    'deposit_amount' => $reservation['deposit_amount'],
+                    'note' => $reservation['note'],
+                    'reservation_date' => $reservation['reservation_date'],
+                    'reservation_time' => $reservation['reservation_time'],
+                ]);
+            });
+        } else {
+            $reservation = $request->reservation;
+        }
+        return view('client.reservation-successfully', compact('reservation'));
+    }
 
     public function showDeposit(Request $request)
     {
@@ -461,7 +443,7 @@ class ReservationController extends Controller
 
             $reservation->update(['status' => 'confirmed']);
             DB::commit();
-            return redirect()->route('admin.reservation.index')->with('success', 'Table đã được đặt thành công.');
+            return redirect()->route('admin.reservation.index')->with('success', 'Xếp bàn thành công.');
         } catch (\Exception $e) {
             // Nếu có lỗi xảy ra, rollback và ghi log lỗi
             DB::rollBack();
