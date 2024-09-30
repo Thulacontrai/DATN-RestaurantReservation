@@ -30,6 +30,7 @@ use App\Http\Controllers\Client\MenuController;
 use App\Http\Controllers\Client\PosController;
 use App\Http\Controllers\ProfileController;
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -98,14 +99,25 @@ route::get(
 )->name("reservationSuccessfully.client");
 
 
+Route::get('/customerInformation', [ReservationController::class, 'showInformation'])->name('customer.information');
+
+
+
+
+
+
+
+
+Route::get('/pos', [\App\Http\Controllers\Pos\PosController::class, 'index'])->name('pos.index');
+
+
+
 
 
 Route::get('pos', function () {
     return view('pos.pos');
 });
 
-// Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
-Route::get('/pos/reservations', [PosController::class, 'getUpcomingAndOverdueReservations'])->name('pos.reservations');
 
 
 
@@ -114,8 +126,11 @@ Route::get('admin', [AdminController::class, 'index']);
 Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::get('/', function () {
+
         return view('auth.login');
-    });
+    });  
+
+
 
     Route::resource('table', TableController::class);
     // Trash - Xoá mềm - Khôi Phục
@@ -125,9 +140,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 
     /// xếp bàn cho khách
-    Route::get('reservation/{reservationId}/assign-tables', [ReservationController::class, 'assignTables'])->name('reservation.assignTables');
-    Route::get('reservation/assign-table', [ReservationController::class, 'assignTable'])->name('assignTable');
-    Route::post('reservation/submit-table', [ReservationController::class, 'submitTable'])->name('submit.tables');
+    Route::get('reservation/{reservationId}/assign-tables', [ReservationController::class,'assignTables'])->name('reservation.assignTables');
+    Route::get('reservation/assign-table', [ReservationController::class,'assignTable'])->name('assignTable');
+    Route::post('reservation/submit-table', [ReservationController::class,'submitTable'])->name('submit.tables');
+    Route::post('reservation/submit-move-table', [ReservationController::class,'submitMoveTable'])->name('submit.Movetables');
+
 
     Route::resource('reservation', ReservationController::class);
     Route::resource('reservationTable', ReservationTableController::class);
