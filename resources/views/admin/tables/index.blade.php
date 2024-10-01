@@ -4,18 +4,6 @@
 
 @section('content')
 
-
-    @if (session('error'))
-        <div class="alert alert-danger">
-            {{ session('error') }}
-        </div>
-    @endif
-    @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
-
     <!-- Content wrapper scroll start -->
     <div class="content-wrapper-scroll">
 
@@ -28,15 +16,12 @@
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <div class="card-title">Danh Mục Bàn</div>
-
-
                             <div class="heart-btn d-flex align-items-center" id="heartButton">
                                 <a href="{{ route('admin.tables.trash') }}">
-                                <i class="bi bi-trash2-fill"></i></a>
+                                    <i class="bi bi-trash2-fill"></i>
+                                </a>
                             </div>
-
-                            <a href="{{ route('admin.table.create') }}"
-                                class=" btn btn-sm btn-primary d-flex align-items-center">
+                            <a href="{{ route('admin.table.create') }}" class="btn btn-sm btn-primary d-flex align-items-center">
                                 <i class="bi bi-plus-circle me-2"></i> Thêm Mới
                             </a>
                         </div>
@@ -44,29 +29,23 @@
                         <div class="card-body">
                             <form method="GET" action="{{ route('admin.table.index') }}" class="mb-3">
                                 <div class="row g-2">
-
                                     <div class="col-auto">
                                         <input type="text" id="search-name" name="name"
-                                            class="form-control form-control-sm" placeholder="Tìm kiếm theo tên bàn"
-                                            value="{{ request('name') }}">
+                                               class="form-control form-control-sm" placeholder="Tìm kiếm theo tên bàn"
+                                               value="{{ request('name') }}">
                                     </div>
-
                                     <div class="col-auto">
                                         <select name="table_type" id="search-table-type" class="form-select form-select-sm">
                                             <option value="">-- Loại bàn --</option>
-                                            <option value="Thường"
-                                                {{ request('table_type') == 'Thường' ? 'selected' : '' }}>Thường</option>
-                                            <option value="VIP" {{ request('table_type') == 'VIP' ? 'selected' : '' }}>
-                                                VIP</option>
+                                            <option value="Thường" {{ request('table_type') == 'Thường' ? 'selected' : '' }}>Thường</option>
+                                            <option value="VIP" {{ request('table_type') == 'VIP' ? 'selected' : '' }}>VIP</option>
                                         </select>
                                     </div>
                                     <div class="col-auto">
                                         <button type="submit" class="btn btn-sm btn-primary">Tìm kiếm</button>
                                     </div>
                                 </div>
-
                             </form>
-
 
                             <div class="table-responsive">
                                 <table class="table v-middle m-0">
@@ -86,28 +65,23 @@
                                                 <td>{{ $table->table_number }}</td>
                                                 <td>{{ $table->table_type }}</td>
                                                 <td>
-                                                    <span
-                                                        class="badge {{ $table->status == 'Available' ? 'shade-green' : ($table->status == 'Reserved' ? 'shade-yellow' : 'shade-red') }} min-70">
+                                                    <span class="badge {{ $table->status == 'Available' ? 'shade-green' : ($table->status == 'Reserved' ? 'shade-yellow' : 'shade-red') }} min-70">
                                                         {{ $table->status == 'Available' ? 'Có sẵn' : ($table->status == 'Reserved' ? 'Đã đặt trước' : 'Đang sử dụng') }}
                                                     </span>
                                                 </td>
                                                 <td>
                                                     <div class="actions">
-                                                        <a href="{{ route('admin.table.edit', $table->id) }}"
-                                                            class="viewRow">
+                                                        <a href="{{ route('admin.table.edit', $table->id) }}" class="viewRow">
                                                             <i class="bi bi-pencil-square text-warning"></i>
                                                         </a>
-                                                        <a href="#1" class="viewRow">
-                                                            <form action="{{ route('admin.table.destroy', $table->id) }}"
-                                                                method="POST" style="display:inline-block;"
-                                                                onsubmit="return confirm('Bạn có chắc chắn muốn xóa?');">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button type="submit" class="btn btn-link p-0">
-                                                                    <i class="bi bi-trash0 text-red"></i>
-                                                                </button>
-                                                            </form>
-                                                        </a>
+                                                        <form action="{{ route('admin.table.destroy', $table->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa?');">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <a href="#">
+                                                            <button type="submit" class="btn btn-link p-0">
+                                                                <i class="bi bi-trash text-red"></i>
+                                                            </button></a>
+                                                        </form>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -124,7 +98,7 @@
                             <div class="pagination justify-content-center mt-3">
                                 {{ $tables->links() }}
                             </div>
-                            <!-- Kết thúc Pagination -->
+                            <!-- End Pagination -->
 
                         </div>
 
@@ -132,7 +106,6 @@
 
                 </div>
             </div>
-
             <!-- Row end -->
 
         </div>
@@ -143,7 +116,29 @@
 
 @endsection
 
+@section('scripts')
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 
-</style>
+    <script>
+        // Function to display alerts based on session messages
+        function showAlert(title, icon) {
+            Swal.fire({
+                position: "top",
+                title: title,
+                icon: icon,
+                showConfirmButton: false,
+                timerProgressBar: true,
+                timer: 1500
+            });
+        }
 
+        @if (session('success'))
+            showAlert("{{ session('success') }}", "success");
+        @endif
 
+        @if (session('error'))
+            showAlert("{{ session('error') }}", "error");
+        @endif
+    </script>
+@endsection

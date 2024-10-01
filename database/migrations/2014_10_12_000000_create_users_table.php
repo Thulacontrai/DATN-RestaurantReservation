@@ -19,7 +19,7 @@ class CreateUsersTable extends Migration
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->date('hire_date')->nullable();
             $table->string('position', 255)->nullable();
-            $table->unsignedBigInteger('role_id')->nullable();
+            // $table->unsignedBigInteger('role_id')->nullable();
             $table->string('avatar', 255)->nullable();
             $table->string('password', 255)->default('None');
             $table->timestamps(); // created_at và updated_at
