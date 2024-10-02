@@ -164,6 +164,15 @@
                                                         <a href="{{ route('admin.reservation.edit', $reservation->id) }}" class="editRow" data-id="{{ $reservation->id }}">
                                                             <i class="bi bi-pencil-square text-warning"></i>
                                                         </a>
+                                                         <!-- Nút hủy đặt bàn -->
+                                                         <form action="{{ route('admin.reservation.cancel', $reservation->id) }}" method="POST" style="display:inline-block;">
+                                                            @csrf
+                                                            @method('POST')
+                                                            <a href="#" style="margin-top: 15px">
+                                                            <button type="submit" class="btn btn-link p-0" onclick="return confirm('Bạn có chắc chắn muốn hủy đơn này?');">
+                                                                <i class="bi bi-x-circle text-danger"></i>
+                                                            </button></a>
+                                                        </form>                                                        
                                                         <form action="{{ route('admin.reservation.destroy', $reservation->id) }}" method="POST" style="display:inline-block;">
                                                             @csrf
                                                             @method('DELETE')
