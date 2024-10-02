@@ -164,6 +164,10 @@
                                                         <a href="{{ route('admin.reservation.edit', $reservation->id) }}" class="editRow" data-id="{{ $reservation->id }}">
                                                             <i class="bi bi-pencil-square text-warning"></i>
                                                         </a>
+                                                    </a>
+                                                    <a href="{{ route('admin.reservation.assignTables', $reservation->id) }}" class="editRow" data-id="{{ $reservation->id }}">
+                                                        <i class="bi bi-box-arrow-in-right"></i>
+                                                    </a>
                                                         <form action="{{ route('admin.reservation.destroy', $reservation->id) }}" method="POST" style="display:inline-block;">
                                                             @csrf
                                                             @method('DELETE')

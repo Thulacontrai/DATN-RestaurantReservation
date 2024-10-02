@@ -26,9 +26,13 @@ use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\TableController;
 use App\Http\Controllers\Client\HomeController;
+use App\Http\Controllers\Client\MemberController;
 use App\Http\Controllers\Client\MenuController;
 use App\Http\Controllers\Client\PosController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AccountController;
+use App\Http\Controllers\Client\LoginController;
+use App\Http\Controllers\Client\AccountController as ClientAccountController;
 
 
 /*
@@ -51,6 +55,23 @@ Route::get('/api/menu/filter', [MenuController::class, 'filterByCategory']);
 
 Route::get('/menu/category/{category}', [MenuController::class, 'filterByCategory'])->name('menu.category');
 
+//member 
+Route::get('/member', [MemberController::class, 'show'])->name('client.member');
+Route::post('/update-member', [MemberController::class, 'update'])->name('member.update');
+Route::post('/change-password', [MemberController::class, 'changePassword'])->name('member.changePassword');
+Route::post('/member/update-booking', [MemberController::class, 'updateBooking'])->name('member.updateBooking');
+
+// login 
+Route::get('/home', [HomeController::class, 'index'])->middleware('auth');
+Route::get('/login1', [LoginController::class, 'showLoginForm'])->name('login.client');
+
+
+
+
+// account
+// Route::get('/account', [AccountController::class, 'show'])->name('account.show');
+// Route::post('/update-account', [AccountController::class, 'update'])->name('account.update');
+// Route::post('/change-password', [AccountController::class, 'changePassword'])->name('account.changePassword');
 
 // route::get("/menu", function () {
 //     return view("client.menu");
@@ -110,6 +131,7 @@ Route::get('/customerInformation', [ReservationController::class, 'showInformati
 
 
 Route::get('/pos', [\App\Http\Controllers\Pos\PosController::class, 'index'])->name('pos.index');
+
 
 
 

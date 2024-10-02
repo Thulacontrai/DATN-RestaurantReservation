@@ -45,6 +45,12 @@
                 @endauth
             
                     <li><a href="{{ route('contact.client') }}">Contact</a></li>
+                    <li><a href="{{ route('client.member') }}"><i class="bi bi-person-fill"></i></a>
+                        <ul>
+                            <li><a href="{{ route('login.client') }}">Login</a></li>
+                        </ul>
+                    </li>
+
                 </ul>
             </nav>
             
