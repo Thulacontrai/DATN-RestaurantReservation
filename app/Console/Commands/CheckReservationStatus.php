@@ -32,6 +32,12 @@ class CheckReservationStatus extends Command
             event(new \App\Events\UpcomingReservationEvent($reservation));
         }
 
+        // Kiểm tra và cập nhật trạng thái cho các đơn đặt bàn quá hạn
+        Reservation::whereDate('reservation_date', $now->toDateString())
+            ->whereTime('reservation_time', '<', $now->copy()->subMinutes(15)->toTimeString())
+            ->where('status', 'Pending')
+            ->update(['status' => 'Cancelled']);
+
         // Lấy danh sách các đơn hàng đã quá hạn
         $overdueReservations = Reservation::where('reservation_date', '=', $now->toDateString())
             ->where('reservation_time', '<', $now->toTimeString())

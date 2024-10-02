@@ -2,19 +2,22 @@
 
 namespace App\Models;
 
-
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 
-class User extends Model
+class User extends Authenticatable
 {
-    use SoftDeletes;
+    use SoftDeletes, HasRoles;
 
     protected $table = 'users';
 
     protected $fillable = [
         'name',
         'phone',
+        'firebase_uid',
         'address',
         'email',
         'gender',

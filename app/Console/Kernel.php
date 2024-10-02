@@ -13,6 +13,8 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('reservations:check-status')->everyMinute();
+        $schedule->command('reservation:check')->everyFifteenMinutes();
+
     }
 
 
