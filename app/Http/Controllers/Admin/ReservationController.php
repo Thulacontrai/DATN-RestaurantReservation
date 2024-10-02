@@ -39,7 +39,7 @@ class ReservationController extends Controller
     public function index(Request $request)
     {
 
-        // $this->updateOverdueReservations(); // Cập nhật các đơn quá hạn
+        $this->updateOverdueReservations($request); // Cập nhật các đơn quá hạn
 
         $query = Reservation::query();
 
@@ -94,7 +94,7 @@ class ReservationController extends Controller
     }
 
     // Cập nhật trạng thái đặt bàn quá hạn
-    private function updateOverdueReservations(Request $request){
+    public function updateOverdueReservations(Request $request){
         $reservations = Reservation::with('customer')
             ->when($request->customer_name, function ($query) use ($request) {
                 $query->whereHas('customer', function ($q) use ($request) {
@@ -108,21 +108,21 @@ class ReservationController extends Controller
         // Cập nhật các đơn quá hạn thành 'Cancelled'
         Reservation::where('reservation_date', '=', $now->toDateString())
             ->where('reservation_time', '<', $now->copy()->subMinutes(15)->toTimeString())
-            ->where('status', 'Pending')
+            ->where('status', 'Confirmed')
             ->update(['status' => 'Cancelled']);
 
         // Đơn sắp đến hạn trong vòng 30 phút tới
         $upcomingReservations = Reservation::where('reservation_date', '=', $now->toDateString())
             ->where('reservation_time', '>=', $now->toTimeString())
             ->where('reservation_time', '<=', $now->copy()->addMinutes(30)->toTimeString())
-            ->where('status', 'Pending')
+            ->where('status', 'Confirmed')
             ->get();
 
         // Đơn đang chờ khách trong 15 phút
         $waitingReservations = Reservation::where('reservation_date', '=', $now->toDateString())
             ->where('reservation_time', '<', $now->toTimeString())
             ->where('reservation_time', '>=', $now->copy()->subMinutes(15)->toTimeString())
-            ->where('status', 'Pending')
+            ->where('status', 'Confirmed')
             ->get();
 
         // Đơn đã quá hạn
@@ -197,7 +197,6 @@ class ReservationController extends Controller
             'guest_count' => 'required|integer|min:1',
             'deposit_amount' => 'nullable|numeric|min:0',
             'note' => 'nullable|string',
-
             'status' => 'in:Pending',
             'cancelled_reason' => 'nullable|string|max:255'
         ]);
