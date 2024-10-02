@@ -164,7 +164,6 @@
                                                         <a href="{{ route('admin.reservation.edit', $reservation->id) }}" class="editRow" data-id="{{ $reservation->id }}">
                                                             <i class="bi bi-pencil-square text-warning"></i>
                                                         </a>
-<<<<<<< HEAD
                                                          <!-- Nút hủy đặt bàn -->
                                                          <form action="{{ route('admin.reservation.cancel', $reservation->id) }}" method="POST" style="display:inline-block;">
                                                             @csrf
@@ -174,12 +173,10 @@
                                                                 <i class="bi bi-x-circle text-danger"></i>
                                                             </button></a>
                                                         </form>                                                        
-=======
                                                     </a>
                                                     <a href="{{ route('admin.reservation.assignTables', $reservation->id) }}" class="editRow" data-id="{{ $reservation->id }}">
                                                         <i class="bi bi-box-arrow-in-right"></i>
                                                     </a>
->>>>>>> 3f9b4516ad382234a981bb210fd5c384e7751f9a
                                                         <form action="{{ route('admin.reservation.destroy', $reservation->id) }}" method="POST" style="display:inline-block;">
                                                             @csrf
                                                             @method('DELETE')
