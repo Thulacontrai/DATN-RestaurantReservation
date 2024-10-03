@@ -23,14 +23,14 @@ class ReservationController extends Controller
 {
 
     use TraitCRUD;
-     public function __construct()
+    public function __construct()
     {
         // Gán middleware cho các phương thức
         $this->middleware('permission:Xem đặt bàn', ['only' => ['index']]);
         $this->middleware('permission:Tạo mới đặt bàn', ['only' => ['create']]);
         $this->middleware('permission:Sửa đặt bàn', ['only' => ['edit']]);
         $this->middleware('permission:Xóa đặt bàn', ['only' => ['destroy']]);
-        
+
     }
     protected $model = Reservation::class;
     protected $viewPath = 'admin.reservation';
@@ -94,7 +94,8 @@ class ReservationController extends Controller
     }
 
     // Cập nhật trạng thái đặt bàn quá hạn
-    public function updateOverdueReservations(Request $request){
+    public function updateOverdueReservations(Request $request)
+    {
         $reservations = Reservation::with('customer')
             ->when($request->customer_name, function ($query) use ($request) {
                 $query->whereHas('customer', function ($q) use ($request) {
@@ -183,7 +184,7 @@ class ReservationController extends Controller
             ->where('reservation_time', '<', $now->copy()->subMinutes(15)->toTimeString())
             ->where('status', 'Cancelled')
             ->get();
-            // ->update(['status' => 'Cancelled']); // Cập nhật trạng thái thành 'Hủy'
+        // ->update(['status' => 'Cancelled']); // Cập nhật trạng thái thành 'Hủy'
 
         return view('admin.reservation.check', compact('upcomingReservations', 'waitingReservations', 'overdueReservations'));
     }
@@ -297,7 +298,7 @@ class ReservationController extends Controller
 
 
 
-     public function createReservation(StoreReservationRquest $request)
+    public function createReservation(StoreReservationRquest $request)
     {
         $reservation = $request->all();
         if ($request->guest_count >= 6) {
@@ -306,13 +307,15 @@ class ReservationController extends Controller
 
         } else {
             DB::transaction(function () use ($request) {
-                $user = User::create([
-                    'name' => $request->user_name,
-                    'phone' => $request->user_phone,
-                    'password' => fake()->password(),
-                    'status' => 'inactive',
-                ]);
-
+                $user = User::where('phone', $request->user_phone)->first();
+                if (!isset($user) && $user == null) {
+                    $user = User::create([
+                        'name' => $request->user_name,
+                        'phone' => $request->user_phone,
+                        'password' => fake()->password(),
+                        'status' => 'inactive',
+                    ]);
+                }
                 Reservation::create([
                     'customer_id' => $user->id,
                     'user_name' => $request->user_name,
@@ -323,6 +326,8 @@ class ReservationController extends Controller
                     'reservation_time' => $request->reservation_time,
                 ]);
             });
+            ;
+
 
             return redirect()->route('reservationSuccessfully.client', compact('reservation'));
         }
@@ -334,14 +339,17 @@ class ReservationController extends Controller
             $data = str_replace("'", '"', $reservation);
             $reservation = json_decode($data, true);
             DB::transaction(function () use ($reservation) {
-                $user = User::create([
-                    'name' => $reservation['user_name'],
-                    'phone' => $reservation['user_phone'],
-                    'password' => fake()->password(),
-                    'status' => 'inactive',
-                ]);
+                $user = User::where('phone', $reservation['user_phone'])->first();
+                if (!isset($user) && $user == null) {
+                    $user = User::create([
+                        'name' => $reservation['user_name'],
+                        'phone' => $reservation['user_phone'],
+                        'password' => fake()->password(),
+                        'status' => 'inactive',
+                    ]);
+                }
                 Reservation::create([
-                    'customer_id' => $user['id'],
+                    'customer_id' => $user->id,
                     'user_name' => $reservation['user_name'],
                     'user_phone' => $reservation['user_phone'],
                     'guest_count' => $reservation['guest_count'],
@@ -363,7 +371,7 @@ class ReservationController extends Controller
         $deposit = $showDeposit['guest_count'] * 100000;
         return view('client.deposit', compact('showDeposit', 'deposit'));
     }
-   
+
 
 
 
@@ -375,7 +383,7 @@ class ReservationController extends Controller
         return view('admin.reservation.table_layout', compact('tables', 'reservationId'));
 
     }
-    public function assignTable(Request  $request)
+    public function assignTable(Request $request)
     {
         dd($request->all());
         $reservationId = 1;
@@ -400,7 +408,7 @@ class ReservationController extends Controller
         return view('admin.reservation.table_layout', compact('tables', 'reservationId'));
 
     }
-    public function submitTable(Request  $request)
+    public function submitTable(Request $request)
     {
         try {
             // Bắt đầu transaction
@@ -454,14 +462,15 @@ class ReservationController extends Controller
         }
     }
 
-    public function submitMoveTable(Request $request) {
+    public function submitMoveTable(Request $request)
+    {
         $tableId = $request->input('dataId');
         $reservationId = $request->input('reservationId');
         $reservationData = ReservationTable::where('reservation_id', $reservationId)->first();
-        if($reservationData){
+        if ($reservationData) {
             Table::where('id', $reservationData->table_id)->update(['status' => 'Available']);
         }
-        ReservationTable::where('reservation_id', $reservationId)->update([ 'table_id' => $tableId ]);
+        ReservationTable::where('reservation_id', $reservationId)->update(['table_id' => $tableId]);
         Table::where('id', $tableId)->update(['status' => 'Reserved']);
         return response()->json([
             'success' => true,
