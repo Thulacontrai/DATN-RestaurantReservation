@@ -1,427 +1,206 @@
 @extends('pos.layouts.master')
 
-@section('title', 'pos Dashboard')
+@section('title', 'POS Dashboard')
 
 @section('content')
-    <div class="content-page">
-        <div class="container-fluid r-banner-cap">
-            <div class="row">
-                <div class="col-xl-3 col-lg-6 col-md-6">
-                    <div class="card card-block card-stretch card-height r-odr-block">
-                        <div class="d-flex align-items-center justify-content-between p-20">
-                            <div class="text-warning">
-                                <i class="fas fa-utensils resto-img"></i>
+
+<!-- Main Content Section -->
+<div class="main-container p-3">
+    <!-- Table Grid Section -->
+    <section class="content">
+        <div class="tables-grid" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px;">
+            @foreach($tables as $table)
+                @if($table->status == 'occupied')
+                    <div class="table-box" style="background-color: #ffffff; border-radius: 15px; border: 1px solid #ccc; width: 150px; height: 150px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                        <div style="padding: 10px;">
+                            <div class="table-name" style="font-size: 16px; color: #333; font-weight: bold;">Bàn {{ $table->table_number }}</div>
+                            <div class="table-info" style="display: flex; align-items: center; color: #666; font-size: 14px; margin-top: 5px;">
+                                <span style="margin-right: 8px;">
+                                    <i class="fas fa-utensils"></i> {{ $table->dishes ?? 'Chưa có món' }}
+                                </span>
+                                <span>
+                                    <i class="fas fa-users"></i> {{ $table->guests }}
+                                </span>
                             </div>
-                            <div class="iq-card-text">
-                                <h2 class="mb-0 line-height">25 K</h2>
-                                <p class="mb-0">Đơn hàng</p>
-                            </div>
-                            <div>
-                                <span class="badge badge-success cust-badge">75% <i class="fas fa-angle-up ml-1"></i></span>
-                            </div>
+                        </div>
+                        <div style="background-color: #007acc; color: white; padding: 5px; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; display: flex; justify-content: space-between; align-items: center;">
+                            <div style="font-size: 12px;">{{ $table->time ?? 'Chưa có thời gian' }}</div>
+                            <div style="font-size: 16px; font-weight: bold;">{{ number_format($table->total_price ?? 0, 0, ',', '.') }} VND</div>
                         </div>
                     </div>
-                </div>
-                <div class="col-xl-3 col-lg-6 col-md-6">
-                    <div class="card card-block card-stretch card-height r-odr-block success">
-                        <div class="d-flex align-items-center justify-content-between p-20">
-                            <div class="text-success">
-                                <i class="fas fa-users resto-img"></i>
+                @else
+                    <!-- Default empty table styling -->
+                    <div class="table-box" style="background-color: #ffffff; border-radius: 15px; border: 1px solid #ccc; width: 150px; height: 120px; display: flex; align-items: center; justify-content: center; text-align: center;">
+                        <a href="{{ route('Pmenu', ['table_number' => $table->table_number]) }}" style="text-decoration: none; color: inherit;">
+                            <div class="table-name" style="font-size: 16px; color: #333; font-weight: bold;">
+                                Bàn {{ $table->table_number }}
                             </div>
-                            <div class="iq-card-text">
-                                <h2 class="mb-0 line-height">15 K</h2>
-                                <p class="mb-0">Giao dịch</p>
-                            </div>
-                            <div>
-                                <span class="badge badge-success cust-badge">53% <i class="fas fa-angle-up ml-1"></i></span>
-                            </div>
-                        </div>
+                        </a>
                     </div>
-                </div>
-                <div class="col-xl-3 col-lg-6 col-md-6">
-                    <div class="card card-block card-stretch card-height r-odr-block info" style="cursor: pointer;"
-                        onclick="openModal('reservationDetail')">
-                        <div class="d-flex align-items-center justify-content-between p-20">
-                            <div class="text-info">
-                                <i class="fas fa-coins resto-img"></i>
-                            </div>
-                            <div class="iq-card-text">
-                                <h2 class="mb-0 line-height">40 K</h2>
-                                <p class="mb-0">Đặt trước</p>
-                            </div>
-                            <div>
-                                <span class="badge badge-danger cust-badge">25% <i
-                                        class="fas fa-angle-down ml-1"></i></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                @endif
+            @endforeach
+        </div>
+    </section>
 
-                <!-- Reservation Detail Modal -->
-                <div id="reservationDetailModal" class="modal">
-                    <div class="modal-content">
-                        <h3 class="text-center mb-4 modal-header">Đơn Đặt Bàn</h3>
-                        <form id="reservationDetails" class="form-container">
-                            <div class="d-flex justify-content-end mt-3 full-width">
-                                <!-- Nút để mở form Đơn Đặt Bàn Sắp Đến -->
-                                <button type="button" onclick="openModal('upcoming')" class="btn btn-primary mr-2">Sắp
-                                    Đến</button>
-                                <!-- Nút để mở form Đơn Đặt Bàn Quá Giờ -->
-                                <button type="button" onclick="openModal('expired')" class="btn btn-secondary mr-2">Quá
-                                    Giờ</button>
-                                <button type="button" onclick="closeModal('reservationDetail')"
-                                    class="btn btn-danger">Đóng</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+    <!-- Order Section -->
+    <aside class="order-section mt-3" style="background-color: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); width: 350px;">
+        <h3 style="font-weight: bold; margin-bottom: 15px; border-bottom: 2px solid #007acc; padding-bottom: 5px; color: #007acc;">Đơn Hàng</h3>
 
+        <!-- Order List -->
+        <ul class="order-list" style="list-style-type: none; padding: 0; max-height: 250px; overflow-y: auto;">
+            @if(!empty($table->orders) && $table->orders->count() > 0)
+                @foreach($table->orders as $order)
+                    <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 10px; background-color: #f9f9f9; border-radius: 8px; transition: background-color 0.3s;">
+                        <span style="font-weight: bold;">{{ $order->name }} x {{ $order->quantity }}</span>
+                        <div style="display: flex; align-items: center;">
+                            <input type="number" value="{{ $order->quantity }}" min="1" class="quantity-input" style="width: 60px; margin-right: 10px; padding: 5px; border-radius: 5px; border: 1px solid #ccc;">
+                            <span>{{ number_format($order->price * $order->quantity, 0, ',', '.') }} VND</span>
+                            <button class="btn btn-danger btn-sm" style="margin-left: 10px;" onclick="confirmDelete('{{ $order->id }}')">Xóa</button>
+                        </div>
+                    </li>
+                @endforeach
+            @else
+                <li style="text-align: center; color: #999;">Chưa có món trong đơn.</li>
+            @endif
+        </ul>
 
-                <!-- Đơn Đặt Bàn Sắp Đến Modal -->
-                <div id="upcomingReservationModal" class="modal">
-                    <h3 class="text-center mb-4">Đơn Đặt Bàn Sắp Đến</h3>
-                    <form id="upcomingReservationDetails" class="form-container">
-                        <div class="form-group half-width">
-                            <label for="orderIdUpcoming">Mã Đơn Hàng:</label>
-                            <input type="text" id="orderIdUpcoming" name="orderIdUpcoming" readonly class="form-control">
-                        </div>
-                        <div class="form-group half-width">
-                            <label for="customerUpcoming">Khách hàng:</label>
-                            <input type="text" id="customerUpcoming" name="customerUpcoming" class="form-control">
-                        </div>
-                        <div class="form-group half-width">
-                            <label for="phoneUpcoming">Số điện thoại:</label>
-                            <input type="text" id="phoneUpcoming" name="phoneUpcoming" class="form-control">
-                        </div>
-                        <div class="form-group half-width">
-                            <label for="reservationDateUpcoming">Ngày đặt:</label>
-                            <input type="date" id="reservationDateUpcoming" name="reservationDateUpcoming"
-                                class="form-control">
-                        </div>
-                        <div class="form-group half-width">
-                            <label for="tableNumberUpcoming">Bàn số:</label>
-                            <input type="text" id="tableNumberUpcoming" name="tableNumberUpcoming" class="form-control">
-                        </div>
-                        <div class="form-group half-width">
-                            <label for="statusUpcoming">Trạng thái:</label>
-                            <select id="statusUpcoming" name="statusUpcoming" class="form-control">
-                                <option value="pending">Pending</option>
-                                <option value="confirmed">Confirmed</option>
-                                <option value="cancelled">Cancelled</option>
-                            </select>
-                        </div>
-                        <div class="form-group half-width">
-                            <label for="guestCountUpcoming">Số người:</label>
-                            <input type="number" id="guestCountUpcoming" name="guestCountUpcoming" class="form-control">
-                        </div>
-                        <div class="form-group half-width">
-                            <label for="notesUpcoming">Ghi chú:</label>
-                            <input type="text" id="notesUpcoming" name="notesUpcoming" class="form-control">
-                        </div>
-                        <div class="d-flex justify-content-end mt-3 full-width">
-                            <button type="button" onclick="updateReservation('upcoming')"
-                                class="btn btn-primary mr-2">Cập nhật</button>
-                            <button type="button" onclick="printReservation('upcoming')"
-                                class="btn btn-secondary mr-2">In</button>
-                            <button type="button" onclick="closeModal('upcoming')" class="btn btn-danger">Đóng</button>
-                        </div>
-                    </form>
-                </div>
-
-
-                <!-- Đơn Đặt Bàn Quá Giờ Modal -->
-                <div id="expiredReservationModal" class="modal">
-                    <h3 class="text-center mb-4">Đơn Đặt Bàn Quá Giờ</h3>
-                    <form id="expiredReservationDetails" class="form-container">
-                        <div class="form-group half-width">
-                            <label for="orderIdExpired">Mã Đơn Hàng:</label>
-                            <input type="text" id="orderIdExpired" name="orderIdExpired" value="#48" readonly
-                                class="form-control">
-                        </div>
-                        <div class="form-group half-width">
-                            <label for="customerExpired">Khách hàng:</label>
-                            <input type="text" id="customerExpired" name="customerExpired" value="Nguyen"
-                                class="form-control">
-                        </div>
-                        <div class="form-group half-width">
-                            <label for="phoneExpired">Số điện thoại:</label>
-                            <input type="text" id="phoneExpired" name="phoneExpired" value="98765"
-                                class="form-control">
-                        </div>
-                        <div class="form-group half-width">
-                            <label for="reservationDateExpired">Ngày đặt:</label>
-                            <input type="date" id="reservationDateExpired" name="reservationDateExpired"
-                                value="2024-08" class="form-control">
-                        </div>
-                        <div class="form-group half-width">
-                            <label for="tableNumberExpired">Bàn số:</label>
-                            <input type="text" id="tableNumberExpired" name="tableNumberExpired"
-                                class="form-control">
-                        </div>
-                        <div class="form-group half-width">
-                            <label for="statusExpired">Trạng thái:</label>
-                            <select id="statusExpired" name="statusExpired" class="form-control">
-                                <option value="pending" selected>Pending</option>
-                                <option value="confirmed">Confirmed</option>
-                                <option value="cancelled">Cancelled</option>
-                            </select>
-                        </div>
-                        <div class="form-group half-width">
-                            <label for="guestCountExpired">Số người:</label>
-                            <input type="number" id="guestCountExpired" name="guestCountExpired" value="2"
-                                class="form-control">
-                        </div>
-                        <div class="form-group half-width">
-                            <label for="notesExpired">Ghi chú:</label>
-                            <input type="text" id="notesExpired" name="notesExpired" value="late"
-                                class="form-control">
-                        </div>
-                        <div class="d-flex justify-content-end mt-3 full-width">
-                            <button type="button" onclick="updateReservation('expired')"
-                                class="btn btn-primary mr-2">Cập nhật</button>
-                            <button type="button" onclick="printReservation('expired')"
-                                class="btn btn-secondary mr-2">In</button>
-                            <button type="button" onclick="closeModal('expired')" class="btn btn-danger">Đóng</button>
-                        </div>
-                    </form>
-                </div>
+        <!-- Order Summary -->
+        <div class="order-summary mt-3" style="font-size: 16px;">
+            <div class="d-flex justify-content-between">
+                <span>Tổng cộng:</span>
+                <span id="total-price">{{ number_format($table->total_price ?? 0, 0, ',', '.') }} VND</span>
+            </div>
+            <div class="d-flex justify-content-between mt-2">
+                <span>Đặt cọc:</span>
+                <span id="deposit-amount">{{ number_format($table->deposit ?? 0, 0, ',', '.') }} VND</span>
+            </div>
+            <div class="d-flex justify-content-between mt-2">
+                <span>Giảm giá:</span>
+                <input type="number" id="discount" value="0" min="0" class="form-control form-control-sm" style="width: 120px;" onchange="updateTotal()">
+            </div>
+            <div class="d-flex justify-content-between mt-2">
+                <span>Thuế (10%):</span>
+                <span id="tax">{{ number_format(($table->total_price ?? 0) * 0.1, 0, ',', '.') }} VND</span>
+            </div>
+            <div class="d-flex justify-content-between mt-2">
+                <span>Phí dịch vụ (5%):</span>
+                <span id="service-charge">{{ number_format(($table->total_price ?? 0) * 0.05, 0, ',', '.') }} VND</span>
+            </div>
+            <div class="d-flex justify-content-between mt-3 font-weight-bold">
+                <span>Khách trả:</span>
+                <input type="number" id="customer-paid" value="0" min="0" class="form-control form-control-sm" style="width: 120px;" onchange="calculateChange()">
+            </div>
+            <div class="d-flex justify-content-between mt-2 font-weight-bold">
+                <span>Tiền thừa:</span>
+                <span id="change-amount">0 VND</span>
             </div>
         </div>
 
-        <!-- Dishes and Combos -->
-        <div class="row">
-            <div class="col-lg-6">
-                <div class="card card-block card-stretch card-height">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h4 class="card-title">Món Ăn</h4>
-                        <div id="trending-order-slick-arrow" class="slick-arrow-block">
-                            <button class="slick-prev slick-arrow" aria-label="Previous" type="button">Previous</button>
-                            <button class="slick-next slick-arrow" aria-label="Next" type="button">Next</button>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="trending-order slick-initialized slick-slider">
-                            <div class="slick-list draggable">
-                                <div class="slick-track">
-                                    @foreach ($dishes as $dish)
-                                        <div class="item slick-slide">
-                                            <img src="{{ asset($dish->image) }}"
-                                                class="img-fluid rounded-circle avatar-120 odr-img" alt="image">
-                                            <div class="odr-content bg-danger-light text-center">
-                                                <span class="badge badge-white text-center">
-                                                    <i class="fas fa-heart text-danger"></i>
-                                                </span>
-                                                <h5 class="mb-1">{{ $dish->name }}</h5>
-                                                <h5><strong>${{ number_format($dish->price, 2) }}</strong></h5>
-                                                <p class="mb-0">Order: {{ $dish->quantity }}</p>
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            </div>
-                        </div>
-                        <nav aria-label="Page navigation" class="mt-3">
-                            <ul class="pagination justify-content-center">
-                                {{ $dishes->links('vendor.pagination.bootstrap-5') }}
-                            </ul>
-                        </nav>
-                    </div>
-                </div>
-            </div>
+        <!-- Actions -->
+        <div class="order-buttons d-flex align-items-center justify-content-between" style="margin-top: 20px;">
+            <button class="btn btn-outline-danger" style="border-radius: 5px;" onclick="clearOrder()">Xóa Đơn</button>
+            <button class="btn btn-outline-primary" style="border-radius: 5px;" onclick="saveOrder()">Lưu Đơn</button>
+            <button class="btn btn-outline-success" style="padding: 10px 20px; border-radius: 5px;" onclick="payOrder()">Thanh Toán</button>
+        </div>
 
-            <!-- Combo Section -->
-            <div class="col-lg-6">
-                <div class="card card-block card-stretch card-height">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h4 class="card-title">Combo</h4>
-                        <div id="trending-order-slick-arrow" class="slick-arrow-block">
-                            <button class="slick-prev slick-arrow" aria-label="Previous" type="button">Previous</button>
-                            <button class="slick-next slick-arrow" aria-label="Next" type="button">Next</button>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="resto-blog slick-initialized slick-slider">
-                            <div class="slick-list draggable">
-                                <div class="slick-track">
-                                    @foreach ($combos as $combo)
-                                        <div class="item slick-slide" data-slick-index="{{ $loop->index }}">
-                                            <img src="{{ asset($combo->image) }}" class="rounded img-fluid w-100"
-                                                alt="{{ $combo->name }}">
-                                            <div class="r-blog-content text-center">
-                                                <h4 class="mb-1">{{ $combo->name }}</h4>
-                                                <div class="d-flex justify-content-center mb-1">
-                                                    @for ($i = 0; $i < 5; $i++)
-                                                        <a href="#" tabindex="0">
-                                                            <i
-                                                                class="las la-star {{ $i < $combo->rating ? 'text-warning' : 'text-light' }}"></i>
-                                                        </a>
-                                                    @endfor
-                                                </div>
-                                                <p class="body-text font-weight-bold mb-1">
-                                                    <i class="las la-map-marker-alt mr-1"></i> {{ $combo->address }}
-                                                </p>
-                                                <p class="mb-0">{{ Str::limit($combo->description, 50) }}</p>
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            </div>
-                        </div>
-                        <nav aria-label="Page navigation" class="mt-3">
-                            <ul class="pagination justify-content-center">
-                                {{ $combos->links('vendor.pagination.bootstrap-5') }}
-                            </ul>
-                        </nav>
-                    </div>
-                </div>
+        <!-- Complete Order Button -->
+        <div class="complete-order mt-3 d-flex justify-content-between">
+            <button class="btn btn-primary" style="width: 100%;" onclick="completeOrder()">Hoàn tất & Gửi hóa đơn</button>
+        </div>
+    </aside>
+</div>
+
+<!-- Bottom Action Section -->
+<div class="bottom-actions d-flex justify-content-between p-2" style="background-color: #f4f4f4; border-top: 1px solid #ddd;">
+    <button class="takeaway-btn btn d-flex align-items-center" style="background-color: white; border: 1px solid #ddd; padding: 10px 15px; border-radius: 5px;">
+        Takeaway orders <span class="badge" style="background-color: red; color: white; padding: 3px 7px; border-radius: 12px; margin-left: 5px;">0</span>
+    </button>
+
+    <div class="table-actions d-flex align-items-center">
+        <label for="table-select" style="margin-right: 10px;">Tất cả bàn</label>
+        <select id="table-select" style="padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+            <option value="all">Tất cả bàn</option>
+            @foreach($tables as $table)
+                <option value="{{ $table->table_number }}">{{ $table->table_number }} ({{ $table->status }})</option>
+            @endforeach
+        </select>
+        <button class="add-table-btn btn" style="background: none; border: none; margin-left: 10px;">
+            <i class="fas fa-plus"></i>
+        </button>
+    </div>
+</div>
+
+<!-- Confirm Delete Modal -->
+<div id="confirm-delete-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Xác nhận xóa</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Bạn có chắc chắn muốn xóa món này khỏi đơn hàng không?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-danger" onclick="deleteOrder()">Xóa</button>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- CSS for Modal Styling -->
-    <style>
-        .modal {
-            display: none;
-            background-color: white;
-            width: 100%;
-            max-width: 600px;
-            padding: 20px;
-            border-radius: 8px;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-            z-index: 1050;
-            overflow-y: auto;
+<script>
+    function updateTotal() {
+        let total = {{ $table->total_price ?? 0 }};
+        let discount = parseInt(document.getElementById('discount').value) || 0;
+        let tax = total * 0.1;
+        let serviceCharge = total * 0.05;
+
+        let finalTotal = total - discount + tax + serviceCharge;
+        document.getElementById('total-price').innerText = new Intl.NumberFormat('vi-VN').format(finalTotal) + ' VND';
+    }
+
+    function calculateChange() {
+        let total = {{ $table->total_price ?? 0 }};
+        let customerPaid = parseInt(document.getElementById('customer-paid').value) || 0;
+        let discount = parseInt(document.getElementById('discount').value) || 0;
+        let tax = total * 0.1;
+        let serviceCharge = total * 0.05;
+
+        let finalTotal = total - discount + tax + serviceCharge;
+        let change = customerPaid - finalTotal;
+
+        document.getElementById('change-amount').innerText = new Intl.NumberFormat('vi-VN').format(change > 0 ? change : 0) + ' VND';
+    }
+
+    function confirmDelete(orderId) {
+        $('#confirm-delete-modal').modal('show');
+    }
+
+    function deleteOrder() {
+        $('#confirm-delete-modal').modal('hide');
+        alert('Món đã được xóa khỏi đơn hàng.');
+    }
+
+    function clearOrder() {
+        if (confirm('Bạn có chắc chắn muốn xóa toàn bộ đơn hàng?')) {
+            alert('Đơn hàng đã được xóa.');
         }
+    }
 
-        .form-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-        }
+    function saveOrder() {
+        alert('Đơn hàng đã được lưu.');
+    }
 
-        .form-group {
-            flex: 0 0 48%;
-        }
+    function payOrder() {
+        alert('Tiến hành thanh toán.');
+    }
 
-        .full-width {
-            flex: 0 0 70%;
-            padding-bottom: 30px;
-        }
-
-        .form-control {
-            width: 100%;
-            border-radius: 6px;
-            border: 1px solid #d1d1d1;
-            padding: 10px;
-        }
-
-        button {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .btn-primary {
-            background-color: #007bff;
-            color: white;
-        }
-
-        .btn-secondary {
-            background-color: #6c757d;
-            color: white;
-        }
-
-        .btn-danger {
-            background-color: #dc3545;
-            color: white;
-        }
-    </style>
-
-    <!-- JavaScript for Modal Actions -->
-    <script>
-        function openModal(type) {
-            if (type === 'upcoming') {
-                document.getElementById('upcomingReservationModal').style.display = 'block';
-            } else if (type === 'expired') {
-                document.getElementById('expiredReservationModal').style.display = 'block';
-            } else {
-                document.getElementById('reservationDetailModal').style.display = 'block';
-            }
-        }
-
-        function closeModal(type) {
-            if (type === 'upcoming') {
-                document.getElementById('upcomingReservationModal').style.display = 'none';
-            } else if (type === 'expired') {
-                document.getElementById('expiredReservationModal').style.display = 'none';
-            } else {
-                document.getElementById('reservationDetailModal').style.display = 'none';
-            }
-        }
-
-        function updateReservation(type = '') {
-            const idSuffix = type ? type.charAt(0).toUpperCase() + type.slice(1) : '';
-            const orderId = document.getElementById(`orderId${idSuffix}`).value;
-            const customer = document.getElementById(`customer${idSuffix}`).value;
-            const phone = document.getElementById(`phone${idSuffix}`).value;
-            const reservationDate = document.getElementById(`reservationDate${idSuffix}`).value;
-            const tableNumber = document.getElementById(`tableNumber${idSuffix}`).value;
-            const status = document.getElementById(`status${idSuffix}`).value;
-            const guestCount = document.getElementById(`guestCount${idSuffix}`).value;
-            const notes = document.getElementById(`notes${idSuffix}`).value;
-
-            fetch('/api/reservation/update', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        orderId: orderId,
-                        customer: customer,
-                        phone: phone,
-                        reservationDate: reservationDate,
-                        tableNumber: tableNumber,
-                        status: status,
-                        guestCount: guestCount,
-                        notes: notes
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    alert('Reservation updated successfully!');
-                    closeModal(type || 'reservationDetail');
-                })
-                .catch((error) => {
-                    alert('Failed to update reservation.');
-                });
-        }
-
-        function printReservation(type = '') {
-            window.print();
-        }
-
-        function loadUpcomingReservationDetails(reservationId) {
-            fetch(`/api/reservations/${reservationId}`) // Adjust the API endpoint as needed
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('orderIdUpcoming').value = data.id;
-                    document.getElementById('customerUpcoming').value = data.customer
-                    .name; // Adjust according to your data structure
-                    document.getElementById('phoneUpcoming').value = data.customer.phone;
-                    document.getElementById('reservationDateUpcoming').value = data.reservation_date;
-                    document.getElementById('tableNumberUpcoming').value = data.table_number;
-                    document.getElementById('statusUpcoming').value = data.status;
-                    document.getElementById('guestCountUpcoming').value = data.guest_count;
-                    document.getElementById('notesUpcoming').value = data.notes || 'None';
-
-                    openModal('upcoming'); // Open the modal after data is loaded
-                })
-                .catch(error => console.error('Error loading reservation details:', error));
-        }
-    </script>
+    function completeOrder() {
+        alert('Hoàn tất đơn hàng và gửi hóa đơn.');
+    }
+</script>
 
 @endsection

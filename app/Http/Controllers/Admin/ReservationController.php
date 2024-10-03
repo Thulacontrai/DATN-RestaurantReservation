@@ -414,10 +414,10 @@ class ReservationController extends Controller
             // Bắt đầu transaction
             DB::beginTransaction();
             $reservation = Reservation::query()->findOrFail($request->get('reservation_id'));
-            $reservation_date = $reservation->reservation_date; //ngày nhận bàn 
+            $reservation_date = $reservation->reservation_date; //ngày nhận bàn
             $reservation_time = $reservation->reservation_time; //giờ nhận bàn
             $reservationDuration = 60; //thời gian sử dụng ướ   tính
-            //tính thời gian kết thúc ước tính 
+            //tính thời gian kết thúc ước tính
             $endTime = Carbon::createFromFormat('H:i:s', $reservation_time)->addMinutes($reservationDuration)->toTimeString();
             $tables = $request->get('tables');
             foreach ($tables as $tableId) {

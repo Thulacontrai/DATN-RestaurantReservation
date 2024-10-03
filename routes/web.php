@@ -28,7 +28,7 @@ use App\Http\Controllers\Admin\TableController;
 use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Client\MemberController;
 use App\Http\Controllers\Client\MenuController;
-use App\Http\Controllers\Client\PosController;
+use App\Http\Controllers\Pos\PosController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\Client\LoginController;
@@ -129,7 +129,40 @@ Route::get('/customerInformation', [ReservationController::class, 'showInformati
 
 
 
-Route::get('/pos', [\App\Http\Controllers\Pos\PosController::class, 'index'])->name('pos.index');
+Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
+
+Route::get('/Pmenu/{table_number}', [PosController::class, 'Pmenu'])->name('Pmenu');
+
+Route::post('/Ppayment/{table_number}', [PosController::class, 'Ppayment'])->name('Ppayment');
+
+
+
+
+// // Process the offline payment (POST)
+// Route::post('/payment/offline', [PosController::class, 'processPaymentOffline'])->name('processPaymentOffline');
+
+
+// // Process the online payment (POST)
+// Route::post('/payment/online', [PosController::class, 'processPaymentOnline'])->name('processPaymentOnline');
+
+
+// Route::get('/receipt', [PosController::class, 'showReceipt'])->name('pos.receipt');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
