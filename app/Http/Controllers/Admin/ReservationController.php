@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreReservationRquest;
 use App\Models\Coupon;
 use App\Models\Reservation;
 use App\Models\Table;
 use App\Models\ReservationTable;
 use App\Models\User;
+use App\Traits\TraitCRUD;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -28,7 +30,7 @@ class ReservationController extends Controller
         $this->middleware('permission:Tạo mới đặt bàn', ['only' => ['create']]);
         $this->middleware('permission:Sửa đặt bàn', ['only' => ['edit']]);
         $this->middleware('permission:Xóa đặt bàn', ['only' => ['destroy']]);
-        
+
     }
     protected $model = Reservation::class;
     protected $viewPath = 'admin.reservation';
@@ -37,7 +39,7 @@ class ReservationController extends Controller
     public function index(Request $request)
     {
 
-        $this->updateOverdueReservations(); // Cập nhật các đơn quá hạn
+        // $this->updateOverdueReservations(); // Cập nhật các đơn quá hạn
 
         $query = Reservation::query();
 
@@ -92,7 +94,7 @@ class ReservationController extends Controller
     }
 
     // Cập nhật trạng thái đặt bàn quá hạn
-    private function updateOverdueReservations()
+    private function updateOverdueReservations(Request $request){
         $reservations = Reservation::with('customer')
             ->when($request->customer_name, function ($query) use ($request) {
                 $query->whereHas('customer', function ($q) use ($request) {
@@ -181,9 +183,7 @@ class ReservationController extends Controller
             ->where('reservation_time', '<', $now->copy()->subMinutes(15)->toTimeString())
             ->where('status', 'Cancelled')
             ->get();
-    }
-
-            ->update(['status' => 'Cancelled']); // Cập nhật trạng thái thành 'Hủy'
+            // ->update(['status' => 'Cancelled']); // Cập nhật trạng thái thành 'Hủy'
 
         return view('admin.reservation.check', compact('upcomingReservations', 'waitingReservations', 'overdueReservations'));
     }
@@ -364,7 +364,7 @@ class ReservationController extends Controller
         $deposit = $showDeposit['guest_count'] * 100000;
         return view('client.deposit', compact('showDeposit', 'deposit'));
     }
-   
+
 
 
 
@@ -407,10 +407,10 @@ class ReservationController extends Controller
             // Bắt đầu transaction
             DB::beginTransaction();
             $reservation = Reservation::query()->findOrFail($request->get('reservation_id'));
-            $reservation_date = $reservation->reservation_date; //ngày nhận bàn 
+            $reservation_date = $reservation->reservation_date; //ngày nhận bàn
             $reservation_time = $reservation->reservation_time; //giờ nhận bàn
             $reservationDuration = 60; //thời gian sử dụng ướ   tính
-            //tính thời gian kết thúc ước tính 
+            //tính thời gian kết thúc ước tính
             $endTime = Carbon::createFromFormat('H:i:s', $reservation_time)->addMinutes($reservationDuration)->toTimeString();
             $tables = $request->get('tables');
             foreach ($tables as $tableId) {
@@ -444,7 +444,7 @@ class ReservationController extends Controller
 
             $reservation->update(['status' => 'confirmed']);
             DB::commit();
-            return redirect()->route('admin.reservation.index')->with('success', 'Table đã được đặt thành công.');
+            return redirect()->route('admin.reservation.index')->with('success', 'Xếp bàn thành công.');
         } catch (\Exception $e) {
             // Nếu có lỗi xảy ra, rollback và ghi log lỗi
             DB::rollBack();

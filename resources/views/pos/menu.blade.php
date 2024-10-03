@@ -1,437 +1,326 @@
-{{-- @extends('pos.layouts.master')
+@extends('pos.layouts.master')
 
-@section('title', 'Menu')
+@section('title', "Menu $table")
 
 @section('content')
-@include('pos.layouts.partials.header', [
+<div class="menu-container p-3 d-flex">
+    <!-- Cột 1: Phần Menu -->
+    <div class="menu-section" style="flex: 2; padding-right: 20px;">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1 class="text-left" style="color: #007acc; font-weight: bold;">Danh sách món</h1>
+        </div>
 
-])
-<div class="content-page">
-    <div class="container-fluid r-banner-cap">
+        <!-- Bộ lọc danh mục with improved style -->
+        <div class="filter-section mb-4 mt-3 d-flex justify-content-start">
+            <button class="btn btn-filter active" data-category="all">Tất cả</button>
+            @foreach($categories as $category => $items)
+                <button class="btn btn-filter" data-category="{{ strtolower($category) }}">{{ $category }}</button>
+            @endforeach
+        </div>
 
-<div class="row">
-    <div class="col-xl-3 col-lg-6 col-md-6">
-        <div class="card card-block card-stretch card-height r-odr-block">
-            <div class="d-flex align-items-center justify-content-between p-20">
-                <div class="text-warning">
-                    <i class="fas fa-utensils resto-img"></i>
-                </div>
-                <div class="iq-card-text">
-                    <h2 class="mb-0 line-height">25 K</h2>
-                    <p class="mb-0">Order Served</p>
-                </div>
+        <!-- Danh sách sản phẩm -->
+        <div class="product-grid" style="display: flex; flex-wrap: wrap; justify-content: space-between;">
+            @foreach($categories as $category => $items)
+                @foreach($items as $item)
+                    <div class="product-item" data-category="{{ strtolower($category) }}" style="width: calc(20% - 10px); margin-bottom: 20px; text-align: center; transition: transform 0.3s, box-shadow 0.3s;">
+                        <img src="{{ asset($item['image'] ? 'storage/' . $item['image'] : 'images/placeholder.jpg') }}" alt="{{ $item['name'] }}" style="width: 120px; height: 120px; border-radius: 5px; object-fit: cover;">
+                        <p style="font-weight: bold;">{{ $item['name'] }}</p>
+                        <p>{{ number_format($item['price'], 2) }} VNĐ</p>
+                        <button class="btn btn-primary btn-sm add-to-cart" data-name="{{ $item['name'] }}" data-price="{{ $item['price'] }}">Thêm</button>
+                    </div>
+                @endforeach
+            @endforeach
+        </div>
+    </div>
+
+    <!-- Cột 2: Phần Giỏ hàng -->
+    <aside class="cart-summary" style="flex: 1; background-color: #f9f9f9; padding: 20px; border-radius: 10px; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);">
+        {{-- <h3 class="text-center" style="color: #007acc; font-weight: bold;">Giỏ hàng</h3> --}}
+        <ul id="cart-items" class="list-group" style="max-height: 300px; overflow-y: auto;"></ul>
+        <div class="d-flex justify-content-between mt-3" style="font-size: 1.2em;">
+            <strong>Tổng cộng:</strong>
+            <span id="total-price">0.00 VNĐ</span>
+        </div>
+        <button class="btn btn-danger mt-3" id="clear-cart-button" style="width: 100%;">Xóa </button>
+        <button class="btn btn-success mt-3" id="checkout-button" style="width: 100%;">Thanh toán</button>
+    </aside>
+</div>
+
+<!-- Improved Notification for Table and Area -->
+<div id="cart-notification" class="cart-notification">
+    <span class="close-btn" onclick="hideNotification()">&#10005;</span>
+    <div class="notification-content">
+        <p><strong>Thành công!</strong> Món đã được thêm </p>
+        <p>Số bàn: <strong>{{ $table }}</strong>, Khu vực: <strong>{{ $tableArea }}</strong></p>
+    </div>
+</div>
+
+<!-- Checkout Modal -->
+<div class="modal fade" id="checkoutModal" tabindex="-1" role="dialog" aria-labelledby="checkoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title text-white" id="checkoutModalLabel">Chọn sản phẩm để thanh toán</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body p-4" style="background-color: #f9f9f9; border-radius: 10px; transition: transform 0.3s;">
+                <form id="checkout-form" action="{{ route('Ppayment', ['table_number' => $table]) }}" method="POST">
+                    @csrf
+                    <ul class="list-group" id="checkout-items-list" style="list-style: none; padding-left: 0;"></ul>
+
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="select-all-items">
+                            <label class="custom-control-label" for="select-all-items">Chọn tất cả</label>
+                        </div>
+                        <strong class="ml-auto">Tổng cộng: <span id="checkout-total-price" class="text-danger">0.00 VNĐ</span></strong>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary" id="confirm-checkout">Xác nhận thanh toán</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Item Modal -->
+<div class="modal fade" id="editItemModal" tabindex="-1" role="dialog" aria-labelledby="editItemModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title text-white" id="editItemModalLabel">Chỉnh sửa món ăn</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-item-form">
+                    <div class="form-group">
+                        <label for="itemName">Tên món ăn</label>
+                        <input type="text" class="form-control" id="itemName" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="itemQuantity">Số lượng</label>
+                        <input type="number" class="form-control" id="itemQuantity" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="itemPrice">Giá tiền</label>
+                        <input type="text" class="form-control" id="itemPrice">
+                    </div>
+                    <div class="form-group">
+                        <label for="itemDescription">Mô tả món ăn</label>
+                        <textarea class="form-control" id="itemDescription" rows="3" disabled></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="itemNotes">Ghi chú</label>
+                        <textarea class="form-control" id="itemNotes" rows="2"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy bỏ</button>
+                <button type="button" class="btn btn-primary" id="saveItemChanges">Lưu thay đổi</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Updated Script for Cart Handling and Edit Item Modal -->
+<script>
+    let cart = [];
+    let totalAmount = 0;
+
+    document.querySelectorAll('.btn-filter').forEach(button => {
+        button.addEventListener('click', function () {
+            document.querySelectorAll('.btn-filter').forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            const selectedCategory = this.getAttribute('data-category');
+            document.querySelectorAll('.product-item').forEach(item => {
+                const itemCategory = item.getAttribute('data-category');
+                if (selectedCategory === 'all' || itemCategory === selectedCategory) {
+                    item.style.display = 'block';
+                    item.style.opacity = 0;
+                    setTimeout(() => {
+                        item.style.opacity = 1;
+                    }, 100);
+                } else {
+                    item.style.opacity = 0;
+                    setTimeout(() => {
+                        item.style.display = 'none';
+                    }, 300);
+                }
+            });
+        });
+    });
+
+    function showNotification() {
+        const notification = document.getElementById('cart-notification');
+        notification.classList.add('show');
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 5000);
+    }
+
+    function hideNotification() {
+        const notification = document.getElementById('cart-notification');
+        notification.classList.remove('show');
+    }
+
+    function addToCart(name, price) {
+        const existingItem = cart.find(item => item.name === name);
+        if (existingItem) {
+            existingItem.quantity += 1;
+        } else {
+            cart.push({ name, price, quantity: 1 });
+        }
+        updateCart();
+        showNotification();
+    }
+
+    function updateCart() {
+        const cartItemsContainer = document.getElementById('cart-items');
+        cartItemsContainer.innerHTML = '';
+        let total = 0;
+        if (cart.length === 0) {
+            cartItemsContainer.innerHTML = '<li class="list-group-item">Giỏ hàng trống</li>';
+        }
+        cart.forEach((item, index) => {
+            const li = document.createElement('li');
+            li.className = 'list-group-item d-flex justify-content-between align-items-center';
+            li.innerHTML = `
+                <span class="cart-item-name">${item.name.length > 20 ? item.name.substring(0, 20) + '...' : item.name} x${item.quantity}</span>
                 <div>
-                    <span class="badge badge-success cust-badge">75% <i class="fas fa-angle-up ml-1"></i></span>
+                    <span>${(item.price * item.quantity).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</span>
+                    <button class="btn btn-info btn-sm edit-cart-item" data-index="${index}" style="margin-left: 10px;">Chỉnh sửa</button>
+                    <button class="btn btn-danger btn-sm remove-from-cart" data-index="${index}" style="margin-left: 10px;">X</button>
                 </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-xl-3 col-lg-6 col-md-6">
-        <div class="card card-block card-stretch card-height r-odr-block success">
-            <div class="d-flex align-items-center justify-content-between p-20">
-                <div class="text-success">
-                    <i class="fas fa-users resto-img"></i>
-                </div>
-                <div class="iq-card-text">
-                    <h2 class="mb-0 line-height">15 K</h2>
-                    <p class="mb-0">Daily User's</p>
-                </div>
-                <div>
-                    <span class="badge badge-success cust-badge">53% <i class="fas fa-angle-up ml-1"></i></span>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-xl-3 col-lg-6 col-md-6">
-        <div class="card card-block card-stretch card-height r-odr-block info">
-            <div class="d-flex align-items-center justify-content-between p-20">
-                <div class="text-info">
-                    <i class="fas fa-coins resto-img"></i>
-                </div>
-                <div class="iq-card-text">
-                    <h2 class="mb-0 line-height">40 K</h2>
-                    <p class="mb-0">Total Earning</p>
-                </div>
-                <div>
-                    <span class="badge badge-danger cust-badge">25% <i class="fas fa-angle-down ml-1"></i></span>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-xl-3 col-lg-6 col-md-6 ">
-        <div class="card card-block card-stretch card-height r-odr-block danger">
-            <div class="d-flex align-items-center justify-content-between p-20">
-                <div class="text-danger">
-                    <i class="fas fa-comment-alt resto-img"></i>
-                </div>
-                <div class="iq-card-text">
-                    <h2 class="mb-0 line-height">258</h2>
-                    <p class="mb-0">New Feedback</p>
-                </div>
-                <div>
-                    <span class="badge badge-danger cust-badge">20% <i class="fas fa-angle-down ml-1"></i></span>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-lg-6">
-        <div class="card card-block card-stretch card-height">
-            <div class="card-header d-flex justify-content-between">
-                <div class="header-title">
-                    <h4 class="card-title">Trending Order's</h4>
-                </div>
-                <div id="trending-order-slick-arrow" class="slick-aerrow-block"><button class="slick-prev slick-arrow" aria-label="Previous" type="button" style="">Previous</button>
+                <small>${item.notes ? "Ghi chú: " + item.notes : ""}</small>`;
+            cartItemsContainer.appendChild(li);
+            total += item.price * item.quantity;
+        });
+        document.getElementById('total-price').innerText = total.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+    }
 
-                <button class="slick-next slick-arrow" aria-label="Next" type="button" style="">Next</button></div>
-            </div>
-            <div class="card-body">
-                <div class="trending-order slick-initialized slick-slider">
-                    <div class="slick-list draggable"><div class="slick-track" style="opacity: 1; width: 3210px; transform: translate3d(-642px, 0px, 0px);"><div class="item slick-slide slick-cloned" data-slick-index="-2" id="" aria-hidden="true" tabindex="-1" style="width: 321px;">
-                        <img src="poss/assets/images/layouts/layout-6/or-3.png" class="img-fluid rounded-circle avatar-120 odr-img" alt="image">
-                        <div class="odr-content bg-danger-light">
-                            <span class="badge badge-white text-center"><i class="fas fa-heart text-danger"></i></span>
-                            <h5 class="mb-1">Veg Fried Rice</h5>
-                            <h5><strong>$15.25</strong></h5>
-                            <p class="mb-0">order: 55</p>
-                        </div>
-                    </div><div class="item slick-slide slick-cloned" data-slick-index="-1" id="" aria-hidden="true" tabindex="-1" style="width: 321px;">
-                        <img src="poss/assets/images/layouts/layout-6/or-1.png" class="img-fluid rounded-circle avatar-120 odr-img" alt="image">
-                        <div class="odr-content bg-danger-light">
-                            <span class="badge badge-white text-center"><i class="fas fa-heart text-danger"></i></span>
-                            <h5 class="mb-1">Mix Sushi Rice</h5>
-                            <h5 class="mb-1"><strong>$25.25</strong></h5>
-                            <p class="mb-0">order: 85</p>
-                        </div>
-                    </div><div class="item slick-slide slick-current slick-active" data-slick-index="0" aria-hidden="false" tabindex="0" style="width: 321px;">
-                        <img src="poss/assets/images/layouts/layout-6/or-1.png" class="img-fluid rounded-circle avatar-120 odr-img" alt="image">
-                        <div class="odr-content bg-danger-light">
-                            <span class="badge badge-white text-center"><i class="fas fa-heart text-danger"></i></span>
-                            <h5 class="mb-1">Mix Sushi Rice</h5>
-                            <h5><strong>$25.25</strong></h5>
-                            <p class="mb-0">order: 85</p>
-                        </div>
-                    </div><div class="item slick-slide slick-active" data-slick-index="1" aria-hidden="false" tabindex="0" style="width: 321px;">
-                        <img src="poss/assets/images/layouts/layout-6/or-2.png" class="img-fluid rounded-circle avatar-120 odr-img" alt="image">
-                        <div class="odr-content bg-success-light">
-                            <span class="badge badge-white text-center"><i class="fas fa-heart text-danger"></i></span>
-                            <h5 class="mb-1">Tropical Fruits</h5>
-                            <h5><strong>$36.25</strong></h5>
-                            <p class="mb-0">order: 70</p>
-                        </div>
-                    </div><div class="item slick-slide" data-slick-index="2" aria-hidden="true" tabindex="-1" style="width: 321px;">
-                        <img src="poss/assets/images/layouts/layout-6/or-3.png" class="img-fluid rounded-circle avatar-120 odr-img" alt="image">
-                        <div class="odr-content bg-danger-light">
-                            <span class="badge badge-white text-center"><i class="fas fa-heart text-danger"></i></span>
-                            <h5 class="mb-1">Veg Fried Rice</h5>
-                            <h5><strong>$15.25</strong></h5>
-                            <p class="mb-0">order: 55</p>
-                        </div>
-                    </div><div class="item slick-slide" data-slick-index="3" aria-hidden="true" tabindex="-1" style="width: 321px;">
-                        <img src="poss/assets/images/layouts/layout-6/or-1.png" class="img-fluid rounded-circle avatar-120 odr-img" alt="image">
-                        <div class="odr-content bg-danger-light">
-                            <span class="badge badge-white text-center"><i class="fas fa-heart text-danger"></i></span>
-                            <h5 class="mb-1">Mix Sushi Rice</h5>
-                            <h5 class="mb-1"><strong>$25.25</strong></h5>
-                            <p class="mb-0">order: 85</p>
-                        </div>
-                    </div><div class="item slick-slide slick-cloned" data-slick-index="4" id="" aria-hidden="true" tabindex="-1" style="width: 321px;">
-                        <img src="poss/assets/images/layouts/layout-6/or-1.png" class="img-fluid rounded-circle avatar-120 odr-img" alt="image">
-                        <div class="odr-content bg-danger-light">
-                            <span class="badge badge-white text-center"><i class="fas fa-heart text-danger"></i></span>
-                            <h5 class="mb-1">Mix Sushi Rice</h5>
-                            <h5><strong>$25.25</strong></h5>
-                            <p class="mb-0">order: 85</p>
-                        </div>
-                    </div><div class="item slick-slide slick-cloned" data-slick-index="5" id="" aria-hidden="true" tabindex="-1" style="width: 321px;">
-                        <img src="poss/assets/images/layouts/layout-6/or-2.png" class="img-fluid rounded-circle avatar-120 odr-img" alt="image">
-                        <div class="odr-content bg-success-light">
-                            <span class="badge badge-white text-center"><i class="fas fa-heart text-danger"></i></span>
-                            <h5 class="mb-1">Tropical Fruits</h5>
-                            <h5><strong>$36.25</strong></h5>
-                            <p class="mb-0">order: 70</p>
-                        </div>
-                    </div><div class="item slick-slide slick-cloned" data-slick-index="6" id="" aria-hidden="true" tabindex="-1" style="width: 321px;">
-                        <img src="poss/assets/images/layouts/layout-6/or-3.png" class="img-fluid rounded-circle avatar-120 odr-img" alt="image">
-                        <div class="odr-content bg-danger-light">
-                            <span class="badge badge-white text-center"><i class="fas fa-heart text-danger"></i></span>
-                            <h5 class="mb-1">Veg Fried Rice</h5>
-                            <h5><strong>$15.25</strong></h5>
-                            <p class="mb-0">order: 55</p>
-                        </div>
-                    </div><div class="item slick-slide slick-cloned" data-slick-index="7" id="" aria-hidden="true" tabindex="-1" style="width: 321px;">
-                        <img src="poss/assets/images/layouts/layout-6/or-1.png" class="img-fluid rounded-circle avatar-120 odr-img" alt="image">
-                        <div class="odr-content bg-danger-light">
-                            <span class="badge badge-white text-center"><i class="fas fa-heart text-danger"></i></span>
-                            <h5 class="mb-1">Mix Sushi Rice</h5>
-                            <h5 class="mb-1"><strong>$25.25</strong></h5>
-                            <p class="mb-0">order: 85</p>
-                        </div>
-                    </div></div></div>
-
-
-
+    function populateCheckoutModal() {
+        const checkoutItemsList = document.getElementById('checkout-items-list');
+        checkoutItemsList.innerHTML = '';
+        cart.forEach((item, index) => {
+            const li = document.createElement('li');
+            li.className = 'list-group-item d-flex justify-content-between align-items-center';
+            li.innerHTML = `
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input checkout-item" id="checkout-item-${index}" name="items[]" value="${item.name}" data-index="${index}" data-price="${item.price * item.quantity}">
+                    <label class="custom-control-label" for="checkout-item-${index}">${item.quantity} x ${item.name}</label>
                 </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-6">
-        <div class="card card-transparent">
-            <div class="resto-blog slick-initialized slick-slider">
-                <div class="slick-list draggable"><div class="slick-track" style="opacity: 1; width: 2728px; transform: translate3d(-682px, 0px, 0px);"><div class="item slick-slide slick-cloned" data-slick-index="-2" id="" aria-hidden="true" tabindex="-1" style="width: 341px;">
-                    <img src="poss/assets/images/layouts/layout-6/blog-2.jpg" class="rounded img-fluid w-100" alt="image">
-                    <div class="r-blog-content">
-                        <h4 class="mb-1">Pancake World</h4>
-                        <div class="d-flex justify-content-left mb-1">
-                            <a href="#" tabindex="-1"><i class="las la-star text-warning"></i></a>
-                            <a href="#" tabindex="-1"><i class="las la-star text-warning"></i></a>
-                            <a href="#" tabindex="-1"><i class="las la-star text-warning"></i></a>
-                            <a href="#" tabindex="-1"><i class="las la-star text-warning"></i></a>
-                            <a href="#" tabindex="-1"><i class="las la-star text-light"></i></a>
-                        </div>
-                        <p class="body-text font-weight-bold mb-1"><i class="las la-map-marker-alt mr-1"></i> 8517 West Norcross, GA
-                            30092</p>
-                        <p class="mb-0">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
-                    </div>
-                </div><div class="item slick-slide slick-cloned" data-slick-index="-1" id="" aria-hidden="true" tabindex="-1" style="width: 341px;">
-                    <img src="poss/assets/images/layouts/layout-6/blog-3.jpg" class="rounded img-fluid w-100" alt="image">
-                    <div class="r-blog-content">
-                        <h4 class="mb-1">Green Curry</h4>
-                        <div class="d-flex justify-content-left mb-1">
-                            <a href="#" tabindex="-1"><i class="las la-star text-warning"></i></a>
-                            <a href="#" tabindex="-1"><i class="las la-star text-warning"></i></a>
-                            <a href="#" tabindex="-1"><i class="las la-star text-warning"></i></a>
-                            <a href="#" tabindex="-1"><i class="las la-star text-warning"></i></a>
-                            <a href="#" tabindex="-1"><i class="las la-star text-light"></i></a>
-                        </div>
-                        <p class="body-text font-weight-bold mb-1"><i class="las la-map-marker-alt mr-1"></i> 8517 West Norcross, GA
-                            30092</p>
-                        <p class="mb-0">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
-                    </div>
-                </div><div class="item slick-slide slick-current slick-active" data-slick-index="0" aria-hidden="false" tabindex="0" style="width: 341px;">
-                    <img src="poss/assets/images/layouts/layout-6/blog-1.jpg" class="rounded img-fluid w-100" alt="image">
-                    <div class="r-blog-content">
-                        <h4 class="mb-1">Green Curry</h4>
-                        <div class="d-flex justify-content-left mb-1">
-                            <a href="#" tabindex="0"><i class="las la-star text-warning"></i></a>
-                            <a href="#" tabindex="0"><i class="las la-star text-warning"></i></a>
-                            <a href="#" tabindex="0"><i class="las la-star text-warning"></i></a>
-                            <a href="#" tabindex="0"><i class="las la-star text-warning"></i></a>
-                            <a href="#" tabindex="0"><i class="las la-star text-light"></i></a>
-                        </div>
-                        <p class="body-text font-weight-bold mb-1"><i class="las la-map-marker-alt mr-1"></i> 8517 West Norcross, GA 30092</p>
-                        <p class="mb-0">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
-                    </div>
-                </div><div class="item slick-slide slick-active" data-slick-index="1" aria-hidden="false" tabindex="0" style="width: 341px;">
-                    <img src="poss/assets/images/layouts/layout-6/blog-2.jpg" class="rounded img-fluid w-100" alt="image">
-                    <div class="r-blog-content">
-                        <h4 class="mb-1">Pancake World</h4>
-                        <div class="d-flex justify-content-left mb-1">
-                            <a href="#" tabindex="0"><i class="las la-star text-warning"></i></a>
-                            <a href="#" tabindex="0"><i class="las la-star text-warning"></i></a>
-                            <a href="#" tabindex="0"><i class="las la-star text-warning"></i></a>
-                            <a href="#" tabindex="0"><i class="las la-star text-warning"></i></a>
-                            <a href="#" tabindex="0"><i class="las la-star text-light"></i></a>
-                        </div>
-                        <p class="body-text font-weight-bold mb-1"><i class="las la-map-marker-alt mr-1"></i> 8517 West Norcross, GA
-                            30092</p>
-                        <p class="mb-0">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
-                    </div>
-                </div><div class="item slick-slide" data-slick-index="2" aria-hidden="true" tabindex="-1" style="width: 341px;">
-                    <img src="poss/assets/images/layouts/layout-6/blog-3.jpg" class="rounded img-fluid w-100" alt="image">
-                    <div class="r-blog-content">
-                        <h4 class="mb-1">Green Curry</h4>
-                        <div class="d-flex justify-content-left mb-1">
-                            <a href="#" tabindex="-1"><i class="las la-star text-warning"></i></a>
-                            <a href="#" tabindex="-1"><i class="las la-star text-warning"></i></a>
-                            <a href="#" tabindex="-1"><i class="las la-star text-warning"></i></a>
-                            <a href="#" tabindex="-1"><i class="las la-star text-warning"></i></a>
-                            <a href="#" tabindex="-1"><i class="las la-star text-light"></i></a>
-                        </div>
-                        <p class="body-text font-weight-bold mb-1"><i class="las la-map-marker-alt mr-1"></i> 8517 West Norcross, GA
-                            30092</p>
-                        <p class="mb-0">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
-                    </div>
-                </div><div class="item slick-slide slick-cloned" data-slick-index="3" id="" aria-hidden="true" tabindex="-1" style="width: 341px;">
-                    <img src="poss/assets/images/layouts/layout-6/blog-1.jpg" class="rounded img-fluid w-100" alt="image">
-                    <div class="r-blog-content">
-                        <h4 class="mb-1">Green Curry</h4>
-                        <div class="d-flex justify-content-left mb-1">
-                            <a href="#" tabindex="-1"><i class="las la-star text-warning"></i></a>
-                            <a href="#" tabindex="-1"><i class="las la-star text-warning"></i></a>
-                            <a href="#" tabindex="-1"><i class="las la-star text-warning"></i></a>
-                            <a href="#" tabindex="-1"><i class="las la-star text-warning"></i></a>
-                            <a href="#" tabindex="-1"><i class="las la-star text-light"></i></a>
-                        </div>
-                        <p class="body-text font-weight-bold mb-1"><i class="las la-map-marker-alt mr-1"></i> 8517 West Norcross, GA 30092</p>
-                        <p class="mb-0">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
-                    </div>
-                </div><div class="item slick-slide slick-cloned" data-slick-index="4" id="" aria-hidden="true" tabindex="-1" style="width: 341px;">
-                    <img src="poss/assets/images/layouts/layout-6/blog-2.jpg" class="rounded img-fluid w-100" alt="image">
-                    <div class="r-blog-content">
-                        <h4 class="mb-1">Pancake World</h4>
-                        <div class="d-flex justify-content-left mb-1">
-                            <a href="#" tabindex="-1"><i class="las la-star text-warning"></i></a>
-                            <a href="#" tabindex="-1"><i class="las la-star text-warning"></i></a>
-                            <a href="#" tabindex="-1"><i class="las la-star text-warning"></i></a>
-                            <a href="#" tabindex="-1"><i class="las la-star text-warning"></i></a>
-                            <a href="#" tabindex="-1"><i class="las la-star text-light"></i></a>
-                        </div>
-                        <p class="body-text font-weight-bold mb-1"><i class="las la-map-marker-alt mr-1"></i> 8517 West Norcross, GA
-                            30092</p>
-                        <p class="mb-0">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
-                    </div>
-                </div><div class="item slick-slide slick-cloned" data-slick-index="5" id="" aria-hidden="true" tabindex="-1" style="width: 341px;">
-                    <img src="poss/assets/images/layouts/layout-6/blog-3.jpg" class="rounded img-fluid w-100" alt="image">
-                    <div class="r-blog-content">
-                        <h4 class="mb-1">Green Curry</h4>
-                        <div class="d-flex justify-content-left mb-1">
-                            <a href="#" tabindex="-1"><i class="las la-star text-warning"></i></a>
-                            <a href="#" tabindex="-1"><i class="las la-star text-warning"></i></a>
-                            <a href="#" tabindex="-1"><i class="las la-star text-warning"></i></a>
-                            <a href="#" tabindex="-1"><i class="las la-star text-warning"></i></a>
-                            <a href="#" tabindex="-1"><i class="las la-star text-light"></i></a>
-                        </div>
-                        <p class="body-text font-weight-bold mb-1"><i class="las la-map-marker-alt mr-1"></i> 8517 West Norcross, GA
-                            30092</p>
-                        <p class="mb-0">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
-                    </div>
-                </div></div></div>
+                <span>${(item.price * item.quantity).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</span>`;
+            checkoutItemsList.appendChild(li);
+        });
+    }
 
+    document.querySelector('.menu-container').addEventListener('click', function (e) {
+        if (e.target.classList.contains('add-to-cart')) {
+            const name = e.target.getAttribute('data-name');
+            const price = parseFloat(e.target.getAttribute('data-price'));
+            addToCart(name, price);
+        }
+    });
 
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-lg-12">
-        <div class="card card-block card-stretch card-height">
-            <div class="card-header d-flex justify-content-between">
-                <div class="header-title">
-                    <h4 class="card-title">Order List</h4>
-                </div>
-                <div class="card-header-toolbar d-flex align-items-center">
-                    <button class="btn btn-warning">View All</button>
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper no-footer"><div class="dataTables_length" id="DataTables_Table_0_length"><label>Show <select name="DataTables_Table_0_length" aria-controls="DataTables_Table_0" class=""><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option></select> entries</label></div><div id="DataTables_Table_0_filter" class="dataTables_filter"><label>Search:<input type="search" class="" placeholder="" aria-controls="DataTables_Table_0"></label></div><table class="table mb-0 table-borderless data-table dataTable no-footer" id="DataTables_Table_0" role="grid" aria-describedby="DataTables_Table_0_info">
-                        <thead class="order-resto">
-                            <tr role="row"><th class="sorting_asc" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Order ID: activate to sort column descending" style="width: 84.6875px;">Order ID</th><th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="Order Name: activate to sort column ascending" style="width: 154.65px;">Order Name</th><th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="Customer Name: activate to sort column ascending" style="width: 171.238px;">Customer Name</th><th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="Date &amp;amp; Time: activate to sort column ascending" style="width: 171.875px;">Date &amp; Time</th><th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="Amount: activate to sort column ascending" style="width: 75.95px;">Amount</th><th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="Ph No.: activate to sort column ascending" style="width: 180.25px;">Ph No.</th><th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="Quantity: activate to sort column ascending" style="width: 82.125px;">Quantity</th><th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="Location: activate to sort column ascending" style="width: 80.125px;">Location</th><th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="Status: activate to sort column ascending" style="width: 76.025px;">Status</th><th scope="col" class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="Action: activate to sort column ascending" style="width: 77.075px;">Action</th></tr>
-                        </thead>
-                        <tbody class="odr-tble">
+    document.querySelector('.menu-container').addEventListener('click', function (e) {
+        if (e.target.classList.contains('edit-cart-item')) {
+            const index = parseInt(e.target.getAttribute('data-index'));
+            const item = cart[index];
 
+            // Gán giá trị vào modal
+            document.getElementById('itemName').value = item.name;
+            document.getElementById('itemQuantity').value = item.quantity;
+            document.getElementById('itemPrice').value = (item.price * item.quantity).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+            document.getElementById('itemNotes').value = item.notes || '';
 
+            // Save original price for calculations
+            const originalPrice = item.price;
 
-                        <tr role="row" class="odd">
-                                <td class="sorting_1">
-                                    #12345
-                                </td>
-                                <td>Lorem Ipsum Idor
-                                </td>
-                                <td>
-                                    Mario Speedwagon
-                                </td>
-                                <td>
-                                    09/09/2020 , 09:30
-                                </td>
-                                <td>
-                                    $85
-                                </td>
-                                <td>
-                                    + 114 12345 67891
-                                </td>
-                                <td>
-                                    05
-                                </td>
-                                <td>
-                                    Canada
-                                </td>
-                                <td>
-                                    <span class="badge badge-success">Paid</span>
-                                </td>
-                                <td>
-                                    <div class="d-flex align-items-center list-action">
-                                        <a class="badge bg-success-light mr-2" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit" href="#"><i class="ri-pencil-line"></i></a>
-                                        <a class="badge bg-danger-light" data-toggle="tooltip" data-placement="top" title="" data-original-title="Delete" href="#"><i class="ri-delete-bin-line"></i></a>
-                                    </div>
-                                </td>
-                            </tr><tr role="row" class="even">
-                                <td class="sorting_1">
-                                    #56565
-                                </td>
-                                <td>Lorem Ipsum Idor
-                                </td>
-                                <td>
-                                    Petey Cruiser
-                                </td>
-                                <td>
-                                    08/09/2020 , 11:30
-                                </td>
-                                <td>
-                                    $21
-                                </td>
-                                <td>
-                                    + 114 12345 67891
-                                </td>
-                                <td>
-                                    15
-                                </td>
-                                <td>
-                                    England
-                                </td>
-                                <td>
-                                    <span class="badge badge-danger">Pending</span>
-                                </td>
-                                <td>
-                                    <div class="d-flex align-items-center list-action">
-                                        <a class="badge bg-success-light mr-2" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit" href="#"><i class="ri-pencil-line"></i></a>
-                                        <a class="badge bg-danger-light" data-toggle="tooltip" data-placement="top" title="" data-original-title="Delete" href="#"><i class="ri-delete-bin-line"></i></a>
-                                    </div>
-                                </td>
-                            </tr><tr role="row" class="odd">
-                                <td class="sorting_1">
-                                    #766768
-                                </td>
-                                <td>Lorem Ipsum Idor
-                                </td>
-                                <td>
-                                    Anna Sthesia
-                                </td>
-                                <td>
-                                    05/09/2020 , 07:30
-                                </td>
-                                <td>
-                                    $65
-                                </td>
-                                <td>
-                                    + 114 12345 67891
-                                </td>
-                                <td>
-                                    08
-                                </td>
-                                <td>
-                                    London
-                                </td>
-                                <td>
-                                    <span class="badge badge-success">Paid</span>
-                                </td>
-                                <td>
-                                    <div class="d-flex align-items-center list-action">
-                                        <a class="badge bg-success-light mr-2" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit" href="#"><i class="ri-pencil-line"></i></a>
-                                        <a class="badge bg-danger-light" data-toggle="tooltip" data-placement="top" title="" data-original-title="Delete" href="#"><i class="ri-delete-bin-line"></i></a>
-                                    </div>
-                                </td>
-                            </tr></tbody>
-                    </table><div class="dataTables_info" id="DataTables_Table_0_info" role="status" aria-live="polite">Showing 1 to 3 of 3 entries</div><div class="dataTables_paginate paging_simple_numbers" id="DataTables_Table_0_paginate"><a class="paginate_button previous disabled" aria-controls="DataTables_Table_0" data-dt-idx="0" tabindex="0" id="DataTables_Table_0_previous">Previous</a><span><a class="paginate_button current" aria-controls="DataTables_Table_0" data-dt-idx="1" tabindex="0">1</a></span><a class="paginate_button next disabled" aria-controls="DataTables_Table_0" data-dt-idx="2" tabindex="0" id="DataTables_Table_0_next">Next</a></div></div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-</div>
-</div>
+            // Update price dynamically when quantity changes
+            document.getElementById('itemQuantity').addEventListener('input', function () {
+                const newQuantity = parseInt(this.value);
+                if (newQuantity > 0) {
+                    const newPrice = (originalPrice * newQuantity).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+                    document.getElementById('itemPrice').value = newPrice;
+                }
+            });
 
-@endsection --}}
+            // Hiển thị modal
+            $('#editItemModal').modal('show');
+
+            // Xử lý khi người dùng lưu thay đổi
+            document.getElementById('saveItemChanges').addEventListener('click', function () {
+                const newQuantity = parseInt(document.getElementById('itemQuantity').value);
+                const newNotes = document.getElementById('itemNotes').value;
+
+                if (newQuantity > 0) {
+                    // Cập nhật số lượng và ghi chú
+                    cart[index].quantity = newQuantity;
+                    cart[index].notes = newNotes;
+
+                    // Cập nhật lại giỏ hàng và đóng modal
+                    updateCart();
+                    $('#editItemModal').modal('hide');
+                } else {
+                    alert('Số lượng phải lớn hơn 0.');
+                }
+            });
+        }
+    });
+
+    document.querySelector('.menu-container').addEventListener('click', function (e) {
+        if (e.target.classList.contains('remove-from-cart')) {
+            const index = parseInt(e.target.getAttribute('data-index'));
+            cart.splice(index, 1);
+            updateCart();
+        }
+    });
+
+    document.getElementById('checkout-button').addEventListener('click', function () {
+        populateCheckoutModal();
+        $('#checkoutModal').modal('show');
+    });
+
+    document.getElementById('checkout-items-list').addEventListener('change', function (e) {
+        const items = document.querySelectorAll('.checkout-item');
+        totalAmount = 0;
+        items.forEach(item => {
+            if (item.checked) {
+                totalAmount += parseFloat(item.getAttribute('data-price'));
+            }
+        });
+        document.getElementById('checkout-total-price').innerText = totalAmount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+    });
+
+    document.getElementById('select-all-items').addEventListener('change', function () {
+        const items = document.querySelectorAll('.checkout-item');
+        const isChecked = this.checked;
+        items.forEach(item => {
+            item.checked = isChecked;
+        });
+        document.getElementById('checkout-items-list').dispatchEvent(new Event('change'));
+    });
+
+    document.getElementById('confirm-checkout').addEventListener('click', function () {
+        if (totalAmount > 0) {
+            document.getElementById('checkout-form').submit();
+        } else {
+            alert('Vui lòng chọn ít nhất một sản phẩm để thanh toán.');
+        }
+    });
+
+    document.getElementById('clear-cart-button').addEventListener('click', function () {
+        if (confirm('Bạn có chắc chắn muốn xóa giỏ hàng?')) {
+            cart = [];
+            updateCart();
+        }
+    });
+</script>
+@endsection
