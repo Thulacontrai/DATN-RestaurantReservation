@@ -145,7 +145,7 @@ class ReservationController extends Controller
 
         Reservation::where('reservation_date', '=', $now->toDateString())
             ->where('reservation_time', '<', $now->copy()->subMinutes(15)->toTimeString())
-            ->where('status', 'Pending')
+            ->where('status', 'Confirmed')
             ->update(['status' => 'Cancelled']);
     }
 
@@ -157,7 +157,7 @@ class ReservationController extends Controller
         return Reservation::where('reservation_date', '=', $now->toDateString())
             ->where('reservation_time', '>=', $now->toTimeString())
             ->where('reservation_time', '<=', $now->copy()->addMinutes(30)->toTimeString())
-            ->where('status', 'Pending')
+            ->where('status', 'Confirmed')
 
             ->get();
     }
@@ -170,7 +170,7 @@ class ReservationController extends Controller
         return Reservation::where('reservation_date', '=', $now->toDateString())
             ->where('reservation_time', '<', $now->toTimeString())
             ->where('reservation_time', '>=', $now->copy()->subMinutes(15)->toTimeString())
-            ->where('status', 'Pending')
+            ->where('status', 'Confirmed')
             ->get();
     }
 
