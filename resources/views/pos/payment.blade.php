@@ -84,16 +84,6 @@
                 </div>
             </div>
 
-            <!-- Thẻ thanh toán bằng thẻ -->
-            <div class="col-lg-4 col-md-6">
-                <div class="payment-method-card card shadow-lg border-0 text-center p-3 payment-option hover-effect"
-                    id="cardPaymentBtn" data-toggle="modal" data-target="#cardPaymentSection">
-                    <!-- Icon thẻ ngân hàng -->
-                    <i class="fas fa-credit-card fa-3x mb-2 text-primary"></i>
-                    <h5 class="text-primary">Thanh toán bằng thẻ</h5>
-                </div>
-            </div>
-
             <!-- Thẻ chuyển khoản ngân hàng -->
             <div class="col-lg-4 col-md-6">
                 <div class="payment-method-card card shadow-lg border-0 text-center p-3 payment-option hover-effect"
@@ -146,24 +136,6 @@
                                     toán</button>
                         </form>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Thanh toán bằng thẻ -->
-    <div id="cardPaymentSection" class="modal fade" tabindex="-1" aria-labelledby="cardPaymentLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="cardPaymentLabel">Nhập thông tin thẻ ngân hàng</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    1
                 </div>
             </div>
         </div>
@@ -250,7 +222,7 @@
             cashGivenInput.addEventListener('input', function() {
                 let cashGiven = parseInt(cashGivenInput.value.replace(/\D/g, '')); // Chỉ nhận số
                 if (!isNaN(cashGiven)) {
-                    let change = cashGiven - totalAmount;
+                    let change = cashGiven - totalAmount + deposit;
                     changeAmount.textContent = change > 0 ? change.toLocaleString('vi-VN') + ' VND' :
                         "0 VND";
                 } else {
@@ -307,6 +279,7 @@
                     document.querySelectorAll('#payment-options button').forEach(btn => btn.classList
                         .remove('selected'));
                     button.classList.add('selected');
+                    toggleSubmitButton();
                 };
 
                 paymentOptionsContainer.appendChild(button);
@@ -316,16 +289,16 @@
             $(document).ready(function() {
                 var checkInterval = 1000;
                 var delayBeforeStart = 2000;
-                // var desiredAmount = {{ $total_amount }};
-                // var desiredDescription = {{ $orderId }};
-                var desiredAmount = 2000;
-                var desiredDescription = 'test';
+                var desiredAmount = {{ $total_amount }};
+                var desiredDescription = 'Thanh Toan Don Hang ' + {{ $orderId }};
+                // var desiredAmount = 2000;
+                // var desiredDescription = 'test';
                 var transactionFound = false;
                 var intervalId;
                 // Hàm kiểm tra giao dịch
                 function checkTransaction() {
                     $.ajax({
-                        url: 'https://script.google.com/macros/s/AKfycbykL1FhIB2kEaReIq9wzGqfY1SY5cRxOvsmB7hVNc_IY3wqz_sDgVJVQCJCEWsn2CPE/exec', // Thay thế bằng URL hoặc route thực tế
+                        url: 'https://script.google.com/macros/s/AKfycbykL1FhIB2kEaReIq9wzGqfY1SY5cRxOvsmB7hVNc_IY3wqz_sDgVJVQCJCEWsn2CPE/exec',
                         type: 'GET',
                         dataType: 'json',
                         success: function(data) {
