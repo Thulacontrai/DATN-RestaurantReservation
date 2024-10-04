@@ -84,7 +84,7 @@
                                                             <i class="bi bi-list text-green"></i>
                                                         </a>
                                                         <a href="#" class="deleteRow">
-                                                            <i class="bi bi-trash text-red"></i>
+                                                            <i class="bi bi-printer text-primary"></i>
                                                         </a>
                                                     </div>
                                                 </td>
