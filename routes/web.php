@@ -161,6 +161,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 
     Route::resource('reservation', ReservationController::class);
+    Route::post('reservation/cancel/{id}', [ReservationController::class, 'cancel'])->name('reservation.cancel');
     Route::resource('reservationTable', ReservationTableController::class);
     Route::resource('reservationHistory', ReservationHistoryController::class);
 
