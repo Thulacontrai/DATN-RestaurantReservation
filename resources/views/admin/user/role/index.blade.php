@@ -42,6 +42,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+
                                     @if ($roles->isNotEmpty())
                                         @foreach ($roles as $role)
                                             <tr>
@@ -50,10 +51,15 @@
                                                 <td>{{ $role->permissions->pluck('name')->implode(' , ') }}</td>
                                                 <td>{{ $role->created_at }}</td>
                                                 <td>
+
+                                                    
                                                     <div class="actions">
+                                                        @can('Sửa vai trò')
                                                         <a href="{{ route('admin.role.edit', $role->id) }}">
                                                             <i class="bi bi-pencil-square text-warning"></i>
                                                         </a>
+                                                        @endcan
+
                                                         <a href="#">
                                                             <form
                                                                 action="{{ route('admin.role.destroy', $role->id) }}"
@@ -71,6 +77,7 @@
                                             </tr>
                                         @endforeach
                                     @endif
+
 
 
 

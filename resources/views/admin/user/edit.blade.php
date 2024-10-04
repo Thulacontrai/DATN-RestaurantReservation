@@ -84,7 +84,10 @@
                                 
 
                                 <button type="submit" class="btn btn-sm btn-primary">Cập Nhật</button>
-                                <a href="{{ route('admin.role.index') }}" class="btn btn-sm btn-secondary">Hủy</a>
+
+                                <a href="{{ route('admin.user.index') }}" class="btn btn-sm btn-secondary">Hủy</a>
+
+
                             </form>
                             <!-- Kết thúc Form Chỉnh Sửa -->
 
