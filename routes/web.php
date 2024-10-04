@@ -96,8 +96,10 @@ route::post(
     "MOMOCheckout",
     action: [OnlineCheckoutController::class, "onlineCheckout"]
 )->name("MOMOCheckout.client");
-
-
+route::post(
+    "checkout/{orderID}",
+    action: [ReservationController::class, "checkout"]
+)->name("checkout.admin");
 
 route::get("/about", function () {
     return view("client.about");
@@ -179,7 +181,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/', function () {
 
         return view('auth.login');
-    });  
+    });
 
 
 
@@ -191,10 +193,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 
     /// xếp bàn cho khách
-    Route::get('reservation/{reservationId}/assign-tables', [ReservationController::class,'assignTables'])->name('reservation.assignTables');
-    Route::get('reservation/assign-table', [ReservationController::class,'assignTable'])->name('assignTable');
-    Route::post('reservation/submit-table', [ReservationController::class,'submitTable'])->name('submit.tables');
-    Route::post('reservation/submit-move-table', [ReservationController::class,'submitMoveTable'])->name('submit.Movetables');
+    Route::get('reservation/{reservationId}/assign-tables', [ReservationController::class, 'assignTables'])->name('reservation.assignTables');
+    Route::get('reservation/assign-table', [ReservationController::class, 'assignTable'])->name('assignTable');
+    Route::post('reservation/submit-table', [ReservationController::class, 'submitTable'])->name('submit.tables');
+    Route::post('reservation/submit-move-table', [ReservationController::class, 'submitMoveTable'])->name('submit.Movetables');
 
 
     Route::resource('reservation', ReservationController::class);
@@ -314,4 +316,7 @@ Route::post('/verify-code', [CustomerAuthController::class, 'verifyCode'])->name
 Route::post('/check-account', [CustomerAuthController::class, 'checkAccount']);
 
 
+Route::get('/test', function () {
+    return view('test');
+});
 require __DIR__ . '/auth.php';

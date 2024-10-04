@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreReservationRquest;
 use App\Models\Coupon;
+use App\Models\Order;
 use App\Models\Reservation;
 use App\Models\Table;
 use App\Models\ReservationTable;
@@ -371,8 +372,38 @@ class ReservationController extends Controller
         $deposit = $showDeposit['guest_count'] * 100000;
         return view('client.deposit', compact('showDeposit', 'deposit'));
     }
-
-
+    public function checkout($orderId, Request $request)
+    {
+        DB::transaction(function () use ($request, $orderId) {
+            $itemsCount = DB::table('orders_items')->where('order_id', $orderId)->count();
+            $order = Order::find($orderId);
+            $table = Table::find($order->table_id);
+            $itemNames = $request->item_name;
+            $quantities = $request->quantity;
+            foreach ($itemNames as $index => $itemName) {
+                DB::table('orders_items')
+                    ->where('order_id', $orderId)
+                    ->where('dish_id', $itemName)
+                    ->update(['quantity' => DB::raw('quantity - ' . $quantities[$index])]);
+                DB::table('orders_items')
+                    ->where('order_id', $orderId)
+                    ->where('dish_id', $itemName)
+                    ->where('quantity', '<=', '0')
+                    ->delete();
+            }
+            if ($itemsCount == 0) {
+                Order::where('id', '=', $orderId)
+                    ->update(['status' => 'completed']);
+                Table::where('id', '=', $table->id)
+                    ->update(['status' => 'Available']);
+                ReservationTable::where('reservation_id', $order->reservation_id)
+                    ->where('table_id', $order->table_id)
+                    ->update(['status' => 'available']);
+                ;
+            }
+        });
+        return redirect(route('pos.index'));
+    }
 
 
     public function assignTables($reservationId)

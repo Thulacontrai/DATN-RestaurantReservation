@@ -4,9 +4,13 @@ namespace App\Http\Controllers\Pos;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Combo;
+use App\Models\Dishes;
 use App\Models\Order;
 use App\Models\Table;
 use App\Models\Payment;
+use App\Models\Reservation;
+use App\Models\ReservationTable;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -54,9 +58,9 @@ class PosController extends Controller
 
 
     public function orders()
-{
-    return $this->hasMany(Order::class);
-}
+    {
+        return $this->hasMany(Order::class);
+    }
 
 
 
@@ -115,20 +119,23 @@ class PosController extends Controller
         }
     }
 
-    public function Ppayment($tableNumber, Request $request)
+    public function Ppayment($orderId, Request $request)
     {
-        try {
-            $selectedItems = $request->input('items', []);
-
-            if (!is_array($selectedItems) || empty($selectedItems)) {
-                return back()->with('error', 'No items selected for payment.');
-            }
-
-            return view('pos.payment', compact('tableNumber', 'selectedItems'));
-        } catch (\Exception $e) {
-            Log::error('Error loading payment page: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
-            return back()->with('error', 'An error occurred while navigating to the payment page.');
-        }
+        $order = Order::find($orderId);
+        $reservation = Reservation::find($order->reservation_id);
+        $table = Table::find($order->table_id);
+        $reservation_table = ReservationTable::where('reservation_id', $order->reservation_id)
+            ->where('table_id', $order->table_id)
+            ->first();
+        $order_items = Dishes::whereIn('id', $request->order_item)->get();
+        $staff_id = User::find($order->staff_id);
+        $customer_id = User::find($order->customer_id);
+        $total_amount = $request->total_amount;
+        $order_item = $request->order_item;
+        return view(
+            'pos.payment',
+            compact('orderId', 'order', 'reservation', 'table', 'reservation_table', 'order_items', 'staff_id', 'customer_id', 'total_amount', 'order_item', )
+        );
     }
 
 
