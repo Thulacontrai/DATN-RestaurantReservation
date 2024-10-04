@@ -156,6 +156,7 @@
                                                     @endif
                                                 </td>
 
+
                                             <td>
                                                 <div class="actions">
                                                     <a href="{{ route('admin.reservation.show', $reservation->id) }}" class="editRow" data-id="{{ $reservation->id }}">
@@ -163,6 +164,7 @@
                                                     </a>
                                                     <a href="{{ route('admin.reservation.edit', $reservation->id) }}" class="editRow" data-id="{{ $reservation->id }}">
                                                         <i class="bi bi-pencil-square text-warning"></i>
+
 
                                                     </a>
                                                     <a href="{{ route('admin.reservation.assignTables', $reservation->id) }}" class="editRow" data-id="{{ $reservation->id }}">

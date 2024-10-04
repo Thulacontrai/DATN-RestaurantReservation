@@ -253,6 +253,19 @@ class ReservationController extends Controller
         }
     }
 
+    public function cancel($id)
+    {
+        // Tìm đơn đặt chỗ
+        $reservation = Reservation::findOrFail($id);
+
+        // Cập nhật trạng thái đơn đặt chỗ thành 'Cancelled'
+        $reservation->status = 'Cancelled';
+        $reservation->save();
+
+        return redirect()->route('admin.reservation.index')->with('success', 'Đơn đặt bàn đã được hủy thành công.');
+    }
+
+
 
     public function show($id)
     {
