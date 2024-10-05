@@ -125,32 +125,6 @@
                                     </thead>
                                     <tbody>
                                         @forelse ($reservations as $reservation)
-<<<<<<< HEAD
-                                        <tr id="reservation-{{ $reservation->id }}">
-                                            <td><input type="checkbox" name="selected_reservations[]" value="{{ $reservation->id }}"></td>
-                                            <td>{{ $reservation->id }}</td>
-                                            <td>{{ $reservation->customer->name ?? 'Không rõ' }}</td>
-                                            <td>{{ $reservation->guest_count ?? 'N/A' }}</td>
-                                            <td>{{ \Carbon\Carbon::parse($reservation->reservation_time)->format('H:i:s') }}</td>
-                                            <td>{{ $reservation->reservation_date }}
-                                                <br> {{ $reservation->reservation_time }}
-                                            </td>
-                                            <td>@foreach ($reservation->tables as $table )
-                                                {{$table->table_number}},
-                                            @endforeach</td>
-                                            <td>{{ $reservation->note ?? 'Không có' }}</td>
-                                            <td>
-                                                @if ($reservation->status === 'Confirmed')
-                                                <span class="badge shade-green min-70">Đã xác nhận</span>
-                                                @elseif ($reservation->status === 'Pending')
-                                                <span class="badge shade-yellow min-70">Chờ xử lý</span>
-                                                @elseif ($reservation->status === 'Cancelled')
-                                                <span class="badge shade-red min-70">Đã hủy</span>
-                                                @else
-                                                <span class="badge shade-gray min-70">Không rõ</span>
-                                                @endif
-                                            </td>
-=======
                                             <tr id="reservation-{{ $reservation->id }}">
                                                 <td><input type="checkbox" name="selected_reservations[]"
                                                         value="{{ $reservation->id }}"></td>
@@ -181,7 +155,7 @@
                                                         <span class="badge bg-secondary">Không rõ</span>
                                                     @endif
                                                 </td>
->>>>>>> ad98898c3fae91c291365eb87f8b5100e779c4c4
+
 
                                             <td>
                                                 <div class="actions">
@@ -190,6 +164,7 @@
                                                     </a>
                                                     <a href="{{ route('admin.reservation.edit', $reservation->id) }}" class="editRow" data-id="{{ $reservation->id }}">
                                                         <i class="bi bi-pencil-square text-warning"></i>
+
 
                                                     </a>
                                                     <a href="{{ route('admin.reservation.assignTables', $reservation->id) }}" class="editRow" data-id="{{ $reservation->id }}">

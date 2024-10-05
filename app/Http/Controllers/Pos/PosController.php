@@ -3,10 +3,22 @@
 namespace App\Http\Controllers\Pos;
 
 use App\Http\Controllers\Controller;
+<<<<<<< HEAD
+=======
+use App\Models\Category;
+use App\Models\Combo;
+>>>>>>> fc0a73e868cae2bc1cd6f1a65f303c2818b17a88
 use App\Models\Dishes;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Table;
+<<<<<<< HEAD
+=======
+use App\Models\Payment;
+use App\Models\Reservation;
+use App\Models\ReservationTable;
+use App\Models\User;
+>>>>>>> fc0a73e868cae2bc1cd6f1a65f303c2818b17a88
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -25,8 +37,25 @@ class PosController extends Controller
         return view('pos.index', compact('tables', 'dishes'));
     }
 
+<<<<<<< HEAD
     // API để tạo đơn hàng mới
     public function createOrder(Request $request)
+=======
+
+
+
+
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+
+
+
+    public function Pmenu($tableNumber)
+>>>>>>> fc0a73e868cae2bc1cd6f1a65f303c2818b17a88
     {
         // Xác thực dữ liệu đầu vào
         $request->validate([
@@ -64,6 +93,7 @@ class PosController extends Controller
         }
     }
 
+<<<<<<< HEAD
     // API để thêm món vào order_items
     public function addDishToOrder(Request $request)
     {
@@ -128,5 +158,24 @@ class PosController extends Controller
                 'message' => 'Đã xảy ra lỗi khi thêm món vào đơn hàng.',
             ], 500);
         }
+=======
+    public function Ppayment($orderId, Request $request)
+    {
+        $order = Order::find($orderId);
+        $reservation = Reservation::find($order->reservation_id);
+        $table = Table::find($order->table_id);
+        $reservation_table = ReservationTable::where('reservation_id', $order->reservation_id)
+            ->where('table_id', $order->table_id)
+            ->first();
+        $order_items = Dishes::whereIn('id', $request->order_item)->get();
+        $staff_id = User::find($order->staff_id);
+        $customer_id = User::find($order->customer_id);
+        $total_amount = $request->total_amount;
+        $order_item = $request->order_item;
+        return view(
+            'pos.payment',
+            compact('orderId', 'order', 'reservation', 'table', 'reservation_table', 'order_items', 'staff_id', 'customer_id', 'total_amount', 'order_item', )
+        );
+>>>>>>> fc0a73e868cae2bc1cd6f1a65f303c2818b17a88
     }
 }
