@@ -1,206 +1,309 @@
 @extends('pos.layouts.master')
 
-@section('title', 'POS Dashboard')
+@section('title', 'POS | Trang chủ')
 
 @section('content')
 
-<!-- Main Content Section -->
-<div class="main-container p-3">
-    <!-- Table Grid Section -->
-    <section class="content">
-        <div class="tables-grid" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px;">
-            @foreach($tables as $table)
-                @if($table->status == 'occupied')
-                    <div class="table-box" style="background-color: #ffffff; border-radius: 15px; border: 1px solid #ccc; width: 150px; height: 150px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-                        <div style="padding: 10px;">
-                            <div class="table-name" style="font-size: 16px; color: #333; font-weight: bold;">Bàn {{ $table->table_number }}</div>
-                            <div class="table-info" style="display: flex; align-items: center; color: #666; font-size: 14px; margin-top: 5px;">
-                                <span style="margin-right: 8px;">
-                                    <i class="fas fa-utensils"></i> {{ $table->dishes ?? 'Chưa có món' }}
-                                </span>
-                                <span>
-                                    <i class="fas fa-users"></i> {{ $table->guests }}
-                                </span>
+    <div class="wrapper">
+        <div class="container-fluid d-flex flex-grow-1 px-0">
+            <!-- Phần bên trái: Phòng bàn và thực đơn -->
+            <div class="col-md-8 bg-light-gray p-4">
+                <!-- Điều hướng Phòng bàn và Thực đơn -->
+                <nav class="nav nav-pills nav-fill mb-4">
+                    <a class="nav-link active" href="#" id="table-view-button">
+                        <i class="fas fa-th"></i> Phòng bàn
+                    </a>
+                    <a class="nav-link" href="#" id="menu-view-button">
+                        <i class="fas fa-utensils"></i> Thực đơn
+                    </a>
+                </nav>
+
+                <!-- Phần hiển thị các bàn -->
+                <div class="table-section transition-section" id="table-section">
+                    <div class="table-container d-flex flex-wrap justify-content-start">
+                        @foreach ($tables as $table)
+                            <div class="table-box" data-table-id="{{ $table->id }}">
+                                <span class="table-name">Bàn {{ $table->table_number }}</span>
+                                <div class="table-details">
+                                    <i class="fas fa-utensils"></i> 4
+                                    <i class="fas fa-user-friends"></i> 8
+                                </div>
+                                <div class="table-status">Tầng 1</div>
+                                <div class="table-price">0 VND</div>
                             </div>
-                        </div>
-                        <div style="background-color: #007acc; color: white; padding: 5px; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; display: flex; justify-content: space-between; align-items: center;">
-                            <div style="font-size: 12px;">{{ $table->time ?? 'Chưa có thời gian' }}</div>
-                            <div style="font-size: 16px; font-weight: bold;">{{ number_format($table->total_price ?? 0, 0, ',', '.') }} VND</div>
-                        </div>
+                        @endforeach
                     </div>
-                @else
-                    <!-- Default empty table styling -->
-                    <div class="table-box" style="background-color: #ffffff; border-radius: 15px; border: 1px solid #ccc; width: 150px; height: 120px; display: flex; align-items: center; justify-content: center; text-align: center;">
-                        <a href="{{ route('Pmenu', ['table_number' => $table->table_number]) }}" style="text-decoration: none; color: inherit;">
-                            <div class="table-name" style="font-size: 16px; color: #333; font-weight: bold;">
-                                Bàn {{ $table->table_number }}
+                </div>
+
+                <!-- Phần hiển thị thực đơn -->
+                <div class="menu-section transition-section" id="menu-section" style="display: none;">
+                    <div class="filter-section mb-4 d-flex justify-content-start flex-nowrap">
+                        <button class="btn filter-btn active" data-category="all">Tất cả</button>
+                        <button class="btn filter-btn" data-category="mon-an">Món Ăn</button>
+                        <button class="btn filter-btn" data-category="do-uong">Đồ Uống</button>
+                        <button class="btn filter-btn" data-category="trang-mieng">Tráng Miệng</button>
+                        <button class="btn filter-btn" data-category="combo">Combo</button>
+                    </div>
+
+                    <div class="row" id="dish-list">
+                        @foreach ($dishes as $dish)
+                            <div class="col-md-3 dish-item"
+                                data-category="{{ strtolower(str_replace(' ', '-', $dish->category)) }}"
+                                data-dish-id="{{ $dish->id }}" data-dish-price="{{ $dish->price }}">
+                                <div class="card menu-item">
+                                    <img src="{{ asset($dish->image ? 'storage/' . $dish->image : 'images/placeholder.jpg') }}"
+                                        alt="{{ $dish->name }}" class="img-fluid rounded"
+                                        style="height: 200px; object-fit: cover;" />
+                                    <div class="card-body text-center">
+                                        <h5 class="card-price">{{ number_format($dish->price, 0, ',', '.') }} VND</h5>
+                                        <p class="card-title">{{ \Str::limit($dish->name, 20, '...') }}</p>
+                                        <button class="btn btn-primary btn-add-dish" data-dish-id="{{ $dish->id }}"
+                                            data-dish-price="{{ $dish->price }}"
+                                            data-dish-name="{{ $dish->name }}">Thêm món</button>
+                                    </div>
+                                </div>
                             </div>
-                        </a>
+                        @endforeach
                     </div>
-                @endif
-            @endforeach
-        </div>
-    </section>
+                    <!-- Phân trang -->
+                    <div class="pagination mt-4">
+                        {{ $dishes->links() }} <!-- Hiển thị liên kết phân trang -->
+                    </div>
+                </div>
+            </div>
 
-    <!-- Order Section -->
-    <aside class="order-section mt-3" style="background-color: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); width: 350px;">
-        <h3 style="font-weight: bold; margin-bottom: 15px; border-bottom: 2px solid #007acc; padding-bottom: 5px; color: #007acc;">Đơn Hàng</h3>
+            <!-- Phần bên phải: Đơn hàng -->
+            <div class="col-md-4 p-4 order-section">
+                <div id="notification" class="alert alert-success"
+                    style="display:none; position:fixed; bottom:10px; right:10px; z-index:9999;">
+                    <strong>Thông báo!</strong> <span id="notification-message">Đơn hàng đã được tạo.</span>
+                </div>
+                <div class="dropdown">
 
-        <!-- Order List -->
-        <ul class="order-list" style="list-style-type: none; padding: 0; max-height: 250px; overflow-y: auto;">
-            @if(!empty($table->orders) && $table->orders->count() > 0)
-                @foreach($table->orders as $order)
-                    <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 10px; background-color: #f9f9f9; border-radius: 8px; transition: background-color 0.3s;">
-                        <span style="font-weight: bold;">{{ $order->name }} x {{ $order->quantity }}</span>
-                        <div style="display: flex; align-items: center;">
-                            <input type="number" value="{{ $order->quantity }}" min="1" class="quantity-input" style="width: 60px; margin-right: 10px; padding: 5px; border-radius: 5px; border: 1px solid #ccc;">
-                            <span>{{ number_format($order->price * $order->quantity, 0, ',', '.') }} VND</span>
-                            <button class="btn btn-danger btn-sm" style="margin-left: 10px;" onclick="confirmDelete('{{ $order->id }}')">Xóa</button>
-                        </div>
-                    </li>
-                @endforeach
-            @else
-                <li style="text-align: center; color: #999;">Chưa có món trong đơn.</li>
-            @endif
-        </ul>
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-file-alt"></i> <span id="order-count">0</span> Đơn hàng
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="order-dropdown"></ul>
+                </div>
 
-        <!-- Order Summary -->
-        <div class="order-summary mt-3" style="font-size: 16px;">
-            <div class="d-flex justify-content-between">
-                <span>Tổng cộng:</span>
-                <span id="total-price">{{ number_format($table->total_price ?? 0, 0, ',', '.') }} VND</span>
-            </div>
-            <div class="d-flex justify-content-between mt-2">
-                <span>Đặt cọc:</span>
-                <span id="deposit-amount">{{ number_format($table->deposit ?? 0, 0, ',', '.') }} VND</span>
-            </div>
-            <div class="d-flex justify-content-between mt-2">
-                <span>Giảm giá:</span>
-                <input type="number" id="discount" value="0" min="0" class="form-control form-control-sm" style="width: 120px;" onchange="updateTotal()">
-            </div>
-            <div class="d-flex justify-content-between mt-2">
-                <span>Thuế (10%):</span>
-                <span id="tax">{{ number_format(($table->total_price ?? 0) * 0.1, 0, ',', '.') }} VND</span>
-            </div>
-            <div class="d-flex justify-content-between mt-2">
-                <span>Phí dịch vụ (5%):</span>
-                <span id="service-charge">{{ number_format(($table->total_price ?? 0) * 0.05, 0, ',', '.') }} VND</span>
-            </div>
-            <div class="d-flex justify-content-between mt-3 font-weight-bold">
-                <span>Khách trả:</span>
-                <input type="number" id="customer-paid" value="0" min="0" class="form-control form-control-sm" style="width: 120px;" onchange="calculateChange()">
-            </div>
-            <div class="d-flex justify-content-between mt-2 font-weight-bold">
-                <span>Tiền thừa:</span>
-                <span id="change-amount">0 VND</span>
-            </div>
-        </div>
+                <div id="order-details" class="order-details mt-4">
+                    <div class="empty-cart text-center">
+                        <i class="fas fa-utensils fa-3x"></i>
+                        <p>Chưa có món trong đơn</p>
+                        <span>Vui lòng chọn món từ thực đơn</span>
+                    </div>
+                </div>
 
-        <!-- Actions -->
-        <div class="order-buttons d-flex align-items-center justify-content-between" style="margin-top: 20px;">
-            <button class="btn btn-outline-danger" style="border-radius: 5px;" onclick="clearOrder()">Xóa Đơn</button>
-            <button class="btn btn-outline-primary" style="border-radius: 5px;" onclick="saveOrder()">Lưu Đơn</button>
-            <button class="btn btn-outline-success" style="padding: 10px 20px; border-radius: 5px;" onclick="payOrder()">Thanh Toán</button>
-        </div>
-
-        <!-- Complete Order Button -->
-        <div class="complete-order mt-3 d-flex justify-content-between">
-            <button class="btn btn-primary" style="width: 100%;" onclick="completeOrder()">Hoàn tất & Gửi hóa đơn</button>
-        </div>
-    </aside>
-</div>
-
-<!-- Bottom Action Section -->
-<div class="bottom-actions d-flex justify-content-between p-2" style="background-color: #f4f4f4; border-top: 1px solid #ddd;">
-    <button class="takeaway-btn btn d-flex align-items-center" style="background-color: white; border: 1px solid #ddd; padding: 10px 15px; border-radius: 5px;">
-        Takeaway orders <span class="badge" style="background-color: red; color: white; padding: 3px 7px; border-radius: 12px; margin-left: 5px;">0</span>
-    </button>
-
-    <div class="table-actions d-flex align-items-center">
-        <label for="table-select" style="margin-right: 10px;">Tất cả bàn</label>
-        <select id="table-select" style="padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
-            <option value="all">Tất cả bàn</option>
-            @foreach($tables as $table)
-                <option value="{{ $table->table_number }}">{{ $table->table_number }} ({{ $table->status }})</option>
-            @endforeach
-        </select>
-        <button class="add-table-btn btn" style="background: none; border: none; margin-left: 10px;">
-            <i class="fas fa-plus"></i>
-        </button>
-    </div>
-</div>
-
-<!-- Confirm Delete Modal -->
-<div id="confirm-delete-modal" class="modal fade" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Xác nhận xóa</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                Bạn có chắc chắn muốn xóa món này khỏi đơn hàng không?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
-                <button type="button" class="btn btn-danger" onclick="deleteOrder()">Xóa</button>
+                <div class="payment-actions d-flex justify-content-between align-items-center mt-4">
+                    <span class="fw-bold total-price">Tổng tiền: 0 VND</span>
+                    <div class="d-flex align-items-center">
+                        <button class="btn btn-outline-primary me-2">Thông báo (F10)</button>
+                        <button class="btn btn-success">Thanh toán (F9)</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<script>
-    function updateTotal() {
-        let total = {{ $table->total_price ?? 0 }};
-        let discount = parseInt(document.getElementById('discount').value) || 0;
-        let tax = total * 0.1;
-        let serviceCharge = total * 0.05;
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const tableViewButton = document.getElementById('table-view-button');
+            const menuViewButton = document.getElementById('menu-view-button');
+            const tableSection = document.getElementById('table-section');
+            const menuSection = document.getElementById('menu-section');
+            const orderDetails = document.getElementById('order-details');
+            let currentOrder = {};
+            let totalAmount = 0;
+            let orderId = null;
 
-        let finalTotal = total - discount + tax + serviceCharge;
-        document.getElementById('total-price').innerText = new Intl.NumberFormat('vi-VN').format(finalTotal) + ' VND';
-    }
+            // Hàm hiển thị thông báo
+            function showNotification(message) {
+                const notification = document.getElementById('notification');
+                const notificationMessage = document.getElementById('notification-message');
+                notificationMessage.textContent = message;
+                notification.style.display = 'block';
 
-    function calculateChange() {
-        let total = {{ $table->total_price ?? 0 }};
-        let customerPaid = parseInt(document.getElementById('customer-paid').value) || 0;
-        let discount = parseInt(document.getElementById('discount').value) || 0;
-        let tax = total * 0.1;
-        let serviceCharge = total * 0.05;
+                // Ẩn thông báo sau 3 giây
+                setTimeout(function() {
+                    notification.style.display = 'none';
+                }, 3000);
+            }
 
-        let finalTotal = total - discount + tax + serviceCharge;
-        let change = customerPaid - finalTotal;
+            function hideSection(element) {
+                element.style.display = "none";
+            }
 
-        document.getElementById('change-amount').innerText = new Intl.NumberFormat('vi-VN').format(change > 0 ? change : 0) + ' VND';
-    }
+            function showSection(element) {
+                element.style.display = "block";
+            }
 
-    function confirmDelete(orderId) {
-        $('#confirm-delete-modal').modal('show');
-    }
+            // Chuyển đổi giữa Phòng bàn và Thực đơn
+            tableViewButton.addEventListener('click', function() {
+                hideSection(menuSection);
+                showSection(tableSection);
+                tableViewButton.classList.add('active');
+                menuViewButton.classList.remove('active');
+            });
 
-    function deleteOrder() {
-        $('#confirm-delete-modal').modal('hide');
-        alert('Món đã được xóa khỏi đơn hàng.');
-    }
+            menuViewButton.addEventListener('click', function() {
+                hideSection(tableSection);
+                showSection(menuSection);
+                menuViewButton.classList.add('active');
+                tableViewButton.classList.remove('active');
+            });
 
-    function clearOrder() {
-        if (confirm('Bạn có chắc chắn muốn xóa toàn bộ đơn hàng?')) {
-            alert('Đơn hàng đã được xóa.');
-        }
-    }
+            // Khi bấm vào bàn để tạo đơn hàng
+            document.querySelectorAll('.table-box').forEach(function(tableBox) {
+                tableBox.addEventListener('click', function() {
+                    const tableId = this.getAttribute('data-table-id');
+                    createOrder(tableId);
+                });
+            });
 
-    function saveOrder() {
-        alert('Đơn hàng đã được lưu.');
-    }
+            // Tạo đơn hàng mới và hiển thị đơn hàng bên phải
+            function createOrder(tableId) {
+                fetch('/create-order', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            table_id: tableId
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            orderId = data.order.id;
+                            updateOrderDisplay(data.order);
+                            currentOrder = {};
+                            totalAmount = 0;
+                            showNotification('Đã tạo đơn hàng thành công cho Bàn ' + data.table_number);
+                        } else {
+                            alert('Lỗi khi tạo đơn hàng: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Đã xảy ra lỗi khi kết nối tới server.');
+                    });
+            }
 
-    function payOrder() {
-        alert('Tiến hành thanh toán.');
-    }
+            // Cập nhật hiển thị đơn hàng
+            function updateOrderDisplay(order) {
+                orderDetails.innerHTML = `
+            <div class="order-info">
+                <h4>Đơn hàng cho Bàn ${order.table_number}</h4>
+                <p>Trạng thái: ${order.status}</p>
+            </div>
+            <div class="empty-cart text-center">
+                <i class="fas fa-utensils fa-3x"></i>
+                <p>Chưa có món trong đơn</p>
+                <span>Vui lòng chọn món từ thực đơn</span>
+            </div>`;
+                document.querySelector('.total-price').innerText = `Tổng tiền: ${totalAmount} VND`;
+            }
 
-    function completeOrder() {
-        alert('Hoàn tất đơn hàng và gửi hóa đơn.');
-    }
-</script>
+            // Thêm món vào đơn hàng và lưu vào cơ sở dữ liệu
+            document.querySelectorAll('.btn-add-dish').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    const dishId = this.getAttribute('data-dish-id');
+                    const dishPrice = parseFloat(this.getAttribute('data-dish-price'));
+                    const dishName = this.getAttribute('data-dish-name');
+
+                    if (!orderId) {
+                        alert('Vui lòng chọn bàn trước khi thêm món!');
+                        return;
+                    }
+
+                    if (currentOrder[dishId]) {
+                        currentOrder[dishId].quantity += 1;
+                    } else {
+                        currentOrder[dishId] = {
+                            dishName,
+                            dishPrice,
+                            quantity: 1
+                        };
+                    }
+
+                    totalAmount = Object.values(currentOrder).reduce((total, item) => total + (item
+                        .dishPrice * item.quantity), 0);
+                    updateOrderItems();
+
+                    // Gọi API để lưu món ăn vào cơ sở dữ liệu
+                    saveDishToOrder(orderId, dishId, currentOrder[dishId].quantity);
+                });
+            });
+
+            // Lưu món ăn vào cơ sở dữ liệu
+            function saveDishToOrder(orderId, dishId, quantity) {
+                fetch('/add-dish-to-order', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            order_id: orderId,
+                            dish_id: dishId,
+                            quantity: quantity
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showNotification('Đã thêm ' + data.orderItem.dishName + ' vào đơn hàng.');
+                        } else {
+                            alert('Lỗi khi thêm món vào đơn hàng: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Đã xảy ra lỗi khi kết nối tới server.');
+                    });
+            }
+
+            // Cập nhật các món trong đơn hàng
+            function updateOrderItems() {
+                orderDetails.innerHTML = '';
+                for (const itemId in currentOrder) {
+                    const item = currentOrder[itemId];
+                    const orderItemHTML = `
+                <div class="order-item d-flex justify-content-between align-items-center">
+                    <span>${item.dishName} x
+                        <input type="number" min="1" value="${item.quantity}" class="quantity-input" data-dish-id="${itemId}" style="width: 50px; text-align: center;" />
+                    </span>
+                    <span style="color: #28a745;">${item.dishPrice * item.quantity} VND</span>
+                    <button class="btn btn-danger btn-delete" data-dish-id="${itemId}">Xóa</button>
+                </div>`;
+                    orderDetails.innerHTML += orderItemHTML;
+                }
+
+                document.querySelector('.total-price').innerText = `Tổng tiền: ${totalAmount} VND`;
+
+                document.querySelectorAll('.btn-delete').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const dishId = this.getAttribute('data-dish-id');
+                        delete currentOrder[dishId];
+                        updateOrderItems();
+                    });
+                });
+
+                document.querySelectorAll('.quantity-input').forEach(input => {
+                    input.addEventListener('change', function() {
+                        const dishId = this.getAttribute('data-dish-id');
+                        const newQuantity = parseInt(this.value);
+                        if (currentOrder[dishId] && newQuantity > 0) {
+                            currentOrder[dishId].quantity = newQuantity;
+                            updateOrderItems();
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+
 
 @endsection

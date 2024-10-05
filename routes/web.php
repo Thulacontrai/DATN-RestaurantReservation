@@ -110,7 +110,10 @@ Route::get('/customerInformation', [ReservationController::class, 'showInformati
 
 Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
 
-Route::get('/Pmenu/{table_number}', [PosController::class, 'Pmenu'])->name('Pmenu');
+Route::post('/create-order', [PosController::class, 'createOrder']);
+Route::post('/add-dish-to-order', [PosController::class, 'addDishToOrder']);
+
+
 
 Route::post('/Ppayment/{table_number}', [PosController::class, 'Ppayment'])->name('Ppayment');
 

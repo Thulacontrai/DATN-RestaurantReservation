@@ -36,5 +36,4 @@ class Table extends Model
     }
 
 
-
 }
