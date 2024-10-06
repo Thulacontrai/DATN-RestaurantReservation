@@ -349,30 +349,34 @@ class ReservationController extends Controller
     public function reservationSuccessfully(Request $request)
     {
         if ($request->query('extraData')) {
-            $reservation = $request->query('extraData');
-            $data = str_replace("'", '"', $reservation);
-            $reservation = json_decode($data, true);
-            DB::transaction(function () use ($reservation) {
-                $user = User::where('phone', $reservation['user_phone'])->first();
-                if (!isset($user) && $user == null) {
-                    $user = User::create([
-                        'name' => $reservation['user_name'],
-                        'phone' => $reservation['user_phone'],
-                        'password' => fake()->password(),
-                        'status' => 'inactive',
+            if ($request->query('message') == 'Successful.') {
+                $reservation = $request->query('extraData');
+                $data = str_replace("'", '"', $reservation);
+                $reservation = json_decode($data, true);
+                DB::transaction(function () use ($reservation) {
+                    $user = User::where('phone', $reservation['user_phone'])->first();
+                    if (!isset($user) && $user == null) {
+                        $user = User::create([
+                            'name' => $reservation['user_name'],
+                            'phone' => $reservation['user_phone'],
+                            'password' => fake()->password(),
+                            'status' => 'inactive',
+                        ]);
+                    }
+                    Reservation::create([
+                        'customer_id' => $user->id,
+                        'user_name' => $reservation['user_name'],
+                        'user_phone' => $reservation['user_phone'],
+                        'guest_count' => $reservation['guest_count'],
+                        'deposit_amount' => $reservation['deposit_amount'],
+                        'note' => $reservation['note'],
+                        'reservation_date' => $reservation['reservation_date'],
+                        'reservation_time' => $reservation['reservation_time'],
                     ]);
-                }
-                Reservation::create([
-                    'customer_id' => $user->id,
-                    'user_name' => $reservation['user_name'],
-                    'user_phone' => $reservation['user_phone'],
-                    'guest_count' => $reservation['guest_count'],
-                    'deposit_amount' => $reservation['deposit_amount'],
-                    'note' => $reservation['note'],
-                    'reservation_date' => $reservation['reservation_date'],
-                    'reservation_time' => $reservation['reservation_time'],
-                ]);
-            });
+                });
+            } else {
+                return redirect('/')->with('err', 'Đơn đặt bàn đã đã bị hủy');
+            }
         } else {
             $reservation = $request->reservation;
         }

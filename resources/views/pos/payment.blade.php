@@ -52,12 +52,12 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($order_items as $item)
+                            @foreach ($order_items as $index => $item)
                                 <tr>
                                     <td>{{ $item->name }}</td>
-                                    <td class="text-center">1</td>
-                                    <td class="text-end">30,000 VND</td>
-                                    <td class="text-end">30,000 VND</td>
+                                    <td class="text-center">{{ $quantity[$index] }}</td>
+                                    <td class="text-end">{{ $price[$index] }}</td>
+                                    <td class="text-end">{{ $amount = $price[$index] * $quantity[$index]}}</td>
                                 </tr>
                             @endforeach
                         </tbody>

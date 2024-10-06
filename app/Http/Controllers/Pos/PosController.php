@@ -128,13 +128,15 @@ class PosController extends Controller
             ->where('table_id', $order->table_id)
             ->first();
         $order_items = Dishes::whereIn('id', $request->order_item)->get();
+        $quantity = $request->quantity;
+        $price = $request->price;
         $staff_id = User::find($order->staff_id);
         $customer_id = User::find($order->customer_id);
         $total_amount = $request->total_amount;
         $order_item = $request->order_item;
         return view(
             'pos.payment',
-            compact('orderId', 'order', 'reservation', 'table', 'reservation_table', 'order_items', 'staff_id', 'customer_id', 'total_amount', 'order_item', )
+            compact('orderId', 'order', 'reservation', 'table', 'reservation_table', 'order_items','quantity','price', 'staff_id', 'customer_id', 'total_amount', 'order_item', )
         );
     }
 
