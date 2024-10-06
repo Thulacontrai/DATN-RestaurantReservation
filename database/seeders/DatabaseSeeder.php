@@ -28,6 +28,14 @@ class DatabaseSeeder extends Seeder
         //     PaymentSeeder::class,
         //     ReservationHistorySeeder::class,
         // ]);
+
+
+        // Gọi các Seeder để seed quyền và tài khoản supperadmin
+        $this->call([
+            // PermissionsSeeder::class,
+            SuperAdminSeeder::class,
+        ]);
+
     }
 
 }

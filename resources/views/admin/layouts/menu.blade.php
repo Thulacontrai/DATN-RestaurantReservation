@@ -19,6 +19,7 @@
                         <span class="menu-text">Dashboards</span>
                     </a>
                 </li>
+                {{-- @can('Xem danh mục') --}}
                 <li class="sidebar-dropdown">
                     <a href="#">
                         <i class="bi bi-window-split"></i>
@@ -32,6 +33,8 @@
                         </ul>
                     </div>
                 </li>
+                {{-- @endcan --}}
+
                 <li class="sidebar-dropdown">
                     <a href="#">
                         <i class="bi bi-layers-half"></i>
@@ -52,6 +55,14 @@
                         </ul>
                     </div>
                 </li>
+
+
+
+                @can('Xem danh mục')
+
+
+                {{-- @can('Xem và quản lý danh mục') --}}
+
                 <li class="sidebar-dropdown">
                     <a href="#">
                         <i class="bi bi-folder"></i>
@@ -65,7 +76,12 @@
                         </ul>
                     </div>
                 </li>
+                {{-- @endcan --}}
 
+                @endcan
+
+
+                @can('Xem món ăn')
                 <li class="sidebar-dropdown">
                     <a href="#">
                         <i class="bi bi-journal-bookmark-fill"></i>
@@ -80,7 +96,9 @@
                         </ul>
                     </div>
                 </li>
+                @endcan
 
+                @can('Xem combo')
                 <li class="sidebar-dropdown">
                     <a href="#">
                         <i class="bi bi-boxes"></i>
@@ -94,7 +112,9 @@
                         </ul>
                     </div>
                 </li>
+                @endcan
 
+                @can('Xem thanh toán')
                 <li class="sidebar-dropdown">
                     <a href="#">
                         <i class="bi bi-clipboard-check"></i>
@@ -108,6 +128,9 @@
                         </ul>
                     </div>
                 </li>
+                @endcan
+
+                @can('Xem mã giảm giá')
                 <li class="sidebar-dropdown">
                     <a href="#">
                         <i class="bi bi-receipt-cutoff"></i>
@@ -121,6 +144,9 @@
                         </ul>
                     </div>
                 </li>
+                @endcan
+
+                @can('Xem order')
                 <li class="sidebar-dropdown">
                     <a href="#">
                         <i class="bi bi-clipboard-data"></i>
@@ -135,7 +161,9 @@
                         </ul>
                     </div>
                 </li>
+                @endcan
 
+                @can('Xem feedback')
                 <li class="sidebar-dropdown">
                     <a href="#">
                         <i class="bi bi-person-workspace"></i>
@@ -150,6 +178,7 @@
                         </ul>
                     </div>
                 </li>
+                @endcan
 
                 {{-- <li class="sidebar-dropdown">
                     <a href="#">
@@ -166,6 +195,13 @@
                     </div>
                 </li> --}}
 
+
+
+                @can('Xem người dùng')
+
+
+                {{-- @can('Xem và quản lý người dùng') --}}
+
                 <li class="sidebar-dropdown">
                     <a href="#">
                         <i class="bi bi-people-fill"></i>
@@ -178,7 +214,7 @@
 
                             </li>
                             <li>
-                                <a href="{{ route('admin.permission.index') }}">Quyền hạn</a>
+                                <a href="{{ route('admin.permissions.index') }}">Quyền hạn</a>
 
                             </li>
                             <li>
@@ -189,6 +225,10 @@
                         </ul>
                     </div>
                 </li>
+                {{-- @endcan --}}
+
+
+                @endcan
 
                 <li class="sidebar-dropdown">
                     <a href="#">
@@ -221,6 +261,41 @@
                         </ul>
                     </div>
                 </li>
+
+
+                {{-- @can('Xem và quản lý người dùng') --}}
+                    <li class="sidebar-dropdown">
+                        <a href="#">
+                            <i class="bi bi-pci-card"></i>
+                            <span class="menu-text">Quản lý kho Ng-liệu</span>
+                        </a>
+                        <div class="sidebar-submenu">
+                            <ul>
+                                <li>
+                                    <a href="{{ route('admin.supplier.index') }}">Nhà cung cấp</a>
+                                <li>
+                                <li>
+                                    <a href="{{ route('admin.ingredientType.index') }}">Loại Nguyên Liệu</a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('admin.ingredient.index') }}">Danh sách Nguyên Liệu</a>
+                                </li>
+                                <li>
+                                    <a href="#">Phiếu nhập kho</a>
+                                </li>
+                                <li>
+                                    <a href="#">Combo món ăn</a>
+                                </li>
+                                <li>
+                                    <a href="#">Hàng tồn kho</a>
+                                </li>
+                                <li>
+                                    <a href="#">Xuất kho</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                {{-- @endcan --}}
 
 
                 {{-- <li class="sidebar-dropdown">

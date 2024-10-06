@@ -2,13 +2,15 @@
 
 namespace App\Models;
 
-
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 
-class User extends Model
+class User extends Authenticatable
 {
-    use SoftDeletes;
+    use SoftDeletes, HasRoles;
 
     protected $table = 'users';
 
@@ -39,6 +41,12 @@ class User extends Model
     {
         return $this->belongsTo(User::class, 'parent_id');
     }
+
+    public function isPosStaff()
+{
+    return $this->role === 'pos' || $this->role === 'staff';
+}
+
 
 
     /**

@@ -104,7 +104,8 @@
                         <div class="text-center">
                             <h5 class="uptitle wow fadeInUp">Hãy sẵn sàng cho</h5>
                             <h2 class="wow fadeInUp">Những khoảnh khắc đáng nhớ</h2>
-                            <p class="lead wow fadeInUp">Từ các món ăn tinh tế đến không gian ấm cúng, buổi khai trương của chúng tôi hứa hẹn sẽ mang lại một trải nghiệm ẩm thực không thể quên.</p>
+                            <p class="lead wow fadeInUp">Từ các món ăn tinh tế đến không gian ấm cúng, buổi khai trương của
+                                chúng tôi hứa hẹn sẽ mang lại một trải nghiệm ẩm thực không thể quên.</p>
                             <div class="spacer-single"></div>
                         </div>
                     </div>
@@ -117,7 +118,8 @@
                             <img src="client/03_images/misc/icon-1.png" alt="">
                             <div class="spacer-single"></div>
                             <h3>Hương vị thơm ngon</h3>
-                            <p>Đậm đà, lôi cuốn và đầy kích thích, hương vị của cà phê là một hành trình cảm giác bắt đầu từ lần ngửi đầu tiên.</p>
+                            <p>Đậm đà, lôi cuốn và đầy kích thích, hương vị của cà phê là một hành trình cảm giác bắt đầu từ
+                                lần ngửi đầu tiên.</p>
                             <a href="{{ route('blog.client') }}" class="btn-line">Đọc thêm</a>
                         </div>
                     </div>
@@ -128,7 +130,8 @@
                             <img src="client/03_images/misc/icon-2.png" alt="">
                             <div class="spacer-single"></div>
                             <h3>Món ăn ngon miệng</h3>
-                            <p>Từ hương vị đầu tiên đến dư vị cuối cùng, thực đơn của chúng tôi là sự tôn vinh các nền ẩm thực đa dạng và sáng tạo táo bạo.</p>
+                            <p>Từ hương vị đầu tiên đến dư vị cuối cùng, thực đơn của chúng tôi là sự tôn vinh các nền ẩm
+                                thực đa dạng và sáng tạo táo bạo.</p>
                             <a href="{{ route('blog.client') }}" class="btn-line">Đọc thêm</a>
                         </div>
                     </div>
@@ -139,7 +142,8 @@
                             <img src="client/03_images/misc/icon-3.png" alt="">
                             <div class="spacer-single"></div>
                             <h3>Tổ chức tiệc</h3>
-                            <p>Biến quán cà phê ấm cúng của chúng tôi thành địa điểm tổ chức tiệc tuyệt vời, nơi bạn bè quây quần, tiếng cười vang vọng và những kỷ niệm được tạo nên.</p>
+                            <p>Biến quán cà phê ấm cúng của chúng tôi thành địa điểm tổ chức tiệc tuyệt vời, nơi bạn bè quây
+                                quần, tiếng cười vang vọng và những kỷ niệm được tạo nên.</p>
                             <a href="{{ route('blog.client') }}" class="btn-line">Đọc thêm</a>
                         </div>
                     </div>
@@ -154,18 +158,26 @@
                     <div class="col-lg-6">
                         <h5 class="uptitle wow fadeInUp">Khám phá</h5>
                         <h2 class="wow fadeInUp">Câu chuyện của chúng tôi</h2>
-                        <p class="lead wow fadeInUp">Tại "Baresto", chúng tôi tin tưởng vào sức mạnh của cà phê ngon và sự hiếu khách ấm áp. Hành trình của chúng tôi bắt đầu với một tầm nhìn đơn giản: tạo ra một không gian chào đón, nơi bạn bè, gia đình và những người lạ có thể đến và tận hưởng những món đồ uống ngon lành, bánh ngọt tự làm và những kết nối ý nghĩa.</p>
+                        <p class="lead wow fadeInUp">Tại "Baresto", chúng tôi tin tưởng vào sức mạnh của cà phê ngon và sự
+                            hiếu khách ấm áp. Hành trình của chúng tôi bắt đầu với một tầm nhìn đơn giản: tạo ra một không
+                            gian chào đón, nơi bạn bè, gia đình và những người lạ có thể đến và tận hưởng những món đồ uống
+                            ngon lành, bánh ngọt tự làm và những kết nối ý nghĩa.</p>
 
-                        <p class="wow fadeInUp">Là một thành viên tự hào của cộng đồng, chúng tôi cam kết đóng góp và tạo ra tác động tích cực mọi nơi chúng tôi có thể. Từ việc hỗ trợ các nghệ nhân và nông dân địa phương đến việc tổ chức các sự kiện tôn vinh sự đa dạng và hòa nhập, chúng tôi tin tưởng vào việc sử dụng nền tảng của mình để lan tỏa niềm vui và thiện chí trong khu phố và xa hơn nữa.</p>
+                        <p class="wow fadeInUp">Là một thành viên tự hào của cộng đồng, chúng tôi cam kết đóng góp và tạo
+                            ra tác động tích cực mọi nơi chúng tôi có thể. Từ việc hỗ trợ các nghệ nhân và nông dân địa
+                            phương đến việc tổ chức các sự kiện tôn vinh sự đa dạng và hòa nhập, chúng tôi tin tưởng vào
+                            việc sử dụng nền tảng của mình để lan tỏa niềm vui và thiện chí trong khu phố và xa hơn nữa.</p>
                     </div>
 
                     <div class="col-lg-6">
                         <div class="row">
                             <div class="col-6">
-                                <img src="client/03_images/background/bg-side-15.jpg" class="img-fluid wow zoomIn" alt="">
+                                <img src="client/03_images/background/bg-side-15.jpg" class="img-fluid wow zoomIn"
+                                    alt="">
                             </div>
                             <div class="col-6">
-                                <img src="client/03_images/background/bg-side-17.jpg" class="img-fluid wow zoomIn" alt="">
+                                <img src="client/03_images/background/bg-side-17.jpg" class="img-fluid wow zoomIn"
+                                    alt="">
                             </div>
                         </div>
                     </div>
@@ -180,7 +192,8 @@
                     <div class="col-lg-6 offset-lg-3 text-center">
                         <h5 class="uptitle wow fadeInUp">22,000+</h5>
                         <h2 class="wow fadeInUp">Khách hàng hạnh phúc</h2>
-                        <p class="lead wow fadeInUp">Khách hàng hài lòng, trái tim hạnh phúc! Tham gia vào hàng ngũ khách hàng thỏa mãn của chúng tôi và trải nghiệm ẩm thực tuyệt vời như chưa từng có.</p>
+                        <p class="lead wow fadeInUp">Khách hàng hài lòng, trái tim hạnh phúc! Tham gia vào hàng ngũ khách
+                            hàng thỏa mãn của chúng tôi và trải nghiệm ẩm thực tuyệt vời như chưa từng có.</p>
                     </div>
                     <div class="col-lg-4 wow fadeInRight" data-wow-delay="0s">
                         <div class="de-review-app h-100">
@@ -188,7 +201,8 @@
                                 <img src="client/03_images/reviews/google.png" class="" alt="">
                             </div>
                             <div class="d-testi">
-                                Một viên ngọc quý! Thức ăn tuyệt vời, dịch vụ hoàn hảo và không gian thú vị. Không thể chờ đợi để quay lại!
+                                Một viên ngọc quý! Thức ăn tuyệt vời, dịch vụ hoàn hảo và không gian thú vị. Không thể chờ
+                                đợi để quay lại!
                             </div>
                             <div class="d-testi-by">Karyn Deely<span>Jan 20, 2024</span></div>
                             <div class="d-stars">
@@ -203,7 +217,8 @@
                                 <img src="client/03_images/reviews/trustpilot.png" class="" alt="">
                             </div>
                             <div class="d-testi">
-                                Thật tuyệt vời! Sự tận tâm của đầu bếp với các nguyên liệu chất lượng thể hiện rõ trong từng món ăn.
+                                Thật tuyệt vời! Sự tận tâm của đầu bếp với các nguyên liệu chất lượng thể hiện rõ trong từng
+                                món ăn.
                             </div>
                             <div class="d-testi-by">Josefa Devany<span>Jan 20, 2024</span></div>
                             <div class="d-stars">
@@ -218,7 +233,8 @@
                                 <img src="client/03_images/reviews/google.png" class="" alt="">
                             </div>
                             <div class="d-testi">
-                                Một trải nghiệm ẩm thực khó quên. Mỗi món ăn đều là một sự bất ngờ thú vị, được bổ sung hoàn hảo bởi dịch vụ tuyệt vời.
+                                Một trải nghiệm ẩm thực khó quên. Mỗi món ăn đều là một sự bất ngờ thú vị, được bổ sung hoàn
+                                hảo bởi dịch vụ tuyệt vời.
                             </div>
                             <div class="d-testi-by">Samual Stein<span>Jan 20, 2024</span></div>
                             <div class="d-stars">
@@ -245,8 +261,8 @@
                             <div class="c3">Lớn<span>Kích cỡ gia đình</span></div>
                         </div>
 
-                        @if($combos->count() > 0)
-                            @foreach($combos as $combo)
+                        @if ($combos->count() > 0)
+                            @foreach ($combos as $combo)
                                 <div class="menu-item">
                                     <div class="c1">{{ $combo->name }}</div>
                                     <div class="c2">{{ number_format($combo->price, 0, ',', '.') }} VND</div>
@@ -319,7 +335,9 @@
                                 <div class="spacer-single"></div>
                             </div>
                             <blockquote>
-                                Là một chuyên gia bận rộn, tôi dựa vào tách cà phê sáng để bắt đầu ngày mới. Hương vị đậm đà, mượt mà và mùi thơm tuyệt vời luôn khiến tôi tỉnh táo và sẵn sàng đối mặt với bất cứ điều gì trong ngày. Thật như một miếng thiên đường nhỏ trong cốc!
+                                Là một chuyên gia bận rộn, tôi dựa vào tách cà phê sáng để bắt đầu ngày mới. Hương vị đậm
+                                đà, mượt mà và mùi thơm tuyệt vời luôn khiến tôi tỉnh táo và sẵn sàng đối mặt với bất cứ
+                                điều gì trong ngày. Thật như một miếng thiên đường nhỏ trong cốc!
                                 <span>Jenna Smith</span>
                             </blockquote>
                         </div>
@@ -384,7 +402,7 @@
                     <div class="col-lg-9 text-lg-start text-sm-center wow fadeIn">
                         <h3><i class="id-color fa fa-phone mr10"></i>Gọi ngay và nhận ưu đãi đặc biệt!</h3>
                     </div>
-                     <div class="col-lg-3 text-lg-end text-sm-center wow fadeIn" data-wow-delay=".2s">
+                    <div class="col-lg-3 text-lg-end text-sm-center wow fadeIn" data-wow-delay=".2s">
                         <a href="{{ route('booking.client') }}" class="btn-line">Gọi ngay</a>
                     </div>
                 </div>
@@ -398,20 +416,24 @@
                     <div class="col-lg-6">
                         <h5 class="uptitle wow fadeInUp">Khám phá</h5>
                         <h2 class="wow fadeInUp">Câu chuyện của chúng tôi</h2>
-                        <p class="lead wow fadeInUp">Tại "Baresto", chúng tôi tin tưởng vào sức mạnh của cà phê ngon và sự hiếu khách ấm áp. Hành trình của chúng tôi bắt đầu với một tầm nhìn đơn giản: tạo ra một không gian chào đón, nơi bạn bè, gia đình và những người lạ có thể đến và tận hưởng những món đồ uống ngon lành, bánh ngọt tự làm và những kết nối ý nghĩa.</p>
+                        <p class="lead wow fadeInUp">Tại "Baresto", chúng tôi tin tưởng vào sức mạnh của cà phê ngon và sự
+                            hiếu khách ấm áp. Hành trình của chúng tôi bắt đầu với một tầm nhìn đơn giản: tạo ra một không
+                            gian chào đón, nơi bạn bè, gia đình và những người lạ có thể đến và tận hưởng những món đồ uống
+                            ngon lành, bánh ngọt tự làm và những kết nối ý nghĩa.</p>
 
-                        <p class="wow fadeInUp">Là một thành viên tự hào của cộng đồng, chúng tôi cam kết đóng góp và tạo ra tác động tích cực mọi nơi chúng tôi có thể. Từ việc hỗ trợ các nghệ nhân và nông dân địa phương đến việc tổ chức các sự kiện tôn vinh sự đa dạng và hòa nhập, chúng tôi tin tưởng vào việc sử dụng nền tảng của mình để lan tỏa niềm vui và thiện chí trong khu phố và xa hơn nữa.</p>
+                        <p class="wow fadeInUp">Là một thành viên tự hào của cộng đồng, chúng tôi cam kết đóng góp và tạo
+                            ra tác động tích cực mọi nơi chúng tôi có thể. Từ việc hỗ trợ các nghệ nhân và nông dân địa
+                            phương đến việc tổ chức các sự kiện tôn vinh sự đa dạng và hòa nhập, chúng tôi tin tưởng vào
+                            việc sử dụng nền tảng của mình để lan tỏa niềm vui và thiện chí trong khu phố và xa hơn nữa.</p>
                     </div>
 
                     <div class="col-lg-6">
                         <div class="row">
                             <div class="col-6">
-                                <img src="client/03_images/background/bg-side-4.jpg" class="card-img-top"
-                                    alt="">
+                                <img src="client/03_images/background/bg-side-4.jpg" class="card-img-top" alt="">
                             </div>
                             <div class="col-6">
-                                <img src="client/03_images/background/bg-side-5.jpg" class="card-img-top"
-                                    alt="">
+                                <img src="client/03_images/background/bg-side-5.jpg" class="card-img-top" alt="">
                             </div>
                         </div>
                     </div>

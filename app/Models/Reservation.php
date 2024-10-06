@@ -13,13 +13,13 @@ class Reservation extends Model
 
     protected $fillable = [
         'customer_id',
+        'user_name',
+        'user_phone',
         'coupon_id',
         'reservation_time',
         'reservation_date',
         'guest_count',
         'deposit_amount',
-        'total_amount',
-        'remaining_amount',
         'status',
         'cancelled_reason',
         'note',
@@ -32,8 +32,13 @@ class Reservation extends Model
         return $this->belongsTo(User::class, 'customer_id');
     }
 
-    // public function coupon()
-    // {
-    //     return $this->belongsTo(Coupon::class, 'coupon_id');
-    // }
+    public function coupon()
+    {
+        return $this->belongsTo(Coupon::class, 'coupon_id');
+    }
+    public function tables()
+    {
+        return $this->belongsToMany(Table::class, 'reservation_tables');
+
+    }
 }
