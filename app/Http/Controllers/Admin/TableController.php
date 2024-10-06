@@ -20,7 +20,6 @@ class TableController extends Controller
         $this->middleware('permission:Tạo mới đặt bàn', ['only' => ['create']]);
         $this->middleware('permission:Sửa đặt bàn', ['only' => ['edit']]);
         $this->middleware('permission:Xóa đặt bàn', ['only' => ['destroy']]);
-        
     }
 
     use TraitCRUD;
@@ -44,9 +43,18 @@ class TableController extends Controller
             $query->where('table_type', $request->table_type);
         }
 
+        // Lọc theo trạng thái bàn
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Phân trang kết quả
         $tables = $query->paginate(10);
+
+        // Trả về view cùng với kết quả
         return view('admin.tables.index', compact('tables'));
     }
+
 
     public function create()
     {
@@ -110,28 +118,28 @@ class TableController extends Controller
     {
         // Kiểm tra xem có đặt trước hoặc đơn hàng nào liên quan đến bàn
         return DB::table('reservation_tables')->where('table_id', $id)->exists() ||
-               DB::table('reservation_history')->whereExists(function ($query) use ($id) {
-                   $query->select(DB::raw(1))
-                         ->from('reservations')
-                         ->whereColumn('reservation_history.reservation_id', 'reservations.id')
-                         ->whereExists(function ($query) use ($id) {
-                             $query->select(DB::raw(1))
-                                   ->from('reservation_tables')
-                                   ->whereColumn('reservations.id', 'reservation_tables.reservation_id')
-                                   ->where('reservation_tables.table_id', $id);
-                         });
-               })->exists() ||
-               DB::table('orders')->where('table_id', $id)->exists() ||
-               DB::table('payments')->whereExists(function ($query) use ($id) {
-                   $query->select(DB::raw(1))
-                         ->from('reservations')
-                         ->whereColumn('payments.reservation_id', 'reservations.id')
-                         ->whereExists(function ($query) use ($id) {
-                             $query->select(DB::raw(1))
-                                   ->from('reservation_tables')
-                                   ->whereColumn('reservations.id', 'reservation_tables.reservation_id')
-                                   ->where('reservation_tables.table_id', $id);
-                         });
-               })->exists();
+            DB::table('reservation_history')->whereExists(function ($query) use ($id) {
+                $query->select(DB::raw(1))
+                    ->from('reservations')
+                    ->whereColumn('reservation_history.reservation_id', 'reservations.id')
+                    ->whereExists(function ($query) use ($id) {
+                        $query->select(DB::raw(1))
+                            ->from('reservation_tables')
+                            ->whereColumn('reservations.id', 'reservation_tables.reservation_id')
+                            ->where('reservation_tables.table_id', $id);
+                    });
+            })->exists() ||
+            DB::table('orders')->where('table_id', $id)->exists() ||
+            DB::table('payments')->whereExists(function ($query) use ($id) {
+                $query->select(DB::raw(1))
+                    ->from('reservations')
+                    ->whereColumn('payments.reservation_id', 'reservations.id')
+                    ->whereExists(function ($query) use ($id) {
+                        $query->select(DB::raw(1))
+                            ->from('reservation_tables')
+                            ->whereColumn('reservations.id', 'reservation_tables.reservation_id')
+                            ->where('reservation_tables.table_id', $id);
+                    });
+            })->exists();
     }
 }

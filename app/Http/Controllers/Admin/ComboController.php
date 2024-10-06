@@ -13,6 +13,16 @@ use Illuminate\Support\Facades\Storage;
 class ComboController extends Controller
 {
 
+    /**
+     * Construct function
+     *
+     * Gán middleware cho các phương thức
+     * - Xem combo
+     * - Tạo mới combo
+     * - Sửa combo
+     * - Xóa combo
+     */
+
     public function __construct()
     {
         // Gán middleware cho các phương thức
@@ -20,7 +30,7 @@ class ComboController extends Controller
         $this->middleware('permission:Tạo mới combo', ['only' => ['create']]);
         $this->middleware('permission:Sửa combo', ['only' => ['edit']]);
         $this->middleware('permission:Xóa combo', ['only' => ['destroy']]);
-        
+
     }
     use TraitCRUD;
 
@@ -157,7 +167,7 @@ class ComboController extends Controller
             Storage::delete('public/' . $combo->image);
         }
 
-        $combo->forceDelete(); 
+        $combo->forceDelete();
 
         return redirect()->route($this->routePath . '.trash')->with('success', 'Combo đã được xóa vĩnh viễn!');
     }

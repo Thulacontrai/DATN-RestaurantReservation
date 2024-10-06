@@ -13,7 +13,7 @@ class CreateReservationsTable extends Migration
             $table->id(); // bigint, auto-increment
             $table->unsignedBigInteger('customer_id'); // bigint, không cho phép NULL
             $table->unsignedBigInteger('coupon_id')->nullable(); // bigint, cho phép NULL
-            $table->integer('user_phone')->nullable(); // bigint, không
+            $table->string('user_phone')->nullable(); // bigint, không
             $table->string('user_name', 255)->nullable(); // varchar(255), không cho phép NULL
             $table->time('reservation_time'); // datetime, không cho phép NULL
             $table->date('reservation_date')->nullable(); // datetime, cho phép NULL

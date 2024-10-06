@@ -12,14 +12,14 @@
 
         // Firebase configuration
         const firebaseConfig = {
-            apiKey: "AIzaSyDRiOTYCQgDDemeF7QCunNMvlhPwmhh9Tc",
-            authDomain: "datn-5b062.firebaseapp.com",
-            projectId: "datn-5b062",
-            storageBucket: "datn-5b062.appspot.com",
-            messagingSenderId: "630325973482",
-            appId: "1:630325973482:web:18498f0416b4123f05e293",
-            measurementId: "G-HRQ5XG4ELN"
-        };
+    apiKey: "AIzaSyDRiOTYCQgDDemeF7QCunNMvlhPwmhh9Tc",
+    authDomain: "datn-5b062.firebaseapp.com",
+    projectId: "datn-5b062",
+    storageBucket: "datn-5b062.appspot.com",
+    messagingSenderId: "630325973482",
+    appId: "1:630325973482:web:18498f0416b4123f05e293",
+    measurementId: "G-HRQ5XG4ELN"
+  };
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
@@ -87,22 +87,54 @@
 
 
         // Function to verify the OTP code
-        window.verifiCode = function() {
-            const code = document.getElementById("verificationCode").value.trim();
-            if (!code) {
-                document.getElementById("error").innerHTML = "Vui lòng nhập mã OTP!";
-                document.getElementById("error").style.display = "block";
-                return;
-            }
+       // Function to verify the OTP code
+// Function to verify the OTP code
+window.verifiCode = function() {
+    const code = document.getElementById("verificationCode").value.trim();
+    const email = document.getElementById("email").value.trim();
+    console.log('Mã OTP nhập vào:', code);
 
-            window.confirmationResult.confirm(code).then((result) => {
-                window.location.href = "http://datn-restaurantreservation.test/"; // Adjust this URL as necessary
-            }).catch((error) => {
-                console.error("Error while verifying code", error);
-                document.getElementById("error").innerHTML = "Mã OTP không đúng! Vui lòng thử lại.";
+    if (!code) {
+        document.getElementById("error").innerHTML = "Vui lòng nhập mã OTP!";
+        document.getElementById("error").style.display = "block";
+        return;
+    }
+
+    window.confirmationResult.confirm(code).then((result) => {
+        // Gọi API để xác thực và đăng nhập
+        fetch('{{ route("verify.code") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': "{{ csrf_token() }}"
+            },
+            body: JSON.stringify({
+                email: email,
+                verificationCode: code
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = "{{ route('client.index') }}";
+            } else {
+                document.getElementById("error").innerHTML = data.message;
                 document.getElementById("error").style.display = "block";
-            });
-        }
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            document.getElementById("error").innerHTML = "Có lỗi xảy ra. Vui lòng thử lại.";
+            document.getElementById("error").style.display = "block";
+        });
+    }).catch((error) => {
+        console.error("Error while verifying code", error);
+        document.getElementById("error").innerHTML = "Mã OTP không đúng! Vui lòng thử lại.";
+        document.getElementById("error").style.display = "block";
+    });
+}
+
+
     </script>
     <style>
         body {

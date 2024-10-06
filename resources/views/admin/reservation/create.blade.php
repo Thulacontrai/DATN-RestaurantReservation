@@ -1,4 +1,4 @@
-<select name="@Html.NameFor(m => m.ObjDetail.LINH_VUC_CHINH)" id="dllScope" onchange="ShowText2();"
+{{-- <select name="@Html.NameFor(m => m.ObjDetail.LINH_VUC_CHINH)" id="dllScope" onchange="ShowText2();"
     multiple="multiple" required title="Trường này bắt buộc nhập (required)">
 @foreach (var item in serviceScopeType.ObjList.OrderBy(x => x.TEXT))
 {
@@ -21,4 +21,4 @@
         }
     </optgroup>
 }
-</select>
+</select> --}}

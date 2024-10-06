@@ -26,7 +26,24 @@
                             <li><a href="{{ route('gallery.client') }}">Gallery</a></li>
                         </ul>
                     </li>
-                    <li><a href="{{ route('blog.client') }}">Blog</a></li>
+            
+                    @auth
+                    <li><a href="{{ route('profile') }}">Profile</a></li>
+                    <li>
+                        <form action="{{ route('client.logout') }}" method="POST">
+                            @csrf
+                            <button type="submit">Đăng xuất</button>
+                        </form>
+                    </li>
+                @else
+                    <li><a href="#">Đăng nhập</a>
+                        <ul>
+                            <li><a href="{{ route('register.form') }}">Đăng ký</a></li>
+                            <li><a href="{{ route('login.form') }}">Đăng nhập</a></li>
+                        </ul>
+                    </li>
+                @endauth
+            
                     <li><a href="{{ route('contact.client') }}">Contact</a></li>
                     <li><a href="{{ route('client.member') }}"><i class="bi bi-person-fill"></i></a>
                         <ul>
@@ -36,6 +53,14 @@
 
                 </ul>
             </nav>
+            
+            {{-- Debugging --}}
+            <div style="display: none;">
+                Is logged in: {{ var_export(auth()->check(), true) }}
+                User: {{ auth()->user() ? auth()->user()->email : 'Not logged in' }}
+            </div>
+
+
             <div class="clearfix"></div>
         </div>
         <!-- mainmenu close -->

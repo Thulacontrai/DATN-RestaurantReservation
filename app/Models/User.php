@@ -43,6 +43,12 @@ class User extends Authenticatable
         return $this->belongsTo(User::class, 'parent_id');
     }
 
+    public function isPosStaff()
+{
+    return $this->role === 'pos' || $this->role === 'staff';
+}
+
+
 
     /**
      * The attributes that should be hidden for serialization.
