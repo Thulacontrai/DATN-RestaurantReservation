@@ -1,3 +1,4 @@
+
 <header class="navbar navbar-expand-lg navbar-dark bg-primary p-2" style="background: #004a89;">
     <div class="container-fluid">
         <!-- Left Section: Tabs for Phòng bàn and Thực đơn -->
@@ -186,5 +187,6 @@
         }
     });
 });
+
 
 </script>

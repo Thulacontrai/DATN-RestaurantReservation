@@ -200,8 +200,6 @@
                 @can('Xem người dùng')
 
 
-                {{-- @can('Xem và quản lý người dùng') --}}
-
                 <li class="sidebar-dropdown">
                     <a href="#">
                         <i class="bi bi-people-fill"></i>
@@ -225,8 +223,6 @@
                         </ul>
                     </div>
                 </li>
-                {{-- @endcan --}}
-
 
                 @endcan
 
@@ -262,73 +258,6 @@
                     </div>
                 </li>
 
-
-                {{-- @can('Xem và quản lý người dùng') --}}
-                    <li class="sidebar-dropdown">
-                        <a href="#">
-                            <i class="bi bi-pci-card"></i>
-                            <span class="menu-text">Quản lý kho Ng-liệu</span>
-                        </a>
-                        <div class="sidebar-submenu">
-                            <ul>
-                                <li>
-                                    <a href="{{ route('admin.supplier.index') }}">Nhà cung cấp</a>
-                                <li>
-                                <li>
-                                    <a href="{{ route('admin.ingredientType.index') }}">Loại Nguyên Liệu</a>
-                                </li>
-                                <li>
-                                    <a href="{{ route('admin.ingredient.index') }}">Danh sách Nguyên Liệu</a>
-                                </li>
-                                <li>
-                                    <a href="#">Phiếu nhập kho</a>
-                                </li>
-                                <li>
-                                    <a href="#">Combo món ăn</a>
-                                </li>
-                                <li>
-                                    <a href="#">Hàng tồn kho</a>
-                                </li>
-                                <li>
-                                    <a href="#">Xuất kho</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                {{-- @endcan --}}
-
-
-                {{-- <li class="sidebar-dropdown">
-                    <a href="#">
-                        <i class="bi bi-github"></i>
-                        <span class="menu-text">Pages</span>
-                    </a>
-                    <div class="sidebar-submenu">
-                        <ul>
-                            <li>
-                                <a href="">Profile</a>
-                            </li>
-                            <li>
-                                <a href="">Account Settings</a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="sidebar-dropdown">
-                    <a href="#">
-                        <i class="bi bi-gem"></i>
-                        <span class="menu-text">Customers</span>
-                    </a>
-                    <div class="sidebar-submenu">
-                        <ul>
-                            <li>
-                                <a href="">DS Customer</a>
-                            <li>
-                                <a href="">Graph Widgets</a>
-                            </li>
-                        </ul>
-                    </div>
-                </li> --}}
 
             </ul>
         </div>

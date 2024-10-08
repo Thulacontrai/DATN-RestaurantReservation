@@ -1,17 +1,25 @@
 <?php
 
 namespace App\Http\Controllers\Pos;
-
 use App\Http\Controllers\Controller;
+use App\Models\Category;
+use App\Models\Combo;
 use App\Models\Dishes;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Table;
+use App\Models\Payment;
+use App\Models\Reservation;
+use App\Models\ReservationTable;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class PosController extends Controller
 {
+
     // Trang chính của POS, hiển thị bàn và món ăn
     public function index()
     {

@@ -8,7 +8,8 @@ class CreateReservationTablesTable extends Migration
 {
     public function up()
     {
-        Schema::create('reservation_table', function (Blueprint $table) {
+
+        Schema::create('reservation_tables', function (Blueprint $table) {
             $table->foreignId('reservation_id')->constrained()->onDelete('cascade');
             $table->foreignId('table_id')->constrained()->onDelete('cascade');
             $table->enum('status', ['available', 'reserved', 'occupied', 'cleaning'])->default('available');
@@ -24,7 +25,7 @@ class CreateReservationTablesTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('reservation_table');
+        Schema::dropIfExists('reservation_tables');
     }
 }
 

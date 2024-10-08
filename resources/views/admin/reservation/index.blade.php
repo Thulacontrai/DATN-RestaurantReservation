@@ -21,8 +21,8 @@
                             <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
                         </div>
                         <div class="toast-body">
-                            Có {{ $upcomingReservations->count() }} đơn đặt bàn sắp đến hạn trong vòng 30 phút tới
-                        </div>
+
+                            Có {{ $upcomingReservations->count() }} đơn đặt bàn sắp đến giờ nhận bàn trong vòng 30 phút tới                       </div>
                     </div>
                 @endif
 
@@ -60,7 +60,16 @@
                             <div class="card-title">Danh Sách Đặt Bàn</div>
                         </div>
                         <div class="card-body">
-
+                            @if (session('error'))
+                            <div class="alert alert-danger">
+                                {{ session('error') }}
+                            </div>
+                        @endif
+                    @if (session('success'))
+                    <div class="alert alert-success">
+                        {{ session('success') }}
+                    </div>
+                    @endif
                             <!-- Search form -->
                             <form method="GET" action="{{ route('admin.reservation.index') }}" class="mb-3">
                                 <div class="row g-3 align-items-center">
@@ -108,6 +117,8 @@
                                             <th>Tên Khách Hàng</th>
                                             <th>Số Lượng Khách</th>
                                             <th>Thời Gian Đặt</th>
+                                            <th>Bàn</th>
+                                            <th>Tiền cọc</th>
                                             <th>Ghi Chú</th>
                                             <th>Trạng Thái</th>
                                             <th>Hành Động</th>
@@ -115,6 +126,7 @@
                                     </thead>
                                     <tbody>
                                         @forelse ($reservations as $reservation)
+
                                         <tr id="reservation-{{ $reservation->id }}">
                                             <td><input type="checkbox" name="selected_reservations[]" value="{{ $reservation->id }}"></td>
                                             <td>{{ $reservation->id }}</td>
@@ -140,6 +152,7 @@
                                                 @endif
                                             </td>
 
+
                                             <td>
                                                 <div class="actions">
                                                     <a href="{{ route('admin.reservation.show', $reservation->id) }}" class="editRow" data-id="{{ $reservation->id }}">
@@ -147,7 +160,6 @@
                                                     </a>
                                                     <a href="{{ route('admin.reservation.edit', $reservation->id) }}" class="editRow" data-id="{{ $reservation->id }}">
                                                         <i class="bi bi-pencil-square text-warning"></i>
-
                                                     </a>
                                                     <a href="{{ route('admin.reservation.assignTables', $reservation->id) }}" class="editRow" data-id="{{ $reservation->id }}">
                                                         <i class="bi bi-box-arrow-in-right"></i>
