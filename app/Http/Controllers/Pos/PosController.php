@@ -1,11 +1,12 @@
 <?php
-namespace App\Http\Controllers\Pos;
 
+namespace App\Http\Controllers\Pos;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Combo;
 use App\Models\Dishes;
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Table;
 use App\Models\Payment;
 use App\Models\Reservation;
@@ -18,207 +19,122 @@ use Illuminate\Support\Facades\Log;
 
 class PosController extends Controller
 {
-    public function index(Request $request)
+
+    // Trang chính của POS, hiển thị bàn và món ăn
+    public function index()
     {
-        // Fetch all tables along with their associated orders
-        $tables = Table::with('orders')->get();
+        // Lấy tất cả các bàn
+        $tables = Table::all();
 
-        // Loop through each table and calculate the total price of the order and deposit
-        foreach ($tables as $table) {
-            // Initialize total_price and deposit for each table
-            $totalPrice = 0;
-            $deposit = 0;
+        // Lấy các món ăn với phân trang (8 món mỗi trang)
+        $dishes = Dishes::paginate(8);
 
-            // Check if the table has any orders
-            if ($table->orders->isNotEmpty()) {
-                foreach ($table->orders as $order) {
-                    $totalPrice += $order->quantity * $order->price;
-                }
-            }
-
-            // // Set total price for the table
-            // $table->total_price = $totalPrice;
-
-            // Calculate deposit (100,000 VND per guest)
-            if (isset($table->guests) && $table->guests > 0) {
-                $deposit = $table->guests * 100000;
-            }
-
-            // // Set the deposit for the table
-            // $table->deposit = $deposit;
-        }
-
-        // Return the view with the tables and associated data
-        return view('pos.index', compact('tables'));
+        // Trả về view cùng với dữ liệu bàn và món ăn
+        return view('pos.index', compact('tables', 'dishes'));
     }
 
-
-
-
-
-
-    public function orders()
+    // API để tạo đơn hàng mới
+    public function createOrder(Request $request)
     {
-        return $this->hasMany(Order::class);
-    }
+        // Xác thực dữ liệu đầu vào
+        $request->validate([
+            'table_id' => 'required|exists:tables,id',
+        ]);
 
-
-
-
-    public function Pmenu($tableNumber)
-    {
         try {
-            $tableInfo = Table::where('table_number', $tableNumber)->first();
-            if (!$tableInfo) {
-                return back()->with('error', 'Table not found.');
-            }
+            // Tìm bàn theo table_id
+            $table = Table::findOrFail($request->table_id);
 
-            $tableType = $tableInfo->type;
-            $tableArea = $tableInfo->area;
-
-            // Fetch categories and dishes from cache
-            $categories = Cache::remember('categories_with_dishes', 60, function () {
-                return Category::with('dishes')->get();
-            });
-
-            // Organize categories and their dishes
-            $groupedCategories = $categories->mapWithKeys(function ($category) {
-                return [
-                    $category->name => $category->dishes->map(function ($dish) {
-                        return [
-                            'name' => $dish->name,
-                            'price' => $dish->price,
-                            'image' => $dish->image ?? asset('path/to/default-image.jpg'),
-                        ];
-                    })
-                ];
-            });
-
-            // Fetch and add combos to categories
-            $combos = Cache::remember('combos', 60, function () {
-                return Combo::all()->map(function ($combo) {
-                    return [
-                        'name' => $combo->name,
-                        'price' => $combo->price,
-                        'image' => $combo->image ?? asset('path/to/default-combo-image.jpg'),
-                    ];
-                });
-            });
-
-            $groupedCategories['Combo'] = $combos;
-
-            return view('pos.menu', [
-                'table' => $tableNumber,
-                'tableType' => $tableType,
-                'tableArea' => $tableArea,
-                'categories' => $groupedCategories
+            // Tạo đơn hàng mới
+            $order = Order::create([
+                'table_id' => $request->table_id,
+                'status' => 'pending',
+                'total_amount' => 0,
+                'discount_amount' => 0,
+                'final_amount' => 0,
             ]);
+
+            Log::info('Đơn hàng mới đã được tạo cho bàn: ' . $table->table_number);
+
+            return response()->json([
+                'success' => true,
+                'order' => $order,
+                'table_number' => $table->table_number,
+            ]);
+
         } catch (\Exception $e) {
-            Log::error('Error fetching menu in PosController: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
-            return back()->with('error', 'An error occurred while loading the menu. Please try again.');
+            Log::error('Lỗi khi tạo đơn hàng: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Đã xảy ra lỗi khi tạo đơn hàng.',
+            ], 500);
         }
     }
 
-    public function Ppayment($orderId, Request $request)
+    // API để thêm món vào order_items
+    public function addDishToOrder(Request $request)
     {
-        $order = Order::find($orderId);
-        $reservation = Reservation::find($order->reservation_id);
-        $table = Table::find($order->table_id);
-        $reservation_table = ReservationTable::where('reservation_id', $order->reservation_id)
-            ->where('table_id', $order->table_id)
-            ->first();
-        $order_items = Dishes::whereIn('id', $request->order_item)->get();
-        $staff_id = User::find($order->staff_id);
-        $customer_id = User::find($order->customer_id);
-        $total_amount = $request->total_amount;
-        $order_item = $request->order_item;
-        return view(
-            'pos.payment',
-            compact('orderId', 'order', 'reservation', 'table', 'reservation_table', 'order_items', 'staff_id', 'customer_id', 'total_amount', 'order_item', )
-        );
+        // Ghi lại dữ liệu từ request
+        Log::info('Dữ liệu nhận được từ frontend: ', $request->all());
+
+        // Xác thực dữ liệu đầu vào
+        $request->validate([
+            'order_id' => 'required|exists:orders,id',
+            'dish_id' => 'required|exists:dishes,id',
+            'quantity' => 'required|integer|min:1',
+        ]);
+
+        try {
+            $order = Order::findOrFail($request->order_id);
+            $dish = Dishes::findOrFail($request->dish_id);
+
+            // Kiểm tra món ăn đã tồn tại trong order hay chưa
+            $existingOrderItem = OrderItem::where('order_id', $order->id)
+                                          ->where('item_id', $dish->id)
+                                          ->where('item_type', 'dish')
+                                          ->first();
+
+            if ($existingOrderItem) {
+                Log::info('Cập nhật số lượng món đã tồn tại trong đơn hàng.');
+                // Cập nhật số lượng và tổng tiền nếu món đã có trong đơn hàng
+                $existingOrderItem->quantity += $request->quantity;
+                $existingOrderItem->total_price = $existingOrderItem->quantity * $existingOrderItem->price;
+                $existingOrderItem->save();
+            } else {
+                Log::info('Thêm món mới vào đơn hàng.');
+                // Thêm món mới vào order_items nếu chưa có
+                $orderItem = OrderItem::create([
+                    'order_id' => $order->id,
+                    'item_id' => $dish->id,
+                    'item_type' => 'dish',
+                    'quantity' => $request->quantity,
+                    'price' => $dish->price,
+                    'total_price' => $dish->price * $request->quantity,
+                    'status' => 'preparing',
+                ]);
+            }
+
+            // Cập nhật tổng số tiền của đơn hàng
+            $order->total_amount = OrderItem::where('order_id', $order->id)->sum('total_price');
+            $order->final_amount = $order->total_amount;
+            $order->save();
+
+            Log::info('Cập nhật tổng tiền của đơn hàng: ', ['total_amount' => $order->total_amount]);
+
+            return response()->json([
+                'success' => true,
+                'orderItem' => $existingOrderItem ?? $orderItem, // Trả về món đã được cập nhật hoặc món mới
+                'totalAmount' => $order->total_amount,
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Lỗi khi thêm món vào đơn hàng: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Đã xảy ra lỗi khi thêm món vào đơn hàng.',
+            ], 500);
+        }
     }
-
-
-    // public function processPaymentOffline(Request $request)
-    // {
-    //     return $this->handlePayment($request, 'offline');
-    // }
-
-
-    // public function processPaymentOnline(Request $request)
-    // {
-    //     return $this->handlePayment($request, 'online');
-    // }
-
-
-    // private function handlePayment(Request $request, $paymentType)
-    // {
-    //     try {
-    //         // Validate incoming request data
-    //         $rules = [
-    //             'paymentMethod' => 'required|string|in:cash,card,qr,momo,vnpay',
-    //             'items' => 'required|array',
-    //             'table' => 'required|string',
-    //         ];
-
-    //         if ($paymentType === 'online') {
-    //             $rules = array_merge($rules, [
-    //                 'cardNumber' => 'required_if:paymentMethod,card|numeric',
-    //                 'expiryDate' => 'required_if:paymentMethod,card|date_format:m/y',
-    //                 'cvc' => 'required_if:paymentMethod,card|digits:3',
-    //             ]);
-    //         }
-
-    //         $request->validate($rules);
-
-    //         // Extract necessary data
-    //         $table = $request->input('table');
-    //         $paymentMethod = $request->input('paymentMethod');
-    //         $selectedItems = $request->input('items');
-    //         $totalAmount = collect($selectedItems)->sum(function ($item) {
-    //             return isset($item['quantity'], $item['price']) ? $item['quantity'] * $item['price'] : 0;
-    //         });
-
-    //         DB::beginTransaction();
-
-    //         // Create payment record
-    //         $payment = Payment::create([
-    //             'reservation_id' => null,
-    //             'bill_id' => 'BILL_' . time(),
-    //             'transaction_amount' => $totalAmount,
-    //             'refund_amount' => 0,
-    //             'payment_method' => $paymentMethod,
-    //             'status' => 'Pending',
-    //             'transaction_status' => 'pending',
-    //         ]);
-
-    //         // Process payment status
-    //         switch ($paymentMethod) {
-    //             case 'cash':
-    //             case 'card':
-    //             case 'qr':
-    //             case 'momo':
-    //             case 'vnpay':
-    //                 $payment->status = 'Completed';
-    //                 $payment->transaction_status = 'completed';
-    //                 break;
-    //             default:
-    //                 throw new \Exception("Unsupported payment method: " . $paymentMethod);
-    //         }
-
-    //         $payment->save();
-
-    //         DB::commit();
-
-    //         return view('pos.receipt', [
-    //             'table' => $table,
-    //             'selectedItems' => $selectedItems,
-    //             'totalAmount' => $totalAmount
-    //         ])->with('success', 'Payment successful.');
-    //     } catch (\Exception $e) {
-    //         DB::rollBack();
-    //         Log::error('Error processing payment: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
-    //         return back()->with('error', 'An error occurred during payment. Please try again.');
-    //     }
-    // }
 }

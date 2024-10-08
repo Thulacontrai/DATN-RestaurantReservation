@@ -21,6 +21,7 @@
                             <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
                         </div>
                         <div class="toast-body">
+
                             Có {{ $upcomingReservations->count() }} đơn đặt bàn sắp đến giờ nhận bàn trong vòng 30 phút tới                       </div>
                     </div>
                 @endif
@@ -125,36 +126,31 @@
                                     </thead>
                                     <tbody>
                                         @forelse ($reservations as $reservation)
-                                            <tr id="reservation-{{ $reservation->id }}">
-                                                <td><input type="checkbox" name="selected_reservations[]"
-                                                        value="{{ $reservation->id }}"></td>
-                                                <td>{{ $reservation->id }}</td>
-                                                <td>{{ $reservation->customer->name ?? 'Không rõ' }}</td>
-                                                <td>{{ $reservation->guest_count ?? 'N/A' }}</td>
-                                                <td>
-                                                    {{-- {{ \Carbon\Carbon::parse($reservation->reservation_time)->format('H:i:s') }} --}}
-                                                   {{ $reservation->reservation_date }} 
-                                                        <br> {{ $reservation->reservation_time }}
-                                                   
-                                                </td>
-        
-                                                <td>@foreach ($reservation->tables as $table )
-                                                      {{$table->table_number ?? 'Chưa xếp bàn'}} 
-                                                @endforeach</td>
-                                                <td>{{ number_format($reservation->deposit_amount) }}đ
-                                                </td>                                                
-                                                <td>{{ $reservation->note ?? 'Không có' }}</td>
-                                                <td>
-                                                    @if ($reservation->status === 'Confirmed')
-                                                        <span class="badge bg-success">Đã xác nhận</span>
-                                                    @elseif ($reservation->status === 'Pending')
-                                                        <span class="badge bg-warning">Chờ xử lý</span>
-                                                    @elseif ($reservation->status === 'Cancelled')
-                                                        <span class="badge bg-danger">Đã hủy</span>
-                                                    @else
-                                                        <span class="badge bg-secondary">Không rõ</span>
-                                                    @endif
-                                                </td>
+
+                                        <tr id="reservation-{{ $reservation->id }}">
+                                            <td><input type="checkbox" name="selected_reservations[]" value="{{ $reservation->id }}"></td>
+                                            <td>{{ $reservation->id }}</td>
+                                            <td>{{ $reservation->customer->name ?? 'Không rõ' }}</td>
+                                            <td>{{ $reservation->guest_count ?? 'N/A' }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($reservation->reservation_time)->format('H:i:s') }}</td>
+                                            <td>{{ $reservation->reservation_date }}
+                                                <br> {{ $reservation->reservation_time }}
+                                            </td>
+                                            <td>@foreach ($reservation->tables as $table )
+                                                {{$table->table_number}},
+                                            @endforeach</td>
+                                            <td>{{ $reservation->note ?? 'Không có' }}</td>
+                                            <td>
+                                                @if ($reservation->status === 'Confirmed')
+                                                <span class="badge shade-green min-70">Đã xác nhận</span>
+                                                @elseif ($reservation->status === 'Pending')
+                                                <span class="badge shade-yellow min-70">Chờ xử lý</span>
+                                                @elseif ($reservation->status === 'Cancelled')
+                                                <span class="badge shade-red min-70">Đã hủy</span>
+                                                @else
+                                                <span class="badge shade-gray min-70">Không rõ</span>
+                                                @endif
+                                            </td>
 
 
                                             <td>
@@ -164,8 +160,6 @@
                                                     </a>
                                                     <a href="{{ route('admin.reservation.edit', $reservation->id) }}" class="editRow" data-id="{{ $reservation->id }}">
                                                         <i class="bi bi-pencil-square text-warning"></i>
-
-
                                                     </a>
                                                     <a href="{{ route('admin.reservation.assignTables', $reservation->id) }}" class="editRow" data-id="{{ $reservation->id }}">
                                                         <i class="bi bi-box-arrow-in-right"></i>
