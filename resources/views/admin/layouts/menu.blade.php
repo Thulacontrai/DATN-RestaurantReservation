@@ -199,6 +199,7 @@
 
                 @can('Xem người dùng')
 
+
                 <li class="sidebar-dropdown">
                     <a href="#">
                         <i class="bi bi-people-fill"></i>
@@ -222,7 +223,7 @@
                         </ul>
                     </div>
                 </li>
-               
+
                 @endcan
 
                 <li class="sidebar-dropdown">
@@ -257,8 +258,6 @@
                     </div>
                 </li>
 
-
-               
 
             </ul>
         </div>
