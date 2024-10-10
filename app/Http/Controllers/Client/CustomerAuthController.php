@@ -46,53 +46,56 @@ class CustomerAuthController extends Controller
     }
 
     public function login(Request $request)
-    {
-        // Xác thực thông tin đầu vào
-        $request->validate([
-            'phone' => 'required|string',
-            'password' => 'required|string',
-        ]);
-    
-        // Thông tin đăng nhập: sử dụng 'phone' và 'password'
-        $credentials = ['phone' => $request->phone, 'password' => $request->password];
-    
-        // Kiểm tra thông tin xác thực
-        if (Auth::attempt($credentials)) {
-            // Đăng nhập thành công
-            return redirect()->route('client.index')->with('success', 'Đăng nhập thành công!');
-        }
-    
-        // Thông tin không đúng, trả về thông báo lỗi
-        return back()->withErrors(['phone' => 'Thông tin xác thực không đúng. Vui lòng thử lại.']);
+{
+    // Xác thực thông tin đầu vào
+    $request->validate([
+        'phone' => 'required|string',
+        'password' => 'required|string',
+    ]);
+
+    // Thông tin đăng nhập: sử dụng 'phone' và 'password'
+    $credentials = ['phone' => $request->phone, 'password' => $request->password];
+
+    // Kiểm tra thông tin xác thực
+    if (Auth::attempt($credentials)) {
+        // Đăng nhập thành công - chuyển sang trang OTP
+        session(['phone' => $request->phone]); // Lưu số điện thoại vào session để xác thực OTP
+        return redirect()->route('otp.verify.form')->with('success', 'Đăng nhập thành công! Vui lòng xác thực OTP.');
     }
+
+    // Thông tin không đúng, trả về thông báo lỗi
+    return back()->withErrors(['phone' => 'Thông tin xác thực không đúng. Vui lòng thử lại.']);
+}
+
     
     
     
     
-    public function verifyCode(Request $request)
-    {
-        $request->validate([
-            'verificationCode' => 'required|string',
-        ]);
-    
-        try {
-            $confirmationResult = session('confirmationResult');
-    
-            if (!$confirmationResult) {
-                return back()->withErrors(['verificationCode' => 'Mã OTP đã hết hạn hoặc không hợp lệ.']);
-            }
-    
-            $confirmationResult->confirm($request->verificationCode);
-    
-            // Sau khi xác thực OTP thành công, chuyển hướng về trang chủ
-            return redirect()->route('client.index')->with('success', 'Xác thực thành công!');
-            
-        } catch (InvalidToken $e) {
-            return back()->withErrors(['verificationCode' => 'Mã OTP không hợp lệ!']);
-        } catch (\Exception $e) {
-            return back()->withErrors(['verificationCode' => 'Có lỗi xảy ra! Vui lòng thử lại.']);
+public function verifyCode(Request $request)
+{
+    $request->validate([
+        'verificationCode' => 'required|string',
+        'email' => 'required|email',
+    ]);
+
+    try {
+        $user = User::where('email', $request->email)->first();
+        
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'Không tìm thấy tài khoản với email này.']);
         }
+        
+        Auth::login($user);
+        
+        // Lưu session
+        $request->session()->regenerate();
+
+        return response()->json(['success' => true, 'message' => 'Xác thực OTP thành công và đăng nhập.']);
+    } catch (\Exception $e) {
+        return response()->json(['success' => false, 'message' => 'Có lỗi xảy ra khi xác thực OTP. Vui lòng thử lại.']);
     }
+}
+
 
     public function checkAccount(Request $request)
     {
@@ -115,15 +118,34 @@ class CustomerAuthController extends Controller
     
     
 
+
+    public function loginSuccess(Request $request)
+    {
+        // Xác thực OTP thành công
+        $user = User::where('email', $request->email)->first(); // hoặc phương thức khác để lấy người dùng
+    
+        if ($user) {
+            Auth::login($user); // Đăng nhập người dùng
+            return redirect()->route('client.index'); // Chuyển hướng đến trang chính
+        }
+    
+        return back()->withErrors(['message' => 'Đăng nhập không thành công']);
+    }
+    
+    
+    
+
     
     
     
     
 
-    public function logout()
-    {
-        Auth::logout();
-        return redirect()->route('client.index')->with('success', 'Bạn đã đăng xuất.');
-    }
+    public function logout(Request $request)
+{
+    Auth::logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+    return redirect()->route('client.index');
+}
     
 }

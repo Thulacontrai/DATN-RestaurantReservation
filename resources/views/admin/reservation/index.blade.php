@@ -21,6 +21,7 @@
                             <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
                         </div>
                         <div class="toast-body">
+
                             Có {{ $upcomingReservations->count() }} đơn đặt bàn sắp đến giờ nhận bàn trong vòng 30 phút tới                       </div>
                     </div>
                 @endif
@@ -156,29 +157,43 @@
                                                     @endif
                                                 </td>
 
-                                                <td>
-                                                    <div class="actions">
-                                                        <a href="{{ route('admin.reservation.show', $reservation->id) }}" class="editRow" data-id="{{ $reservation->id }}">
-                                                            <i class="bi bi-list text-success"></i>
-                                                        </a>
-                                                        <a href="{{ route('admin.reservation.edit', $reservation->id) }}" class="editRow" data-id="{{ $reservation->id }}">
-                                                            <i class="bi bi-pencil-square text-warning"></i>
-                                                        </a>
-                                                        <form action="{{ route('admin.reservation.destroy', $reservation->id) }}" method="POST" style="display:inline-block;">
+                                            <td>
+                                                <div class="actions">
+                                                    <a href="{{ route('admin.reservation.show', $reservation->id) }}" class="editRow" data-id="{{ $reservation->id }}">
+                                                        <i class="bi bi-list text-green"></i>
+                                                    </a>
+                                                    <a href="{{ route('admin.reservation.edit', $reservation->id) }}" class="editRow" data-id="{{ $reservation->id }}">
+                                                        <i class="bi bi-pencil-square text-warning"></i>
+
+                                                    </a>
+                                                    <a href="{{ route('admin.reservation.assignTables', $reservation->id) }}" class="editRow" data-id="{{ $reservation->id }}">
+                                                        <i class="bi bi-box-arrow-in-right"></i>
+                                                    </a>
+                                                    {{-- Nút hủy đặt bàn --> --}}
+                                                         <form action="{{ route('admin.reservation.cancel', $reservation->id) }}" method="POST" style="display:inline-block;">
                                                             @csrf
-                                                            @method('DELETE')
+                                                            @method('POST')
                                                             <a href="#" style="margin-top: 15px">
-                                                            <button type="submit" class="btn btn-link p-0" onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
-                                                                <i class="bi bi-trash text-danger"></i>
+                                                            <button type="submit" class="btn btn-link p-0" onclick="return confirm('Bạn có chắc chắn muốn hủy đơn này?');">
+                                                                <i class="bi bi-x-circle text-danger"></i>
                                                             </button></a>
-                                                        </form>
-                                                    </div>
-                                                </td>
-                                            </tr>
+
+                                                    </form>
+                                                    <form action="{{ route('admin.reservation.destroy', $reservation->id) }}" method="POST" style="display:inline-block;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <a href="#" style="margin-top: 18px;" >
+                                                        <button type="submit" class="btn btn-link p-0" onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
+                                                            <i class="bi bi-trash text-red"></i>
+                                                        </button></a>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
                                         @empty
-                                            <tr>
-                                                <td colspan="8">Không có đặt bàn nào được tìm thấy.</td>
-                                            </tr>
+                                        <tr>
+                                            <td colspan="8">Không có đặt bàn nào được tìm thấy.</td>
+                                        </tr>
                                         @endforelse
                                     </tbody>
                                 </table>

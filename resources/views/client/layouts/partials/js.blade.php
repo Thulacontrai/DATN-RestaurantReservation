@@ -151,12 +151,16 @@
         });
 
         $('#confirm-button').click(function() {
-            if (selectedTime && selectedDate) {
 
+            function convertDateFormat(dateStr) {
+                const [year, month, day] = dateStr.split("-");
+                return `${day}-${month}-${year}`;
+            }
+            if (selectedTime && selectedDate) {
                 Swal.fire({
                     icon: "question",
                     html: 'Bạn đã chọn thời gian dùng bữa lúc <b>' + selectedTime +
-                        '</b> vào ngày <b>' + selectedDate + '</b>',
+                        '</b> vào ngày <b>' + convertDateFormat(selectedDate) + '</b>',
                     title: 'Vui lòng xác nhận!',
                     showCancelButton: true,
                     confirmButtonText: "Xác nhận",

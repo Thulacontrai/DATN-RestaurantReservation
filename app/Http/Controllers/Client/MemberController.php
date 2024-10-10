@@ -84,6 +84,7 @@ class MemberController extends Controller
     // $memberData = User::findOrFail($id); // Lấy dữ liệu thành viên theo ID
     // return view('client.member', compact('memberData')); // Trả về view kèm dữ liệu
 }
+      
 public function update(Request $request)
 {
     // Lấy người dùng hiện tại
