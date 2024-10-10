@@ -299,9 +299,9 @@ require __DIR__ . '/auth.php';
 //Route đăng nhập của khách hàng
 // Route đăng nhập của khách hàng
 Route::get('/register-client', [CustomerAuthController::class, 'showRegisterForm'])->name('register.form');
-Route::post('/register-client', [CustomerAuthController::class, 'register'])->name('client.register'); 
+Route::post('/register-client', [CustomerAuthController::class, 'register'])->name('client.register');
 Route::get('/login-client', [CustomerAuthController::class, 'showLoginForm'])->name('login.form');
-Route::post('/login-client', [CustomerAuthController::class, 'login'])->name('client.login'); 
+Route::post('/login-client', [CustomerAuthController::class, 'login'])->name('client.login');
 Route::post('/logout-client', [CustomerAuthController::class, 'logout'])->name('client.logout');
 
 Route::post('/check-account', [CustomerAuthController::class, 'checkAccount']);
@@ -320,8 +320,7 @@ Route::middleware(['auth'])->group(function () {
 
 
 
-Route::get('/test', function () {
-    return view('test');
-});
+Route::get('/test', [ReservationController::class, 'getBanks']);
+Route::get('/print/{orderId}', [ReservationController::class, 'print'])->name('print.page');
 require __DIR__ . '/auth.php';
 

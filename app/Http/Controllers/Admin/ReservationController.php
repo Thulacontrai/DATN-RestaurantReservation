@@ -14,6 +14,7 @@ use App\Traits\TraitCRUD;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use GuzzleHttp\Client;
 
 
 
@@ -375,7 +376,7 @@ class ReservationController extends Controller
                     ]);
                 });
             } else {
-                return redirect('/')->with('err', 'Đơn đặt bàn đã đã bị hủy');
+                return redirect()->back()->with('err', 'Đơn đặt bàn đã đã bị hủy');
             }
         } else {
             $reservation = $request->reservation;
@@ -525,6 +526,27 @@ class ReservationController extends Controller
             'message' => 'Chuyển bàn thành công'
         ]);
 
+    }
+
+
+    public function getBanks()
+    {
+
+        $client = new Client();
+        $response = $client->get('https://api.vietqr.io/v2/banks');
+        $data = json_decode($response->getBody(), true);
+
+        if ($data['code'] == '00') {
+            $banks = $data['data'];
+            return view('test', compact('banks'));
+        }
+
+        return 'Lỗi khi lấy danh sách ngân hàng';
+    }
+    public function print($orderId)
+    {
+        $order = Order::find($orderId); 
+        return view('printf', compact('order'))->render();
     }
 
 }
