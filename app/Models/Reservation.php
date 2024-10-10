@@ -39,6 +39,6 @@ class Reservation extends Model
     public function tables()
     {
         return $this->belongsToMany(Table::class, 'reservation_tables');
-                   
+
     }
 }
