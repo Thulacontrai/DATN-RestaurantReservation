@@ -64,7 +64,7 @@ Route::post('/member/update-booking', [MemberController::class, 'updateBooking']
 
 // login 
 Route::get('/home', [HomeController::class, 'index'])->middleware('auth');
-Route::get('/login1', [LoginController::class, 'showLoginForm'])->name('login.client');
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login.client');
 
 
 
@@ -325,18 +325,30 @@ Route::post('/login-success', [CustomerAuthController::class, 'loginSuccess'])->
 Route::post('/verify-code', [CustomerAuthController::class, 'verifyCode'])->name('verify.code');
 
 Route::middleware(['auth'])->group(function () {
-    // Các route cần xác thực
-    Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
-    // ... các route khác cần xác thực
+    Route::get('/member/profile', [MemberController::class, 'showProfile'])->name('member.profile');
+    Route::post('/member/update-booking', [MemberController::class, 'updateBooking'])->name('member.updateBooking');
 });
 
 
 
+Route::get('/member/profile', [MemberController::class, 'showProfile'])->name('member.profile');
+Route::post('/member/update-booking', [MemberController::class, 'updateBooking'])->name('member.updateBooking');
+
+Route::post('/cancel-reservation', [ReservationController::class, 'cancelReservation'])->name('cancel.reservation');
+
+
+Route::post('/send-otp', [ReservationController::class, 'sendOtp'])->name('send.otp');
+Route::post('/verify-otp', [ReservationController::class, 'verifyOtp'])->name('verify.otp');
+
+
+Route::post('/api/cancel-booking/{id}', [ReservationController::class, 'cancelReservation'])->name('cancel.booking');
+Route::post('/cancel-booking/{id}', [ReservationController::class, 'cancelReservation'])->name('cancel.booking');
 
 
 Route::get('/test', function () {
     return view('test');
 });
 require __DIR__ . '/auth.php';
+
 
 
