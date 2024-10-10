@@ -1,202 +1,172 @@
-
 @extends('client.layouts.master')
 @section('title', 'Member')
 
 @section('content')
-    
-@include('client.layouts.component.subheader', [
-    'backgroundImage' => 'client/03_images/background/bg-6.jpg',
-    'subtitle' => 'Get in',
-    'title' => 'Touch',
-    'currentPage' => 'Member',
-])
 
-<div id="content" class="no-bottom no-top">
-<div class="container " >
+    @include('client.layouts.component.subheader', [
+        'backgroundImage' => 'client/03_images/background/bg-6.jpg',
+        'subtitle' => 'Get in',
+        'title' => 'Touch',
+        'currentPage' => 'Member',
+    ])
 
-    <!-- Phần thông tin tài khoản -->
-    <div class="text-center my-4">
-        <img src="{{ $memberData['avatar'] }}" alt="Avatar" class="avatar mb-3">
-        <h5>{{ $memberData['name'] }}</h5>
-    </div>
+    <div id="content" class="no-bottom no-top">
+        <div class="container ">
 
-    <!-- Mã vạch -->
+            <!-- Phần thông tin tài khoản -->
 
-    <!-- Thông tin thành viên -->
-    <div class="row text-center mb-3">
-        <div class="col-6">
-            <h5 class="">{{ $memberData['total_spend'] }}</h5>
-            <p>Tổng chi tiêu</p>
-        </div>
-        <div class="col-6">
-            <h5 class="">{{ $memberData['reward_points'] }}</h5>
-            <p>Điểm thưởng</p>
-        </div>
-    </div>
-
-
-   
-
-
-    <!-- Danh sách tùy chọn -->
-    <ul class="list-group mb-4">
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-            Điểm 
-            <span><i class="bi bi-chevron-right"></i></span>
-        </li>
-        <li class="list-group-item d-flex justify-content-between align-items-center" data-bs-toggle="modal" data-bs-target="#bookingModal">
-            Đơn đặt bàn
-            <span><i class="bi bi-chevron-right" ></i></span>
-        </li>
-        <li class="list-group-item d-flex justify-content-between align-items-center" data-bs-toggle="modal" data-bs-target="#accountInfoModal">
-            Thông tin tài khoản
-            <span ><i class="bi bi-chevron-right" ></i></span>
-        </li>
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-            Lịch sử giao dịch
-            <span ><i class="bi bi-chevron-right"></i></span>
-        </li>
-       
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-            Xóa tài khoản
-            <span><i class="bi bi-chevron-right"></i></span>
-        </li>
-    </ul>
-
-    
-
-    <!-- Nút Đăng xuất -->
-    <div class="text-center">
-        <a href="#" class="text-white">Đăng xuất</a>
-    </div>
-
-    <!-- Modal Thông tin tài khoản -->
-    <div class="modal fade" id="accountInfoModal" tabindex="-1" aria-labelledby="accountInfoModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="accountInfoModalLabel">Thông tin tài khoản</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form action="{{ route('member.update') }}" method="POST">
-                    @csrf
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Tên</label>
-                            <input type="text" class="form-control" id="name" name="name" value="{{ $memberData['name'] }}">
+            <div class="container-fluid">
+                <div class="row">
+                    <!-- Side Menu -->
+                    <div class="col-md-3 side-menu p-3">
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="profile-circle">{{ strtoupper(substr($memberData['name'], 0, 1)) }}</div>
+                            <div class="ms-3">
+                                <h5 class="text-danger">Hi, {{ $memberData['name'] }}</h5>
+                                <p class="text-muted">{{ $memberData['location'] }}</p>
+                                <p class="text-muted">Thành viên từ {{ $memberData['member_since'] }}</p>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="phone" class="form-label">Số điện thoại</label>
-                            <input type="text" class="form-control" id="phone" name="phone" value="{{ $memberData['phone'] }}">
+                        <ul class="nav flex-column">
+                            <li class="nav-item">
+                                <a class="nav-link " href="#" onclick="showSection('reservationSection')">Đặt
+                                    chỗ</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link " href="#" onclick="showSection('accountDetailsSection')">Chi tiết
+                                    tài khoản</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link " href="#" onclick="showSection('paymentSection')">Phương thức
+                                    thanh
+                                    toán</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Main Content -->
+                    <div class="col-md-9 p-4">
+                        <div id="reservationSection" class="content-section">
+                            <h3>Đặt chỗ sắp tới</h3>
+                            <!-- Reservation Details -->
+                            @if (count($memberData['reservations']) > 0)
+                                @php
+                                    $reservationsPerPage = 3; // Số lượng đơn đặt chỗ trên mỗi trang
+                                    $totalReservations = count($memberData['reservations']);
+                                    $totalPages = ceil($totalReservations / $reservationsPerPage);
+                                    $currentPage = request('page', 1); // Lấy trang hiện tại từ query string
+                                    $offset = ($currentPage - 1) * $reservationsPerPage; // Tính chỉ số bắt đầu
+                                    $reservationsToShow = array_slice(
+                                        $memberData['reservations'],
+                                        $offset,
+                                        $reservationsPerPage,
+                                    ); // Lấy mảng đơn đặt chỗ cho trang hiện tại
+                                @endphp
+
+                                @foreach ($reservationsToShow as $reservation)
+                                    <div class="reservation-card mb-3">
+                                        <div>
+                                            <p><strong>{{ $reservation['status'] }}</strong></p>
+                                            <p style="display: inline; margin-right: 10px;">Ngày:
+                                                {{ \Carbon\Carbon::parse($reservation['date'])->format('l, d F Y') }}</p>
+                                            <p style="display: inline; margin-right: 10px;">Giờ: {{ $reservation['time'] }}
+                                            </p>
+                                            <p style="display: inline; margin-right: 10px;"><i class="bi bi-people"></i>
+                                                {{ $reservation['people'] }} người</p>
+                                        </div>
+                                        <div class="actions">
+                                            <a href="#" class="btn btn-primary">Modify</a>
+                                            <a href="#" class="btn btn-danger">Cancel</a>
+                                            <a href="#" class="btn btn-secondary">Add to calendar</a>
+                                        </div>
+                                    </div>
+                                @endforeach
+
+                                <!-- Phân trang -->
+                               
+                            @else
+                                <p>Bạn không có đặt chỗ sắp tới.</p>
+                            @endif
+                            <!-- Add the rest of your reservation content here -->
                         </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email" name="email" value="{{ $memberData['email'] }}">
+                    
+
+
+                    {{-- <div class="reservation-details">
+                           
+                            <p><strong>Status:</strong> Reservation confirmed</p>
+                            <p><strong>Guests:</strong> {{ $reservation->guest_count }}</p>
+                            <p><strong>Date:</strong> {{ $reservation->reservation_date->format('D, M d at g:i A') }}</p>
+                        
+                            <div class="actions">
+                                <a href="#" class="btn btn-primary">Modify</a>
+                                <a href="#" class="btn btn-danger">Cancel</a>
+                                <a href="#" class="btn btn-secondary">Add to calendar</a>
+                            </div>
+                        
+                            <div class="additional-info">
+                                <a href="#">Browse Menu</a>
+                                <a href="#">Get Directions</a>
+                                <a href="#">Send Message</a>
+                            </div>
+                        </div> --}}
+
+
+                        <div id="accountDetailsSection" class="content-section" style="display:none;">
+                            <h3>Thông tin cá nhân</h3>
+                            <div class="profile-info">
+                                <p>
+                                    <strong>Họ tên:</strong> 
+                                    <span id="displayName">{{ $memberData['name'] }}</span>
+                                    <input type="text" id="inputName" value="{{ $memberData['name'] }}" style="display:none;" />
+                                </p>
+                                <p>
+                                    <strong>Số điện thoại:</strong> 
+                                    <span id="displayPhone">{{ $memberData['phone'] }}</span>
+                                    <input type="text" id="inputPhone" value="{{ $memberData['phone'] }}" style="display:none;" />
+                                </p>
+                                <p>
+                                    <strong>Email:</strong> 
+                                    <span id="displayEmail">{{ $memberData['email'] }}</span>
+                                    <input type="email" id="inputEmail" value="{{ $memberData['email'] }}" style="display:none;" />
+                                </p>
+                                <p>
+                                    <strong>Địa chỉ:</strong> 
+                                    <span id="displayLocation">{{ $memberData['location'] }}</span>
+                                    <input type="text" id="inputLocation" value="{{ $memberData['location'] }}" style="display:none;" />
+                                </p>
+                                <p>
+                                    <strong>Thành viên từ:</strong> {{ $memberData['member_since'] }}
+                                </p>
+                            </div>
+                            <button onclick="saveChanges()" style="display:none;" id="saveButton" class="btn-line">Lưu thay đổi</button>
+                            <button onclick="toggleEdit()" id="editButton" class="btn-line">Chỉnh sửa thông tin</button>
                         </div>
                         
-                        <label class="text-center" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
-                            <a href="#" class="text-black">Đổi mật khẩu</a>
-                        </label>
                         
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                        <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
 
-    <!-- Modal Đổi mật khẩu -->
-    <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="changePasswordModalLabel">Đổi mật khẩu</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div id="paymentSection" class="content-section" style="display:none;">
+                        <h3>Phương thức thanh toán</h3>
+                        <!-- Payment details -->
+                    </div>
                 </div>
-                <form action="{{ route('member.changePassword') }}" method="POST">
-                    @csrf
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="current_password" class="form-label">Mật khẩu hiện tại</label>
-                            <input type="password" class="form-control" id="current_password" name="current_password">
-                        </div>
-                        <div class="mb-3">
-                            <label for="new_password" class="form-label">Mật khẩu mới</label>
-                            <input type="password" class="form-control" id="new_password" name="new_password">
-                        </div>
-                        <div class="mb-3">
-                            <label for="confirm_password" class="form-label">Xác nhận mật khẩu mới</label>
-                            <input type="password" class="form-control" id="confirm_password" name="confirm_password">
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                        <button type="submit" class="btn btn-primary">Lưu mật khẩu</button>
-                    </div>
-                </form>
+</div>
             </div>
         </div>
+
+
+
+
+
+
+
+
+
+
+
+
     </div>
 
-    <!-- Modal Đơn đặt bàn -->
-    <div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="bookingModalLabel">Thông tin Đơn đặt bàn</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form action="{{ route('member.updateBooking') }}" method="POST">
-                    @csrf
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="customer_name" class="form-label">Khách hàng</label>
-                            <input type="text" class="form-control" id="customer_name" name="customer_name" value="{{ $bookingData['customer_name'] ?? '' }}">
-                        </div>
-                        <div class="mb-3">
-                            <label for="phone" class="form-label">Số điện thoại</label>
-                            <input type="text" class="form-control" id="phone" name="phone" value="{{ $bookingData['phone'] ?? '' }}">
-                        </div>
-                        <div class="mb-3">
-                            <label for="people" class="form-label">Số người</label>
-                            <input type="number" class="form-control" id="people" name="people" value="{{ $bookingData['people'] ?? '' }}">
-                        </div>
-                        <div class="mb-3">
-                            <label for="table_number" class="form-label">Số bàn</label>
-                            <input type="number" class="form-control" id="table_number" name="table_number" value="{{ $bookingData['table_number'] ?? '' }}">
-                        </div>
-                        <div class="mb-3">
-                            <label for="booking_date" class="form-label">Ngày đặt</label>
-                            <input type="date" class="form-control" id="booking_date" name="booking_date" value="{{ $bookingData['booking_date'] ?? '' }}">
-                        </div>
-                        <div class="mb-3">
-                            <label for="booking_time" class="form-label">Giờ</label>
-                            <input type="time" class="form-control" id="booking_time" name="booking_time" value="{{ $bookingData['booking_time'] ?? '' }}">
-                        </div>
-                        <div class="mb-3">
-                            <label for="amount_paid" class="form-label">Số tiền đã thanh toán</label>
-                            <input type="number" class="form-control" id="amount_paid" name="amount_paid" value="{{ $bookingData['amount_paid'] ?? '' }}">
-                        </div>
-                        <div class="mb-3">
-                            <label for="note" class="form-label">Ghi chú</label>
-                            <textarea class="form-control" id="note" name="note">{{ $bookingData['note'] ?? '' }}</textarea>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                        <button type="submit" class="btn btn-primary">Hủy đơn đặt bàn</button>
-                    </div>
-                </form>
-            </div>
-        </div>
     </div>
-
-</div>
-
-</div>
 
 @endsection
-
