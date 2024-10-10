@@ -60,7 +60,7 @@
                                     <div class="col-md-8 pl-4">
                                         <h4 class="text-dark">{{ $combo->name }}</h4>
                                         <!-- Strip tags and limit description to 150 characters -->
-                                        <p class="text-muted">{{ Str::limit(strip_tags($combo->description), 150) }}</p>
+                                        <p class="text-muted">{!! Str::limit(strip_tags($combo->description), 150) !!}</p>
                                         <p class="text-danger">{{ number_format($combo->price, 0, ',', '.') }} VND</p>
                                         <p class="text-muted">{{ $combo->created_at->format('d/m/Y') }}</p>
                                         <a href="#" class="btn btn-danger">Xem chi tiết</a>

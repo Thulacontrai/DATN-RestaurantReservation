@@ -8,6 +8,7 @@ class CreateReservationTablesTable extends Migration
 {
     public function up()
     {
+
         Schema::create('reservation_tables', function (Blueprint $table) {
             $table->foreignId('reservation_id')->constrained()->onDelete('cascade');
             $table->foreignId('table_id')->constrained()->onDelete('cascade');

@@ -36,6 +36,7 @@ class ReservationTable extends Model
     }
     public function tables()
     {
+
         return $this->belongsToMany(Table::class, 'reservation_tables')
             ->withPivot('start_date', 'start_time', 'end_time', 'status');
     }
