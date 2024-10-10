@@ -294,7 +294,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Route::put('/admin/permission/{id}', [PermissionController::class, 'update'])->name('permissions.update');
     // Route::delete('admin/permission/{id}', [PermissionController::class, 'destroy'])->name('permissions.destroy');
 
-
+});
 
 
    
