@@ -1,113 +1,192 @@
-<!-- Enhanced and Modernized Header Section -->
-<header class="header d-flex justify-content-between align-items-center p-3"
-    style="background: linear-gradient(90deg, #007acc, #00c6ff); box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);">
-    <div class="logo-section d-flex align-items-center">
-        <button class="menu-button btn" id="hamburgerMenu" style="background: none; border: none; color: white;">
-            <i class="fas fa-bars fa-lg animated-icon"></i>
-        </button>
-        <h1 class="logo ml-2" style="font-size: 24px; color: white; font-weight: bold;">POS</h1>
-    </div>
 
-    <!-- Search and Quick Access Features for Cashiers -->
-    <div class="main-actions d-flex align-items-center">
-        <div class="action-buttons d-flex align-items-center">
-            <button class="qr-button btn" style="background: none; border: none; color: white; margin-left: 10px;">
-                <i class="fas fa-qrcode fa-lg animated-icon"></i>
-            </button>
-            <a href="/Pmenu/1">
-                <button class="table-button btn" style="background: none; border: none; color: white;">
-                    <i class="fas fa-utensils fa-lg animated-icon"></i>
-                </button>
-            </a>
-            <button class="discount-button btn" id="applyDiscount"
-                style="background: none; border: none; color: white;">
-                <i class="fas fa-percentage fa-lg animated-icon"></i> Giảm giá
-            </button>
+<header class="navbar navbar-expand-lg navbar-dark bg-primary p-2" style="background: #004a89;">
+    <div class="container-fluid">
+        <!-- Left Section: Tabs for Phòng bàn and Thực đơn -->
+        <div class="navbar-nav d-flex align-items-center">
+
         </div>
-    </div>
 
-    <!-- Cart and Customer Management -->
-    <div class="cart-section d-flex align-items-center">
-        <input type="text" placeholder="Tìm khách hàng" class="customer-search-bar p-1"
-            style="border-radius: 10px; padding: 8px; box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.1); margin-right: 10px; border: none;">
-        <button class="add-customer-button btn" style="background: none; border: none; color: white;">
-            <i class="fas fa-user-plus fa-lg animated-icon"></i>
-        </button>
-    </div>
+        <!-- Middle Section: Search Bar -->
+        <form class="d-flex ms-auto me-3 align-items-center" style="flex-grow: 1;">
+            <input class="form-control me-2" type="search" placeholder="Tìm món (F3)" aria-label="Tìm món"
+                style="width: 100%; max-width: 300px;">
+        </form>
 
+        <!-- Right Section: Icons -->
+        <ul class="navbar-nav ms-auto d-flex align-items-center">
+            <li class="nav-item">
+                <button class="btn btn-link text-white">
+                    <i class="fas fa-volume-mute"></i>
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="btn btn-link text-white">
+                    <i class="fas fa-bell"></i>
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="btn btn-link text-white">
+                    <i class="fas fa-sync"></i>
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="btn btn-link text-white">
+                    <i class="fas fa-print"></i>
+                </button>
+            </li>
+            <li class="nav-item">
+                <!-- Hamburger icon -->
+                <button class="btn btn-link text-white" id="hamburgerMenu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <!-- Dropdown Menu -->
+                <div id="dropdownMenu" class="dropdown-content" style="display: none;">
+                    <div class="user-info">
+                        <img src="path/to/avatar.png" alt="User Avatar" style="width: 40px; height: 40px; border-radius: 50%;">
+                        <p>Thu Ngân</p>
+                        <span style="cursor: pointer;">X</span>
+                    </div>
+                    <div class="menu-options">
+                        <div class="menu-row">
+                            <button class="btn btn-primary"><i class="fas fa-cogs"></i> Quản lý</button>
+                        </div>
+                        <button class="btn"><i class="fas fa-chart-bar"></i> Báo cáo cuối ngày</button>
+                        <button class="btn"><i class="fas fa-file-invoice"></i> Lập phiếu thu</button>
+                        <button class="btn"><i class="fas fa-clipboard-list"></i> Chọn hóa đơn trả hàng</button>
+                        <button class="btn"><i class="fas fa-list"></i> Xem danh sách đặt bàn</button>
+                        <button class="btn"><i class="fas fa-cog"></i> Cài đặt chung</button>
+                        <button class="btn"><i class="fas fa-tag"></i> Thiết lập giá</button>
+                        <button class="btn"><i class="fas fa-box"></i> Món có sẵn trong đơn</button>
+                        <button class="btn"><i class="fas fa-keyboard"></i> Phím tắt</button>
+                        <button class="btn"><i class="fas fa-undo"></i> Chuyển về giao diện cũ</button>
+                        <button class="btn btn-danger"><i class="fas fa-sign-out-alt"></i> Đăng xuất</button>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
 </header>
+<style>
+    /* Dropdown menu styles */
+#dropdownMenu {
+    position: absolute;
+    right: 10px;
+    top: 60px;
+    width: 300px;
+    height: auto;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    padding: 15px;
+    display: none;
+    /* Ẩn menu khi chưa nhấn */
+}
 
-<!-- Dropdown menu for hamburger -->
-<div id="menuDropdown" class="dropdown-menu"
-    style="display: none; position: absolute; top: 70px; left: 0; background-color: white; width: 250px; padding: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); border-radius: 8px; z-index: 1000; opacity: 0; transform: translateY(-20px); transition: all 0.4s ease;">
-    <ul class="list-unstyled">
-        <li><a href="{{ route('pos.index') }}" class="dropdown-item"><i class="fas fa-home"></i> Dịch vụ</a></li>
-        <li><a href="#" class="dropdown-item"><i class="fas fa-file-alt"></i> Đơn hàng tạm</a></li>
-        <li><a href="#" class="dropdown-item"><i class="fas fa-shopping-cart"></i> Đơn hàng</a></li>
-        <li><a href="#" class="dropdown-item"><i class="fas fa-money-bill-wave"></i> Giao dịch</a></li>
-        <li><a href="#" class="dropdown-item"><i class="fas fa-chart-line"></i> Báo cáo</a></li>
-        <li><a href="#" class="dropdown-item"><i class="fas fa-cogs"></i> Cài đặt</a></li>
-        <li><a href="#" class="dropdown-item"><i class="fas fa-user-cog"></i> Quản lý nhân viên</a></li>
-        <li><a href="#" class="dropdown-item"><i class="fas fa-cash-register"></i> Phiếu thu/chi</a></li>
-        <li><a href="#" class="dropdown-item"><i class="fas fa-user"></i> Tài khoản của tôi</a></li>
-        <li><a href="#" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-    </ul>
-</div>
+/* User info styling */
+.user-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 15px;
+}
 
-<!-- JavaScript for handling dropdown menu behavior -->
+.user-info p {
+    margin-left: 10px;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+/* Avatar styling */
+.user-info img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+/* Menu options styling */
+.menu-options {
+    margin-top: 10px;
+}
+
+/* Remove hover effect */
+.menu-row button {
+    width: 48%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px;
+    font-size: 14px;
+    background-color: #f8f9fa;
+    border: none;
+    text-align: left;
+    transition: none;
+}
+
+/* Button styling */
+.btn {
+    display: block;
+    padding: 12px 15px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: none; /* No hover transition */
+}
+
+/* Remove hover background change */
+#dropdownMenu .btn:hover {
+    background-color: #f8f9fa; /* Keep the background the same on hover */
+}
+
+/* Remove any transition or hover effects for icons */
+#hamburgerMenu i {
+    transition: none;
+}
+
+/* Fix hover and white text issues */
+.dropdown-content .btn {
+    background-color: #004a89; /* Default background */
+    color: white; /* Text color */
+    margin-bottom: 10px;
+}
+
+.dropdown-content .btn:hover {
+    background-color: #004a89; /* Prevent hover color change */
+}
+
+.dropdown-content .btn-primary:hover {
+    background-color: #0056b3; /* Optional: Add darker blue for hover if needed */
+}
+
+/* Fix for table name issue - white text */
+.table-box .table-name {
+    color: #333; /* Ensure table name is visible */
+}
+
+</style>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Toggle the dropdown menu with smooth animation
-        document.getElementById('hamburgerMenu').addEventListener('click', function() {
-            var dropdown = document.getElementById('menuDropdown');
-            if (dropdown.style.opacity === '0' || dropdown.style.display === 'none') {
-                dropdown.style.display = 'block';
-                setTimeout(function() {
-                    dropdown.style.opacity = '1';
-                    dropdown.style.transform = 'translateY(0)';
-                }, 10); // Delay for smooth transition
-            } else {
-                dropdown.style.opacity = '0';
-                dropdown.style.transform = 'translateY(-20px)';
-                setTimeout(function() {
-                    dropdown.style.display = 'none';
-                }, 400); // Match the transition duration
-            }
-        });
+    document.addEventListener("DOMContentLoaded", function() {
+    const hamburgerMenu = document.getElementById("hamburgerMenu");
+    const dropdownMenu = document.getElementById("dropdownMenu");
 
-        // Close the dropdown if clicking outside of it
-        document.addEventListener('click', function(event) {
-            var target = event.target;
-            var dropdown = document.getElementById('menuDropdown');
-            if (!target.closest('#menuDropdown') && !target.closest('#hamburgerMenu')) {
-                dropdown.style.opacity = '0';
-                dropdown.style.transform = 'translateY(-20px)';
-                setTimeout(function() {
-                    dropdown.style.display = 'none';
-                }, 400); // Match the transition duration
-            }
-        });
-
-        // Quick Checkout Button Interactivity with a cool animation
-        document.getElementById('quickCheckout').addEventListener('click', function() {
-            alert('Thanh toán nhanh đã được chọn.');
-            // Trigger quick checkout logic here
-        });
-
-        // Apply Discount Button Logic
-        document.getElementById('applyDiscount').addEventListener('click', function() {
-            var discount = prompt('Nhập phần trăm giảm giá:');
-            if (discount) {
-                alert('Đã áp dụng giảm giá: ' + discount + '%');
-                // Apply discount logic here
-            }
-        });
-
-        // Logout Button Action with confirmation dialog
-        document.getElementById('cashierLogout').addEventListener('click', function() {
-            if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
-                window.location.href = '/logout'; // Redirect to logout page
-            }
-        });
+    hamburgerMenu.addEventListener("click", function() {
+        // Toggle menu display without effect
+        if (dropdownMenu.style.display === "none" || dropdownMenu.style.display === "") {
+            dropdownMenu.style.display = "block";
+        } else {
+            dropdownMenu.style.display = "none";
+        }
     });
+
+    // Đóng menu khi nhấn vào nơi khác
+    window.addEventListener("click", function(event) {
+        if (!hamburgerMenu.contains(event.target) && !dropdownMenu.contains(event.target)) {
+            dropdownMenu.style.display = "none";
+        }
+    });
+});
+
+
 </script>

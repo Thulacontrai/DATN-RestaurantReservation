@@ -28,13 +28,13 @@
                     </li>
             
                     @auth
-                    <li><a href="{{ route('profile') }}">Profile</a></li>
-                    <li>
+                    <li><a href="{{ route('client.member') }}">Profile</a></li>
+                    {{-- <li>
                         <form action="{{ route('client.logout') }}" method="POST">
                             @csrf
                             <button type="submit">Đăng xuất</button>
                         </form>
-                    </li>
+                    </li> --}}
                 @else
                     <li><a href="#">Đăng nhập</a>
                         <ul>
@@ -45,11 +45,11 @@
                 @endauth
             
                     <li><a href="{{ route('contact.client') }}">Contact</a></li>
-                    <li><a href="{{ route('client.member') }}"><i class="bi bi-person-fill"></i></a>
+                    {{-- <li><a href="{{ route('client.member') }}"><i class="bi bi-person-fill"></i></a>
                         <ul>
                             <li><a href="{{ route('login.client') }}">Login</a></li>
                         </ul>
-                    </li>
+                    </li> --}}
 
                 </ul>
             </nav>

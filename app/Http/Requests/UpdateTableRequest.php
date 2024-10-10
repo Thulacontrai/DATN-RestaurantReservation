@@ -30,3 +30,4 @@ class UpdateTableRequest extends FormRequest
     }
 
 }
+    

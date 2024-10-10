@@ -22,6 +22,7 @@ class StoreReservationRquest extends FormRequest
     public function rules(): array
     {
         return [
+
             'user_name' => 'required|min:3',
             'user_phone' => ['required', 'regex:/^0[0-9]{9}$/'],
             'guest_count' => 'required|integer|min:1|max:50',
@@ -38,6 +39,7 @@ class StoreReservationRquest extends FormRequest
             'guest_count.integer' => 'Số lượng khách phải là số nguyên!',
             'guest_count.min' => 'Số lượng khách tối thiểu phải là 1!',
             'guest_count.max' => 'Số lượng khách tối đa là 50!',
+
         ];
     }
 }
