@@ -10,6 +10,17 @@ use Illuminate\Http\Request;
 class ReservationHistoryController extends Controller
 {
 
+
+    public function __construct()
+    {
+        // Gán middleware cho các phương thức
+        $this->middleware('permission:Xem lịch sử đặt bàn', ['only' => ['index']]);
+        $this->middleware('permission:Tạo mới lịch sử đặt bàn', ['only' => ['create']]);
+        $this->middleware('permission:Sửa lịch sử đặt bàn', ['only' => ['edit']]);
+        $this->middleware('permission:Xóa lịch sử đặt bàn', ['only' => ['destroy']]);
+
+    }
+
     use TraitCRUD;
 
     protected $model = ReservationHistory::class;

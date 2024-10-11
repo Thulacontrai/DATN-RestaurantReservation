@@ -13,11 +13,12 @@ class CreateTablesTable extends Migration
             $table->enum('area', ['Tầng 1', 'Tầng 2', 'Tầng 3'])->charset('utf8mb4')->collation('utf8mb4_unicode_ci');
             $table->integer('table_number');
             $table->enum('table_type', ['VIP', 'Thường'])->charset('utf8mb4')->collation('utf8mb4_unicode_ci');
-            $table->enum('status', ['Available', 'Reserved', 'Occupied'])->charset('utf8mb4')->collation('utf8mb4_unicode_ci');
+            $table->enum('status', ['Available','Pending','Reserved', 'Occupied'])->charset('utf8mb4')->collation('utf8mb4_unicode_ci');
             $table->timestamps(); // created_at, updated_at
             $table->softDeletes(); // deleted_at
             $table->unsignedBigInteger('parent_id')->nullable();
         });
+
     }
 
     public function down()
