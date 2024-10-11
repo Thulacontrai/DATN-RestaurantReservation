@@ -17,9 +17,24 @@
 <link rel="stylesheet" type="text/css" href="client/revolution/css/navigation.css">
 <link rel="stylesheet" type="text/css" href="client/revolution/css/rev-settings.css">
 
+<link rel="stylesheet" href="{{ asset('adminn/assets/fonts/bootstrap/bootstrap-icons.css') }}">
 
 
 <style>
+    /* css của member */
+    .progress-bar {
+            background-color: #ff3300;
+        }
+        .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+    /* css login member  */
+    
+
   .pagination {
     display: flex;
     justify-content: center;

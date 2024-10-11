@@ -1,13 +1,27 @@
+<<<<<<< HEAD
 <header class="navbar navbar-expand-lg navbar-dark bg-primary p-2" style="background: #004a89;">
     <div class="container-fluid">
         <!-- Left Section: Tabs for Phòng bàn và Thực đơn -->
         <div class="navbar-nav d-flex align-items-center">
             <!-- Add more tabs here if needed -->
+=======
+
+<header class="navbar navbar-expand-lg navbar-dark bg-primary p-2" style="background: #004a89;">
+    <div class="container-fluid">
+        <!-- Left Section: Tabs for Phòng bàn and Thực đơn -->
+        <div class="navbar-nav d-flex align-items-center">
+
+>>>>>>> 0762daeda6a591d3e459ca383c5d5eb38b0a19c6
         </div>
 
         <!-- Middle Section: Search Bar -->
         <form class="d-flex ms-auto me-3 align-items-center" style="flex-grow: 1;">
+<<<<<<< HEAD
             <input class="form-control me-2" type="search" placeholder="Tìm món (F3)" aria-label="Tìm món" style="width: 100%; max-width: 300px;">
+=======
+            <input class="form-control me-2" type="search" placeholder="Tìm món (F3)" aria-label="Tìm món"
+                style="width: 100%; max-width: 300px;">
+>>>>>>> 0762daeda6a591d3e459ca383c5d5eb38b0a19c6
         </form>
 
         <!-- Right Section: Icons -->
@@ -18,8 +32,12 @@
                 </button>
             </li>
             <li class="nav-item">
+<<<<<<< HEAD
                 <!-- Notification Button -->
                 <button class="btn btn-link text-white" id="notificationButton">
+=======
+                <button class="btn btn-link text-white">
+>>>>>>> 0762daeda6a591d3e459ca383c5d5eb38b0a19c6
                     <i class="fas fa-bell"></i>
                 </button>
             </li>
@@ -29,13 +47,21 @@
                 </button>
             </li>
             <li class="nav-item">
+<<<<<<< HEAD
                 <!-- Print Button -->
                 <button class="btn btn-link text-white" id="printButton">
+=======
+                <button class="btn btn-link text-white">
+>>>>>>> 0762daeda6a591d3e459ca383c5d5eb38b0a19c6
                     <i class="fas fa-print"></i>
                 </button>
             </li>
             <li class="nav-item">
+<<<<<<< HEAD
                 <!-- Hamburger Menu -->
+=======
+                <!-- Hamburger icon -->
+>>>>>>> 0762daeda6a591d3e459ca383c5d5eb38b0a19c6
                 <button class="btn btn-link text-white" id="hamburgerMenu">
                     <i class="fas fa-bars"></i>
                 </button>
@@ -66,6 +92,7 @@
         </ul>
     </div>
 </header>
+<<<<<<< HEAD
 
 <!-- Print Settings Dropdown Form -->
 <div id="printDropdownForm" class="print-dropdown" style="display: none;">
@@ -210,6 +237,10 @@ input:checked + .slider:before {
 }
 
 /* Dropdown menu styles */
+=======
+<style>
+    /* Dropdown menu styles */
+>>>>>>> 0762daeda6a591d3e459ca383c5d5eb38b0a19c6
 #dropdownMenu {
     position: absolute;
     right: 10px;
@@ -222,6 +253,10 @@ input:checked + .slider:before {
     z-index: 1000;
     padding: 15px;
     display: none;
+<<<<<<< HEAD
+=======
+    /* Ẩn menu khi chưa nhấn */
+>>>>>>> 0762daeda6a591d3e459ca383c5d5eb38b0a19c6
 }
 
 /* User info styling */
@@ -253,6 +288,10 @@ input:checked + .slider:before {
     margin-top: 10px;
 }
 
+<<<<<<< HEAD
+=======
+/* Remove hover effect */
+>>>>>>> 0762daeda6a591d3e459ca383c5d5eb38b0a19c6
 .menu-row button {
     width: 48%;
     display: flex;
@@ -272,6 +311,7 @@ input:checked + .slider:before {
     padding: 12px 15px;
     margin-bottom: 12px;
     cursor: pointer;
+<<<<<<< HEAD
     transition: none;
 }
 
@@ -282,10 +322,30 @@ input:checked + .slider:before {
 .dropdown-content .btn {
     background-color: #004a89;
     color: white;
+=======
+    transition: none; /* No hover transition */
+}
+
+/* Remove hover background change */
+#dropdownMenu .btn:hover {
+    background-color: #f8f9fa; /* Keep the background the same on hover */
+}
+
+/* Remove any transition or hover effects for icons */
+#hamburgerMenu i {
+    transition: none;
+}
+
+/* Fix hover and white text issues */
+.dropdown-content .btn {
+    background-color: #004a89; /* Default background */
+    color: white; /* Text color */
+>>>>>>> 0762daeda6a591d3e459ca383c5d5eb38b0a19c6
     margin-bottom: 10px;
 }
 
 .dropdown-content .btn:hover {
+<<<<<<< HEAD
     background-color: #004a89;
 }
 
@@ -386,3 +446,42 @@ input:checked + .slider:before {
 });
 
  </script>
+=======
+    background-color: #004a89; /* Prevent hover color change */
+}
+
+.dropdown-content .btn-primary:hover {
+    background-color: #0056b3; /* Optional: Add darker blue for hover if needed */
+}
+
+/* Fix for table name issue - white text */
+.table-box .table-name {
+    color: #333; /* Ensure table name is visible */
+}
+
+</style>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+    const hamburgerMenu = document.getElementById("hamburgerMenu");
+    const dropdownMenu = document.getElementById("dropdownMenu");
+
+    hamburgerMenu.addEventListener("click", function() {
+        // Toggle menu display without effect
+        if (dropdownMenu.style.display === "none" || dropdownMenu.style.display === "") {
+            dropdownMenu.style.display = "block";
+        } else {
+            dropdownMenu.style.display = "none";
+        }
+    });
+
+    // Đóng menu khi nhấn vào nơi khác
+    window.addEventListener("click", function(event) {
+        if (!hamburgerMenu.contains(event.target) && !dropdownMenu.contains(event.target)) {
+            dropdownMenu.style.display = "none";
+        }
+    });
+});
+
+
+</script>
+>>>>>>> 0762daeda6a591d3e459ca383c5d5eb38b0a19c6

@@ -4,7 +4,13 @@
     "scripts": {
         "dev": "vite",
         "build": "vite build",
+<<<<<<< HEAD
          "serve": "vite preview"
+=======
+
+        "serve": "vite preview"
+
+>>>>>>> 0762daeda6a591d3e459ca383c5d5eb38b0a19c6
     },
     "devDependencies": {
         "@tailwindcss/forms": "^0.5.2",
@@ -15,7 +21,14 @@
         "laravel-vite-plugin": "^1.0.0",
         "pusher-js": "^8.4.0-rc2",
         "postcss": "^8.4.31",
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0762daeda6a591d3e459ca383c5d5eb38b0a19c6
         "tailwindcss": "^3.1.0",
         "vite": "^5.0.0"
+    },
+    "dependencies": {
+        "firebase": "^10.13.2"
     }
 }

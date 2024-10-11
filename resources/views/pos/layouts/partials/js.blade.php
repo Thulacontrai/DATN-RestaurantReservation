@@ -1,10 +1,18 @@
 <script src="{{ asset('poss/assets/js/backend-bundle.min.js') }}"></script>
 
+<<<<<<< HEAD
 <!-- Flextree Javascript -->
 <script src="{{ asset('poss/assets/js/flex-tree.min.js') }}"></script>
 <script src="{{ asset('poss/assets/js/tree.js') }}"></script>
 
 <!-- Table Treeview JavaScript -->
+=======
+<!-- Flextree Javascript-->
+<script src="{{ asset('poss/assets/js/flex-tree.min.js') }}"></script>
+<script src="{{ asset('poss/assets/js/tree.js') }}"></script>
+
+<!-- Table Teeview JavaScript -->
+>>>>>>> 0762daeda6a591d3e459ca383c5d5eb38b0a19c6
 <script src="{{ asset('poss/assets/js/table-treeview.js') }}"></script>
 
 <!-- Masonary Gallery Javascript -->
@@ -15,12 +23,17 @@
 <script src="{{ asset('poss/assets/js/mapbox-gl.js') }}"></script>
 <script src="{{ asset('poss/assets/js/mapbox.js') }}"></script>
 
+<<<<<<< HEAD
 <!-- Fullcalendar Javascript -->
+=======
+<!-- Fullcalender Javascript -->
+>>>>>>> 0762daeda6a591d3e459ca383c5d5eb38b0a19c6
 <script src="{{ asset('poss/assets/vendor/fullcalendar/core/main.js') }}"></script>
 <script src="{{ asset('poss/assets/vendor/fullcalendar/daygrid/main.js') }}"></script>
 <script src="{{ asset('poss/assets/vendor/fullcalendar/timegrid/main.js') }}"></script>
 <script src="{{ asset('poss/assets/vendor/fullcalendar/list/main.js') }}"></script>
 
+<<<<<<< HEAD
 <!-- Sweetalert Javascript -->
 <script src="{{ asset('poss/assets/js/sweetalert.js') }}"></script>
 
@@ -439,3 +452,21 @@
 
         });
 </script>
+=======
+
+<script src="{{ asset('poss/assets/js/sweetalert.js') }}"></script>
+
+
+<script src="{{ asset('poss/assets/js/vector-map-custom.js') }}"></script>
+
+<script src="{{ asset('poss/assets/js/customizer.js') }}"></script>
+
+
+<script src="{{ asset('poss/assets/js/chart-custom.js') }}"></script>
+
+
+<script src="{{ asset('poss/assets/js/slider.js') }}"></script>
+
+
+<script src="{{ asset('poss/assets/js/app.js') }}"></script>
+>>>>>>> 0762daeda6a591d3e459ca383c5d5eb38b0a19c6

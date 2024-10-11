@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreReservationRquest;
 use App\Models\Coupon;
+use App\Models\Order;
 use App\Models\Reservation;
 use App\Models\Table;
 use App\Models\ReservationTable;
@@ -197,7 +198,6 @@ class ReservationController extends Controller
             'guest_count' => 'required|integer|min:1',
             'deposit_amount' => 'nullable|numeric|min:0',
             'note' => 'nullable|string',
-
             'status' => 'in:Pending',
             'cancelled_reason' => 'nullable|string|max:255'
         ]);
@@ -251,6 +251,19 @@ class ReservationController extends Controller
             return back()->withErrors(['error' => "An error occurred while updating the reservation: " . $e->getMessage()]);
         }
     }
+
+    public function cancel($id)
+    {
+        // Tìm đơn đặt chỗ
+        $reservation = Reservation::findOrFail($id);
+
+        // Cập nhật trạng thái đơn đặt chỗ thành 'Cancelled'
+        $reservation->status = 'Cancelled';
+        $reservation->save();
+
+        return redirect()->route('admin.reservation.index')->with('success', 'Đơn đặt bàn đã được hủy thành công.');
+    }
+
 
 
     public function show($id)
@@ -364,7 +377,6 @@ class ReservationController extends Controller
         $deposit = $showDeposit['guest_count'] * 100000;
         return view('client.deposit', compact('showDeposit', 'deposit'));
     }
-
 
 
 

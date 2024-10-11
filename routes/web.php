@@ -23,7 +23,9 @@ use App\Http\Controllers\Admin\ReservationTableController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\TableController;
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Client\HomeController;
+use App\Http\Controllers\Client\MemberController;
 use App\Http\Controllers\Client\MenuController;
 use App\Http\Controllers\Pos\PosController;
 use App\Http\Controllers\ProfileController;
@@ -44,12 +46,28 @@ use App\Http\Controllers\ProfileController;
 
 Route::get('/', [HomeController::class, 'index'])->name('client.index');
 Route::get('/menu', [MenuController::class, 'index'])->name('menu');
+
 Route::get('/api/menu/filter', [MenuController::class, 'filterByCategory']);
 
 Route::get('/menu/category/{category}', [MenuController::class, 'filterByCategory'])->name('menu.category');
 
+//member
+Route::get('/member', [MemberController::class, 'show'])->name('client.member');
+Route::post('/update-member', [MemberController::class, 'update'])->name('member.update');
+Route::post('/change-password', [MemberController::class, 'changePassword'])->name('member.changePassword');
+Route::post('/member/update-booking', [MemberController::class, 'updateBooking'])->name('member.updateBooking');
+
+// login
+Route::get('/home', [HomeController::class, 'index'])->middleware('auth');
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login.client');
 
 
+
+
+// account
+// Route::get('/account', [AccountController::class, 'show'])->name('account.show');
+// Route::post('/update-account', [AccountController::class, 'update'])->name('account.update');
+// Route::post('/change-password', [AccountController::class, 'changePassword'])->name('account.changePassword');
 
 // route::get("/menu", function () {
 //     return view("client.menu");
@@ -177,7 +195,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('reservation/submit-table', [ReservationController::class,'submitTable'])->name('submit.tables');
     Route::post('reservation/submit-move-table', [ReservationController::class,'submitMoveTable'])->name('submit.Movetables');
 
+    /// xếp bàn cho khách
+    Route::get('reservation/{reservationId}/assign-tables', [ReservationController::class, 'assignTables'])->name('reservation.assignTables');
+    Route::get('reservation/assign-table', [ReservationController::class, 'assignTable'])->name('assignTable');
+    Route::post('reservation/submit-table', [ReservationController::class, 'submitTable'])->name('submit.tables');
+    Route::post('reservation/submit-move-table', [ReservationController::class, 'submitMoveTable'])->name('submit.Movetables');
+
     Route::resource('reservation', ReservationController::class);
+    Route::post('reservation/cancel/{id}', [ReservationController::class, 'cancel'])->name('reservation.cancel');
     Route::resource('reservationTable', ReservationTableController::class);
     Route::resource('reservationHistory', ReservationHistoryController::class);
 
@@ -268,13 +293,21 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 
 
-    // // Route đến trang đăng nhập
-    // Route::get('/logon', [AdminController::class, 'logon'])->name('logon');
+    //permission route
+    Route::get('/admin/permission', [PermissionController::class, 'index'])->name('permissions.index');
+    Route::get('/admin/permission/create', [PermissionController::class, 'create'])->name('permissions.create');
+    Route::post('/admin/permission', [PermissionController::class, 'store'])->name('permissions.store');
+    Route::get('/admin/permission/{id}/edit', [PermissionController::class, 'edit'])->name('permissions.edit');
+    Route::put('/admin/permission/{id}', [PermissionController::class, 'update'])->name('permissions.update');
+    Route::delete('admin/permission/{id}', [PermissionController::class, 'destroy'])->name('permissions.destroy');
 
-    // // Route cho admin
-    // Route::middleware(['auth', 'isAdmin'])->group(function () {
-    //     Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard');
-    // });
+    //roles route
+    // Route::get('/admin/permission', [PermissionController::class, 'index'])->name('permissions.index');
+    // Route::get('/admin/permission/create', [PermissionController::class, 'create'])->name('permissions.create');
+    // Route::post('/admin/permission', [PermissionController::class, 'store'])->name('permissions.store');
+    // Route::get('/admin/permission/{id}/edit', [PermissionController::class, 'edit'])->name('permissions.edit');
+    // Route::put('/admin/permission/{id}', [PermissionController::class, 'update'])->name('permissions.update');
+    // Route::delete('admin/permission/{id}', [PermissionController::class, 'destroy'])->name('permissions.destroy');
 
 
 });
