@@ -21,13 +21,8 @@
                             <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
                         </div>
                         <div class="toast-body">
-<<<<<<< HEAD
-                            Có {{ $upcomingReservations->count() }} đơn đặt bàn sắp đến hạn trong vòng 30 phút tới
-                        </div>
-=======
 
                             Có {{ $upcomingReservations->count() }} đơn đặt bàn sắp đến giờ nhận bàn trong vòng 30 phút tới                       </div>
->>>>>>> 0762daeda6a591d3e459ca383c5d5eb38b0a19c6
                     </div>
                 @endif
 
@@ -122,11 +117,8 @@
                                             <th>Tên Khách Hàng</th>
                                             <th>Số Lượng Khách</th>
                                             <th>Thời Gian Đặt</th>
-<<<<<<< HEAD
-=======
                                             <th>Bàn</th>
                                             <th>Tiền cọc</th>
->>>>>>> 0762daeda6a591d3e459ca383c5d5eb38b0a19c6
                                             <th>Ghi Chú</th>
                                             <th>Trạng Thái</th>
                                             <th>Hành Động</th>
@@ -134,32 +126,6 @@
                                     </thead>
                                     <tbody>
                                         @forelse ($reservations as $reservation)
-<<<<<<< HEAD
-                                        <tr id="reservation-{{ $reservation->id }}">
-                                            <td><input type="checkbox" name="selected_reservations[]" value="{{ $reservation->id }}"></td>
-                                            <td>{{ $reservation->id }}</td>
-                                            <td>{{ $reservation->customer->name ?? 'Không rõ' }}</td>
-                                            <td>{{ $reservation->guest_count ?? 'N/A' }}</td>
-                                            <td>{{ \Carbon\Carbon::parse($reservation->reservation_time)->format('H:i:s') }}</td>
-                                            <td>{{ $reservation->reservation_date }}
-                                                <br> {{ $reservation->reservation_time }}
-                                            </td>
-                                            <td>@foreach ($reservation->tables as $table )
-                                                {{$table->table_number}},
-                                            @endforeach</td>
-                                            <td>{{ $reservation->note ?? 'Không có' }}</td>
-                                            <td>
-                                                @if ($reservation->status === 'Confirmed')
-                                                <span class="badge shade-green min-70">Đã xác nhận</span>
-                                                @elseif ($reservation->status === 'Pending')
-                                                <span class="badge shade-yellow min-70">Chờ xử lý</span>
-                                                @elseif ($reservation->status === 'Cancelled')
-                                                <span class="badge shade-red min-70">Đã hủy</span>
-                                                @else
-                                                <span class="badge shade-gray min-70">Không rõ</span>
-                                                @endif
-                                            </td>
-=======
                                             <tr id="reservation-{{ $reservation->id }}">
                                                 <td><input type="checkbox" name="selected_reservations[]"
                                                         value="{{ $reservation->id }}"></td>
@@ -190,7 +156,6 @@
                                                         <span class="badge bg-secondary">Không rõ</span>
                                                     @endif
                                                 </td>
->>>>>>> 0762daeda6a591d3e459ca383c5d5eb38b0a19c6
 
                                             <td>
                                                 <div class="actions">
@@ -204,8 +169,6 @@
                                                     <a href="{{ route('admin.reservation.assignTables', $reservation->id) }}" class="editRow" data-id="{{ $reservation->id }}">
                                                         <i class="bi bi-box-arrow-in-right"></i>
                                                     </a>
-<<<<<<< HEAD
-=======
                                                     {{-- Nút hủy đặt bàn --> --}}
                                                          <form action="{{ route('admin.reservation.cancel', $reservation->id) }}" method="POST" style="display:inline-block;">
                                                             @csrf
@@ -216,7 +179,6 @@
                                                             </button></a>
 
                                                     </form>
->>>>>>> 0762daeda6a591d3e459ca383c5d5eb38b0a19c6
                                                     <form action="{{ route('admin.reservation.destroy', $reservation->id) }}" method="POST" style="display:inline-block;">
                                                         @csrf
                                                         @method('DELETE')
