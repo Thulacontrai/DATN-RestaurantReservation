@@ -105,4 +105,18 @@
             </form>
         </section>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @if (session('err'))
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi!',
+                    text: '{{ session('err') }}',
+                    timer: 2000,
+                    confirmButtonText: 'OK'
+                });
+            });
+        </script>
+    @endif
 @endsection

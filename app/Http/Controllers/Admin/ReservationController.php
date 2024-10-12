@@ -402,8 +402,7 @@ class ReservationController extends Controller
             $reservation = Reservation::findOrFail($reservationId);
             $reservationData = $reservation->toArray();
         }
-
-        return view('client.reservation-successfully', ['reservation' => $reservationData]);
+        return view('client.reservation-successfully', ['reservation' => $reservation]);
     }
 
 
@@ -605,48 +604,6 @@ class ReservationController extends Controller
         }
     }
 
-    // Hàm chuẩn hóa số điện thoại
-    private function normalizePhoneNumber($phoneNumber)
-    {
-        // Loại bỏ tất cả ký tự không phải số
-        $numbers = preg_replace('/[^0-9]/', '', $phoneNumber);
-
-        // Nếu số điện thoại bắt đầu bằng 84, loại bỏ
-        if (strpos($numbers, '84') === 0) {
-            $numbers = substr($numbers, 2);
-        }
-
-        // Nếu số điện thoại không bắt đầu bằng 0, thêm vào
-        if (strpos($numbers, '0') !== 0) {
-            $numbers = '0' . $numbers;
-        }
-
-        return $numbers;
-    }
-    public function verifyOtp(Request $request)
-    {
-        $request->validate([
-            'otp' => 'required|digits:6',
-            'reservation_id' => 'required|exists:reservations,id',
-        ]);
-
-        $inputOtp = $request->input('otp');
-        $sessionOtp = Session::get('otp');
-
-        if ($inputOtp == $sessionOtp) {
-            $reservation = Reservation::find($request->input('reservation_id'));
-
-            if ($reservation && $reservation->user_id == Auth::id()) {
-                $reservation->delete();
-                return response()->json(['success' => true, 'message' => 'Hủy đặt bàn thành công.']);
-            } else {
-                return response()->json(['success' => false, 'message' => 'Không tìm thấy đặt bàn hoặc bạn không có quyền hủy.']);
-            }
-        } else {
-            return response()->json(['success' => false, 'message' => 'Mã OTP không đúng. Vui lòng thử lại.']);
-        }
-    }
-
 
     public function getBanks()
     {
@@ -668,56 +625,6 @@ class ReservationController extends Controller
         $table = Table::find($order->table_id);
         $staff = User::find($order->staff_id);
         return view('pos.printf', compact('order', 'table', 'staff'))->render();
-    }
-
-    public function cancelReservation(Request $request, $id)
-    {
-        try {
-            // Lấy số điện thoại đã xác thực từ request
-            $verifiedPhoneNumber = $request->input('phone_number');
-
-            // Chuẩn hóa số điện thoại xác thực
-            $normalizedVerifiedPhone = $this->normalizePhoneNumber($verifiedPhoneNumber);
-
-            $reservation = Reservation::findOrFail($id);
-
-            // Chuẩn hóa số điện thoại trong đơn đặt bàn
-            $normalizedReservationPhone = $this->normalizePhoneNumber($reservation->user_phone);
-
-            // Log để debug
-            Log::info('Phone numbers comparison', [
-                'original_verified' => $verifiedPhoneNumber,
-                'original_reservation' => $reservation->user_phone,
-                'normalized_verified' => $normalizedVerifiedPhone,
-                'normalized_reservation' => $normalizedReservationPhone
-            ]);
-
-            // So sánh số điện thoại đã chuẩn hóa
-            if ($normalizedVerifiedPhone !== $normalizedReservationPhone) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Số điện thoại xác thực không khớp với số điện thoại đặt bàn.'
-                ], 403);
-            }
-
-            // Thực hiện hủy đặt bàn
-            $reservation->status = 'cancelled';
-            $reservation->save();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Đặt bàn đã được hủy thành công.'
-            ]);
-        } catch (\Exception $e) {
-            Log::error('Error cancelling reservation', [
-                'reservation_id' => $id,
-                'error' => $e->getMessage()
-            ]);
-            return response()->json([
-                'success' => false,
-                'message' => 'Có lỗi xảy ra khi hủy đặt bàn: ' . $e->getMessage()
-            ], 500);
-        }
     }
 
     // Hàm chuẩn hóa số điện thoại

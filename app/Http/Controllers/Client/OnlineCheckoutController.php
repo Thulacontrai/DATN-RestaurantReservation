@@ -41,7 +41,7 @@ class OnlineCheckoutController extends Controller
             $orderId = time() . "";
             $redirectUrl = route("reservationSuccessfully.client");
             $ipnUrl = route("reservationSuccessfully.client");
-            $note = $request->user_note ?? null;
+            $note = $request->note ?? null;
             $extraData = "{'user_name':'$request->user_name','user_phone':'$request->user_phone','reservation_time':'$request->reservation_time','reservation_date':'$request->reservation_date','guest_count':'$request->guest_count','note':'$note','deposit_amount':'$request->deposit'}";
             $requestId = time() . "";
             $requestType = "payWithATM";
