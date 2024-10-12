@@ -200,6 +200,11 @@
                 @can('Xem người dùng')
 
 
+<<<<<<< HEAD
+                {{-- @can('Xem và quản lý người dùng') --}}
+
+=======
+>>>>>>> 0762daeda6a591d3e459ca383c5d5eb38b0a19c6
                 <li class="sidebar-dropdown">
                     <a href="#">
                         <i class="bi bi-people-fill"></i>
@@ -223,6 +228,10 @@
                         </ul>
                     </div>
                 </li>
+                {{-- @endcan --}}
+
+
+                @endcan
 
                 @endcan
 
@@ -259,6 +268,11 @@
                 </li>
 
 
+<<<<<<< HEAD
+
+
+=======
+>>>>>>> 0762daeda6a591d3e459ca383c5d5eb38b0a19c6
             </ul>
         </div>
     </div>

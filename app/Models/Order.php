@@ -45,7 +45,7 @@ class Order extends Model
     // Quan hệ với bảng Table (Bàn mà đơn hàng thuộc về)
     public function table()
     {
-        return $this->belongsTo(Table::class);
+        return $this->belongsTo(Table::class, 'table_id');
     }
 
     // Quan hệ với bảng User (Khách hàng)
