@@ -1,5 +1,8 @@
 
+<<<<<<< HEAD
+=======
 
+>>>>>>> 0762daeda6a591d3e459ca383c5d5eb38b0a19c6
     <!-- Footer -->
     <footer class="iq-footer">
         <div class="row">

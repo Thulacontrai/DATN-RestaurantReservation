@@ -1,15 +1,27 @@
+<<<<<<< HEAD
+<header class="navbar navbar-expand-lg navbar-dark bg-primary p-2" style="background: #004a89;">
+    <div class="container-fluid">
+        <!-- Left Section: Tabs for Phòng bàn và Thực đơn -->
+        <div class="navbar-nav d-flex align-items-center">
+            <!-- Add more tabs here if needed -->
+=======
 
 <header class="navbar navbar-expand-lg navbar-dark bg-primary p-2" style="background: #004a89;">
     <div class="container-fluid">
         <!-- Left Section: Tabs for Phòng bàn and Thực đơn -->
         <div class="navbar-nav d-flex align-items-center">
 
+>>>>>>> 0762daeda6a591d3e459ca383c5d5eb38b0a19c6
         </div>
 
         <!-- Middle Section: Search Bar -->
         <form class="d-flex ms-auto me-3 align-items-center" style="flex-grow: 1;">
+<<<<<<< HEAD
+            <input class="form-control me-2" type="search" placeholder="Tìm món (F3)" aria-label="Tìm món" style="width: 100%; max-width: 300px;">
+=======
             <input class="form-control me-2" type="search" placeholder="Tìm món (F3)" aria-label="Tìm món"
                 style="width: 100%; max-width: 300px;">
+>>>>>>> 0762daeda6a591d3e459ca383c5d5eb38b0a19c6
         </form>
 
         <!-- Right Section: Icons -->
@@ -20,7 +32,12 @@
                 </button>
             </li>
             <li class="nav-item">
+<<<<<<< HEAD
+                <!-- Notification Button -->
+                <button class="btn btn-link text-white" id="notificationButton">
+=======
                 <button class="btn btn-link text-white">
+>>>>>>> 0762daeda6a591d3e459ca383c5d5eb38b0a19c6
                     <i class="fas fa-bell"></i>
                 </button>
             </li>
@@ -30,12 +47,21 @@
                 </button>
             </li>
             <li class="nav-item">
+<<<<<<< HEAD
+                <!-- Print Button -->
+                <button class="btn btn-link text-white" id="printButton">
+=======
                 <button class="btn btn-link text-white">
+>>>>>>> 0762daeda6a591d3e459ca383c5d5eb38b0a19c6
                     <i class="fas fa-print"></i>
                 </button>
             </li>
             <li class="nav-item">
+<<<<<<< HEAD
+                <!-- Hamburger Menu -->
+=======
                 <!-- Hamburger icon -->
+>>>>>>> 0762daeda6a591d3e459ca383c5d5eb38b0a19c6
                 <button class="btn btn-link text-white" id="hamburgerMenu">
                     <i class="fas fa-bars"></i>
                 </button>
@@ -66,8 +92,155 @@
         </ul>
     </div>
 </header>
+<<<<<<< HEAD
+
+<!-- Print Settings Dropdown Form -->
+<div id="printDropdownForm" class="print-dropdown" style="display: none;">
+    <div class="print-option">
+        <label for="autoPrint">Tự động in hóa đơn</label>
+        <label class="switch">
+            <input type="checkbox" id="autoPrint" checked>
+            <span class="slider round"></span>
+        </label>
+    </div>
+
+    <div class="print-option">
+        <label for="printTemplate">Chọn mẫu in hóa đơn</label>
+        <input type="number" id="printTemplate" value="1" min="1">
+    </div>
+
+    <div class="print-actions">
+        <button class="btn btn-primary" id="confirmButton">Xong</button>
+        <button class="btn btn-secondary" id="cancelButton">Bỏ qua</button>
+    </div>
+</div>
+ <style>
+    /* Print Dropdown Form Styles */
+.print-dropdown {
+    position: absolute;
+    right: 10px;
+    top: 60px;
+    width: 300px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    z-index: 1000;
+}
+
+/* Notification Dropdown Styles */
+.notification-dropdown {
+    position: absolute;
+    right: 10px;
+    top: 100px;
+    width: 300px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    z-index: 1000;
+    font-family: 'Roboto', sans-serif;
+}
+
+.notification-header {
+    font-size: 16px;
+    font-weight: bold;
+    color: #007bff;
+    margin-bottom: 10px;
+}
+
+.notification-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #666;
+    text-align: center;
+}
+
+.notification-body p {
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.notification-icon {
+    font-size: 50px;
+    color: #cccccc;
+    margin-bottom: 10px;
+}
+
+/* Switch Toggle */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 20px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 14px;
+    width: 14px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.4s;
+}
+
+input:checked + .slider {
+    background-color: #2196F3;
+}
+
+input:checked + .slider:before {
+    transform: translateX(20px);
+}
+
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+/* Print Form Actions */
+.print-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.print-option {
+    margin-bottom: 10px;
+}
+
+#confirmButton,
+#cancelButton {
+    width: 48%;
+}
+
+/* Dropdown menu styles */
+=======
 <style>
     /* Dropdown menu styles */
+>>>>>>> 0762daeda6a591d3e459ca383c5d5eb38b0a19c6
 #dropdownMenu {
     position: absolute;
     right: 10px;
@@ -80,7 +253,10 @@
     z-index: 1000;
     padding: 15px;
     display: none;
+<<<<<<< HEAD
+=======
     /* Ẩn menu khi chưa nhấn */
+>>>>>>> 0762daeda6a591d3e459ca383c5d5eb38b0a19c6
 }
 
 /* User info styling */
@@ -112,7 +288,10 @@
     margin-top: 10px;
 }
 
+<<<<<<< HEAD
+=======
 /* Remove hover effect */
+>>>>>>> 0762daeda6a591d3e459ca383c5d5eb38b0a19c6
 .menu-row button {
     width: 48%;
     display: flex;
@@ -132,6 +311,18 @@
     padding: 12px 15px;
     margin-bottom: 12px;
     cursor: pointer;
+<<<<<<< HEAD
+    transition: none;
+}
+
+#dropdownMenu .btn:hover {
+    background-color: #f8f9fa;
+}
+
+.dropdown-content .btn {
+    background-color: #004a89;
+    color: white;
+=======
     transition: none; /* No hover transition */
 }
 
@@ -149,10 +340,113 @@
 .dropdown-content .btn {
     background-color: #004a89; /* Default background */
     color: white; /* Text color */
+>>>>>>> 0762daeda6a591d3e459ca383c5d5eb38b0a19c6
     margin-bottom: 10px;
 }
 
 .dropdown-content .btn:hover {
+<<<<<<< HEAD
+    background-color: #004a89;
+}
+
+.dropdown-content .btn-primary:hover {
+    background-color: #0056b3;
+}
+
+ </style>
+
+ <script>
+    document.addEventListener("DOMContentLoaded", function() {
+    const printButton = document.getElementById("printButton");
+    const printDropdownForm = document.getElementById("printDropdownForm");
+    const hamburgerMenu = document.getElementById("hamburgerMenu");
+    const dropdownMenu = document.getElementById("dropdownMenu");
+    const bellButton = document.querySelector('.fa-bell');
+    const notificationDropdown = document.createElement('div');
+
+    // Thêm nội dung dropdown cho chuông thông báo
+    notificationDropdown.classList.add('notification-dropdown');
+    notificationDropdown.style.display = 'none'; // Bắt đầu ẩn
+    notificationDropdown.innerHTML = `
+        <h4 class="notification-header">Chưa thanh toán</h4>
+        <div class="notification-body">
+            <i class="fas fa-file-alt notification-icon"></i>
+            <p>Không có đơn đặt hàng chờ thanh toán</p>
+        </div>
+    `;
+    document.body.appendChild(notificationDropdown);
+
+    // Điều khiển hiển thị dropdown của chuông thông báo
+    bellButton.addEventListener("click", function(event) {
+        event.stopPropagation();
+        toggleDropdown(notificationDropdown);
+        hideDropdown(printDropdownForm);
+        hideDropdown(dropdownMenu);
+    });
+
+    // Toggle print form
+    printButton.addEventListener("click", function(event) {
+        event.stopPropagation();
+        toggleDropdown(printDropdownForm);
+        hideDropdown(dropdownMenu);
+        hideDropdown(notificationDropdown);
+    });
+
+    // Toggle hamburger menu
+    hamburgerMenu.addEventListener("click", function(event) {
+        event.stopPropagation();
+        toggleDropdown(dropdownMenu);
+        hideDropdown(printDropdownForm);
+        hideDropdown(notificationDropdown);
+    });
+
+    // Close all menus when clicking outside
+    window.addEventListener("click", function() {
+        hideDropdown(printDropdownForm);
+        hideDropdown(dropdownMenu);
+        hideDropdown(notificationDropdown);
+    });
+
+    // Add functionality to Confirm and Cancel buttons
+    document.getElementById("confirmButton").addEventListener("click", function() {
+        hideDropdown(printDropdownForm);
+        alert('Hóa đơn đã được chọn!');
+    });
+
+    document.getElementById("cancelButton").addEventListener("click", function() {
+        hideDropdown(printDropdownForm);
+    });
+
+    // Hàm chung để hiển thị/ẩn dropdown
+    function toggleDropdown(element) {
+        if (element.style.display === "none" || element.style.display === "") {
+            element.style.display = "block";
+        } else {
+            element.style.display = "none";
+        }
+    }
+
+    // Hàm để ẩn dropdown
+    function hideDropdown(element) {
+        element.style.display = "none";
+    }
+
+    // Ngăn chặn đóng khi nhấp vào bên trong dropdown
+    printDropdownForm.addEventListener("click", function(event) {
+        event.stopPropagation();
+    });
+
+    dropdownMenu.addEventListener("click", function(event) {
+        event.stopPropagation();
+    });
+
+    notificationDropdown.addEventListener("click", function(event) {
+        event.stopPropagation();
+    });
+});
+
+ </script>
+=======
     background-color: #004a89; /* Prevent hover color change */
 }
 
@@ -190,3 +484,4 @@
 
 
 </script>
+>>>>>>> 0762daeda6a591d3e459ca383c5d5eb38b0a19c6
