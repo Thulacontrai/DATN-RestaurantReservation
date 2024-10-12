@@ -14,7 +14,6 @@ use App\Models\User;
 use App\Traits\TraitCRUD;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use GuzzleHttp\Client;
 
@@ -24,6 +23,10 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Whoops\Exception\Formatter;
 use Illuminate\Support\Str;
+
+
+
+
 
 
 class ReservationController extends Controller
@@ -47,8 +50,7 @@ class ReservationController extends Controller
     public function index(Request $request)
     {
 
-
-        $this->updateOverdueReservations($request); // Cập nhật các đơn quá hạn
+        // $this->updateOverdueReservations(); // Cập nhật các đơn quá hạn
 
         $query = Reservation::query();
 
@@ -104,10 +106,8 @@ class ReservationController extends Controller
 
     // Cập nhật trạng thái đặt bàn quá hạn
 
-
-    public function updateOverdueReservations(Request $request)
+    private function updateOverdueReservations(Request $request)
     {
-
         $reservations = Reservation::with('customer')
             ->when($request->customer_name, function ($query) use ($request) {
                 $query->whereHas('customer', function ($q) use ($request) {
@@ -121,26 +121,21 @@ class ReservationController extends Controller
         // Cập nhật các đơn quá hạn thành 'Cancelled'
         Reservation::where('reservation_date', '=', $now->toDateString())
             ->where('reservation_time', '<', $now->copy()->subMinutes(15)->toTimeString())
-
-            ->where('status', 'Confirmed')
-
+            ->where('status', 'Pending')
             ->update(['status' => 'Cancelled']);
 
         // Đơn sắp đến hạn trong vòng 30 phút tới
         $upcomingReservations = Reservation::where('reservation_date', '=', $now->toDateString())
             ->where('reservation_time', '>=', $now->toTimeString())
             ->where('reservation_time', '<=', $now->copy()->addMinutes(30)->toTimeString())
-
-            ->where('status', 'Confirmed')
-
+            ->where('status', 'Pending')
             ->get();
 
         // Đơn đang chờ khách trong 15 phút
         $waitingReservations = Reservation::where('reservation_date', '=', $now->toDateString())
             ->where('reservation_time', '<', $now->toTimeString())
             ->where('reservation_time', '>=', $now->copy()->subMinutes(15)->toTimeString())
-
-            ->where('status', 'Confirmed')
+            ->where('status', 'Pending')
             ->get();
 
         // Đơn đã quá hạn
@@ -163,8 +158,7 @@ class ReservationController extends Controller
 
         Reservation::where('reservation_date', '=', $now->toDateString())
             ->where('reservation_time', '<', $now->copy()->subMinutes(15)->toTimeString())
-
-            ->where('status', 'Confirmed')
+            ->where('status', 'Pending')
             ->update(['status' => 'Cancelled']);
     }
 
@@ -176,8 +170,7 @@ class ReservationController extends Controller
         return Reservation::where('reservation_date', '=', $now->toDateString())
             ->where('reservation_time', '>=', $now->toTimeString())
             ->where('reservation_time', '<=', $now->copy()->addMinutes(30)->toTimeString())
-
-            ->where('status', 'Confirmed')
+            ->where('status', 'Pending')
 
             ->get();
     }
@@ -190,10 +183,9 @@ class ReservationController extends Controller
         return Reservation::where('reservation_date', '=', $now->toDateString())
             ->where('reservation_time', '<', $now->toTimeString())
             ->where('reservation_time', '>=', $now->copy()->subMinutes(15)->toTimeString())
-            ->where('status', 'Confirmed')
+            ->where('status', 'Pending')
             ->get();
     }
-
 
     // Lấy danh sách đặt bàn đã quá hạn
     private function getOverdueReservations()
@@ -204,11 +196,7 @@ class ReservationController extends Controller
             ->where('reservation_time', '<', $now->copy()->subMinutes(15)->toTimeString())
             ->where('status', 'Cancelled')
             ->get();
-
-
         // ->update(['status' => 'Cancelled']); // Cập nhật trạng thái thành 'Hủy'
-
-
 
         return view('admin.reservation.check', compact('upcomingReservations', 'waitingReservations', 'overdueReservations'));
     }
@@ -335,8 +323,6 @@ class ReservationController extends Controller
 
 
 
-
-
     public function createReservation(StoreReservationRquest $request)
     {
         $reservation = $request->all();
@@ -366,6 +352,7 @@ class ReservationController extends Controller
                 ]);
             });
             ;
+
 
 
             return redirect()->route('reservationSuccessfully.client', compact('reservation'));
@@ -450,12 +437,14 @@ class ReservationController extends Controller
 
 
 
+
     public function assignTables($reservationId)
     {
         $tables = Table::all();
 
 
         return view('admin.reservation.table_layout', compact('tables', 'reservationId'));
+
     }
 
     public function assignTable(Request $request)
@@ -481,6 +470,7 @@ class ReservationController extends Controller
 
 
         return view('admin.reservation.table_layout', compact('tables', 'reservationId'));
+
     }
 
     public function submitTable(Request $request)
@@ -537,7 +527,6 @@ class ReservationController extends Controller
         }
     }
 
-
     public function submitMoveTable(Request $request)
     {
         $tableId = $request->input('dataId');
@@ -552,6 +541,7 @@ class ReservationController extends Controller
             'success' => true,
             'message' => 'Chuyển bàn thành công'
         ]);
+
     }
 
 
