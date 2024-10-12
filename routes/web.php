@@ -58,7 +58,12 @@ Route::post('/update-member', [MemberController::class, 'update'])->name('member
 Route::post('/change-password', [MemberController::class, 'changePassword'])->name('member.changePassword');
 Route::post('/member/update-booking', [MemberController::class, 'updateBooking'])->name('member.updateBooking');
 
-// login
+
+
+
+
+// login 
+
 Route::get('/home', [HomeController::class, 'index'])->middleware('auth');
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login.client');
 
