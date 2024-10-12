@@ -72,12 +72,38 @@
                                 <a href="{{ route('booking.client') }}" class="text-secondary">Quay lại</a>
                             </div>
                             <div class="col-2">
-                                <input type="submit" value="Xác nhận" class="btn-line">
+                                <button type="button" id="confirmButton" class="btn-line">Xác nhận</button>
                             </div>
                         </div>
                     </form>
+
+                    <!-- Modal OTP -->
+                    <div class="modal fade" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="otpModalLabel">Xác thực OTP</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>                                    
+                                </div>
+                                <div class="modal-body">
+                                    <input type="text" id="otp_code" class="form-control" placeholder="Nhập mã OTP">
+                                    <div id="otpError" class="alert alert-danger mt-2 d-none">Mã OTP không chính xác!</div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"  data-dismiss="modal">Hủy</button>
+                                    <button type="button" id="verifyOtpButton" class="btn btn-primary">Xác nhận OTP</button>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </section>
     </div>
+
 @endsection
+

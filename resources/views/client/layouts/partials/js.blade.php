@@ -76,6 +76,25 @@
 
     });
 </script>
+
+<script>
+
+    document.getElementById('confirmButton').addEventListener('click', function() {
+        $('#confirmButton').click(function(e) {
+            e.preventDefault();  // Ngăn submit form mặc định
+            $('#otpModal').modal('show');  // Hiển thị modal OTP
+        });
+    });
+
+    document.querySelectorAll('[data-dismiss="modal"]').forEach(button => {
+        button.addEventListener('click', function() {
+            console.log('Modal closed'); // Kiểm tra xem sự kiện có được gọi không
+        });
+    });
+
+</script>
+
+
 <script src="client/js/plugins.js"></script>
 <script src="client/js/designesia.js"></script>
 
