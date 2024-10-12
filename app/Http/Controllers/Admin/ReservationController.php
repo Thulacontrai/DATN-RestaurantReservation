@@ -340,13 +340,16 @@ class ReservationController extends Controller
                 // Nếu đã đăng nhập, chỉ lấy customer_id
                 $customer_id = auth()->id();
             } else {
-                // Nếu chưa đăng nhập, tạo tài khoản tạm thời
-                $user = User::create([
-                    'name' => $request->user_name,
-                    'phone' => $request->user_phone,
-                    'password' => bcrypt(Str::random(10)),
-                    'status' => 'inactive',
-                ]);
+                $user = User::where('phone', $request->user_phone)->first();
+                if (!isset($user) && $user == null) {
+                    // Nếu chưa đăng nhập, tạo tài khoản tạm thời
+                    $user = User::create([
+                        'name' => $request->user_name,
+                        'phone' => $request->user_phone,
+                        'password' => bcrypt(Str::random(10)),
+                        'status' => 'inactive',
+                    ]);
+                }
                 $customer_id = $user->id;
             }
 
@@ -361,18 +364,22 @@ class ReservationController extends Controller
                 'reservation_time' => $request->reservation_time,
             ]);
         });
-
-        return redirect()->route('reservationSuccessfully.client', ['reservation' => $reservation->id]);
+        return redirect()->route('reservationSuccessfully.client')->with('reservation', $reservation);
     }
 
     public function reservationSuccessfully(Request $request)
+    {
+        $reservation = session('reservation');
+        return view('client.reservation-successfully', compact('reservation'));
+    }
+    public function createReservationWithMomo(Request $request)
     {
         if ($request->query('extraData')) {
             if ($request->query('message') == 'Successful.') {
                 $reservation = $request->query('extraData');
                 $data = str_replace("'", '"', $reservation);
                 $reservation = json_decode($data, true);
-                DB::transaction(function () use ($reservation) {
+                DB::transaction(function () use ($reservation, $request) {
                     $user = User::where('phone', $reservation['user_phone'])->first();
                     if (!isset($user) && $user == null) {
                         $user = User::create([
@@ -383,6 +390,7 @@ class ReservationController extends Controller
                         ]);
                     }
                     Reservation::create([
+                        'id' => $request->query('orderId'),
                         'customer_id' => $user->id,
                         'user_name' => $reservation['user_name'],
                         'user_phone' => $reservation['user_phone'],
@@ -394,15 +402,10 @@ class ReservationController extends Controller
                     ]);
                 });
             } else {
-                return redirect()->back()->with('err', 'Đơn đặt bàn đã đã bị hủy');
+                return redirect()->back()->with('err', 'Thanh toán không thành công!');
             }
-        } else {
-            // Xử lý trường hợp đặt bàn không cọc
-            $reservationId = $request->reservation;
-            $reservation = Reservation::findOrFail($reservationId);
-            $reservationData = $reservation->toArray();
         }
-        return view('client.reservation-successfully', ['reservation' => $reservation]);
+        return redirect()->route('reservationSuccessfully.client')->with('reservation', $reservation);
     }
 
 
