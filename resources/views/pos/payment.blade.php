@@ -316,6 +316,10 @@
                                     $.ajax({
                                         url: "{{ route('print.page', $orderId) }}",
                                         method: 'GET',
+                                        data: {
+                                            key1: 'value1',
+                                            key2: 'value2'
+                                        },
                                         success: function(response) {
                                             var printFrame = document
                                                 .getElementById(
@@ -370,7 +374,7 @@
                                                             item) {
                                                             if (
                                                                 item
-                                                                ) {
+                                                            ) {
                                                                 form.append(
                                                                     $('<input>', {
                                                                         type: 'hidden',
@@ -393,12 +397,12 @@
                                                     form.submit();
                                                 },
                                                 1000
-                                                ); // Đợi 1 giây cho quá trình in hoàn tất trước khi submit
+                                            ); // Đợi 1 giây cho quá trình in hoàn tất trước khi submit
                                         },
                                         error: function() {
                                             alert(
                                                 'Lỗi khi tải nội dung in.'
-                                                );
+                                            );
                                         }
                                     });
                                 });

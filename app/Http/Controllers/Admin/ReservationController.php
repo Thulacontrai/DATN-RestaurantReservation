@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreReservationRquest;
 use App\Models\Coupon;
+use App\Models\Dishes;
 use App\Models\Order;
 use App\Models\Reservation;
 use App\Models\Table;
@@ -31,7 +32,6 @@ class ReservationController extends Controller
     use TraitCRUD;
 
     public function __construct()
-
     {
         // Gán middleware cho các phương thức
         $this->middleware('permission:Xem đặt bàn', ['only' => ['index']]);
@@ -105,8 +105,9 @@ class ReservationController extends Controller
     // Cập nhật trạng thái đặt bàn quá hạn
 
 
-    public function updateOverdueReservations(Request $request){
- 
+    public function updateOverdueReservations(Request $request)
+    {
+
         $reservations = Reservation::with('customer')
             ->when($request->customer_name, function ($query) use ($request) {
                 $query->whereHas('customer', function ($q) use ($request) {
@@ -413,23 +414,23 @@ class ReservationController extends Controller
         $deposit = $showDeposit['guest_count'] * 100000;
         return view('client.deposit', compact('showDeposit', 'deposit'));
     }
-                  
+
     public function checkout($orderId, Request $request)
     {
         DB::transaction(function () use ($request, $orderId) {
-            $itemsCount = DB::table('orders_items')->where('order_id', $orderId)->count();
+            $itemsCount = DB::table('order_items')->where('order_id', $orderId)->count();
             $order = Order::find($orderId);
             $table = Table::find($order->table_id);
             $itemNames = $request->item_name;
             $quantities = $request->quantity;
             foreach ($itemNames as $index => $itemName) {
-                DB::table('orders_items')
+                DB::table('order_items')
                     ->where('order_id', $orderId)
-                    ->where('dish_id', $itemName)
+                    ->where('item_id', $itemName)
                     ->update(['quantity' => DB::raw('quantity - ' . $quantities[$index])]);
-                DB::table('orders_items')
+                DB::table('order_items')
                     ->where('order_id', $orderId)
-                    ->where('dish_id', $itemName)
+                    ->where('item_id', $itemName)
                     ->where('quantity', '<=', '0')
                     ->delete();
             }
@@ -458,7 +459,6 @@ class ReservationController extends Controller
     }
 
     public function assignTable(Request $request)
-
     {
         dd($request->all());
         $reservationId = 1;
@@ -484,7 +484,6 @@ class ReservationController extends Controller
     }
 
     public function submitTable(Request $request)
-
     {
         try {
             // Bắt đầu transaction
@@ -570,10 +569,12 @@ class ReservationController extends Controller
 
         return 'Lỗi khi lấy danh sách ngân hàng';
     }
-    public function print($orderId)
+    public function print($orderId, Request $request)
     {
-        $order = Order::find($orderId); 
-        return view('printf', compact('order'))->render();
+        $order = Order::find($orderId);
+        $table = Table::find($order->table_id);
+        $staff = User::find($order->staff_id);
+        return view('pos.printf', compact('order', 'table', 'staff'))->render();
     }
 
     public function cancelReservation(Request $request, $id)

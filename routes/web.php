@@ -145,7 +145,7 @@ Route::post('/add-dish-to-order', [PosController::class, 'addDishToOrder']);
 Route::get('/Pmenu/{table_number}', [PosController::class, 'Pmenu'])->name('Pmenu');
 
 
-// Route::post('/Ppayment/{table_number}', [PosController::class, 'Ppayment'])->name('Ppayment');
+Route::post('/Ppayment/{table_number}', [PosController::class, 'Ppayment'])->name('Ppayment');
 
 
 
