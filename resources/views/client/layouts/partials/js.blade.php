@@ -2,7 +2,6 @@
     ================================================== -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<<<<<<< HEAD
 <script>
     $(document).ready(function() {
         var selectedTime = null;
@@ -15,8 +14,8 @@
             // Ẩn tất cả các khung thời gian
             $('.time-slots').hide();
 
-=======
 
+<!--Hiep-->
 <script>
     function showSection(sectionId) {
         // Hide all sections first
@@ -139,7 +138,7 @@
             // Ẩn tất cả các khung thời gian
             $('.time-slots').hide();
 
->>>>>>> 0762daeda6a591d3e459ca383c5d5eb38b0a19c6
+
             // Hiển thị khung thời gian của ngày được chọn
             $('#day-' + index).show();
 
@@ -166,14 +165,6 @@
         });
 
         $('#confirm-button').click(function() {
-<<<<<<< HEAD
-            if (selectedTime && selectedDate) {
-
-                Swal.fire({
-                    icon: "question",
-                    html: 'Bạn đã chọn thời gian dùng bữa lúc <b>' + selectedTime +
-                        '</b> vào ngày <b>' + selectedDate + '</b>',
-=======
 
             function convertDateFormat(dateStr) {
                 const [year, month, day] = dateStr.split("-");
@@ -184,7 +175,6 @@
                     icon: "question",
                     html: 'Bạn đã chọn thời gian dùng bữa lúc <b>' + selectedTime +
                         '</b> vào ngày <b>' + convertDateFormat(selectedDate) + '</b>',
->>>>>>> 0762daeda6a591d3e459ca383c5d5eb38b0a19c6
                     title: 'Vui lòng xác nhận!',
                     showCancelButton: true,
                     confirmButtonText: "Xác nhận",

@@ -21,7 +21,7 @@ class PosController extends Controller
         $occupiedTablesCount = Table::where('status', 'occupied')->count();
         $totalTablesCount = Table::count();
 
-        $dishes = Dishes::all();
+        $dishes = Dishes::query()->paginate(8);
 
         // Trả về view cùng với dữ liệu bàn và món ăn
         return view('pos.index', compact('tables', 'dishes', 'availableTablesCount', 'reservedTablesCount', 'occupiedTablesCount', 'totalTablesCount'));
@@ -313,5 +313,89 @@ class PosController extends Controller
             ], 500);
         }
     }
+    public function Ppayment($tableNumber, Request $request)
+    {
+        try {
+            $selectedItems = $request->input('items', []);
 
+            if (!is_array($selectedItems) || empty($selectedItems)) {
+                return back()->with('error', 'No items selected for payment.');
+            }
+            return view('pos.payment', compact('tableNumber', 'selectedItems'));
+        } catch (\Exception $e) {
+            Log::error('Error loading payment page: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return back()->with('error', 'An error occurred while navigating to the payment page.');
+        }
+    }
+    // public function processPaymentOffline(Request $request)
+    // {
+    //     return $this->handlePayment($request, 'offline');
+    // }
+    // public function processPaymentOnline(Request $request)
+    // {
+    //     return $this->handlePayment($request, 'online');
+    // }
+    // private function handlePayment(Request $request, $paymentType)
+    // {
+    //     try {
+    //         // Validate incoming request data
+    //         $rules = [
+    //             'paymentMethod' => 'required|string|in:cash,card,qr,momo,vnpay',
+    //             'items' => 'required|array',
+    //             'table' => 'required|string',
+    //         ];
+    //         if ($paymentType === 'online') {
+    //             $rules = array_merge($rules, [
+    //                 'cardNumber' => 'required_if:paymentMethod,card|numeric',
+    //                 'expiryDate' => 'required_if:paymentMethod,card|date_format:m/y',
+    //                 'cvc' => 'required_if:paymentMethod,card|digits:3',
+    //             ]);
+    //         }
+    //         $request->validate($rules);
+    //         // Extract necessary data
+    //         $table = $request->input('table');
+    //         $paymentMethod = $request->input('paymentMethod');
+    //         $selectedItems = $request->input('items');
+    //         $totalAmount = collect($selectedItems)->sum(function ($item) {
+    //             return isset($item['quantity'], $item['price']) ? $item['quantity'] * $item['price'] : 0;
+    //         });
+    //         DB::beginTransaction();
+    //         // Create payment record
+    //         $payment = Payment::create([
+    //             'reservation_id' => null,
+    //             'bill_id' => 'BILL_' . time(),
+    //             'transaction_amount' => $totalAmount,
+    //             'refund_amount' => 0,
+    //             'payment_method' => $paymentMethod,
+    //             'status' => 'Pending',
+    //             'transaction_status' => 'pending',
+    //         ]);
+    //         // Process payment status
+    //         switch ($paymentMethod) {
+    //             case 'cash':
+    //             case 'card':
+    //             case 'qr':
+    //             case 'momo':
+    //             case 'vnpay':
+    //                 $payment->status = 'Completed';
+    //                 $payment->transaction_status = 'completed';
+    //                 break;
+    //             default:
+    //                 throw new \Exception("Unsupported payment method: " . $paymentMethod);
+    //         }
+    //         $payment->save();
+    //         DB::commit();
+    //         return view('pos.receipt', [
+    //             'table' => $table,
+    //             'selectedItems' => $selectedItems,
+    //             'totalAmount' => $totalAmount
+    //         ])->with('success', 'Payment successful.');
+    //     } catch (\Exception $e) {
+    //         DB::rollBack();
+    //         Log::error('Error processing payment: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+    //         return back()->with('error', 'An error occurred during payment. Please try again.');
+    //     }
+    // }
 }
+
+
