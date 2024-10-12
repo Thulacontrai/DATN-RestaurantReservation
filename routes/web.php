@@ -353,7 +353,9 @@ Route::post('/verify-otp', [ReservationController::class, 'verifyOtp'])->name('v
 Route::post('/api/cancel-booking/{id}', [ReservationController::class, 'cancelReservation'])->name('cancel.booking');
 Route::post('/cancel-booking/{id}', [ReservationController::class, 'cancelReservation'])->name('cancel.booking');
 
-
+Route::get('/login1',function(){
+        return view('client.login');
+});
 Route::get('/test', function () {
     return view('test');
 });
