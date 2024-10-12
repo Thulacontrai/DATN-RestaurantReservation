@@ -82,18 +82,14 @@
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="otpModalLabel">Xác thực OTP</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>                                    
+                                    <h5 class="modal-title" id="otpModalLabel">Xác thực OTP</h5>                            
                                 </div>
                                 <div class="modal-body">
                                     <input type="text" id="otp_code" class="form-control" placeholder="Nhập mã OTP">
                                     <div id="otpError" class="alert alert-danger mt-2 d-none">Mã OTP không chính xác!</div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary"  data-dismiss="modal">Hủy</button>
-                                    <button type="button" id="verifyOtpButton" class="btn btn-primary">Xác nhận OTP</button>
+                                    <button type="button" id="verifyOtpButton" class="btn-primary">Xác nhận OTP</button>
 
                                 </div>
                             </div>

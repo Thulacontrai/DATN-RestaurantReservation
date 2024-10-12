@@ -78,21 +78,30 @@
 </script>
 
 <script>
+    document.getElementById('confirmButton').addEventListener('click', function(e) {
+        e.preventDefault();
 
-    document.getElementById('confirmButton').addEventListener('click', function() {
-        $('#confirmButton').click(function(e) {
-            e.preventDefault();  // Ngăn submit form mặc định
-            $('#otpModal').modal('show');  // Hiển thị modal OTP
-        });
+        const userName = document.getElementById('user_name').value.trim();
+        const userPhone = document.getElementById('user_phone').value.trim();
+        const guestCount = document.getElementById('guest_count').value.trim();
+
+        if (!userName) {
+            alert('Vui lòng nhập tên khách hàng!');
+            return;
+        }
+        if (!userPhone) {
+            alert('Vui lòng nhập số điện thoại!');
+            return;
+        }
+        if (!guestCount) {
+            alert('Vui lòng nhập số người đặt bàn!');
+            return;
+        }
+
+        $('#otpModal').modal('show');
     });
-
-    document.querySelectorAll('[data-dismiss="modal"]').forEach(button => {
-        button.addEventListener('click', function() {
-            console.log('Modal closed'); // Kiểm tra xem sự kiện có được gọi không
-        });
-    });
-
 </script>
+
 
 
 <script src="client/js/plugins.js"></script>
