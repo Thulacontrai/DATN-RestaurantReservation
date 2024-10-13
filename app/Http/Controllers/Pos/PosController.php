@@ -6,7 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Dishes;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Reservation;
+use App\Models\ReservationTable;
 use App\Models\Table;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -148,6 +151,26 @@ class PosController extends Controller
                 'message' => 'Đã xảy ra lỗi khi thêm món vào đơn hàng.',
             ], 500);
         }
+    }
+    public function Ppayment($orderId, Request $request)
+    {
+        $order = Order::find($orderId);
+        $reservation = Reservation::find($order->reservation_id);
+        $table = Table::find($order->table_id);
+        $reservation_table = ReservationTable::where('reservation_id', $order->reservation_id)
+            ->where('table_id', $order->table_id)
+            ->first();
+        $order_items = Dishes::whereIn('id', $request->order_item)->get();
+        $quantity = $request->quantity;
+        $price = $request->price;
+        $staff_id = User::find($order->staff_id);
+        $customer_id = User::find($order->customer_id);
+        $total_amount = $request->total_amount;
+        $order_item = $request->order_item;
+        return view(
+            'pos.payment',
+            compact('orderId', 'order', 'reservation', 'table', 'reservation_table', 'order_items', 'quantity', 'price', 'staff_id', 'customer_id', 'total_amount', 'order_item', )
+        );
     }
 
     // Xóa món khỏi order_items

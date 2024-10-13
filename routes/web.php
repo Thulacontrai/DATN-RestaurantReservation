@@ -122,6 +122,10 @@ route::get(
     "reservationSuccessfully",
     [ReservationController::class, "reservationSuccessfully"]
 )->name("reservationSuccessfully.client");
+route::get(
+    "createReservationWithMomo",
+    [ReservationController::class, "createReservationWithMomo"]
+)->name("createReservationWithMomo.client");
 
 
 Route::get('/customerInformation', [ReservationController::class, 'showInformation'])->name('customer.information');
@@ -186,8 +190,8 @@ Route::get('admin', [AdminController::class, 'index']);
 Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::get('/', function () {
-    return view('auth.login');
-});
+        return view('auth.login');
+    })->name('home');
 
     Route::resource('table', TableController::class);
     // Trash - Xoá mềm - Khôi Phục
@@ -361,6 +365,47 @@ Route::get('/test', function () {
 });
 
 
-require __DIR__.'/auth.php';
+//Route đăng nhập của khách hàng
+// Route đăng nhập của khách hàng
+Route::get('/register-client', [CustomerAuthController::class, 'showRegisterForm'])->name('register.form');
+Route::post('/register-client', [CustomerAuthController::class, 'register'])->name('client.register');
+Route::get('/login-client', [CustomerAuthController::class, 'showLoginForm'])->name('login.form');
+Route::post('/login-client', [CustomerAuthController::class, 'login'])->name('client.login');
+Route::post('/logout-client', [CustomerAuthController::class, 'logout'])->name('client.logout');
+
+Route::post('/check-account', [CustomerAuthController::class, 'checkAccount']);
+Route::post('/login-success', [CustomerAuthController::class, 'loginSuccess'])->name('login.success');
+
+
+
+
+Route::post('/verify-code', [CustomerAuthController::class, 'verifyCode'])->name('verify.code');
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/member/profile', [MemberController::class, 'showProfile'])->name('member.profile');
+    Route::post('/member/update-booking', [MemberController::class, 'updateBooking'])->name('member.updateBooking');
+});
+
+
+
+Route::get('/member/profile', [MemberController::class, 'showProfile'])->name('member.profile');
+Route::post('/member/update-booking', [MemberController::class, 'updateBooking'])->name('member.updateBooking');
+
+Route::post('/cancel-reservation', [ReservationController::class, 'cancelReservation'])->name('cancel.reservation');
+
+
+Route::post('/send-otp', [ReservationController::class, 'sendOtp'])->name('send.otp');
+Route::post('/verify-otp', [ReservationController::class, 'verifyOtp'])->name('verify.otp');
+
+
+Route::post('/api/cancel-booking/{id}', [ReservationController::class, 'cancelReservation'])->name('cancel.booking');
+Route::post('/cancel-booking/{id}', [ReservationController::class, 'cancelReservation'])->name('cancel.booking');
+
+
+Route::get('/test', [ReservationController::class, 'getBanks']);
+Route::get('/print/{orderId}', [ReservationController::class, 'print'])->name('print.page');
+require __DIR__ . '/auth.php';
+
+
 
 
