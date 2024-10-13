@@ -39,9 +39,9 @@ class OnlineCheckoutController extends Controller
             $orderInfo = "Thanh toán qua MoMo";
             $amount = "$request->deposit";
             $orderId = time() . "";
-            $redirectUrl = route("reservationSuccessfully.client");
-            $ipnUrl = route("reservationSuccessfully.client");
-            $note = $request->user_note ?? null;
+            $redirectUrl = route("createReservationWithMomo.client");
+            $ipnUrl = route("createReservationWithMomo.client");
+            $note = $request->note ?? null;
             $extraData = "{'user_name':'$request->user_name','user_phone':'$request->user_phone','reservation_time':'$request->reservation_time','reservation_date':'$request->reservation_date','guest_count':'$request->guest_count','note':'$note','deposit_amount':'$request->deposit'}";
             $requestId = time() . "";
             $requestType = "payWithATM";

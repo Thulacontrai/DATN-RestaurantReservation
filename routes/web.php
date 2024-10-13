@@ -122,6 +122,10 @@ route::get(
     "reservationSuccessfully",
     [ReservationController::class, "reservationSuccessfully"]
 )->name("reservationSuccessfully.client");
+route::get(
+    "createReservationWithMomo",
+    [ReservationController::class, "createReservationWithMomo"]
+)->name("createReservationWithMomo.client");
 
 
 Route::get('/customerInformation', [ReservationController::class, 'showInformation'])->name('customer.information');
