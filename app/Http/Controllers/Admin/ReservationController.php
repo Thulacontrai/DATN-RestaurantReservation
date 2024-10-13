@@ -340,13 +340,16 @@ class ReservationController extends Controller
                 // Nếu đã đăng nhập, chỉ lấy customer_id
                 $customer_id = auth()->id();
             } else {
-                // Nếu chưa đăng nhập, tạo tài khoản tạm thời
-                $user = User::create([
-                    'name' => $request->user_name,
-                    'phone' => $request->user_phone,
-                    'password' => bcrypt(Str::random(10)),
-                    'status' => 'inactive',
-                ]);
+                $user = User::where('phone', $request->user_phone)->first();
+                if (!isset($user) && $user == null) {
+                    // Nếu chưa đăng nhập, tạo tài khoản tạm thời
+                    $user = User::create([
+                        'name' => $request->user_name,
+                        'phone' => $request->user_phone,
+                        'password' => bcrypt(Str::random(10)),
+                        'status' => 'inactive',
+                    ]);
+                }
                 $customer_id = $user->id;
             }
 
@@ -361,18 +364,22 @@ class ReservationController extends Controller
                 'reservation_time' => $request->reservation_time,
             ]);
         });
-
-        return redirect()->route('reservationSuccessfully.client', ['reservation' => $reservation->id]);
+        return redirect()->route('reservationSuccessfully.client')->with('reservation', $reservation);
     }
 
     public function reservationSuccessfully(Request $request)
+    {
+        $reservation = session('reservation');
+        return view('client.reservation-successfully', compact('reservation'));
+    }
+    public function createReservationWithMomo(Request $request)
     {
         if ($request->query('extraData')) {
             if ($request->query('message') == 'Successful.') {
                 $reservation = $request->query('extraData');
                 $data = str_replace("'", '"', $reservation);
                 $reservation = json_decode($data, true);
-                DB::transaction(function () use ($reservation) {
+                DB::transaction(function () use ($reservation, $request) {
                     $user = User::where('phone', $reservation['user_phone'])->first();
                     if (!isset($user) && $user == null) {
                         $user = User::create([
@@ -383,6 +390,7 @@ class ReservationController extends Controller
                         ]);
                     }
                     Reservation::create([
+                        'id' => $request->query('orderId'),
                         'customer_id' => $user->id,
                         'user_name' => $reservation['user_name'],
                         'user_phone' => $reservation['user_phone'],
@@ -394,16 +402,10 @@ class ReservationController extends Controller
                     ]);
                 });
             } else {
-                return redirect()->back()->with('err', 'Đơn đặt bàn đã đã bị hủy');
+                return redirect()->back()->with('err', 'Thanh toán không thành công!');
             }
-        } else {
-            // Xử lý trường hợp đặt bàn không cọc
-            $reservationId = $request->reservation;
-            $reservation = Reservation::findOrFail($reservationId);
-            $reservationData = $reservation->toArray();
         }
-
-        return view('client.reservation-successfully', ['reservation' => $reservationData]);
+        return redirect()->route('reservationSuccessfully.client')->with('reservation', $reservation);
     }
 
 
@@ -605,48 +607,6 @@ class ReservationController extends Controller
         }
     }
 
-    // Hàm chuẩn hóa số điện thoại
-    private function normalizePhoneNumber($phoneNumber)
-    {
-        // Loại bỏ tất cả ký tự không phải số
-        $numbers = preg_replace('/[^0-9]/', '', $phoneNumber);
-
-        // Nếu số điện thoại bắt đầu bằng 84, loại bỏ
-        if (strpos($numbers, '84') === 0) {
-            $numbers = substr($numbers, 2);
-        }
-
-        // Nếu số điện thoại không bắt đầu bằng 0, thêm vào
-        if (strpos($numbers, '0') !== 0) {
-            $numbers = '0' . $numbers;
-        }
-
-        return $numbers;
-    }
-    public function verifyOtp(Request $request)
-    {
-        $request->validate([
-            'otp' => 'required|digits:6',
-            'reservation_id' => 'required|exists:reservations,id',
-        ]);
-
-        $inputOtp = $request->input('otp');
-        $sessionOtp = Session::get('otp');
-
-        if ($inputOtp == $sessionOtp) {
-            $reservation = Reservation::find($request->input('reservation_id'));
-
-            if ($reservation && $reservation->user_id == Auth::id()) {
-                $reservation->delete();
-                return response()->json(['success' => true, 'message' => 'Hủy đặt bàn thành công.']);
-            } else {
-                return response()->json(['success' => false, 'message' => 'Không tìm thấy đặt bàn hoặc bạn không có quyền hủy.']);
-            }
-        } else {
-            return response()->json(['success' => false, 'message' => 'Mã OTP không đúng. Vui lòng thử lại.']);
-        }
-    }
-
 
     public function getBanks()
     {
@@ -668,56 +628,6 @@ class ReservationController extends Controller
         $table = Table::find($order->table_id);
         $staff = User::find($order->staff_id);
         return view('pos.printf', compact('order', 'table', 'staff'))->render();
-    }
-
-    public function cancelReservation(Request $request, $id)
-    {
-        try {
-            // Lấy số điện thoại đã xác thực từ request
-            $verifiedPhoneNumber = $request->input('phone_number');
-
-            // Chuẩn hóa số điện thoại xác thực
-            $normalizedVerifiedPhone = $this->normalizePhoneNumber($verifiedPhoneNumber);
-
-            $reservation = Reservation::findOrFail($id);
-
-            // Chuẩn hóa số điện thoại trong đơn đặt bàn
-            $normalizedReservationPhone = $this->normalizePhoneNumber($reservation->user_phone);
-
-            // Log để debug
-            Log::info('Phone numbers comparison', [
-                'original_verified' => $verifiedPhoneNumber,
-                'original_reservation' => $reservation->user_phone,
-                'normalized_verified' => $normalizedVerifiedPhone,
-                'normalized_reservation' => $normalizedReservationPhone
-            ]);
-
-            // So sánh số điện thoại đã chuẩn hóa
-            if ($normalizedVerifiedPhone !== $normalizedReservationPhone) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Số điện thoại xác thực không khớp với số điện thoại đặt bàn.'
-                ], 403);
-            }
-
-            // Thực hiện hủy đặt bàn
-            $reservation->status = 'cancelled';
-            $reservation->save();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Đặt bàn đã được hủy thành công.'
-            ]);
-        } catch (\Exception $e) {
-            Log::error('Error cancelling reservation', [
-                'reservation_id' => $id,
-                'error' => $e->getMessage()
-            ]);
-            return response()->json([
-                'success' => false,
-                'message' => 'Có lỗi xảy ra khi hủy đặt bàn: ' . $e->getMessage()
-            ], 500);
-        }
     }
 
     // Hàm chuẩn hóa số điện thoại
