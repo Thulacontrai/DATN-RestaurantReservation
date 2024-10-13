@@ -98,7 +98,6 @@ $orderId = 1;
                 });
             }
 
-            // Sự kiện khi bấm nút "Xác nhận"
             $('#bankPaymentBtn').click(function(event) {
                 event.preventDefault();
                 // Bắt đầu tìm kiếm sau 20 giây

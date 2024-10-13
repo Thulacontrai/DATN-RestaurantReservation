@@ -308,9 +308,10 @@ class ReservationController extends Controller
     }
     public function showInformation(Request $request)
     {
+        $data = $request->all();
         $date = $request->query('date');
         $time = $request->query('time');
-        return view('client.customer-information', compact('date', 'time'));
+        return view('client.customer-information', compact('date', 'time', 'data'));
     }
 
 
@@ -413,7 +414,8 @@ class ReservationController extends Controller
     {
         $showDeposit = $request->customerInformation;
         $deposit = $showDeposit['guest_count'] * 100000;
-        return view('client.deposit', compact('showDeposit', 'deposit'));
+        $orderId = time();
+        return view('client.deposit', compact('showDeposit', 'deposit', 'orderId'));
     }
 
     public function checkout($orderId, Request $request)

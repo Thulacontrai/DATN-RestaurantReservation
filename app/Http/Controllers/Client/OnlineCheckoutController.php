@@ -3,7 +3,12 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
+use App\Models\Reservation;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+
 
 class OnlineCheckoutController extends Controller
 {
@@ -66,6 +71,41 @@ class OnlineCheckoutController extends Controller
             $result = $this->execPostRequest($endpoint, json_encode($data));
             $jsonResult = json_decode($result, true);  // decode json
             return redirect()->to($jsonResult['payUrl']);
+        }
+        if ($request->payment == "vnpay") {
+            $reservation = DB::transaction(function () use ($request) {
+                $customer_id = null;
+                if (auth()->check()) {
+                    // Nếu đã đăng nhập, chỉ lấy customer_id
+                    $customer_id = auth()->id();
+                } else {
+                    $user = User::where('phone', $request->user_phone)->first();
+                    if (!isset($user) && $user == null) {
+                        // Nếu chưa đăng nhập, tạo tài khoản tạm thời
+                        $user = User::create([
+                            'name' => $request->user_name,
+                            'phone' => $request->user_phone,
+                            'password' => bcrypt(Str::random(10)),
+                            'status' => 'inactive',
+                        ]);
+                    }
+                    $customer_id = $user->id;
+                }
+
+                // Luôn sử dụng thông tin từ form
+                return Reservation::create([
+                    'id' => $request->orderId,
+                    'customer_id' => $customer_id,
+                    'user_name' => $request->user_name,
+                    'user_phone' => $request->user_phone,
+                    'guest_count' => $request->guest_count,
+                    'deposit_amount' => $request->deposit,
+                    'note' => $request->note,
+                    'reservation_date' => $request->reservation_date,
+                    'reservation_time' => $request->reservation_time,
+                ]);
+            });
+            return redirect()->route('reservationSuccessfully.client')->with('reservation', $reservation);
         }
     }
 }
