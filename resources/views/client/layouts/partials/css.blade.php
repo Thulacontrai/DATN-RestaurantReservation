@@ -21,116 +21,241 @@
 
 
 <style>
-    /* css của member */
-    .progress-bar {
-            background-color: #ff3300;
+
+    /* login  */
+    .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
         }
-        .avatar {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            object-fit: cover;
+        .btn-option {
+            display: inline-block;
+            width: 48%;
+            text-align: center;
+            cursor: pointer;
+        }
+        .btn-option.active {
+            background-color: #FFB347;
+            color: white;
+        }
+        .otp-input {
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            margin: 5px;
+            font-size: 24px;
         }
 
-    /* css login member  */
-    
-
-  .pagination {
-    display: flex;
-    justify-content: center;
-    padding-left: 0;
-    list-style: none;
-    border-radius: 0.25rem;
-    margin: 0;
+.profile-section {
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    margin: 20px;
+}
+.upcoming-reservations .reservation-item {
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
 }
 
-.pagination .page-item {
-    margin: 0 8px;
+.reservation-details {
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    margin: 20px;
+}
+.reservation-details .actions {
+    margin-top: 20px;
+}
+.reservation-details .actions .btn {
+    margin-right: 10px;
+}
+.additional-info {
+    margin-top: 20px;
 }
 
-.pagination .page-link {
-    color: #070707;
-    background-color: #ffffff; /* Neutral dark gray background */
-    border: none;
-    border-radius: 50%;
-    padding: 10px 20px;
-    width: 50px;
-    height: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+
+   /* General container styling */
+.container-fluid {
+    background-color: #18191B;
+    /* padding: 20px; */
+}
+
+/* Side Menu Styling */
+.side-menu {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.side-menu h5 {
+    font-weight: 600;
+}
+
+.side-menu .nav-link {
+    padding: 10px;
+    font-size: 16px;
+    color: #333;
+    border-radius: 4px;
     transition: background-color 0.3s ease, color 0.3s ease;
-    font-size: 18px;
 }
 
-.pagination .page-link:hover {
-    background-color: #28a745; /* Green for hover effect */
-    color: white;
+.nav-link {
+    color: #000; /* Màu mặc định */
+    text-decoration: none; /* Bỏ gạch chân */
 }
 
-.pagination .page-item.active .page-link {
-    background-color: #007bff; /* Highlight active page */
-    color: white;
-    border: 2px solid #007bff;
+.nav-link.active {
+    font-weight: bold; /* In đậm */
+    /* color: #007bff; Màu khi đang hoạt động */
 }
 
-.pagination .page-link:focus {
-    outline: none;
-    box-shadow: none;
-}
-
-.pagination .page-link.disabled {
-    background-color: #dee2e6;
-    color: #6c757d;
-    border: none;
-}
-
-
-.page-item .page-link {
-    background-color: #fff; /* Màu nền mặc định cho các nút */
-    color: #000; /* Màu chữ mặc định */
-    border: 1px solid #ddd; /* Đường viền nhẹ */
+/* Profile Circle Styling */
+.profile-circle {
+    background-color: #007bff;
+    color: black;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
-    width: 40px;
-    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 5px;
+    font-size: 24px;
+    font-weight: bold;
+}
+/* edit */
+.popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* Nền mờ */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Đảm bảo nó nằm trên cùng */
 }
 
-.page-item.active .page-link {
-    background-color: #007bff; /* Màu xanh dương nhạt cho nút đang được chọn */
-    color: #fff; /* Màu chữ trắng cho nút đang chọn */
-    border-color: #007bff; /* Đường viền trùng với màu nền của nút */
+.popup-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 300px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.page-item .page-link:hover {
-    background-color: #f0f0f0; /* Màu nền khi hover */
-    color: #007bff; /* Màu chữ khi hover */
-    border-color: #007bff; /* Đường viền khi hover */
+.close {
+    cursor: pointer;
+    float: right;
+    font-size: 20px;
+}
+
+.edit-icon {
+    cursor: pointer;
+    margin-left: 10px;
+    color: #007bff; /* Màu cho icon */
+}
+
+.edit-icon:hover {
+    color: #0056b3; /* Màu khi hover */
+}
+
+
+/* Profile Info Section */
+.profile-info {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.profile-info p {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+/* Reservation Card Styling */
+.reservation-card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    align-items: center;
+}
+
+.reservation-card h5 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.reservation-card p {
+    font-size: 14px;
+    color: #666;
+}
+
+.reservation-card .bi-people {
+    margin-right: 5px;
+    color: #007bff;
+}
+
+/* Phân trang  */
+.pagination {
+    justify-content: center; /* Căn giữa các nút phân trang */
+    margin-top: 20px; /* Khoảng cách phía trên */
+}
+
+.page-item {
+    margin: 0 3px; /* Khoảng cách giữa các nút */
+}
+
+.page-link {
+    padding: 3px 3px; /* Thu nhỏ kích thước nút */
+    font-size: 14px; /* Giảm kích thước font chữ */
 }
 
 .page-item.disabled .page-link {
-    color: #ddd; /* Màu cho các nút bị vô hiệu hóa */
-    background-color: transparent;
-    border-color: #ddd;
+    pointer-events: none; /* Vô hiệu hóa nút khi không thể nhấp */
+    color: #6c757d; /* Màu cho nút không khả dụng */
 }
 
-.menu-category:hover {
-                background-color: #f8f8f8;
-                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-                transform: scale(1.05);
-            }
+.page-item.active .page-link {
+    background-color: #007bff; /* Màu nền cho nút đang chọn */
+    color: white; /* Màu chữ cho nút đang chọn */
+}
 
-            .text-description {
-                white-space: nowrap;
-                /* Đảm bảo mô tả chỉ nằm trên 1 dòng */
-                overflow: hidden;
-                /* Ẩn phần văn bản vượt quá nếu quá dài */
-                text-overflow: ellipsis;
-                /* Thêm dấu '...' nếu văn bản quá dài */
-            }
+.page-link:hover {
+    background-color: #f1f1f1; /* Màu nền khi hover */
+    border-radius: 5px; /* Bo góc cho nút */
+}
+
+.page-link:focus {
+    outline: none; /* Bỏ viền focus */
+}
 
 
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .side-menu {
+        margin-bottom: 20px;
+    }
+    
+    .reservation-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .reservation-card img {
+        width: 100%;
+        height: auto;
+        margin-bottom: 10px;
+    }
+}
 </style>
