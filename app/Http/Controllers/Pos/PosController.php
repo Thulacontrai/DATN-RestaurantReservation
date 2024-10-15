@@ -336,20 +336,20 @@ class PosController extends Controller
             ], 500);
         }
     }
-    public function Ppayment($tableNumber, Request $request)
-    {
-        try {
-            $selectedItems = $request->input('items', []);
+    // public function Ppayment($tableNumber, Request $request)
+    // {
+    //     try {
+    //         $selectedItems = $request->input('items', []);
 
-            if (!is_array($selectedItems) || empty($selectedItems)) {
-                return back()->with('error', 'No items selected for payment.');
-            }
-            return view('pos.payment', compact('tableNumber', 'selectedItems'));
-        } catch (\Exception $e) {
-            Log::error('Error loading payment page: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
-            return back()->with('error', 'An error occurred while navigating to the payment page.');
-        }
-    }
+    //         if (!is_array($selectedItems) || empty($selectedItems)) {
+    //             return back()->with('error', 'No items selected for payment.');
+    //         }
+    //         return view('pos.payment', compact('tableNumber', 'selectedItems'));
+    //     } catch (\Exception $e) {
+    //         Log::error('Error loading payment page: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+    //         return back()->with('error', 'An error occurred while navigating to the payment page.');
+    //     }
+    // }
     // public function processPaymentOffline(Request $request)
     // {
     //     return $this->handlePayment($request, 'offline');

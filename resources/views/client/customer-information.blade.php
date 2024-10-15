@@ -31,8 +31,7 @@
                                 <input class="form-control" type="text" name="user_name" id="user_name"
                                     placeholder="Nhập tên khách hàng"
                                     value="{{ old('user_name') ?? ($data['user_name'] ?? null) }}">
-
-                                @error('user_name')
+                                @error('user_name') 
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
