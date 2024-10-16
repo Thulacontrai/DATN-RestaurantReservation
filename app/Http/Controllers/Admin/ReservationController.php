@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreReservationRquest;
 use App\Models\Coupon;
+use App\Models\Dishes;
 use App\Models\Order;
 use App\Models\Reservation;
 use App\Models\Table;
@@ -15,10 +16,18 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use GuzzleHttp\Client;
+
+
+
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Whoops\Exception\Formatter;
 use Illuminate\Support\Str;
+
+
+
+
 
 
 class ReservationController extends Controller
@@ -27,7 +36,6 @@ class ReservationController extends Controller
     use TraitCRUD;
 
     public function __construct()
-
     {
         // Gán middleware cho các phương thức
         $this->middleware('permission:Xem đặt bàn', ['only' => ['index']]);
@@ -43,8 +51,7 @@ class ReservationController extends Controller
     public function index(Request $request)
     {
 
-
-        $this->updateOverdueReservations($request); // Cập nhật các đơn quá hạn
+        // $this->updateOverdueReservations(); // Cập nhật các đơn quá hạn
 
         $query = Reservation::query();
 
@@ -100,9 +107,8 @@ class ReservationController extends Controller
 
     // Cập nhật trạng thái đặt bàn quá hạn
 
-
-    public function updateOverdueReservations(Request $request){
- 
+    private function updateOverdueReservations(Request $request)
+    {
         $reservations = Reservation::with('customer')
             ->when($request->customer_name, function ($query) use ($request) {
                 $query->whereHas('customer', function ($q) use ($request) {
@@ -116,26 +122,21 @@ class ReservationController extends Controller
         // Cập nhật các đơn quá hạn thành 'Cancelled'
         Reservation::where('reservation_date', '=', $now->toDateString())
             ->where('reservation_time', '<', $now->copy()->subMinutes(15)->toTimeString())
-
-            ->where('status', 'Confirmed')
-
+            ->where('status', 'Pending')
             ->update(['status' => 'Cancelled']);
 
         // Đơn sắp đến hạn trong vòng 30 phút tới
         $upcomingReservations = Reservation::where('reservation_date', '=', $now->toDateString())
             ->where('reservation_time', '>=', $now->toTimeString())
             ->where('reservation_time', '<=', $now->copy()->addMinutes(30)->toTimeString())
-
-            ->where('status', 'Confirmed')
-
+            ->where('status', 'Pending')
             ->get();
 
         // Đơn đang chờ khách trong 15 phút
         $waitingReservations = Reservation::where('reservation_date', '=', $now->toDateString())
             ->where('reservation_time', '<', $now->toTimeString())
             ->where('reservation_time', '>=', $now->copy()->subMinutes(15)->toTimeString())
-
-            ->where('status', 'Confirmed')
+            ->where('status', 'Pending')
             ->get();
 
         // Đơn đã quá hạn
@@ -158,8 +159,7 @@ class ReservationController extends Controller
 
         Reservation::where('reservation_date', '=', $now->toDateString())
             ->where('reservation_time', '<', $now->copy()->subMinutes(15)->toTimeString())
-
-            ->where('status', 'Confirmed')
+            ->where('status', 'Pending')
             ->update(['status' => 'Cancelled']);
     }
 
@@ -171,8 +171,7 @@ class ReservationController extends Controller
         return Reservation::where('reservation_date', '=', $now->toDateString())
             ->where('reservation_time', '>=', $now->toTimeString())
             ->where('reservation_time', '<=', $now->copy()->addMinutes(30)->toTimeString())
-
-            ->where('status', 'Confirmed')
+            ->where('status', 'Pending')
 
             ->get();
     }
@@ -185,10 +184,9 @@ class ReservationController extends Controller
         return Reservation::where('reservation_date', '=', $now->toDateString())
             ->where('reservation_time', '<', $now->toTimeString())
             ->where('reservation_time', '>=', $now->copy()->subMinutes(15)->toTimeString())
-            ->where('status', 'Confirmed')
+            ->where('status', 'Pending')
             ->get();
     }
-
 
     // Lấy danh sách đặt bàn đã quá hạn
     private function getOverdueReservations()
@@ -199,11 +197,7 @@ class ReservationController extends Controller
             ->where('reservation_time', '<', $now->copy()->subMinutes(15)->toTimeString())
             ->where('status', 'Cancelled')
             ->get();
-
-
         // ->update(['status' => 'Cancelled']); // Cập nhật trạng thái thành 'Hủy'
-
-
 
         return view('admin.reservation.check', compact('upcomingReservations', 'waitingReservations', 'overdueReservations'));
     }
@@ -330,8 +324,6 @@ class ReservationController extends Controller
 
 
 
-
-
     public function createReservation(StoreReservationRquest $request)
     {
         // Kiểm tra số lượng khách, nếu >= 6 thì chuyển hướng đến trang đặt cọc
@@ -339,25 +331,28 @@ class ReservationController extends Controller
             $customerInformation = $request->all();
             return redirect()->route('deposit.client', compact('customerInformation'));
         }
-    
+
         // Thực hiện giao dịch đặt bàn
         $reservation = DB::transaction(function () use ($request) {
             $customer_id = null;
-            
+
             if (auth()->check()) {
                 // Nếu đã đăng nhập, chỉ lấy customer_id
                 $customer_id = auth()->id();
             } else {
-                // Nếu chưa đăng nhập, tạo tài khoản tạm thời
-                $user = User::create([
-                    'name' => $request->user_name,
-                    'phone' => $request->user_phone,
-                    'password' => bcrypt(Str::random(10)),
-                    'status' => 'inactive',
-                ]);
+                $user = User::where('phone', $request->user_phone)->first();
+                if (!isset($user) && $user == null) {
+                    // Nếu chưa đăng nhập, tạo tài khoản tạm thời
+                    $user = User::create([
+                        'name' => $request->user_name,
+                        'phone' => $request->user_phone,
+                        'password' => bcrypt(Str::random(10)),
+                        'status' => 'inactive',
+                    ]);
+                }
                 $customer_id = $user->id;
             }
-    
+
             // Luôn sử dụng thông tin từ form
             return Reservation::create([
                 'customer_id' => $customer_id,
@@ -369,56 +364,50 @@ class ReservationController extends Controller
                 'reservation_time' => $request->reservation_time,
             ]);
         });
-    
-        return redirect()->route('reservationSuccessfully.client', ['reservation' => $reservation->id]);
+        return redirect()->route('reservationSuccessfully.client')->with('reservation', $reservation);
     }
-    
+
     public function reservationSuccessfully(Request $request)
     {
-        if ($request->query('extraData')) {
-            // Xử lý trường hợp đặt bàn có cọc
-            $reservationString = $request->query('extraData');
-            $data = str_replace("'", '"', $reservationString);
-            $inputData = json_decode($data, true);
-    
-            $reservation = DB::transaction(function () use ($inputData) {
-                $customer_id = null;
-    
-                if (Auth::check()) {
-                    $customer_id = Auth::id();
-                } else {
-                    // Tạo user mới nếu chưa đăng nhập
-                    $user = User::create([
-                        'name' => $inputData['user_name'],
-                        'phone' => $inputData['user_phone'],
-                        'password' => bcrypt(Str::random(10)),
-                        'status' => 'inactive',
-                    ]);
-                    $customer_id = $user->id;
-                }
-    
-                return Reservation::create([
-                    'customer_id' => $customer_id,
-                    'user_name' => $inputData['user_name'],
-                    'user_phone' => $inputData['user_phone'],
-                    'guest_count' => $inputData['guest_count'],
-                    'deposit_amount' => $inputData['deposit_amount'],
-                    'note' => $inputData['note'] ?? null,
-                    'reservation_date' => $inputData['reservation_date'],
-                    'reservation_time' => $inputData['reservation_time'],
-                ]);
-            });
-    
-            $reservationData = $reservation->toArray();
-        } else {
-            // Xử lý trường hợp đặt bàn không cọc
-            $reservationId = $request->reservation;
-            $reservation = Reservation::findOrFail($reservationId);
-            $reservationData = $reservation->toArray();
-        }
-    
-        return view('client.reservation-successfully', ['reservation' => $reservationData]);
+        $reservation = session('reservation');
+        return view('client.reservation-successfully', compact('reservation'));
     }
+    public function createReservationWithMomo(Request $request)
+    {
+        if ($request->query('extraData')) {
+            if ($request->query('message') == 'Successful.') {
+                $reservation = $request->query('extraData');
+                $data = str_replace("'", '"', $reservation);
+                $reservation = json_decode($data, true);
+                DB::transaction(function () use ($reservation, $request) {
+                    $user = User::where('phone', $reservation['user_phone'])->first();
+                    if (!isset($user) && $user == null) {
+                        $user = User::create([
+                            'name' => $reservation['user_name'],
+                            'phone' => $reservation['user_phone'],
+                            'password' => fake()->password(),
+                            'status' => 'inactive',
+                        ]);
+                    }
+                    Reservation::create([
+                        'id' => $request->query('orderId'),
+                        'customer_id' => $user->id,
+                        'user_name' => $reservation['user_name'],
+                        'user_phone' => $reservation['user_phone'],
+                        'guest_count' => $reservation['guest_count'],
+                        'deposit_amount' => $reservation['deposit_amount'],
+                        'note' => $reservation['note'],
+                        'reservation_date' => $reservation['reservation_date'],
+                        'reservation_time' => $reservation['reservation_time'],
+                    ]);
+                });
+            } else {
+                return redirect()->back()->with('err', 'Thanh toán không thành công!');
+            }
+        }
+        return redirect()->route('reservationSuccessfully.client')->with('reservation', $reservation);
+    }
+
 
     public function showDeposit(Request $request)
     {
@@ -426,23 +415,23 @@ class ReservationController extends Controller
         $deposit = $showDeposit['guest_count'] * 100000;
         return view('client.deposit', compact('showDeposit', 'deposit'));
     }
-                  
+
     public function checkout($orderId, Request $request)
     {
         DB::transaction(function () use ($request, $orderId) {
-            $itemsCount = DB::table('orders_items')->where('order_id', $orderId)->count();
+            $itemsCount = DB::table('order_items')->where('order_id', $orderId)->count();
             $order = Order::find($orderId);
             $table = Table::find($order->table_id);
             $itemNames = $request->item_name;
             $quantities = $request->quantity;
             foreach ($itemNames as $index => $itemName) {
-                DB::table('orders_items')
+                DB::table('order_items')
                     ->where('order_id', $orderId)
-                    ->where('dish_id', $itemName)
+                    ->where('item_id', $itemName)
                     ->update(['quantity' => DB::raw('quantity - ' . $quantities[$index])]);
-                DB::table('orders_items')
+                DB::table('order_items')
                     ->where('order_id', $orderId)
-                    ->where('dish_id', $itemName)
+                    ->where('item_id', $itemName)
                     ->where('quantity', '<=', '0')
                     ->delete();
             }
@@ -462,16 +451,17 @@ class ReservationController extends Controller
 
 
 
+
     public function assignTables($reservationId)
     {
         $tables = Table::all();
 
 
         return view('admin.reservation.table_layout', compact('tables', 'reservationId'));
+
     }
 
     public function assignTable(Request $request)
-
     {
         dd($request->all());
         $reservationId = 1;
@@ -494,10 +484,10 @@ class ReservationController extends Controller
 
 
         return view('admin.reservation.table_layout', compact('tables', 'reservationId'));
+
     }
 
     public function submitTable(Request $request)
-
     {
         try {
             // Bắt đầu transaction
@@ -551,7 +541,6 @@ class ReservationController extends Controller
         }
     }
 
-
     public function submitMoveTable(Request $request)
     {
         $tableId = $request->input('dataId');
@@ -566,9 +555,8 @@ class ReservationController extends Controller
             'success' => true,
             'message' => 'Chuyển bàn thành công'
         ]);
+
     }
-
-
     public function cancelReservation(Request $request, $id)
     {
         try {
@@ -617,6 +605,29 @@ class ReservationController extends Controller
                 'message' => 'Có lỗi xảy ra khi hủy đặt bàn: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+
+    public function getBanks()
+    {
+
+        $client = new Client();
+        $response = $client->get('https://api.vietqr.io/v2/banks');
+        $data = json_decode($response->getBody(), true);
+
+        if ($data['code'] == '00') {
+            $banks = $data['data'];
+            return view('test', compact('banks'));
+        }
+
+        return 'Lỗi khi lấy danh sách ngân hàng';
+    }
+    public function print($orderId, Request $request)
+    {
+        $order = Order::find($orderId);
+        $table = Table::find($order->table_id);
+        $staff = User::find($order->staff_id);
+        return view('pos.printf', compact('order', 'table', 'staff'))->render();
     }
 
     // Hàm chuẩn hóa số điện thoại

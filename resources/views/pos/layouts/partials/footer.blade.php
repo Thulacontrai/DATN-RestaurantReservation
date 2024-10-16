@@ -1,5 +1,4 @@
 
-
     <!-- Footer -->
     <footer class="iq-footer">
         <div class="row">
