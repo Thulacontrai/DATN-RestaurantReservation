@@ -262,16 +262,7 @@
 
     });
 </script>
-
-{{-- Modal hủy đơn --}}
-<script>
-    // Hiển thị modal khi nhấn nút Cancel
-    document.getElementById("cancelTableConfirm").onclick = function() {
-        $('#cancelModal').modal('show');
-    };
-</script>
-
-
+>>>>>>>>> Temporary merge branch 2
 <script src="client/js/plugins.js"></script>
 <script src="client/js/designesia.js"></script>
 
