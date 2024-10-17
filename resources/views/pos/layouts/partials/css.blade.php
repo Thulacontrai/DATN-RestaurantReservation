@@ -84,7 +84,7 @@
         background-color: transparent;
         border: none;
         border-bottom: 1px solid #fff;
-        color: #fff;
+        color: black;
         width: 250px;
         margin-left: 40px;
         font-size: 16px;
@@ -884,6 +884,165 @@
 
 .table-card.occupied .border-decoration.left {
     background-color: red; /* Đang sử dụng */
+}
+
+/* Style cho container chứa các input */
+.search-filter {
+    display: flex; /* Sử dụng Flexbox */
+    flex-wrap: nowrap; /* Không cho phép gói, luôn trên cùng một dòng */
+    gap: 20px; /* Khoảng cách giữa các nhóm */
+    margin-bottom: 15px; /* Khoảng cách giữa các phần tử */
+}
+
+/* Style cho mỗi nhóm input */
+.input-group {
+    display: flex; /* Sử dụng Flexbox cho input và label */
+    flex-direction: row;
+    align-items: flex-start; /* Căn trái cho label */
+    min-width: 120px; /* Đặt chiều rộng tối thiểu */
+    margin-bottom: 15px;
+}
+
+/* Điều chỉnh kích thước ô input và select */
+.modal-body input[type="text"],
+.modal-body select {
+    width: 100%;
+    padding: 5px;
+    border: none;
+    border-bottom: 1px solid #ccc;
+    border-radius: 0;
+    font-size: 14px;
+    color: #333;
+}
+
+/* Điều chỉnh kích thước ô input cho thời gian */
+.modal-body .time-group input[type="text"] {
+    width: 150px;
+}
+
+/* Hiệu ứng khi focus vào ô input */
+.modal-body input[type="text"]:focus,
+.modal-body select:focus {
+    border-bottom-color: #007bff;
+    outline: none;
+}
+
+.transparent-button {
+    background-color: transparent;
+    color: #007bff;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 5px 10px;/
+    text-decoration: none;
+    border: none;
+}
+
+.transparent-button:hover {
+    color: #0056b3;
+    border: none;
+}
+
+/* Đảm bảo modal hiển thị ở trung tâm và có hiệu ứng mờ */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1050;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.5); /* Nền mờ */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Nội dung modal */
+.modal-dialog {
+    width: 1000px;
+    margin: 0 auto;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    width: 100%;
+}
+
+.modal-header {
+    border-bottom: none;
+}
+
+.modal-title {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.modal-body {
+    padding: 15px 0;
+}
+
+/* Định dạng các nút trong modal */
+.modal-footer .btn {
+    min-width: 100px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+}
+
+/* Định dạng nút đóng modal */
+.close {
+    color: #000;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover, .close:focus {
+    color: red;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Tùy chỉnh cho các input, form control */
+.form-control {
+    margin-bottom: 10px;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 4px;
+}
+
+/* Định dạng layout 2 cột đối xứng */
+.modal-body .d-flex {
+    display: flex;
+    justify-content: space-between;
+}
+
+.modal-body .d-flex > div {
+    width: 48%; /* Mỗi cột chiếm 48% chiều rộng */
+}
+
+/* Nút "Bỏ qua" màu trung tính */
+.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+/* Các nút khác có thể tùy chỉnh thêm */
+.btnGroup{
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btnEdit{
+    width: 100px;
+    margin-right: 15px
 }
 
 </style>

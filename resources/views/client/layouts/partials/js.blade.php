@@ -262,34 +262,7 @@
 
     });
 </script>
-
-<script>
-    document.getElementById('confirmButton').addEventListener('click', function(e) {
-        e.preventDefault();
-
-        const userName = document.getElementById('user_name').value.trim();
-        const userPhone = document.getElementById('user_phone').value.trim();
-        const guestCount = document.getElementById('guest_count').value.trim();
-
-        if (!userName) {
-            alert('Vui lòng nhập tên khách hàng!');
-            return;
-        }
-        if (!userPhone) {
-            alert('Vui lòng nhập số điện thoại!');
-            return;
-        }
-        if (!guestCount) {
-            alert('Vui lòng nhập số người đặt bàn!');
-            return;
-        }
-
-        $('#otpModal').modal('show');
-    });
-</script>
-
-
-
+>>>>>>>>> Temporary merge branch 2
 <script src="client/js/plugins.js"></script>
 <script src="client/js/designesia.js"></script>
 
