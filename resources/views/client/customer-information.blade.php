@@ -73,11 +73,33 @@
                                 <a href="{{ route('booking.client') }}" class="text-secondary">Quay lại</a>
                             </div>
                             <div class="col-2">
+
                                 <button type="button" class="btn-line" onclick="sendOTP()">Xác nhận</button>
+
                             </div>
 
                         </div>
                     </form>
+
+                    <!-- Modal OTP -->
+                    <div class="modal fade" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="otpModalLabel">Xác thực OTP</h5>                            
+                                </div>
+                                <div class="modal-body">
+                                    <input type="text" id="otp_code" class="form-control" placeholder="Nhập mã OTP">
+                                    <div id="otpError" class="alert alert-danger mt-2 d-none">Mã OTP không chính xác!</div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" id="verifyOtpButton" class="btn-primary">Xác nhận OTP</button>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </section>
@@ -234,3 +256,7 @@
         document.getElementById("otp-popup").style.display = "none";
     }
 </script>
+
+
+
+

@@ -52,12 +52,12 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($order_items as $item)
+                            @foreach ($order_items as $index => $item)
                                 <tr>
                                     <td>{{ $item->name }}</td>
-                                    <td class="text-center">1</td>
-                                    <td class="text-end">30,000 VND</td>
-                                    <td class="text-end">30,000 VND</td>
+                                    <td class="text-center">{{ $quantity[$index] }}</td>
+                                    <td class="text-end">{{ $price[$index] }}</td>
+                                    <td class="text-end">{{ $amount = $price[$index] * $quantity[$index] }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -140,6 +140,7 @@
             </div>
         </div>
     </div>
+    <iframe id="printFrame" style="display:none;"></iframe>
 
     <!-- Chuyển khoản ngân hàng -->
     <div id="bankPaymentSection" class="modal fade" tabindex="-1" aria-labelledby="bankPaymentLabel"
@@ -291,10 +292,9 @@
                 var delayBeforeStart = 2000;
                 var desiredAmount = {{ $total_amount }};
                 var desiredDescription = 'Thanh Toan Don Hang ' + {{ $orderId }};
-                // var desiredAmount = 2000;
-                // var desiredDescription = 'test';
                 var transactionFound = false;
                 var intervalId;
+
                 // Hàm kiểm tra giao dịch
                 function checkTransaction() {
                     $.ajax({
@@ -305,6 +305,7 @@
                             var lastTransaction = data.data[data.data.length - 1];
                             if (lastTransaction['Giá trị'] == desiredAmount &&
                                 lastTransaction['Mô tả'].includes(desiredDescription)) {
+
                                 Swal.fire({
                                     position: "center",
                                     icon: "success",
@@ -312,50 +313,102 @@
                                     showConfirmButton: false,
                                     timer: 2000
                                 }).then(() => {
-                                    let form = $('<form>', {
-                                        action: "{{ route('checkout.admin', $orderId) }}",
-                                        method: 'POST'
-                                    });
+                                    $.ajax({
+                                        url: "{{ route('print.page', $orderId) }}",
+                                        method: 'GET',
+                                        data: {
+                                            key1: 'value1',
+                                            key2: 'value2'
+                                        },
+                                        success: function(response) {
+                                            var printFrame = document
+                                                .getElementById(
+                                                    'printFrame')
+                                                .contentWindow;
 
-                                    form.append($('<input>', {
-                                        type: 'hidden',
-                                        name: '_token',
-                                        value: '{{ csrf_token() }}'
-                                    }));
+                                            // Chèn nội dung vào iframe và in
+                                            printFrame.document.open();
+                                            printFrame.document.write(
+                                                response);
+                                            printFrame.document.close();
 
-                                    form.append($('<input>', {
-                                        type: 'hidden',
-                                        name: 'end_time',
-                                        value: new Date()
-                                            .toLocaleTimeString()
-                                    }));
-                                    form.append($('<input>', {
-                                        type: 'hidden',
-                                        name: 'payment_method',
-                                        value: 'bank'
-                                    }));
-                                    var orderItems = @json($order_items);
-                                    $.each(orderItems, function(index, item) {
-                                        if (item) {
-                                            form.append($('<input>', {
-                                                type: 'hidden',
-                                                name: 'item_name[]',
-                                                value: item.id
-                                            }));
-                                            form.append($('<input>', {
-                                                type: 'hidden',
-                                                name: 'quantity[]',
-                                                value: 1
-                                            }));
+                                            // Đợi quá trình in hoàn thành trước khi submit form
+                                            printFrame.focus();
+                                            printFrame.print();
+
+                                            setTimeout(function() {
+                                                    // Tạo form động và submit
+                                                    let form = $(
+                                                        '<form>', {
+                                                            action: "{{ route('checkout.admin', $orderId) }}",
+                                                            method: 'POST'
+                                                        });
+
+                                                    form.append($(
+                                                        '<input>', {
+                                                            type: 'hidden',
+                                                            name: '_token',
+                                                            value: '{{ csrf_token() }}'
+                                                        }));
+
+                                                    form.append($(
+                                                        '<input>', {
+                                                            type: 'hidden',
+                                                            name: 'end_time',
+                                                            value: new Date()
+                                                                .toLocaleTimeString()
+                                                        }));
+
+                                                    form.append($(
+                                                        '<input>', {
+                                                            type: 'hidden',
+                                                            name: 'payment_method',
+                                                            value: 'bank'
+                                                        }));
+
+                                                    var orderItems =
+                                                        @json($order_items);
+                                                    $.each(orderItems,
+                                                        function(
+                                                            index,
+                                                            item) {
+                                                            if (
+                                                                item
+                                                            ) {
+                                                                form.append(
+                                                                    $('<input>', {
+                                                                        type: 'hidden',
+                                                                        name: 'item_name[]',
+                                                                        value: item
+                                                                            .id
+                                                                    })
+                                                                );
+                                                                form.append(
+                                                                    $('<input>', {
+                                                                        type: 'hidden',
+                                                                        name: 'quantity[]',
+                                                                        value: 1
+                                                                    })
+                                                                );
+                                                            }
+                                                        });
+                                                    $('body').append(
+                                                        form);
+                                                    form.submit();
+                                                },
+                                                1000
+                                            ); // Đợi 1 giây cho quá trình in hoàn tất trước khi submit
+                                        },
+                                        error: function() {
+                                            alert(
+                                                'Lỗi khi tải nội dung in.'
+                                            );
                                         }
                                     });
-                                    $('body').append(form);
-                                    form.submit();
                                 });
+
                                 transactionFound = true;
-                                //...
-                                // Dừng việc kiểm tra
-                                clearInterval(intervalId);
+                                clearInterval(intervalId); // Dừng việc kiểm tra giao dịch
                             } else {
                                 $('#status').text('Chưa tìm thấy giao dịch phù hợp.');
                             }
@@ -368,9 +421,7 @@
 
                 // Sự kiện khi bấm nút "Bắt đầu tìm kiếm"
                 $('#bankPaymentBtn').click(function() {
-                    // Bắt đầu tìm kiếm sau 20 giây
                     setTimeout(function() {
-                        // Bắt đầu kiểm tra mỗi giây
                         intervalId = setInterval(function() {
                             if (!transactionFound) {
                                 checkTransaction();
