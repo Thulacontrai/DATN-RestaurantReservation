@@ -72,8 +72,10 @@
                                                 {{ $reservation['people'] }} người</p>
                                         </div>
                                         <div class="actions">
-                                            <a href="#" class="btn-outline-warning" >Chi tiết</a> <!-- Nút màu nâu nhạt -->
-                                            <a href="#" class="btn-outline-danger" >Cancel</a> <!-- Nút đỏ -->
+                                            <button class="text-warning" style="background: transparent; border: none;">Chi tiết</button>
+                                            <button id="cancelTableConfirm" class="text-danger" style="background: transparent; border: none;" >Cancel</button>
+                                             <!-- Nút màu nâu nhạt -->
+                                             <!-- Nút đỏ -->
                                             {{-- <a href="#" class="btn btn-secondary">Add to calendar</a> --}}
                                         </div>
                                     </div>
@@ -81,6 +83,58 @@
                             @else
                                 <p>Bạn không có đặt chỗ sắp tới.</p>
                             @endif
+                        </div>
+
+                        <!-- Modal -->
+                        <div id="cancelModal" class="modal fade" tabindex="-1" role="dialog">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Xác Nhận Hủy Đơn</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <i class="fas fa-times"></i> <!-- Biểu tượng "x" -->
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form id="cancelForm">
+                                            <div class="form-group">
+                                                <label for="fullName">Họ Và Tên:</label>
+                                                <input type="text" id="fullName" name="fullName" class="form-control" required>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="bankSelect">Chọn Ngân hàng:</label>
+                                                <select id="bankSelect" name="bankSelect" class="form-control" required>
+                                                    <option value="">Chọn ngân hàng</option>
+                                                    @foreach ($bankList as $bank)
+                                                        <option value="{{ $bank['code'] }}">{{ $bank['name'] }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <label for="accountNumber">Số tài khoản:</label>
+                                                <input type="text" id="accountNumber" name="accountNumber" class="form-control" required>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="email">Email:</label>
+                                                <input type="email" id="email" name="email" class="form-control" required>
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <label for="reason">Lí do hủy:</label>
+                                                <textarea id="reason" name="reason" class="form-control" required></textarea>
+                                            </div>
+                                            <br>
+
+                                            <div class="form-group text-end">
+                                                <button type="submit" class="btn btn-danger">Xác Nhận Hủy</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <div id="accountDetailsSection" class="content-section" style="display:none;">
