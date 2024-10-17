@@ -68,7 +68,7 @@
         </ul>
     </div>
 
-    <!-- Modal Popup -->
+    <!-- Modal Popup Danh Sách Đặt Bàn-->
     <div class="modal fade" id="reservationListModal" tabindex="-1" role="dialog" aria-labelledby="reservationListModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
@@ -130,7 +130,7 @@
         </div>
     </div>
 
-    <!-- Modal -->
+    <!-- Modal Chi Tiết -->
     <div class="modal fade" id="orderDetailModal" tabindex="-1" role="dialog" aria-labelledby="orderDetailModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -147,7 +147,7 @@
                             <div class="col-md-6">
                                 <div class="input-group">
                                     <label for="customerName">Khách hàng</label>
-                                    <input type="text" class="form-control" id="customerName" value="Nguyễn Bá Thư" readonly>
+                                    <input type="text" class="form-control" id="customerName" value="Nguyễn Bá Thư">
                                 </div>
                                 <div class="input-group">
                                     <label for="orderCode">Mã đặt bàn</label>

@@ -934,10 +934,12 @@
     font-size: 14px;
     padding: 5px 10px;/
     text-decoration: none;
+    border: none;
 }
 
 .transparent-button:hover {
     color: #0056b3;
+    border: none;
 }
 
 /* Đảm bảo modal hiển thị ở trung tâm và có hiệu ứng mờ */
