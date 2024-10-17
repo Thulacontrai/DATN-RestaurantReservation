@@ -336,19 +336,20 @@ class ReservationController extends Controller
     {
         // Kiểm tra số lượng khách, nếu >= 6 thì chuyển hướng đến trang đặt cọc
         if ($request->guest_count >= 6) {
+            // Lưu thông tin khách hàng tạm thời để sử dụng ở trang cọc
             $customerInformation = $request->all();
             return redirect()->route('deposit.client', compact('customerInformation'));
         }
     
-        // Thực hiện giao dịch đặt bàn
+        // Thực hiện giao dịch đặt bàn mà không cần cọc
         $reservation = DB::transaction(function () use ($request) {
             $customer_id = null;
-            
+    
             if (auth()->check()) {
                 // Nếu đã đăng nhập, chỉ lấy customer_id
                 $customer_id = auth()->id();
             } else {
-                // Nếu chưa đăng nhập, tạo tài khoản tạm thời
+                // Nếu chưa đăng nhập, tạo tài khoản tạm thời cho khách hàng
                 $user = User::create([
                     'name' => $request->user_name,
                     'phone' => $request->user_phone,
@@ -358,7 +359,7 @@ class ReservationController extends Controller
                 $customer_id = $user->id;
             }
     
-            // Luôn sử dụng thông tin từ form
+            // Tạo đơn đặt bàn
             return Reservation::create([
                 'customer_id' => $customer_id,
                 'user_name' => $request->user_name,
@@ -367,11 +368,33 @@ class ReservationController extends Controller
                 'note' => $request->note,
                 'reservation_date' => $request->reservation_date,
                 'reservation_time' => $request->reservation_time,
+                // 'deposit_amount' => 0,  // Không cần cọc validate ss
             ]);
         });
     
+        // Điều hướng đến trang xác nhận đặt bàn thành công
         return redirect()->route('reservationSuccessfully.client', ['reservation' => $reservation->id]);
     }
+    
+    
+    public function storeOtpSession(Request $request)
+{
+    if ($request->otpVerified) {
+        session(['otpVerified' => true]); // Lưu trạng thái OTP đã xác thực
+        return response()->json(['success' => true]);
+    }
+
+    return response()->json(['success' => false]);
+}
+    
+    
+    // Hàm kiểm tra điều kiện cần OTP
+    private function requireOtp($request)
+    {
+        // Ví dụ kiểm tra nếu số lượng người đặt bàn >= 6 thì cần OTP
+        return $request->guest_count >= 6;
+    }
+    
     
     public function reservationSuccessfully(Request $request)
     {

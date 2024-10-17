@@ -345,6 +345,9 @@ Route::post('/api/cancel-booking/{id}', [ReservationController::class, 'cancelRe
 Route::post('/cancel-booking/{id}', [ReservationController::class, 'cancelReservation'])->name('cancel.booking');
 
 
+//session otp đặt bàn
+Route::post('/store-otp-session', [ReservationController::class, 'storeOtpSession'])->name('storeOtpSession');
+
 Route::get('/test', function () {
     return view('test');
 });

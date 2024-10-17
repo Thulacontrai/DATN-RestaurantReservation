@@ -92,11 +92,7 @@
                                     <input type="text" class="form-control" id="phone" name="phone"
                                         value="{{ $member->phone }}">
                                 </div>
-                                <div class="mb-3">
-                                    <label for="email" class="form-label">Email</label>
-                                    <input type="email" class="form-control" id="email" name="email"
-                                        value="{{ $member->email }}">
-                                </div>
+                               
                             </div>
 
                             <div class="modal-footer">
