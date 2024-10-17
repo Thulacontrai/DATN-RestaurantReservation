@@ -38,7 +38,6 @@
                 @else
                     <li><a href="#">Đăng nhập</a>
                         <ul>
-                            <li><a href="{{ route('register.form') }}">Đăng ký</a></li>
                             <li><a href="{{ route('login.form') }}">Đăng nhập</a></li>
                         </ul>
                     </li>
