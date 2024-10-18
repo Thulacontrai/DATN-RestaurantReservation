@@ -85,6 +85,7 @@
                             @endif
                         </div>
 
+
                         <!-- Modal -->
                         <div id="cancelModal" class="modal fade" tabindex="-1" role="dialog">
                             <div class="modal-dialog" role="document">
@@ -137,32 +138,20 @@
                             </div>
                         </div>
 
-                        <div id="accountDetailsSection" class="content-section" style="display:none;">
-                            <h3>Thông tin cá nhân</h3>
-                            <div class="profile-info" style="background-color: #2b2b2b; padding: 15px; border-radius: 5px; color: #d3d3d3;"> <!-- Nền tối và chữ xám nhạt -->
-                                <p>
-                                    <strong>Họ tên:</strong> 
-                                    <span id="displayName">{{ $memberData['name'] }}</span>
-                                    <input type="text" id="inputName" value="{{ $memberData['name'] }}" style="display:none;" />
-                                </p>
-                                <p>
-                                    <strong>Số điện thoại:</strong> 
-                                    <span id="displayPhone">{{ $memberData['phone'] }}</span>
-                                    <input type="text" id="inputPhone" value="{{ $memberData['phone'] }}" style="display:none;" />
-                                </p>
-                                <p>
-                                    <strong>Email:</strong> 
-                                    <span id="displayEmail">{{ $memberData['email'] }}</span>
-                                    <input type="email" id="inputEmail" value="{{ $memberData['email'] }}" style="display:none;" />
-                                </p>
-                                <p>
-                                    <strong>Địa chỉ:</strong> 
-                                    <span id="displayLocation">{{ $memberData['location'] }}</span>
-                                    <input type="text" id="inputLocation" value="{{ $memberData['location'] }}" style="display:none;" />
-                                </p>
-                                <p>
-                                    <strong>Thành viên từ:</strong> {{ $memberData['member_since'] }}
-                                </p>
+                        <form action="{{ route('member.update') }}" method="POST">
+                            @csrf
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">Tên</label>
+                                    <input type="text" class="form-control" id="name" name="name"
+                                        value="{{ $member->name }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="phone" class="form-label">Số điện thoại</label>
+                                    <input type="text" class="form-control" id="phone" name="phone"
+                                        value="{{ $member->phone }}">
+                                </div>
+                               
                             </div>
                             <button onclick="saveChanges()" style="display:none;" id="saveButton" class="btn-line">Lưu thay đổi</button>
                             <button onclick="toggleEdit()" id="editButton" class="btn-line">Chỉnh sửa thông tin</button>

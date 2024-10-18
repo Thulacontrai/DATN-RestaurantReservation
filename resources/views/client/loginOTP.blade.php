@@ -17,7 +17,6 @@
             signInWithPhoneNumber
         } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
-        // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyDRiOTYCQgDDemeF7QCunNMvlhPwmhh9Tc",
             authDomain: "datn-5b062.firebaseapp.com",
@@ -28,7 +27,6 @@
             measurementId: "G-HRQ5XG4ELN"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
@@ -50,66 +48,32 @@
             });
         }
 
-        // Function to send OTP
         window.sendOTP = function() {
-            const email = document.getElementById("email").value.trim();
-            const password = document.getElementById("password").value.trim();
             const phoneNumber = document.getElementById("number").value.trim();
             const appVerifier = window.recaptchaVerifier;
 
-            // Gửi yêu cầu kiểm tra tài khoản và mật khẩu
-            $.ajax({
-                url: '/check-account', // Đường dẫn tới controller checkAccount
-                method: 'POST',
-                data: {
-                    email: email,
-                    password: password,
-                    phone: phoneNumber,
-                    _token: "{{ csrf_token() }}" // Token CSRF để bảo mật
-                },
-                success: function(response) {
-                    if (response.success) {
-                        // Tài khoản hợp lệ, gửi OTP
-                        signInWithPhoneNumber(auth, phoneNumber, appVerifier)
-                            .then((confirmationResult) => {
-                                window.confirmationResult = confirmationResult;
-                                document.getElementById("sentMessage").innerHTML = "OTP đã được gửi!";
-                                document.getElementById("sentMessage").style.display = "block";
+            // Gửi OTP
+            signInWithPhoneNumber(auth, phoneNumber, appVerifier)
+                .then((confirmationResult) => {
+                    window.confirmationResult = confirmationResult;
+                    document.getElementById("sentMessage").innerHTML = "OTP đã được gửi!";
+                    document.getElementById("sentMessage").style.display = "block";
 
-                                // Hide phone form and show OTP verification form
-                                document.getElementById("phone-form").style.display = "none";
-                                document.getElementById("otp-verification-form").style.display =
-                                "block";
-                            }).catch((error) => {
-                                document.getElementById("error").innerHTML =
-                                    "Có lỗi xảy ra! Vui lòng thử lại.";
-                                document.getElementById("error").style.display = "block";
-                            });
-                    } else {
-                        // Tài khoản hoặc mật khẩu sai
-                        document.getElementById("error").innerHTML = response.message;
-                        document.getElementById("error").style.display = "block";
-                    }
-                }
-            });
+                    // Ẩn form nhập số điện thoại và hiện form OTP
+                    document.getElementById("phone-popup").style.display = "none";
+                    document.getElementById("otp-popup").style.display = "block";
+                }).catch((error) => {
+                    document.getElementById("error").innerHTML = "Có lỗi xảy ra! Vui lòng thử lại.";
+                    document.getElementById("error").style.display = "block";
+                });
         }
 
+        window.verifyCode = function() {
+            let otpCode = '';
+            document.querySelectorAll('.otp-input').forEach(input => otpCode += input.value);
 
-
-        // Function to verify the OTP code
-        window.verifiCode = function() {
-            const code = document.getElementById("verificationCode").value.trim();
-            const email = document.getElementById("email").value.trim();
-            console.log('Mã OTP nhập vào:', code);
-
-            if (!code) {
-                document.getElementById("error").innerHTML = "Vui lòng nhập mã OTP!";
-                document.getElementById("error").style.display = "block";
-                return;
-            }
-
-            window.confirmationResult.confirm(code).then((result) => {
-                // Gọi API để xác thực và đăng nhập
+            window.confirmationResult.confirm(otpCode).then((result) => {
+                const phoneNumber = document.getElementById("number").value.trim(); // Chỉ lấy số điện thoại
                 fetch('{{ route('verify.code') }}', {
                         method: 'POST',
                         headers: {
@@ -117,8 +81,8 @@
                             'X-CSRF-TOKEN': "{{ csrf_token() }}"
                         },
                         body: JSON.stringify({
-                            email: email,
-                            verificationCode: code
+                            phone: phoneNumber, // Chỉ gửi số điện thoại
+                            verificationCode: otpCode
                         })
                     })
                     .then(response => response.json())
@@ -131,85 +95,84 @@
                         }
                     })
                     .catch(error => {
-                        console.error("Error:", error);
                         document.getElementById("error").innerHTML = "Có lỗi xảy ra. Vui lòng thử lại.";
                         document.getElementById("error").style.display = "block";
                     });
             }).catch((error) => {
-                console.error("Error while verifying code", error);
-                document.getElementById("error").innerHTML = "Mã OTP không đúng! Vui lòng thử lại.";
+                document.getElementById("error").innerHTML = "Mã OTP không đúng!";
                 document.getElementById("error").style.display = "block";
             });
         }
     </script>
+
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
         }
 
         h1 {
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        form {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
             text-align: center;
         }
 
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            z-index: 10;
         }
 
-        input {
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ddd;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9;
+        }
+
+        .otp-input {
+            width: 40px;
+            height: 40px;
+            text-align: center;
+            font-size: 24px;
+            margin: 5px;
+            border: 1px solid #ccc;
             border-radius: 4px;
-            font-size: 14px;
+        }
+
+        .otp-container {
+            display: flex;
+            justify-content: center;
         }
 
         button {
-            background-color: #007bff;
+            display: block;
+            width: 100%;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #4CAF50;
             color: white;
             border: none;
-            padding: 10px;
-            border-radius: 4px;
             cursor: pointer;
-            font-size: 16px;
-            width: 100%;
+            border-radius: 4px;
         }
 
         button:hover {
-            background-color: #0056b3;
-        }
-
-        #error,
-        #sentMessage {
-            margin-top: 10px;
-            font-size: 14px;
+            background-color: #45a049;
         }
 
         #error {
             color: red;
-        }
-
-        #sentMessage {
-            color: green;
+            text-align: center;
         }
     </style>
 </head>
@@ -217,30 +180,47 @@
 <body>
     <h1>Đăng Nhập</h1>
 
-    <!-- Form nhập thông tin đăng nhập -->
-    <form id="phone-form">
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" placeholder="Nhập email" required>
+    <!-- Form nhập số điện thoại -->
+    <div class="overlay" id="overlay"></div>
+    <div class="popup" id="phone-popup" style="display: block;">
+        <form id="phone-form">
+            <label for="phone">Số điện thoại</label>
+            <input type="text" id="number" name="phone" placeholder="+84123456789" required>
+            <div id="recaptcha-container"></div>
+            <button type="button" id="send-otp" onclick="sendOTP()">Gửi OTP</button>
+        </form>
+    </div>
 
-        <label for="password">Mật khẩu</label>
-        <input type="password" id="password" name="password" placeholder="Nhập mật khẩu" required>
-
-        <label for="phone">Số điện thoại</label>
-        <input type="text" id="number" name="phone" placeholder="+84123456789" required>
-
-        <div id="recaptcha-container"></div>
-        <button type="button" id="send-otp" onclick="sendOTP()">Gửi OTP</button>
-    </form>
 
     <!-- Form nhập OTP -->
-    <form id="otp-verification-form" style="display: none;">
-        <label for="verificationCode">Nhập mã OTP</label>
-        <input type="text" id="verificationCode" name="verificationCode" placeholder="Nhập mã OTP" required>
-        <button type="button" onclick="verifiCode()">Xác thực</button>
-    </form>
+    <div class="popup" id="otp-popup">
+        <form id="otp-verification-form">
+            <label for="verificationCode">Nhập mã OTP</label>
+            <div class="otp-container">
+                <input type="text" class="otp-input" maxlength="1">
+                <input type="text" class="otp-input" maxlength="1">
+                <input type="text" class="otp-input" maxlength="1">
+                <input type="text" class="otp-input" maxlength="1">
+                <input type="text" class="otp-input" maxlength="1">
+                <input type="text" class="otp-input" maxlength="1">
+            </div>
+            <button type="button" onclick="verifyCode()">Xác thực</button>
+        </form>
+    </div>
 
     <div id="error" style="display: none;"></div>
     <div id="sentMessage" style="display: none;"></div>
+
+    <script>
+        const otpInputs = document.querySelectorAll('.otp-input');
+        otpInputs.forEach((input, index) => {
+            input.addEventListener('input', () => {
+                if (input.value.length === 1 && index < otpInputs.length - 1) {
+                    otpInputs[index + 1].focus();
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>
