@@ -262,6 +262,7 @@
 
     });
 </script>
+>>>>>>>>> Temporary merge branch 2
 <script src="client/js/plugins.js"></script>
 <script src="client/js/designesia.js"></script>
 
