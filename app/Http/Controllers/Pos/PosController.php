@@ -38,7 +38,7 @@ class PosController extends Controller
         $reservedTablesCount = Table::where('status', 'reserved')->count();
         $occupiedTablesCount = Table::where('status', 'occupied')->count();
         $totalTablesCount = Table::count();
-
+        
         $dishes = Dishes::query()->paginate(8);
 
         // Trả về view cùng với dữ liệu bàn và món ăn
@@ -351,7 +351,7 @@ class PosController extends Controller
             ], 500);
         }
     }
-    public function Ppayment($tableNumber, Request $request)
+    public function payment($tableNumber, Request $request)
     {
         try {
             $selectedItems = $request->input('items', []);
