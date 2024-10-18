@@ -7,6 +7,7 @@ use App\Models\Reservation;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 
 class MemberController extends Controller
 {
@@ -78,8 +79,33 @@ class MemberController extends Controller
     // // Truyền dữ liệu đặt chỗ đến view
     // // return view('member.profile', ['reservations' => $reservations]);
 
+    // Gọi API để lấy thông tin ngân hàng
+    try {
+        // Gọi API sử dụng file_get_contents
+        $url = 'https://api.vietqr.io/v2/banks';
+        $response = file_get_contents($url);
 
-    return view('client.member', compact('memberData'));
+        if ($response === false) {
+            return ['error' => 'Failed to fetch data'];
+        }
+        
+        // Chuyển đổi JSON thành mảng
+        $banks = json_decode($response, true);
+
+        // Kiểm tra nếu có lỗi trong việc giải mã JSON
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return ['error' => 'Invalid JSON response'];
+        }
+
+        $bankList = $banks['data'];
+
+    } catch (\Exception $e) {
+        return ['error' => $e->getMessage()]; // Xử lý lỗi
+    }
+
+    // dd($banks);
+    
+    return view('client.member', compact('memberData', 'bankList'));
 
     // $memberData = User::findOrFail($id); // Lấy dữ liệu thành viên theo ID
     // return view('client.member', compact('memberData')); // Trả về view kèm dữ liệu
