@@ -15,7 +15,22 @@ use Illuminate\Support\Facades\Log;
 
 class PosController extends Controller
 {
-    // Trang chính POS
+
+
+    // public function __construct()
+    // {
+    //     // Gán middleware cho các phương thức
+    //     $this->middleware('permission:Xem pos', ['only' => ['index']]);
+    //     $this->middleware('permission:Tạo mới pos', ['only' => ['create']]);
+    //     $this->middleware('permission:Sửa pos', ['only' => ['edit']]);
+    //     $this->middleware('permission:Xóa pos', ['only' => ['destroy']]);
+        
+    // }
+
+    // Trang chính của POS, hiển thị bàn và món ăn
+
+ 
+
     public function index()
     {
         $tables = Table::all();
