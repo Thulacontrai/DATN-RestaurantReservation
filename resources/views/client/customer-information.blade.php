@@ -40,7 +40,9 @@
                                 @error('user_phone')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
-                                <div id="recaptcha-container"></div> 
+                                
+                                <!-- Căn chỉnh reCAPTCHA ra giữa -->
+                                <div id="recaptcha-container" class="mt-3"></div> 
                             </div>
 
                             <div class="col">
@@ -131,6 +133,14 @@
             text-align: center;
             margin: 5px;
         }
+
+        /* Căn chỉnh lại reCAPTCHA cho đúng vị trí trung tâm */
+        #recaptcha-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
     </style>
 @endsection
 
@@ -162,19 +172,18 @@
     }
 
     function renderRecaptcha() {
-    window.recaptchaVerifier = new RecaptchaVerifier('recaptcha-container', {
-        'size': 'normal',
-        'callback': function(response) {},
-        'expired-callback': function() {}
-    }, auth);
+        window.recaptchaVerifier = new RecaptchaVerifier('recaptcha-container', {
+            'size': 'normal',
+            'callback': function(response) {},
+            'expired-callback': function() {}
+        }, auth);
 
-    recaptchaVerifier.render().then(function() {
-        console.log('Recaptcha rendered');
-    }).catch(function(error) {
-        console.error("Error rendering recaptcha:", error);
-    });
-}
-
+        recaptchaVerifier.render().then(function() {
+            console.log('Recaptcha rendered');
+        }).catch(function(error) {
+            console.error("Error rendering recaptcha:", error);
+        });
+    }
 
     window.sendOTP = function() {
         let phoneNumber = document.getElementById("user_phone").value.trim();
@@ -202,39 +211,54 @@
             });
     }
 
-
-
     window.verifyCode = function() {
-    let otpCode = '';
-    document.querySelectorAll('.otp-input').forEach(input => otpCode += input.value);
+        let otpCode = '';
+        document.querySelectorAll('.otp-input').forEach(input => otpCode += input.value);
 
-    window.confirmationResult.confirm(otpCode).then((result) => {
-        alert('Xác thực OTP thành công! Đang xử lý đặt bàn.');
+        window.confirmationResult.confirm(otpCode).then((result) => {
+            alert('Xác thực OTP thành công! Đang xử lý đặt bàn.');
 
-        // Lưu trạng thái xác thực OTP vào session qua AJAX
-        fetch('{{ route("storeOtpSession") }}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: JSON.stringify({
-                otpVerified: true
-            })
-        }).then(() => {
-            document.getElementById("booking-form").submit(); // Sau khi xác thực thành công, submit form
+            // Lưu trạng thái xác thực OTP vào session qua AJAX
+            fetch('{{ route("storeOtpSession") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    otpVerified: true
+                })
+            }).then(() => {
+                document.getElementById("booking-form").submit(); // Sau khi xác thực thành công, submit form
+            });
+
+        }).catch((error) => {
+            alert("Mã OTP không đúng! Vui lòng thử lại.");
         });
-
-    }).catch((error) => {
-        alert("Mã OTP không đúng! Vui lòng thử lại.");
-    });
-}
-
-
+    }
 
     function closePopup() {
         document.getElementById("otp-popup").style.display = "none";
     }
+
+    // Script to handle OTP input with focus control and deletion
+    document.querySelectorAll('.otp-input').forEach((input, index, inputs) => {
+        input.addEventListener('keydown', (event) => {
+            // Xử lý di chuyển về ô trước khi nhấn Backspace
+            if (event.key === 'Backspace' && input.value === '' && index > 0) {
+                inputs[index - 1].focus();
+            }
+        });
+
+        input.addEventListener('input', (event) => {
+            const value = event.target.value;
+
+            // Nếu nhập đủ 1 ký tự, chuyển sang ô tiếp theo
+            if (value.length === 1 && index < inputs.length - 1) {
+                inputs[index + 1].focus();
+            }
+        });
+    });
 </script>
 
 
