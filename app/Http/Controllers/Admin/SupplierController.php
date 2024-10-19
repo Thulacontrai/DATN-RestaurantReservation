@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Traits\TraitCRUD;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
+use App\Imports\SupplierImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SupplierController extends Controller
 {
@@ -94,5 +96,20 @@ class SupplierController extends Controller
         $item->delete();
 
         return redirect()->route('admin.supplier.index')->with('success', 'Xóa thành công.');
+    }
+
+    public function import(Request $request)
+    {
+        // Kiểm tra và xử lý file upload
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls',
+        ]);
+
+        try {
+            Excel::import(new SupplierImport, $request->file('file'));
+            return redirect()->route('admin.supplier.index')->with('success', 'Nhập dữ liệu thành công!');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.supplier.index')->with('error', 'Có lỗi xảy ra khi nhập dữ liệu: ' . $e->getMessage());
+        }
     }
 }

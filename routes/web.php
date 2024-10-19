@@ -32,6 +32,7 @@ use App\Http\Controllers\Pos\PosController;
 use App\Http\Controllers\ProfileController;
 
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -43,6 +44,8 @@ use App\Http\Controllers\ProfileController;
 |
 */
 
+// import
+Route::post('admin/supplier/import', [SupplierController::class, 'import'])->name('admin.supplier.import');
 
 
 Route::get('/', [HomeController::class, 'index'])->name('client.index');
