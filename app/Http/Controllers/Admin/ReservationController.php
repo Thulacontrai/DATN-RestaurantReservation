@@ -7,6 +7,7 @@ use App\Http\Requests\StoreReservationRquest;
 use App\Models\Coupon;
 use App\Models\Dishes;
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Reservation;
 use App\Models\Table;
 use App\Models\ReservationTable;
@@ -371,7 +372,11 @@ class ReservationController extends Controller
     public function reservationSuccessfully(Request $request)
     {
         $reservation = session('reservation');
-        return view('client.reservation-successfully', compact('reservation'));
+        if (isset($reservation) && $reservation != null) {
+            return view('client.reservation-successfully', compact('reservation'));
+        } else {
+            return redirect()->route('booking.client');
+        }
     }
     public function createReservationWithMomo(Request $request)
     {
@@ -381,18 +386,24 @@ class ReservationController extends Controller
                 $data = str_replace("'", '"', $reservation);
                 $reservation = json_decode($data, true);
                 DB::transaction(function () use ($reservation, $request) {
-                    $user = User::where('phone', $reservation['user_phone'])->first();
-                    if (!isset($user) && $user == null) {
-                        $user = User::create([
-                            'name' => $reservation['user_name'],
-                            'phone' => $reservation['user_phone'],
-                            'password' => fake()->password(),
-                            'status' => 'inactive',
-                        ]);
+                    $customer_id = null;
+                    if (auth()->check()) {
+                        $customer_id = auth()->id();
+                    } else {
+                        $user = User::where('phone', $reservation['user_phone'])->first();
+                        if (!isset($user) && $user == null) {
+                            $user = User::create([
+                                'name' => $reservation['user_name'],
+                                'phone' => $reservation['user_phone'],
+                                'password' => fake()->password(),
+                                'status' => 'inactive',
+                            ]);
+                        }
+                        $customer_id = $user->id;
                     }
                     Reservation::create([
                         'id' => $request->query('orderId'),
-                        'customer_id' => $user->id,
+                        'customer_id' => $customer_id,
                         'user_name' => $reservation['user_name'],
                         'user_phone' => $reservation['user_phone'],
                         'guest_count' => $reservation['guest_count'],
@@ -405,6 +416,36 @@ class ReservationController extends Controller
             } else {
                 return redirect()->back()->with('err', 'Thanh toán không thành công!');
             }
+        } else {
+            $reservation = $request->all();
+            DB::transaction(function () use ($request) {
+                $customer_id = null;
+                if (auth()->check()) {
+                    $customer_id = auth()->id();
+                } else {
+                    $user = User::where('phone', $request->user_phone)->first();
+                    if (!isset($user) && $user == null) {
+                        $user = User::create([
+                            'name' => $request->user_name,
+                            'phone' => $request->user_phone,
+                            'password' => fake()->password(),
+                            'status' => 'inactive',
+                        ]);
+                    }
+                    $customer_id = $user->id;
+                }
+                Reservation::create([
+                    'id' => $request->orderId,
+                    'customer_id' => $customer_id,
+                    'user_name' => $request->user_name,
+                    'user_phone' => $request->user_phone,
+                    'guest_count' => $request->guest_count,
+                    'deposit_amount' => $request->deposit_amount,
+                    'note' => $request->note,
+                    'reservation_date' => $request->reservation_date,
+                    'reservation_time' => $request->reservation_time,
+                ]);
+            });
         }
         return redirect()->route('reservationSuccessfully.client')->with('reservation', $reservation);
     }
@@ -609,27 +650,21 @@ class ReservationController extends Controller
         }
     }
 
-
-    public function getBanks()
-    {
-
-        $client = new Client();
-        $response = $client->get('https://api.vietqr.io/v2/banks');
-        $data = json_decode($response->getBody(), true);
-
-        if ($data['code'] == '00') {
-            $banks = $data['data'];
-            return view('test', compact('banks'));
-        }
-
-        return 'Lỗi khi lấy danh sách ngân hàng';
-    }
     public function print($orderId, Request $request)
     {
+        $final = 0;
+        $data = $request->end_time;
         $order = Order::find($orderId);
         $table = Table::find($order->table_id);
+        $reservation_table = ReservationTable::where('reservation_id', $order->reservation_id)
+            ->where('table_id', $order->table_id)
+            ->first();
+        $items = OrderItem::where('order_id', $orderId)->get();
+        $item = $items->all();
+        $dishIds = $items->pluck('item_id')->toArray();
+        $dishes = Dishes::whereIn('id', $dishIds)->get();
         $staff = User::find($order->staff_id);
-        return view('pos.printf', compact('order', 'table', 'staff'))->render();
+        return view('pos.printf', compact('dishes','final', 'data', 'order', 'table', 'staff', 'reservation_table', 'item'))->render();
     }
 
     // Hàm chuẩn hóa số điện thoại

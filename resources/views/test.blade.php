@@ -9,11 +9,6 @@
     <input type="hidden" name="price[]" value="1000">
     <input type="submit" value="1">
 </form>
-<select>
-    @foreach ($banks as $bank)
-        <option value="{{ $bank['bin'] }}">{{ $bank['name'] }}({{ $bank['code'] }})</option>
-    @endforeach
-</select>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -38,7 +33,6 @@ $orderId = 1;
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-
         const actionForm = document.getElementById('actionForm');
         const refundOption = document.getElementById('refund');
         actionForm.addEventListener('submit', function(event) {
