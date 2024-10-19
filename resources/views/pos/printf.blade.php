@@ -13,8 +13,10 @@
         <div class="col-9 border border-3">
             <div class="receipt m-4">
                 <div class="text-center">
+                    <h1>STEAKS HOUSE</h1>
+                    <p>Địa chỉ: Số 1 Trịnh Văn Bô, Nam Từ Liêm, Hà Nội</p>
                     <h3>HÓA ĐƠN THANH TOÁN</h3>
-                    <p>Mã hóa đơn: {{$order->id}}</p>
+                    <p>Mã hóa đơn: {{ $order->id }}</p>
                 </div>
 
                 <div class="row mb-3">
@@ -23,7 +25,9 @@
                             <strong>Ngày:</strong>
                         </div>
                         <div class="col-9">
-                            14/09/2016 (10:09 SA - 10:09 SA)
+                            {{ DateTime::createFromFormat('Y-m-d', $reservation_table->reservation_date)->format('d-m-Y') }}
+                            (Giờ vào: {{ $reservation_table->start_time }} -
+                            Giờ ra: {{ $data }})
                         </div>
                     </div>
                     <div class="row">
@@ -31,7 +35,7 @@
                             <strong>Bàn:</strong>
                         </div>
                         <div class="col-9">
-                           {{$table->table_number}}
+                            {{ $table->table_number }}
                         </div>
                     </div>
                     <div class="row">
@@ -39,7 +43,7 @@
                             <strong>Thu ngân:</strong>
                         </div>
                         <div class="col-9">
-                            {{$staff->name}}
+                            {{ $staff->name }}
                         </div>
                     </div>
 
@@ -49,61 +53,31 @@
                     <thead>
                         <tr>
                             <th>Tên món</th>
-                            <th>SL</th>
-                            <th>ĐG</th>
-                            <th>% KM</th>
+                            <th>Số lượng</th>
+                            <th>Đơn giá</th>
+                            <th>% Khuyến mãi</th>
                             <th>Thành tiền</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Lạc rang</td>
-                            <td>3</td>
-                            <td>20.000</td>
-                            <td></td>
-                            <td>60.000</td>
-                        </tr>
-                        <tr>
-                            <td>Bia Hà Nội (Keg 2 Lít)</td>
-                            <td>1</td>
-                            <td>320.000</td>
-                            <td>5</td>
-                            <td>304.000</td>
-                        </tr>
-                        <tr>
-                            <td>Cá bò khô nướng</td>
-                            <td>2</td>
-                            <td>73.000</td>
-                            <td></td>
-                            <td>146.000</td>
-                        </tr>
-                        <tr>
-                            <td>Cánh gà xiên nướng</td>
-                            <td>1</td>
-                            <td>160.000</td>
-                            <td></td>
-                            <td>160.000</td>
-                        </tr>
+                        @foreach ($item as $key => $item)
+                            <tr>
+                                <td>{{ $dishes[$key]->name ?? 'N/A' }}</td>
+                                <td>{{ $item->quantity }}</td>
+                                <td>{{ number_format($item->price) }} VND</td>
+                                <td></td>
+                                <td>{{ number_format($item->total_price) }} VND</td>
+                                <?php $final += $item->total_price; ?>
+                            </tr>
+                        @endforeach
+
                     </tbody>
                 </table>
 
                 <div class="d-flex justify-content-between">
                     <strong>Tổng thanh toán:</strong>
-                    <strong>670.000đ</strong>
+                    <strong>{{ number_format($final) }} VND</strong>
                 </div>
-
-                <div class="d-flex justify-content-between">
-                    <span>Tiền mặt:</span>
-                    <span>670.000đ</span>
-                </div>
-
-                <div class="d-flex justify-content-between mb-3">
-                    <span>Trả lại khách:</span>
-                    <span>0đ</span>
-                </div>
-
-                <div class="border-bottom-dotted mb-3"></div>
-
                 <div class="text-center footer-text">
                     <b>Trân trọng cảm ơn!</b>
                 </div>

@@ -176,15 +176,17 @@ class PosController extends Controller
             ->where('table_id', $order->table_id)
             ->first();
         $order_items = Dishes::whereIn('id', $request->order_item)->get();
-        $quantity = $request->quantity;
-        $price = $request->price;
+        $item = OrderItem::where('order_id', $orderId)->get();
+        $items = $item->all();
+        $dishIds = $item->pluck('item_id')->toArray();
+        $dishes = Dishes::whereIn('id', $dishIds)->get();
         $staff_id = User::find($order->staff_id);
         $customer_id = User::find($order->customer_id);
-        $total_amount = $request->total_amount;
         $order_item = $request->order_item;
+        $final = 0;
         return view(
             'pos.payment',
-            compact('orderId', 'order', 'reservation', 'table', 'reservation_table', 'order_items', 'quantity', 'price', 'staff_id', 'customer_id', 'total_amount', 'order_item', )
+            compact('dishes', 'final', 'items', 'orderId', 'order', 'reservation', 'table', 'reservation_table', 'order_items', 'staff_id', 'customer_id', 'order_item', )
         );
     }
 
@@ -351,20 +353,23 @@ class PosController extends Controller
             ], 500);
         }
     }
-    public function payment($tableNumber, Request $request)
-    {
-        try {
-            $selectedItems = $request->input('items', []);
-
-            if (!is_array($selectedItems) || empty($selectedItems)) {
-                return back()->with('error', 'No items selected for payment.');
-            }
-            return view('pos.payment', compact('tableNumber', 'selectedItems'));
-        } catch (\Exception $e) {
-            Log::error('Error loading payment page: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
-            return back()->with('error', 'An error occurred while navigating to the payment page.');
-        }
-    }
+    // public function Ppayment($tableNumber, Request $request)
+    // {
+    //     try {
+    //         $selectedItems = $request->input('items', []);
+    // public function payment($tableNumber, Request $request)
+    // {
+    //     try {
+    //         $selectedItems = $request->input('items', []);
+    //         if (!is_array($selectedItems) || empty($selectedItems)) {
+    //             return back()->with('error', 'No items selected for payment.');
+    //         }
+    //         return view('pos.payment', compact('tableNumber', 'selectedItems'));
+    //     } catch (\Exception $e) {
+    //         Log::error('Error loading payment page: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+    //         return back()->with('error', 'An error occurred while navigating to the payment page.');
+    //     }
+    // }
     // public function processPaymentOffline(Request $request)
     // {
     //     return $this->handlePayment($request, 'offline');

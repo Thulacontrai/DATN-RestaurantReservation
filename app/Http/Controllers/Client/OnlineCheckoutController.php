@@ -3,7 +3,12 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
+use App\Models\Reservation;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+
 
 class OnlineCheckoutController extends Controller
 {
@@ -66,6 +71,10 @@ class OnlineCheckoutController extends Controller
             $result = $this->execPostRequest($endpoint, json_encode($data));
             $jsonResult = json_decode($result, true);  // decode json
             return redirect()->to($jsonResult['payUrl']);
+        }
+        if ($request->payment == "vnpay") {
+            $data = $request->all();
+            return view('client.QR-checkout',compact('data'));
         }
     }
 }
