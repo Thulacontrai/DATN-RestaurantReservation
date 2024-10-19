@@ -329,18 +329,22 @@ class ReservationController extends Controller
     {
         // Kiểm tra số lượng khách, nếu >= 6 thì chuyển hướng đến trang đặt cọc
         if ($request->guest_count >= 6) {
+            // Lưu thông tin khách hàng tạm thời để sử dụng ở trang cọc
             $customerInformation = $request->all();
             return redirect()->route('deposit.client', compact('customerInformation'));
         }
 
-        // Thực hiện giao dịch đặt bàn
+    
+        // Thực hiện giao dịch đặt bàn mà không cần cọc
         $reservation = DB::transaction(function () use ($request) {
             $customer_id = null;
+    
 
             if (auth()->check()) {
                 // Nếu đã đăng nhập, chỉ lấy customer_id
                 $customer_id = auth()->id();
             } else {
+
                 $user = User::where('phone', $request->user_phone)->first();
                 if (!isset($user) && $user == null) {
                     // Nếu chưa đăng nhập, tạo tài khoản tạm thời
@@ -363,10 +367,32 @@ class ReservationController extends Controller
                 'note' => $request->note,
                 'reservation_date' => $request->reservation_date,
                 'reservation_time' => $request->reservation_time,
+                // 'deposit_amount' => 0,  // Không cần cọc validate ss
             ]);
         });
-        return redirect()->route('reservationSuccessfully.client')->with('reservation', $reservation);
+         return redirect()->route('reservationSuccessfully.client')->with('reservation', $reservation);
     }
+    
+    
+    public function storeOtpSession(Request $request)
+{
+    if ($request->otpVerified) {
+        session(['otpVerified' => true]); // Lưu trạng thái OTP đã xác thực
+        return response()->json(['success' => true]);
+    }
+
+    return response()->json(['success' => false]);
+}
+    
+    
+    // Hàm kiểm tra điều kiện cần OTP
+    private function requireOtp($request)
+    {
+        // Ví dụ kiểm tra nếu số lượng người đặt bàn >= 6 thì cần OTP
+        return $request->guest_count >= 6;
+    }
+    
+    
 
     public function reservationSuccessfully(Request $request)
     {
