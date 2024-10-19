@@ -39,7 +39,8 @@
 
         h1 {
             font-size: 26px;
-            margin-bottom: 10px; /* Giảm khoảng cách dưới tiêu đề */
+            margin-bottom: 10px;
+            /* Giảm khoảng cách dưới tiêu đề */
             font-weight: 600;
             color: #333;
         }
@@ -47,8 +48,10 @@
         #timeout-message {
             color: red;
             margin-top: 15px;
-            display: none; /* Ẩn thông báo ban đầu */
-            font-weight: bold; /* Làm cho thông báo nổi bật hơn */
+            display: none;
+            /* Ẩn thông báo ban đầu */
+            font-weight: bold;
+            /* Làm cho thông báo nổi bật hơn */
         }
 
         input[type="text"],
@@ -98,19 +101,22 @@
         #error {
             color: red;
             margin-top: 15px;
-            display: none; /* Ẩn thông báo lỗi ban đầu */
+            display: none;
+            /* Ẩn thông báo lỗi ban đầu */
         }
 
         #sentMessage {
             color: green;
             margin-top: 15px;
-            display: none; /* Ẩn thông báo đã gửi OTP ban đầu */
+            display: none;
+            /* Ẩn thông báo đã gửi OTP ban đầu */
         }
 
         #countdown {
             font-size: 18px;
             color: #333;
-            margin-top: 15px; /* Tạo khoảng cách với các ô nhập OTP */
+            margin-top: 15px;
+            /* Tạo khoảng cách với các ô nhập OTP */
         }
     </style>
 </head>
@@ -120,7 +126,8 @@
         <img src="{{ asset('images/11b25f74-1f72-44cf-8b1b-d4bf2e3c0999.jpg') }}" alt="Logo" loading="lazy">
 
         <h1>Đăng Nhập</h1>
-        <div id="timeout-message">Vui lòng đăng nhập lại.</div> <!-- Thông báo đăng nhập lại ở đây -->
+        <div id="timeout-message">Hết thời gian nhập mã OTP hãy Đăng Nhập lại.</div>
+        <!-- Thông báo đăng nhập lại ở đây -->
 
         <div id="phone-popup" style="display: block;">
             <form id="phone-form">
@@ -150,8 +157,14 @@
     </div>
 
     <script type="module" defer>
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-        import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+        import {
+            initializeApp
+        } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+        import {
+            getAuth,
+            RecaptchaVerifier,
+            signInWithPhoneNumber
+        } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDRiOTYCQgDDemeF7QCunNMvlhPwmhh9Tc",
@@ -166,20 +179,20 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        window.onload = function () {
+        window.onload = function() {
             renderRecaptcha();
         }
 
         function renderRecaptcha() {
             window.recaptchaVerifier = new RecaptchaVerifier('recaptcha-container', {
                 'size': 'normal',
-                'callback': function (response) { },
-                'expired-callback': function () { }
+                'callback': function(response) {},
+                'expired-callback': function() {}
             }, auth);
 
-            recaptchaVerifier.render().then(function () {
+            recaptchaVerifier.render().then(function() {
                 console.log('Recaptcha rendered');
-            }).catch(function (error) {
+            }).catch(function(error) {
                 console.error("Error rendering recaptcha:", error);
             });
         }
@@ -187,14 +200,15 @@
         let countdownTimer;
         let timeRemaining = 90; // Thời gian bắt đầu
 
-        window.sendOTP = function () {
+        window.sendOTP = function() {
             let phoneNumber = document.getElementById("number").value.trim();
             if (phoneNumber.startsWith("0")) {
                 phoneNumber = '+84' + phoneNumber.slice(1);
             }
 
             if (!phoneNumber.match(/^\+\d{1,15}$/)) {
-                document.getElementById("error").innerHTML = "Số điện thoại không hợp lệ. Vui lòng nhập số điện thoại đúng định dạng.";
+                document.getElementById("error").innerHTML =
+                    "Số điện thoại không hợp lệ. Vui lòng nhập số điện thoại đúng định dạng.";
                 document.getElementById("error").style.display = "block";
                 return;
             }
@@ -233,7 +247,8 @@
                     clearInterval(countdownTimer);
                     document.getElementById("otp-popup").style.display = "none"; // Ẩn popup OTP
                     document.getElementById("sentMessage").style.display = "none"; // Ẩn thông báo OTP đã gửi
-                    document.getElementById("timeout-message").style.display = "block"; // Hiển thị thông báo hết thời gian
+                    document.getElementById("timeout-message").style.display =
+                    "block"; // Hiển thị thông báo hết thời gian
                     console.log("OTP expired. Showing timeout message."); // Ghi log khi thông báo được hiển thị
                     setTimeout(() => {
                         location.reload(); // Tải lại trang sau 3 giây
@@ -242,7 +257,7 @@
             }, 1000);
         }
 
-        window.verifyCode = function () {
+        window.verifyCode = function() {
             let otpCode = '';
             document.querySelectorAll('.otp-input').forEach(input => otpCode += input.value);
 
@@ -251,16 +266,16 @@
             window.confirmationResult.confirm(otpCode).then((result) => {
                 const phoneNumber = document.getElementById("number").value.trim();
                 fetch('{{ route('verify.code') }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': "{{ csrf_token() }}",
-                    },
-                    body: JSON.stringify({
-                        phone: phoneNumber,
-                        verificationCode: otpCode
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                        },
+                        body: JSON.stringify({
+                            phone: phoneNumber,
+                            verificationCode: otpCode
+                        })
                     })
-                })
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
@@ -268,7 +283,8 @@
                         } else {
                             document.getElementById("error").innerHTML = data.message;
                             document.getElementById("error").style.display = "block";
-                            console.log("Verification failed:", data.message); // Ghi log khi xác minh thất bại
+                            console.log("Verification failed:", data
+                            .message); // Ghi log khi xác minh thất bại
                         }
                     })
                     .catch(error => {

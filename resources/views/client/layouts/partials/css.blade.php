@@ -247,7 +247,7 @@
 }
 
 .form-control{
-    color: black;
+    /* color: black; */
 }
 
 
