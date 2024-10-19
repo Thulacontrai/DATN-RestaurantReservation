@@ -98,6 +98,10 @@ class SupplierController extends Controller
         return redirect()->route('admin.supplier.index')->with('success', 'Xóa thành công.');
     }
 
+    public function showImportForm()
+    {
+        return view('suppliers.import');
+    }
     public function import(Request $request)
     {
         // Kiểm tra và xử lý file upload

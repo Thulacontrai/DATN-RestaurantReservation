@@ -45,6 +45,7 @@ use App\Http\Controllers\ProfileController;
 */
 
 // import
+Route::get('suppliers/import', [SupplierController::class, 'showImportForm'])->name('suppliers.import');
 Route::post('admin/supplier/import', [SupplierController::class, 'import'])->name('admin.supplier.import');
 
 
