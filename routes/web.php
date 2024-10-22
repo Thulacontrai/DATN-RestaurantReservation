@@ -13,19 +13,25 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Client\OnlineCheckoutController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\CalendarController;
 use App\Http\Controllers\Admin\IngredientController;
 use App\Http\Controllers\Admin\IngredientTypeController;
 use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\Admin\RefundController;
 use App\Http\Controllers\Admin\ReservationController;
 use App\Http\Controllers\Admin\ReservationHistoryController;
 use App\Http\Controllers\Admin\ReservationTableController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\TableController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Client\CustomerAuthController;
 use App\Http\Controllers\Client\HomeController;
+use App\Http\Controllers\Client\MemberController;
 use App\Http\Controllers\Client\MenuController;
-use App\Http\Controllers\Client\PosController;
+use App\Http\Controllers\Pos\PosController;
 use App\Http\Controllers\ProfileController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -42,12 +48,33 @@ use App\Http\Controllers\ProfileController;
 
 Route::get('/', [HomeController::class, 'index'])->name('client.index');
 Route::get('/menu', [MenuController::class, 'index'])->name('menu');
+
 Route::get('/api/menu/filter', [MenuController::class, 'filterByCategory']);
 
 Route::get('/menu/category/{category}', [MenuController::class, 'filterByCategory'])->name('menu.category');
 
+//member
+Route::get('/member', [MemberController::class, 'show'])->name('client.member');
+Route::post('/update-member', [MemberController::class, 'update'])->name('member.update');
+Route::post('/change-password', [MemberController::class, 'changePassword'])->name('member.changePassword');
+Route::post('/member/update-booking', [MemberController::class, 'updateBooking'])->name('member.updateBooking');
 
 
+
+
+
+// login 
+
+Route::get('/home', [HomeController::class, 'index'])->middleware('auth');
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login.client');
+
+
+
+
+// account
+// Route::get('/account', [AccountController::class, 'show'])->name('account.show');
+// Route::post('/update-account', [AccountController::class, 'update'])->name('account.update');
+// Route::post('/change-password', [AccountController::class, 'changePassword'])->name('account.changePassword');
 
 // route::get("/menu", function () {
 //     return view("client.menu");
@@ -96,6 +123,45 @@ route::get(
     "reservationSuccessfully",
     [ReservationController::class, "reservationSuccessfully"]
 )->name("reservationSuccessfully.client");
+route::get(
+    "createReservationWithMomo",
+    [ReservationController::class, "createReservationWithMomo"]
+)->name("createReservationWithMomo.client");
+
+
+Route::get('/customerInformation', [ReservationController::class, 'showInformation'])->name('customer.information');
+
+
+
+
+
+
+
+
+Route::get('/pos', [PosController::class, 'index']);
+Route::post('/create-order', [PosController::class, 'createOrder']);
+
+Route::post('/add-dish-to-order', [PosController::class, 'addDishToOrder']);
+Route::delete('/delete-dish-from-order/{orderId}/{dishId}', [PosController::class, 'deleteDishFromOrder']);
+Route::post('/load-more-dishes', [PosController::class, 'loadMoreDishes']);
+Route::get('/api/tables/{tableId}/order', [TableController::class, 'getOrderForReservedTable']);
+
+
+Route::post('/Ppayment/{table_number}', [PosController::class, 'Ppayment'])->name('Ppayment');
+// hoàn cọc
+Route::get('/refunds/create/{reservation_id}', [RefundController::class, 'create'])->name('refunds.create');
+Route::post('/refunds', [RefundController::class, 'store'])->name('refunds.store');
+Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');
+
+// // Process the offline payment (POST)
+// Route::post('/payment/offline', [PosController::class, 'processPaymentOffline'])->name('processPaymentOffline');
+
+
+// // Process the online payment (POST)
+// Route::post('/payment/online', [PosController::class, 'processPaymentOnline'])->name('processPaymentOnline');
+
+
+// Route::get('/receipt', [PosController::class, 'showReceipt'])->name('pos.receipt');
 
 
 
@@ -106,12 +172,12 @@ route::get(
 
 
 
-Route::get('pos', function () {
-    return view('pos.pos');
-});
 
-// Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
-Route::get('/pos/reservations', [PosController::class, 'getUpcomingAndOverdueReservations'])->name('pos.reservations');
+
+
+
+
+
 
 
 
@@ -126,8 +192,8 @@ Route::get('admin', [AdminController::class, 'index']);
 Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::get('/', function () {
-    return view('auth.login');
-});
+        return view('auth.login');
+    })->name('home');
 
     Route::resource('table', TableController::class);
     // Trash - Xoá mềm - Khôi Phục
@@ -141,7 +207,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('reservation/submit-table', [ReservationController::class,'submitTable'])->name('submit.tables');
     Route::post('reservation/submit-move-table', [ReservationController::class,'submitMoveTable'])->name('submit.Movetables');
 
+    /// xếp bàn cho khách
+    Route::get('reservation/{reservationId}/assign-tables', [ReservationController::class, 'assignTables'])->name('reservation.assignTables');
+    Route::get('reservation/assign-table', [ReservationController::class, 'assignTable'])->name('assignTable');
+    Route::post('reservation/submit-table', [ReservationController::class, 'submitTable'])->name('submit.tables');
+    Route::post('reservation/submit-move-table', [ReservationController::class, 'submitMoveTable'])->name('submit.Movetables');
+
     Route::resource('reservation', ReservationController::class);
+    Route::post('reservation/cancel/{id}', [ReservationController::class, 'cancel'])->name('reservation.cancel');
     Route::resource('reservationTable', ReservationTableController::class);
     Route::resource('reservationHistory', ReservationHistoryController::class);
 
@@ -211,7 +284,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('ingredient', IngredientController::class);
     Route::resource('dashboard', DashboardController::class);
     Route::resource('accountSetting', SettingController::class);
-
+      // Lịch
+      Route::resource('calendar', CalendarController::class);
 
     //permission route
     Route::get('/admin/permission', [PermissionController::class, 'index'])->name('permissions.index');
@@ -231,36 +305,109 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 
 
-    // // Route đến trang đăng nhập
-    // Route::get('/logon', [AdminController::class, 'logon'])->name('logon');
+    //permission route
+    Route::get('/admin/permission', [PermissionController::class, 'index'])->name('permissions.index');
+    Route::get('/admin/permission/create', [PermissionController::class, 'create'])->name('permissions.create');
+    Route::post('/admin/permission', [PermissionController::class, 'store'])->name('permissions.store');
+    Route::get('/admin/permission/{id}/edit', [PermissionController::class, 'edit'])->name('permissions.edit');
+    Route::put('/admin/permission/{id}', [PermissionController::class, 'update'])->name('permissions.update');
+    Route::delete('admin/permission/{id}', [PermissionController::class, 'destroy'])->name('permissions.destroy');
 
-    // // Route cho admin
-    // Route::middleware(['auth', 'isAdmin'])->group(function () {
-    //     Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard');
-    // });
+    //roles route
+    // Route::get('/admin/permission', [PermissionController::class, 'index'])->name('permissions.index');
+    // Route::get('/admin/permission/create', [PermissionController::class, 'create'])->name('permissions.create');
+    // Route::post('/admin/permission', [PermissionController::class, 'store'])->name('permissions.store');
+    // Route::get('/admin/permission/{id}/edit', [PermissionController::class, 'edit'])->name('permissions.edit');
+    // Route::put('/admin/permission/{id}', [PermissionController::class, 'update'])->name('permissions.update');
+    // Route::delete('admin/permission/{id}', [PermissionController::class, 'destroy'])->name('permissions.destroy');
 
 
 });
 
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/register-client', [CustomerAuthController::class, 'showRegisterForm'])->name('register.form');
+Route::post('/register-client', [CustomerAuthController::class, 'register'])->name('client.register'); 
+Route::get('/login-client', [CustomerAuthController::class, 'showLoginForm'])->name('login.form');
+Route::post('/login-client', [CustomerAuthController::class, 'login'])->name('client.login'); 
+Route::post('/logout-client', [CustomerAuthController::class, 'logout'])->name('client.logout');
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+Route::post('/check-account', [CustomerAuthController::class, 'checkAccount']);
+Route::post('/login-success', [CustomerAuthController::class, 'loginSuccess'])->name('login.success');
 
+
+
+
+Route::post('/verify-code', [CustomerAuthController::class, 'verifyCode'])->name('verify.code');
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/member/profile', [MemberController::class, 'showProfile'])->name('member.profile');
+    Route::post('/member/update-booking', [MemberController::class, 'updateBooking'])->name('member.updateBooking');
 });
 
 
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+Route::get('/member/profile', [MemberController::class, 'showProfile'])->name('member.profile');
+Route::post('/member/update-booking', [MemberController::class, 'updateBooking'])->name('member.updateBooking');
+
+Route::post('/cancel-reservation', [ReservationController::class, 'cancelReservation'])->name('cancel.reservation');
 
 
-require __DIR__.'/auth.php';
+Route::post('/send-otp', [ReservationController::class, 'sendOtp'])->name('send.otp');
+Route::post('/verify-otp', [ReservationController::class, 'verifyOtp'])->name('verify.otp');
+
+
+Route::post('/api/cancel-booking/{id}', [ReservationController::class, 'cancelReservation'])->name('cancel.booking');
+Route::post('/cancel-booking/{id}', [ReservationController::class, 'cancelReservation'])->name('cancel.booking');
+
+Route::get('/login1',function(){
+        return view('client.login');
+});
+Route::get('/test', function () {
+    return view('test');
+});
+
+
+//Route đăng nhập của khách hàng
+// Route đăng nhập của khách hàng
+Route::get('/register-client', [CustomerAuthController::class, 'showRegisterForm'])->name('register.form');
+Route::post('/register-client', [CustomerAuthController::class, 'register'])->name('client.register');
+Route::get('/login-client', [CustomerAuthController::class, 'showLoginForm'])->name('login.form');
+Route::post('/login-client', [CustomerAuthController::class, 'login'])->name('client.login');
+Route::post('/logout-client', [CustomerAuthController::class, 'logout'])->name('client.logout');
+
+Route::post('/check-account', [CustomerAuthController::class, 'checkAccount']);
+Route::post('/login-success', [CustomerAuthController::class, 'loginSuccess'])->name('login.success');
+
+
+
+
+Route::post('/verify-code', [CustomerAuthController::class, 'verifyCode'])->name('verify.code');
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/member/profile', [MemberController::class, 'showProfile'])->name('member.profile');
+    Route::post('/member/update-booking', [MemberController::class, 'updateBooking'])->name('member.updateBooking');
+});
+
+
+
+Route::get('/member/profile', [MemberController::class, 'showProfile'])->name('member.profile');
+Route::post('/member/update-booking', [MemberController::class, 'updateBooking'])->name('member.updateBooking');
+
+Route::post('/cancel-reservation', [ReservationController::class, 'cancelReservation'])->name('cancel.reservation');
+
+
+Route::post('/send-otp', [ReservationController::class, 'sendOtp'])->name('send.otp');
+Route::post('/verify-otp', [ReservationController::class, 'verifyOtp'])->name('verify.otp');
+
+
+Route::post('/api/cancel-booking/{id}', [ReservationController::class, 'cancelReservation'])->name('cancel.booking');
+Route::post('/cancel-booking/{id}', [ReservationController::class, 'cancelReservation'])->name('cancel.booking');
+
+
+Route::get('/test', [ReservationController::class, 'getBanks']);
+Route::get('/print/{orderId}', [ReservationController::class, 'print'])->name('print.page');
+require __DIR__ . '/auth.php';
+
+
 
 

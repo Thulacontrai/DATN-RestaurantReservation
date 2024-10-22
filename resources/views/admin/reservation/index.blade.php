@@ -63,86 +63,111 @@
                             </div>
                         </form>
 
-                        <!-- Table list of reservations -->
-                        <div class="table-responsive">
-                            <table class="table v-middle m-0">
-                                <thead>
-                                    <tr>
-                                        <th><input type="checkbox" id="select-all"></th>
-                                        <th>Mã Đặt Chỗ</th>
-                                        <th>Tên Khách Hàng</th>
-                                        <th>Số Lượng Khách</th>
-                                        <th>Thời Gian Đặt</th>
-                                        <th>Bàn</th>
-                                        <th>Tiền cọc</th>
-                                        <th>Ghi Chú</th>
-                                        <th>Trạng Thái</th>
-                                        <th>Hành Động</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse ($reservations as $reservation)
-                                    <tr id="reservation-{{ $reservation->id }}">
-                                        <td><input type="checkbox" name="selected_reservations[]" value="{{ $reservation->id }}"></td>
-                                        <td>{{ $reservation->id }}</td>
-                                        <td>{{ $reservation->customer->name ?? 'Không rõ' }}</td>
-                                        <td>{{ $reservation->guest_count ?? 'N/A' }}</td>
-                                        <td>
-                                            {{-- {{ \Carbon\Carbon::parse($reservation->reservation_time)->format('H:i:s') }} --}}
-                                           {{ $reservation->reservation_date }} 
-                                                <br> {{ $reservation->reservation_time }}
-                                           
-                                        </td>
-
-                                        <td>@foreach ($reservation->tables as $table )
-                                            {{$table->table_number}},
-                                        @endforeach</td>
-                                        <td>{{ number_format($reservation->deposit_amount) }}đ
-                                        </td>
-                                        <td>{{ $reservation->note ?? 'Không có' }}</td>
-                                        <td>
-                                            @if ($reservation->status === 'Confirmed')
-                                            <span class="badge shade-green min-70">Đã xác nhận</span>
-                                            @elseif ($reservation->status === 'Pending')
-                                            <span class="badge shade-yellow min-70">Chờ xử lý</span>
-                                            @elseif ($reservation->status === 'Cancelled')
-                                            <span class="badge shade-red min-70">Đã hủy</span>
-                                            @else
-                                            <span class="badge shade-gray min-70">Không rõ</span>
-                                            @endif
-                                        </td>
-
-                                        <td>
-                                            <div class="actions">
-                                                <a href="{{ route('admin.reservation.show', $reservation->id) }}" class="editRow" data-id="{{ $reservation->id }}">
-                                                    <i class="bi bi-list text-green"></i>
-                                                </a>
-                                                <a href="{{ route('admin.reservation.edit', $reservation->id) }}" class="editRow" data-id="{{ $reservation->id }}">
-                                                    <i class="bi bi-pencil-square text-warning"></i>
+                            <!-- Table list of reservations -->
+                            <div class="table-responsive">
+                                <table class="table v-middle m-0">
+                                    <thead>
+                                        <tr>
+                                            <th><input type="checkbox" id="select-all"></th>
+                                            <th>Mã Đặt Chỗ</th>
+                                            <th>Tên Khách Hàng</th>
+                                            <th>Số Lượng Khách</th>
+                                            <th>Thời Gian Đặt</th>
+                                            <th>Bàn</th>
+                                            <th>Tiền cọc</th>
+                                            <th>Ghi Chú</th>
+                                            <th>Trạng Thái</th>
+                                            <th>Hành Động</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse ($reservations as $reservation)
+                                            <tr id="reservation-{{ $reservation->id }}">
+                                                <td><input type="checkbox" name="selected_reservations[]"
+                                                        value="{{ $reservation->id }}"></td>
+                                                <td>{{ $reservation->id }}</td>
+                                                <td>{{ $reservation->customer->name ?? 'Không rõ' }}</td>
+                                                <td>{{ $reservation->guest_count ?? 'N/A' }}</td>
+                                                <td>
+                                                    {{-- {{ \Carbon\Carbon::parse($reservation->reservation_time)->format('H:i:s') }} --}}
+                                                   {{ $reservation->reservation_date }} 
+                                                        <br> {{ $reservation->reservation_time }}
                                                    
-                                                </a>
-                                                <a href="{{ route('admin.reservation.assignTables', $reservation->id) }}" class="editRow" data-id="{{ $reservation->id }}">
-                                                    <i class="bi bi-box-arrow-in-right"></i>
-                                                </a>
-                                                <form action="{{ route('admin.reservation.destroy', $reservation->id) }}" method="POST" style="display:inline-block;">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <a href="#" style="margin-top: 18px;" >
-                                                    <button type="submit" class="btn btn-link p-0" onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
-                                                        <i class="bi bi-trash text-red"></i>
-                                                    </button></a>
-                                                </form>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    @empty
-                                    <tr>
-                                        <td colspan="8">Không có đặt bàn nào được tìm thấy.</td>
-                                    </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
+                                                </td>
+        
+                                                <td>@foreach ($reservation->tables as $table )
+                                                      {{$table->table_number ?? 'Chưa xếp bàn'}} 
+                                                @endforeach</td>
+                                                <td>{{ number_format($reservation->deposit_amount) }}đ
+                                                </td>                                                
+                                                <td>{{ $reservation->note ?? 'Không có' }}</td>
+                                                <td>
+                                                    @if ($reservation->status === 'confirmed')
+                                                        <span class="badge bg-success">Đã xác nhận</span>
+                                                    @elseif ($reservation->status === 'Pending')
+                                                        <span class="badge bg-warning">Chờ xử lý</span>
+                                                    @elseif ($reservation->status === 'Cancelled')
+                                                        <span class="badge bg-danger">Đã hủy</span>
+                                                    @elseif ($reservation->status === 'Refund')
+                                                        <span class="badge bg-info">Đã hoàn cọc</span>
+                                                    @else
+                                                        <span class="badge bg-secondary">Không rõ</span>
+                                                    @endif
+                                                </td>
+
+                                            <td>
+                                                <div class="actions">
+                                                    <a href="{{ route('admin.reservation.show', $reservation->id) }}" class="editRow" data-id="{{ $reservation->id }}">
+                                                        <i class="bi bi-list text-green"></i>
+                                                    </a>
+                                                    <a href="{{ route('admin.reservation.edit', $reservation->id) }}" class="editRow" data-id="{{ $reservation->id }}">
+                                                        <i class="bi bi-pencil-square text-warning"></i>
+
+                                                    </a>
+                                                    <a href="{{ route('admin.reservation.assignTables', $reservation->id) }}" class="editRow" data-id="{{ $reservation->id }}">
+                                                        <i class="bi bi-box-arrow-in-right"></i>
+                                                    </a>
+                                                    {{-- Nút hủy đặt bàn --> --}}
+                                                         <form action="{{ route('admin.reservation.cancel', $reservation->id) }}" method="POST" style="display:inline-block;">
+                                                            @csrf
+                                                            @method('POST')
+                                                            <a href="#" style="margin-top: 15px">
+                                                            <button type="submit" class="btn btn-link p-0" onclick="return confirm('Bạn có chắc chắn muốn hủy đơn này?');">
+                                                                <i class="bi bi-x-circle text-danger"></i>
+                                                            </button></a>
+
+                                                    </form>
+
+                                                      {{-- Hoàn cọc --}}
+                                                      <form action="" method="POST"
+                                                      style="display:inline-block;">
+                                                      <div style="display: flex; gap: 10px; align-items: center;">
+                                                          <a href="{{ route('refunds.create', ['reservation_id' => $reservation->id]) }}"
+                                                              class="btn btn-link p-0 return-button"
+                                                              style="margin-top: 15px; border: 1px solid #e8e7e7; padding: 10px; width: 37px; height: 35px; display: inline-flex; justify-content: center; align-items: center;">
+                                                              <i class="bi bi-cash-coin"></i>
+                                                          </a>
+                                                      </div>
+                                                  </form>
+                                                    <form action="{{ route('admin.reservation.destroy', $reservation->id) }}" method="POST" style="display:inline-block;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <a href="#" style="margin-top: 18px;" >
+                                                        <button type="submit" class="btn btn-link p-0" onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
+                                                            <i class="bi bi-trash text-red"></i>
+                                                        </button></a>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        @empty
+                                        <tr>
+                                            <td colspan="8">Không có đặt bàn nào được tìm thấy.</td>
+                                        </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
 
                         <!-- Pagination -->
                         <div class="pagination justify-content-center mt-3">
