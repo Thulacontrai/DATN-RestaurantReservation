@@ -32,6 +32,7 @@ use App\Http\Controllers\Pos\PosController;
 use App\Http\Controllers\ProfileController;
 
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -43,7 +44,12 @@ use App\Http\Controllers\ProfileController;
 |
 */
 
+// import
+Route::get('admin/supplier/import', [SupplierController::class, 'showImportForm'])->name('admin.supplier.import');
+Route::post('admin/supplier/import', [SupplierController::class, 'import'])->name('admin.supplier.import');
 
+Route::get('admin/ingredient/import', [IngredientController::class, 'showImportForm'])->name('admin.ingredient.import');
+Route::post('admin/ingredient/import', [IngredientController::class, 'import'])->name('admin.ingredient.import.post');
 
 Route::get('/', [HomeController::class, 'index'])->name('client.index');
 Route::get('/menu', [MenuController::class, 'index'])->name('menu');
@@ -402,8 +408,17 @@ Route::post('/api/cancel-booking/{id}', [ReservationController::class, 'cancelRe
 Route::post('/cancel-booking/{id}', [ReservationController::class, 'cancelReservation'])->name('cancel.booking');
 
 
+
+//session otp đặt bàn
+Route::post('/store-otp-session', [ReservationController::class, 'storeOtpSession'])->name('storeOtpSession');
+
+Route::get('/test', function () {
+    return view('test');
+});
+
 Route::get('/test', [ReservationController::class, 'getBanks']);
 Route::get('/print/{orderId}', [ReservationController::class, 'print'])->name('print.page');
+
 require __DIR__ . '/auth.php';
 
 
