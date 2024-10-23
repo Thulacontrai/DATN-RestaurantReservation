@@ -14,7 +14,7 @@ class CreateOrderItemsTable extends Migration
     public function up()
     {
         Schema::create('order_items', function (Blueprint $table) {
-            $table->id('order_item_id'); // Tạo trường khóa chính, tự động tăng
+            $table->id(); // Tạo trường khóa chính, tự động tăng
             $table->unsignedBigInteger('order_id'); // Khóa ngoại đến bảng orders
             $table->integer('item_id'); // ID của sản phẩm hoặc dịch vụ
             $table->string('item_type', 10); // Loại item (ví dụ: sản phẩm, dịch vụ)
