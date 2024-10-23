@@ -24,14 +24,13 @@ class ReservationController extends Controller
 {
 
     use TraitCRUD;
-     public function __construct()
+    public function __construct()
     {
         // Gán middleware cho các phương thức
         $this->middleware('permission:Xem đặt bàn', ['only' => ['index']]);
         $this->middleware('permission:Tạo mới đặt bàn', ['only' => ['create']]);
         $this->middleware('permission:Sửa đặt bàn', ['only' => ['edit']]);
         $this->middleware('permission:Xóa đặt bàn', ['only' => ['destroy']]);
-
     }
     protected $model = Reservation::class;
     protected $viewPath = 'admin.reservation';
@@ -95,7 +94,8 @@ class ReservationController extends Controller
     }
 
     // Cập nhật trạng thái đặt bàn quá hạn
-    private function updateOverdueReservations(Request $request){
+    private function updateOverdueReservations(Request $request)
+    {
         $reservations = Reservation::with('customer')
             ->when($request->customer_name, function ($query) use ($request) {
                 $query->whereHas('customer', function ($q) use ($request) {
@@ -184,7 +184,7 @@ class ReservationController extends Controller
             ->where('reservation_time', '<', $now->copy()->subMinutes(15)->toTimeString())
             ->where('status', 'Cancelled')
             ->get();
-            // ->update(['status' => 'Cancelled']); // Cập nhật trạng thái thành 'Hủy'
+        // ->update(['status' => 'Cancelled']); // Cập nhật trạng thái thành 'Hủy'
 
         return view('admin.reservation.check', compact('upcomingReservations', 'waitingReservations', 'overdueReservations'));
     }
@@ -311,13 +311,12 @@ class ReservationController extends Controller
 
 
 
-     public function createReservation(StoreReservationRquest $request)
+    public function createReservation(StoreReservationRquest $request)
     {
         $reservation = $request->all();
         if ($request->guest_count >= 6) {
             $customerInformation = $request->all();
             return redirect()->route('deposit.client', compact('customerInformation'));
-
         } else {
             DB::transaction(function () use ($request) {
                 $user = User::create([
@@ -386,7 +385,6 @@ class ReservationController extends Controller
 
 
         return view('admin.reservation.table_layout', compact('tables', 'reservationId'));
-
     }
     public function assignTable(Request  $request)
     {
@@ -411,7 +409,6 @@ class ReservationController extends Controller
 
 
         return view('admin.reservation.table_layout', compact('tables', 'reservationId'));
-
     }
     public function submitTable(Request  $request)
     {
@@ -467,20 +464,19 @@ class ReservationController extends Controller
         }
     }
 
-    public function submitMoveTable(Request $request) {
+    public function submitMoveTable(Request $request)
+    {
         $tableId = $request->input('dataId');
         $reservationId = $request->input('reservationId');
         $reservationData = ReservationTable::where('reservation_id', $reservationId)->first();
-        if($reservationData){
+        if ($reservationData) {
             Table::where('id', $reservationData->table_id)->update(['status' => 'Available']);
         }
-        ReservationTable::where('reservation_id', $reservationId)->update([ 'table_id' => $tableId ]);
+        ReservationTable::where('reservation_id', $reservationId)->update(['table_id' => $tableId]);
         Table::where('id', $tableId)->update(['status' => 'Reserved']);
         return response()->json([
             'success' => true,
             'message' => 'Chuyển bàn thành công'
         ]);
-
     }
-
 }

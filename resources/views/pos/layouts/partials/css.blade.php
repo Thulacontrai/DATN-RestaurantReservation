@@ -38,32 +38,236 @@
 <link rel='stylesheet' href="{{ asset('poss/assets/vendor/fullcalendar/timegrid/main.css') }}">
 <link rel='stylesheet' href="{{ asset('poss/assets/vendor/fullcalendar/list/main.css') }}">
 <link rel="stylesheet" href="{{ asset('poss/assets/vendor/mapbox/mapbox-gl.css') }}">
-<<<<<<< HEAD
 <link rel="stylesheet" href="{{ asset('poss/assets/css/backend.min.css') }}">
 
 
 
-=======
->>>>>>> 0762daeda6a591d3e459ca383c5d5eb38b0a19c6
+
+
+<style>
+    /* Print Dropdown Form Styles */
+    .print-dropdown {
+        position: absolute;
+        right: 10px;
+        top: 60px;
+        width: 300px;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 15px;
+        z-index: 1000;
+    }
+
+    /* Notification Dropdown Styles */
+    .notification-dropdown {
+        position: absolute;
+        right: 10px;
+        top: 100px;
+        width: 300px;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 15px;
+        z-index: 1000;
+        font-family: 'Roboto', sans-serif;
+    }
+
+    .notification-header {
+        font-size: 16px;
+        font-weight: bold;
+        color: #007bff;
+        margin-bottom: 10px;
+    }
+
+    .notification-body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: #666;
+        text-align: center;
+    }
+
+    .notification-body p {
+        margin-top: 10px;
+        font-size: 14px;
+    }
+
+    .notification-icon {
+        font-size: 50px;
+        color: #cccccc;
+        margin-bottom: 10px;
+    }
+
+    /* Switch Toggle */
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 40px;
+        height: 20px;
+    }
+
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: 0.4s;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 14px;
+        width: 14px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: 0.4s;
+    }
+
+    input:checked+.slider {
+        background-color: #2196F3;
+    }
+
+    input:checked+.slider:before {
+        transform: translateX(20px);
+    }
+
+    .slider.round {
+        border-radius: 34px;
+    }
+
+    .slider.round:before {
+        border-radius: 50%;
+    }
+
+    /* Print Form Actions */
+    .print-actions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 15px;
+    }
+
+    .print-option {
+        margin-bottom: 10px;
+    }
+
+    #confirmButton,
+    #cancelButton {
+        width: 48%;
+    }
+
+    /* Dropdown menu styles */
+    #dropdownMenu {
+        position: absolute;
+        right: 10px;
+        top: 60px;
+        width: 300px;
+        height: auto;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        padding: 15px;
+        display: none;
+    }
+
+    /* User info styling */
+    .user-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: bold;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #ddd;
+        margin-bottom: 15px;
+    }
+
+    .user-info p {
+        margin-left: 10px;
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    /* Avatar styling */
+    .user-info img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+    }
+
+    /* Menu options styling */
+    .menu-options {
+        margin-top: 10px;
+    }
+
+
+    .menu-row button {
+        width: 48%;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 10px;
+        font-size: 14px;
+        background-color: #f8f9fa;
+        border: none;
+        text-align: left;
+        transition: none;
+    }
+
+    /* Button styling */
+    .btn {
+        display: block;
+        padding: 12px 15px;
+        margin-bottom: 12px;
+        cursor: pointer;
+        transition: none;
+    }
+
+    #dropdownMenu .btn:hover {
+        background-color: #f8f9fa;
+    }
+
+    .dropdown-content .btn {
+        background-color: #004a89;
+        color: white;
+        margin-bottom: 10px;
+    }
+
+    .dropdown-content .btn:hover {
+        background-color: #004a89;
+    }
+
+    .dropdown-content .btn-primary:hover {
+        background-color: #0056b3;
+    }
+</style>
+
 
 <style>
     /* Active Tab Styling */
     .nav-link.active {
-        color: #004a89;
+
         font-weight: bold;
         padding: 12px 30px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 10px #0f2462;
         transition: background-color 0.3s ease, color 0.3s ease;
         z-index: 2;
     }
 
     /* Inactive Tab Styling */
     .nav-link:not(.active) {
-<<<<<<< HEAD
         margin-left: 10px;
-=======
-        margin-left:  10px;
->>>>>>> 0762daeda6a591d3e459ca383c5d5eb38b0a19c6
+        color: #ffffff;
         transition: all 0.3s ease;
         z-index: 0;
     }
@@ -90,7 +294,7 @@
     .form-control {
         background-color: transparent;
         border: none;
-        border-bottom: 1px solid #fff;
+        border-bottom: 1px solid #eecece;
         color: #fff;
         width: 250px;
         margin-left: 40px;
@@ -120,10 +324,6 @@
     .container-fluid {
         display: flex;
         justify-content: space-between;
-<<<<<<< HEAD
-=======
-        gap: 15px;
->>>>>>> 0762daeda6a591d3e459ca383c5d5eb38b0a19c6
         flex-grow: 1;
         padding: 0 10px;
     }
@@ -131,14 +331,10 @@
     /* Table and Order sections */
     .table-section {
         flex: 1;
-        display: flex;
+
         flex-direction: column;
         justify-content: flex-start;
-<<<<<<< HEAD
         /* padding: 20px; */
-=======
-        padding: 20px;
->>>>>>> 0762daeda6a591d3e459ca383c5d5eb38b0a19c6
     }
 
     .order-section {
@@ -147,12 +343,13 @@
         flex-direction: column;
         justify-content: space-between;
         background-color: #ffffff;
+        height: 675px;
         padding: 20px;
         margin-top: 0;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
 
-<<<<<<< HEAD
+
 
     #orderTabs {
         overflow-x: auto;
@@ -180,11 +377,10 @@
 
     .empty-order p {
         font-size: 16px;
-        margin: 5px 0;
+
     }
 
-=======
->>>>>>> 0762daeda6a591d3e459ca383c5d5eb38b0a19c6
+
     /* Search and icon button styles */
     .search-container {
         display: flex;
@@ -277,7 +473,6 @@
     }
 
 
-<<<<<<< HEAD
     /* --------------------css Ben phía INDEX---------------------- */
     .table-container {
         display: flex;
@@ -560,7 +755,6 @@
 
 
     .navbar {
-        background-color: #eee;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -739,810 +933,399 @@
 
 
     .btn-group {
-            display: flex;
-            gap: 10px;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            font-size: 16px;
-            border-radius: 50px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .btn i {
-            margin-right: 5px;
-        }
-
-        .btn-secondary {
-            background-color: #f0f0f0;
-            color: #888888;
-        }
-
-        .btn-primary {
-            background-color: #007bff;
-            color: white;
-        }
-
-        .btn-info {
-            background-color: #17a2b8;
-            color: white;
-        }
-
-        .btn-warning {
-            background-color: #ffc107;
-            color: white;
-        }
-
-        .btn-secondary:hover, .btn-primary:hover, .btn-info:hover, .btn-warning:hover {
-            opacity: 0.9;
-        }
-
-        .modal {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-        }
-
-        .modal-content {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            width: 400px;
-        }
-
-        .modal-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-        }
-
-        .dropdown {
-            position: absolute;
-            right: 10px;
-            top: 60px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 15px;
-            width: 300px;
-        }
-
-        .dropdown h4 {
-            margin-bottom: 10px;
-        }
-
-        #notificationList {
-            list-style: none;
-            padding: 0;
-        }
-
-        #notificationList li {
-            padding: 5px 0;
-            border-bottom: 1px solid #ddd;
-        }
-
-
-        .table-card {
-    position: relative;
-    width: 150px;
-    height: 150px;
-    margin-left: 10px;
-    background-color: #ffffff;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    box-sizing: border-box;
-    border-radius: 10px;
-    margin-bottom: 10px;
-    transition: border-color 0.3s ease;
-}
-
-.table-number {
-    font-size: 1.0rem;
-    font-weight: bold;
-    color: #333;
-    position: absolute;
-    top: 10px;
-    left: 10px;
-}
-
-.border-decoration {
-    position: absolute;
-    background-color: #ced4da;
-}
-
-.border-decoration.left {
-    width: 3px;
-    height: 120px;
-    left: -5px;
-    top: 50%;
-    transform: translateY(-50%);
-}
-
-.border-decoration.right {
-    width: 3px;
-    height: 120px;
-    right: -5px;
-    top: 50%;
-    transform: translateY(-50%);
-}
-
-.border-decoration.top {
-    height: 3px;
-    width: 120px;
-    top: -5px;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-.border-decoration.bottom {
-    height: 3px;
-    width: 120px;
-    bottom: -5px;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-.table-card.available .border-decoration.left {
-    background-color: green; /* Trống */
-}
-
-.table-card.reserved .border-decoration.left {
-    background-color: orange; /* Đã đặt */
-}
-
-.table-card.occupied .border-decoration.left {
-    background-color: red; /* Đang sử dụng */
-}
-=======
-     /* --------------------css Ben phía INDEX---------------------- */
-     .table-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: flex-start;
-        }
-
-        .table-box {
-            background-color: white;
-            border-radius: 10px;
-            padding: 20px;
-            margin: 10px;
-            text-align: center;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            width: calc(20% - 20px);
-            height: 150px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            cursor: pointer;
-        }
-
-        .table-name {
-            font-size: 18px;
-            font-weight: bold;
-        }
-
-        .table-details {
-            margin: 10px 0;
-        }
-
-        .table-status {
-            font-size: 14px;
-            color: gray;
-        }
-
-        .table-price {
-            font-size: 16px;
-            color: #28a745;
-            font-weight: bold;
-        }
-        .filter-section {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .filter-btn {
-            padding: 10px 20px;
-            border-radius: 50px;
-            border: none;
-            font-size: 14px;
-            cursor: pointer;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
-        }
-
-        .filter-btn.active {
-            background-color: #007bff;
-            color: white;
-            box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.15);
-        }
-
-        .filter-btn:hover {
-            background-color: #0056b3;
-            color: white;
-            box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        .order-item {
-            margin-bottom: 10px;
-        }
-
-        .order-item span:nth-child(2) {
-            color: #28a745;
-            font-weight: bold;
-        }
-
-        .quantity-input {
-            margin-left: 10px;
-        }
-
-        #notification {
-            display: none;
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-            z-index: 9999;
-            background-color: #28a745;
-            color: white;
-            padding: 15px;
-            border-radius: 5px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        #notification strong {
-            margin-right: 10px;
-        }
-
-    /* Các kiểu chung */
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
-    html,
-    body {
-        height: 100%;
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f4;
         display: flex;
-        flex-direction: column;
+        gap: 10px;
     }
 
-    /* Cải tiến cho các ô table */
-    .table-box:hover {
-        transform: translateY(-5px);
-        /* Nổi lên khi hover */
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        /* Bóng đổ mạnh hơn khi hover */
+    .btn {
+        padding: 10px 20px;
+        border: none;
+        font-size: 16px;
+        border-radius: 50px;
         cursor: pointer;
-        /* Con trỏ tay khi hover */
-    }
-
-    .table-box.active {
-        background-color: #fff3cd;
-        /* Màu nền khác cho ô hoạt động */
-        border-color: #ffeeba;
-        /* Đường viền sáng hơn cho ô hoạt động */
-    }
-
-    /* Header Section */
-    .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background-color: #00aaff;
-        padding: 10px;
-        color: white;
-    }
-
-    .logo-section,
-    .main-actions,
-    .cart-section {
         display: flex;
         align-items: center;
+        justify-content: center;
     }
 
-    .menu-button {
-        background: none;
-        border: none;
-        margin-right: 10px;
-        cursor: pointer;
+    .btn i {
+        margin-right: 5px;
+    }
+
+    .btn-secondary {
+        background-color: #f0f0f0;
+        color: #888888;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
         color: white;
     }
 
-    .logo {
-        font-size: 24px;
-        font-weight: bold;
-    }
-    .btn-filter {
-        background: linear-gradient(135deg, #5a9bd5, #007acc);
+    .btn-info {
+        background-color: #17a2b8;
         color: white;
-        margin-right: 10px;
-        padding: 12px 24px;
-        border-radius: 30px;
-        font-size: 1.1em;
-        border: none;
-        cursor: pointer;
-        transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        font-weight: 500;
     }
 
-    .btn-filter:hover {
-        background: linear-gradient(135deg, #007acc, #005b99);
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-        transform: scale(1.05);
+    .btn-warning {
+        background-color: #ffc107;
+        color: white;
     }
 
-    .btn-filter.active {
-        background: linear-gradient(135deg, #28a745, #218838);
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        transform: scale(1.05);
-        font-weight: bold;
+    .btn-secondary:hover,
+    .btn-primary:hover,
+    .btn-info:hover,
+    .btn-warning:hover {
+        opacity: 0.9;
     }
 
-    .btn-filter:focus {
-        outline: none;
-        box-shadow: 0 0 10px rgba(40, 167, 69, 0.7);
-    }
-
-    .cart-notification {
+    .modal {
+        display: flex;
+        justify-content: center;
+        align-items: center;
         position: fixed;
-        bottom: 20px;
-        right: 20px;
-        background: linear-gradient(45deg, #4caf50, #43a047);
-        color: white;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+        background: white;
         padding: 20px;
-        border-radius: 8px;
-        opacity: 0;
-        visibility: hidden;
-        transition: opacity 0.4s ease, visibility 0.4s ease;
-        z-index: 1000;
-        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
-        font-family: 'Arial', sans-serif;
-        max-width: 300px;
-    }
-
-    .cart-notification.show {
-        opacity: 1;
-        visibility: visible;
-    }
-
-    .cart-notification .notification-content {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .cart-notification .notification-content p {
-        margin: 0;
-        font-size: 14px;
-        line-height: 1.5;
-    }
-
-    .cart-notification .close-btn {
-        position: absolute;
-        top: 8px;
-        right: 8px;
-        color: white;
-        cursor: pointer;
-        font-size: 18px;
-    }
-
-    .modal-header {
-        background-color: #007acc;
-        color: white;
-    }
-
-    .modal-body {
-        background-color: #f9f9f9;
         border-radius: 10px;
-        transition: transform 0.3s ease-in-out;
+        width: 400px;
     }
 
-    .modal-body:hover {
-        transform: scale(1.02);
-    }
-
-    .modal-footer {
+    .modal-actions {
         display: flex;
-        justify-content: space-between;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .dropdown {
+        position: absolute;
+        right: 10px;
+        top: 60px;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 15px;
+        width: 300px;
+    }
+
+    .dropdown h4 {
+        margin-bottom: 10px;
+    }
+
+    #notificationList {
+        list-style: none;
+        padding: 0;
+    }
+
+    #notificationList li {
+        padding: 5px 0;
+        border-bottom: 1px solid #ddd;
+    }
+
+
+    .table-card {
+        position: relative;
+        width: 150px;
+        height: 150px;
+        margin-left: 10px;
+        background-color: #ffffff;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        box-sizing: border-box;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        transition: border-color 0.3s ease;
+    }
+
+    .table-number {
+        font-size: 1.0rem;
+        font-weight: bold;
+        color: #333;
+        position: absolute;
+        top: 10px;
+        left: 10px;
+    }
+
+    .border-decoration {
+        position: absolute;
+        background-color: #ced4da;
+    }
+
+    .border-decoration.left {
+        width: 3px;
+        height: 120px;
+        left: -5px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .border-decoration.right {
+        width: 3px;
+        height: 120px;
+        right: -5px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .border-decoration.top {
+        height: 3px;
+        width: 120px;
+        top: -5px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .border-decoration.bottom {
+        height: 3px;
+        width: 120px;
+        bottom: -5px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .table-card.available .border-decoration.left {
+        background-color: rgb(255, 255, 255);
+        /* Trống */
+    }
+
+    .table-card.reserved .border-decoration.left {
+        background-color: rgb(212, 210, 210);
+        /* Đã đặt */
+    }
+
+    .table-card.occupied .border-decoration.left {
+        background-color:rgb(212, 210, 210);
+        /* Đang sử dụng */
+    }
+</style>
+
+
+<style>
+    .order-content-container {
+        max-height: 500px;
+        overflow-y: auto;
+    }
+
+    .btn-success {
+        background-color: #28a745;
+        color: white;
+        padding: 10px 20px;
+        text-decoration: none;
+        border-radius: 5px;
+    }
+
+
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
         align-items: center;
     }
 
-    .product-item:hover {
-        transform: scale(1.05);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    .modal-content {
+        background: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        width: 500px;
+        max-width: 90%;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
 
-    .cart-item-name {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 150px;
+    .action-buttons .btn {
+        margin-right: 10px;
     }
 
-    .btn-sm {
-        padding: 0.25rem 0.5rem;
-    }
-
-    .user-button {
-        background-color: #007acc;
-        border: none;
-        padding: 8px 15px;
+    .badge.bg-warning {
+        background-color: orange;
         color: white;
+        padding: 5px 10px;
         border-radius: 5px;
-        cursor: pointer;
     }
 
-    .product-search-bar {
-        padding: 8px;
-        width: 250px;
+    h4 {
+        padding-bottom: 10px
+    }
+
+    .reservation-details {
+        max-height: 400px;
+        /* Chiều cao tối đa */
+        overflow-y: auto;
+        /* Kích hoạt thanh cuộn dọc */
+    }
+
+
+
+    .table-card.selected {
+        border-color: #8ef4a5;
+        /* Đổi màu viền khi bàn được chọn */
+        box-shadow: 0 0 15px #3108ff;
+        /* Hiệu ứng đổ bóng */
+        transform: scale(1.05);
+        /* Tăng kích thước nhẹ */
+    }
+</style>
+
+<style>
+    /* Hiệu ứng khi di chuột qua Món ăn */
+    .dish-item .menu-item {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .dish-item:hover .menu-item {
+        transform: scale(1.05);
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    }
+</style>
+
+
+<style>
+    .reservation-details {
+        padding: 10px;
+        max-height: 400px;
+        overflow-y: auto;
+        border: 1px solid #ddd;
+        background-color: #f9f9f9;
         border-radius: 5px;
-        border: none;
+    }
+
+    .order-info {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background-color: #ffffff;
+        margin-bottom: 10px;
+    }
+
+    .order-info p {
+        margin: 5px 0;
+    }
+
+    .action-buttons {
+        margin-top: 10px;
     }
 
     .action-buttons button {
-        margin-left: 10px;
-        background-color: white;
-        border: none;
-        padding: 8px;
-        border-radius: 5px;
-        cursor: pointer;
+        width: 100px;
     }
 
-    .cart-section {
-        display: flex;
-        align-items: center;
-    }
 
-    .cart-info {
-        display: flex;
-        align-items: center;
-        position: relative;
-    }
+        .order-btn i {
+            font-size: 24px;
+            /* Tăng kích thước icon */
+        }
 
-    .cart-icon {
-        width: 25px;
-        height: 25px;
-    }
-
-    .cart-badge {
-        position: absolute;
-        top: -5px;
-        right: -10px;
-        background-color: green;
-        color: white;
-        padding: 2px 5px;
-        border-radius: 50%;
-        font-size: 12px;
-    }
-
-    .customer-search-bar {
-        margin-left: 15px;
-        padding: 8px;
-        border-radius: 5px;
-        border: none;
-        width: 150px;
-    }
-
-    .add-customer-button {
-        background-color: white;
-        border: none;
-        padding: 8px;
-        border-radius: 5px;
-        margin-left: 10px;
-        cursor: pointer;
-    }
-
-    /* Main Content and Table Grid */
-    .main-container {
-        display: flex;
-        justify-content: space-between;
-        padding: 20px;
-        flex-grow: 1;
-        /* Ensures it stretches to take up available space */
-    }
-
-    .tables-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 15px;
-        flex-grow: 1;
-    }
-
-    /* Cải tiến cho các ô table */
-    .table-box {
-        background-color: white;
-        padding: 20px;
-        text-align: center;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        border: 1px solid #ddd;
-        transition: transform 0.2s, box-shadow 0.2s;
-        /* Hiệu ứng chuyển động */
-    }
-
-    .table-box:hover {
-        transform: translateY(-5px);
-        /* Nổi lên khi hover */
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        /* Bóng đổ mạnh hơn khi hover */
-    }
-
-    .table-box.active {
-        background-color: #fff3cd;
-        /* Màu nền khác cho ô hoạt động */
-        border-color: #ffeeba;
-        /* Đường viền sáng hơn cho ô hoạt động */
-    }
-
-    .table-name {
-        font-weight: bold;
-        margin-bottom: 10px;
-        font-size: 20px;
-        /* Tăng cỡ chữ cho tên bàn */
-    }
-
-    .table-info {
-        font-size: 24px;
-        /* Tăng cỡ chữ cho thông tin bàn */
-        background-color: #dcdcdc;
-        padding: 10px;
-        border-radius: 5px;
-        transition: background-color 0.3s;
-        /* Hiệu ứng chuyển màu nền */
-    }
-
-    /* Order Section */
-    .order-section {
-        width: 300px;
-        background-color: white;
-        padding: 20px;
-        border-radius: 5px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-
-    .order-summary {
-        margin-bottom: 20px;
-    }
-
-    .order-actions button {
-        display: block;
-        width: 100%;
-        margin-bottom: 10px;
-        padding: 10px;
-        border-radius: 5px;
-        border: none;
-        cursor: pointer;
-    }
-
-    .dine-in-btn {
-        background-color: orange;
-    }
-
-    .discount-btn {
-        background-color: green;
-    }
-
-    .coupon-btn {
-        background-color: pink;
-    }
-
-    /* Bottom Action Section */
-    .bottom-actions {
-        display: flex;
-        justify-content: space-between;
-        padding: 10px;
-        background-color: #f4f4f4;
-        border-top: 1px solid #ddd;
-    }
-
-    .takeaway-btn {
-        background-color: white;
-        border: 1px solid #ddd;
-        padding: 10px 15px;
-        border-radius: 5px;
-        cursor: pointer;
-        position: relative;
-    }
-
-    .badge {
-        background-color: red;
-        color: white;
-        border-radius: 50%;
-        padding: 3px 7px;
-        font-size: 12px;
-        position: absolute;
-        top: -10px;
-        right: -10px;
-    }
-
-    .table-actions {
-        display: flex;
-        align-items: center;
-    }
-
-    .table-actions label {
-        margin-right: 10px;
-    }
-
-    .table-actions select,
-    .add-table-btn {
-        padding: 8px;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-    }
-
-    .order-buttons {
-        display: flex;
-        align-items: center;
-    }
-
-    .order-buttons button {
-        padding: 10px;
-        margin-left: 10px;
-        border: 1px solid #ddd;
-        background-color: white;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-
-    .final-amount-btn {
-        background-color: #00aaff;
-        color: white;
-        padding: 10px 20px;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-
-    /* Footer */
-    footer.footer {
-        text-align: left;
-        width: 100%;
-        padding: 10px 20px;
-        background-color: #f4f4f4;
-        border-top: 1px solid #ddd;
-        position: relative;
-        bottom: 0;
-        flex-shrink: 0;
-    }
-
-    /* Fix footer position at bottom */
-    html,
-    body {
-        min-height: 100vh;
-    }
-
-    body {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .main-container {
-        flex-grow: 1;
-    }
-
-    /* Dropdown Menu */
-    #menuDropdown ul {
-        padding: 0;
-        margin: 0;
-    }
-
-    #menuDropdown li {
-        list-style: none;
-        margin-bottom: 10px;
-    }
-
-    #menuDropdown a {
-        text-decoration: none;
-        color: black;
-        display: flex;
-        align-items: center;
-        padding: 8px;
-        border-radius: 5px;
-        transition: background-color 0.2s ease-in-out;
-    }
-
-    #menuDropdown a:hover {
-        background-color: #f4f4f4;
-    }
-
-    /* Enhanced Animated Icons */
-    .animated-icon {
-        transition: transform 0.3s, color 0.3s;
-    }
-
-    .animated-icon:hover {
-        transform: scale(1.2);
-        color: #00c6ff;
-    }
-
-    /* Quick Checkout and Logout Button Hover Effect */
-    .quick-checkout-button:hover,
-    .logout-button:hover {
-        transform: translateY(-2px);
-    }
-
-    /* Header Logo and Button Styling */
-    .logo {
-        font-family: 'Poppins', sans-serif;
-    }
-
-    .product-search-bar,
-    .customer-search-bar {
-        transition: box-shadow 0.3s;
-    }
-
-    .product-search-bar:focus,
-    .customer-search-bar:focus {
-        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
-    }
-
-    /* Dropdown Menu Styles */
-    #menuDropdown {
-        transform: translateY(-20px);
-        opacity: 0;
-        transition: all 0.4s ease;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        border-radius: 10px;
-    }
-
-    #menuDropdown ul {
-        padding: 0;
-        margin: 0;
-    }
-
-    #menuDropdown li {
-        list-style: none;
-    }
-
-    #menuDropdown a {
-        text-decoration: none;
-        color: black;
-        display: flex;
-        align-items: center;
-        padding: 10px;
-        border-radius: 5px;
-        transition: background-color 0.3s ease;
-    }
-
-    #menuDropdown a:hover {
-        background-color: #f0f0f0;
-    }
-
-    /* Animation for hover on icons */
-    .dropdown-item i {
-        margin-right: 10px;
-        transition: transform 0.3s;
-    }
-
-    .dropdown-item:hover i {
-        transform: scale(1.2);
-        color: #007acc;
-    }
-
-    /* Button Hover Effects */
-    .quick-checkout-button:hover,
-    .logout-button:hover {
-        transform: translateY(-2px);
-    }
-
-    .animated-icon:hover {
-        transform: scale(1.2);
-        transition: transform 0.3s ease;
-    }
->>>>>>> 0762daeda6a591d3e459ca383c5d5eb38b0a19c6
 
 </style>
+
+
+<style>
+    /* Styles for the table and menu sections */
+    .table-section, .menu-section {
+        transition: opacity 0.3s ease-in-out;
+    }
+
+    .active {
+        font-weight: bold;
+        color: #ffffff;
+    }
+
+    .border-decoration {
+        position: absolute;
+        border: 2px solid transparent;
+        transition: border-color 0.3s ease;
+    }
+
+    .table-card:hover .border-decoration {
+        border-color: #007bff;
+    }
+
+    .table-card {
+        position: relative;
+        margin: 10px;
+        padding: 20px;
+        border: 2px solid #007bff;
+        border-radius: 10px;
+        text-align: center;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+    }
+
+    .table-card:hover {
+        transform: scale(1.05);
+    }
+
+    .dish-item {
+        margin-bottom: 15px;
+    }
+
+    .order-item {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .btn-delete {
+        margin-left: 10px;
+    }
+
+    .empty-order {
+        text-align: center;
+        margin-top: 20px;
+        color: #888;
+    }
+
+    .total {
+        font-weight: bold;
+        margin-top: 10px;
+    }
+
+    .table-number {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+</style>
+
+
+<style>
+
+
+    .table-card.reserved {
+
+
+        background-color: #acd8ef;
+    }
+
+    .table-card.occupied {
+
+
+        background-color: #f8c1a5;
+    }
+
+    .table-card:hover {
+
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+
+
+    </style>
+
+
+
+
+
+

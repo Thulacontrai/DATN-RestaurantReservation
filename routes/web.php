@@ -110,7 +110,6 @@ route::get("/contact", function () {
 })->name("contact.client");
 route::get("/blog-single", function () {
     return view("client.blog-single");
-
 })->name("blog-single.client");
 route::get(
     "reservationSuccessfully",
@@ -131,9 +130,24 @@ Route::get('/pos', [PosController::class, 'index']);
 Route::post('/create-order', [PosController::class, 'createOrder']);
 
 Route::post('/add-dish-to-order', [PosController::class, 'addDishToOrder']);
-Route::delete('/delete-dish-from-order/{orderId}/{dishId}', [PosController::class, 'deleteDishFromOrder']);
+
 Route::post('/load-more-dishes', [PosController::class, 'loadMoreDishes']);
 Route::get('/api/tables/{tableId}/order', [TableController::class, 'getOrderForReservedTable']);
+Route::get('/reservations', [ReservationController::class, 'showReservations'])
+    ->name('reservations.upcoming');
+Route::get('/reservations/late', [PosController::class, 'getLateReservations'])
+    ->name('reservations.late');
+Route::post('/reservations', [PosController::class, 'store'])->name('reservations.store');
+Route::delete('/order/{order_id}/item/{item_id}', [PosController::class, 'deleteOrderItem']);;
+
+
+
+
+
+
+
+
+
 
 
 Route::post('/Ppayment/{table_number}', [PosController::class, 'Ppayment'])->name('Ppayment');
@@ -180,8 +194,8 @@ Route::get('admin', [AdminController::class, 'index']);
 Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::get('/', function () {
-    return view('auth.login');
-});
+        return view('auth.login');
+    });
 
     Route::resource('table', TableController::class);
     // Trash - Xoá mềm - Khôi Phục
@@ -190,10 +204,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::delete('table/{id}/force-delete', [TableController::class, 'forceDelete'])->name('table.forceDelete');
 
     /// xếp bàn cho khách
-    Route::get('reservation/{reservationId}/assign-tables', [ReservationController::class,'assignTables'])->name('reservation.assignTables');
-    Route::get('reservation/assign-table', [ReservationController::class,'assignTable'])->name('assignTable');
-    Route::post('reservation/submit-table', [ReservationController::class,'submitTable'])->name('submit.tables');
-    Route::post('reservation/submit-move-table', [ReservationController::class,'submitMoveTable'])->name('submit.Movetables');
+    Route::get('reservation/{reservationId}/assign-tables', [ReservationController::class, 'assignTables'])->name('reservation.assignTables');
+    Route::get('reservation/assign-table', [ReservationController::class, 'assignTable'])->name('assignTable');
+    Route::post('reservation/submit-table', [ReservationController::class, 'submitTable'])->name('submit.tables');
+    Route::post('reservation/submit-move-table', [ReservationController::class, 'submitMoveTable'])->name('submit.Movetables');
 
     /// xếp bàn cho khách
     Route::get('reservation/{reservationId}/assign-tables', [ReservationController::class, 'assignTables'])->name('reservation.assignTables');
@@ -272,8 +286,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('ingredient', IngredientController::class);
     Route::resource('dashboard', DashboardController::class);
     Route::resource('accountSetting', SettingController::class);
-      // Lịch
-      Route::resource('calendar', CalendarController::class);
+    // Lịch
+    Route::resource('calendar', CalendarController::class);
 
     //permission route
     Route::get('/admin/permission', [PermissionController::class, 'index'])->name('permissions.index');
@@ -321,7 +335,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
 });
 
 
@@ -331,6 +344,4 @@ Route::middleware('auth')->group(function () {
 // });
 
 
-require __DIR__.'/auth.php';
-
-
+require __DIR__ . '/auth.php';
