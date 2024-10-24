@@ -7,15 +7,16 @@ use App\Models\Dishes;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Reservation;
-use App\Models\ReservationTable;
 use App\Models\Table;
+use Carbon\Carbon;
+use App\Models\ReservationTable;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class PosController extends Controller
 {
-
 
     // public function __construct()
     // {
@@ -28,22 +29,81 @@ class PosController extends Controller
     // }
 
     // Trang chính của POS, hiển thị bàn và món ăn
-
- 
-
     public function index()
     {
-        $tables = Table::all();
-        $availableTablesCount = Table::where('status', 'available')->count();
-        $reservedTablesCount = Table::where('status', 'reserved')->count();
-        $occupiedTablesCount = Table::where('status', 'occupied')->count();
-        $totalTablesCount = Table::count();
-        
-        $dishes = Dishes::query()->paginate(8);
+        // Lấy thời gian hiện tại và các mốc thời gian cần thiết
+        $now = now();
+        $nextHalfHour = $now->copy()->addMinutes(30);
+        $fifteenMinutesAgo = $now->copy()->subMinutes(15);
 
-        // Trả về view cùng với dữ liệu bàn và món ăn
-        return view('pos.index', compact('tables', 'dishes', 'availableTablesCount', 'reservedTablesCount', 'occupiedTablesCount', 'totalTablesCount'));
+        // Lấy danh sách các bàn
+        $tables = Table::withCount(['orders' => function ($query) {
+            $query->whereIn('status', ['pending', 'in-progress']);
+        }])->get();
+
+        // Lấy danh sách món ăn
+        $dishes = Dishes::all();
+        $order = Order::latest()->first();
+
+
+
+        // Lấy các đơn đặt bàn sắp đến trong 30 phút tới
+        $upcomingReservations = Reservation::where('reservation_date', '=', today())
+            ->where('reservation_time', '>=', $now->toTimeString())
+            ->where('reservation_time', '<=', $nextHalfHour->toTimeString())
+            ->get();
+
+        // Lấy các đơn đặt bàn đã quá giờ nhưng vẫn trong khoảng 15 phút trước (chờ khách)
+        $lateReservations = Reservation::where('reservation_date', '=', today())
+            ->where('reservation_time', '<', $now->toTimeString())
+            ->where('reservation_time', '>=', $fifteenMinutesAgo->toTimeString())
+            ->where('status', 'Pending')
+            ->get();
+
+        // Lấy danh sách các bàn trống (available)
+        $availableTables = Table::where('status', 'available')->get();
+
+        // Truyền dữ liệu tới view
+        return view('pos.index', [
+            'tables' => $tables,
+            'order' => $order,  // Truyền biến $order vào view
+            'dishes' => $dishes,
+            'upcomingReservations' => $upcomingReservations,
+            'lateReservations' => $lateReservations,
+            'availableTables' => $availableTables,  // Truyền danh sách bàn trống vào view
+            'availableTablesCount' => $tables->where('status', 'available')->count(),
+            'reservedTablesCount' => $tables->where('status', 'reserved')->count(),
+            'occupiedTablesCount' => $tables->where('status', 'occupied')->count(),
+            'totalTablesCount' => $tables->count(),
+        ]);
     }
+
+    public function showOrder($id)
+    {
+        $order = Order::with('table')->find($id); // Lấy đơn hàng cùng thông tin bàn
+        return view('your-view-file', compact('order')); // Truyền dữ liệu $order sang view
+    }
+
+
+    // Phương thức upcomingReservations()
+    public function upcomingReservations()
+    {
+        // Lấy thời gian hiện tại và thời gian 30 phút sau
+        $now = now();
+        $nextHalfHour = now()->addMinutes(30);
+
+        // Lấy các đặt bàn trong khoảng thời gian từ hiện tại đến 30 phút sau
+        $upcomingReservations = Reservation::whereBetween(DB::raw("CONCAT(reservation_date, ' ', reservation_time)"), [$now, $nextHalfHour])
+            ->with('table') // Nếu bạn cần thông tin bàn, có thể kết hợp với bảng tables
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'upcomingReservations' => $upcomingReservations,
+        ]);
+    }
+
+
 
     // Tạo đơn hàng
     public function createOrder(Request $request)
@@ -53,30 +113,25 @@ class PosController extends Controller
         ]);
 
         try {
-            // Tìm bàn
             $table = Table::findOrFail($request->table_id);
 
             // Kiểm tra trạng thái của bàn
-            if ($table->status == 'occupied' || $table->status == 'reserved') {
+            if ($table->status === 'occupied' || $table->status === 'reserved') {
                 return response()->json([
                     'success' => false,
                     'message' => 'Bàn này đang sử dụng hoặc đã được đặt trước. Không thể tạo thêm đơn hàng.',
-                ], 400); // 400: Bad Request
+                ], 400);
             }
 
-            // Kiểm tra xem bàn đã có đơn hàng chưa (trạng thái pending hoặc in-progress)
-            $existingOrder = Order::where('table_id', $table->id)
-                ->whereIn('status', ['pending', 'in-progress'])
-                ->first();
-
-            if ($existingOrder) {
+            // Kiểm tra xem bàn đã có đơn hàng chưa
+            if (Order::where('table_id', $table->id)->whereIn('status', ['pending', 'in-progress'])->exists()) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Bàn này đã có đơn hàng đang hoạt động. Không thể tạo thêm đơn hàng mới.',
-                ], 400); // 400: Bad Request
+                ], 400);
             }
 
-            // Tạo đơn hàng mới nếu chưa có đơn nào và bàn đang trống
+            // Tạo đơn hàng mới
             $order = Order::create([
                 'table_id' => $table->id,
                 'status' => 'pending',
@@ -86,14 +141,13 @@ class PosController extends Controller
             ]);
 
             // Cập nhật trạng thái của bàn thành "reserved"
-            $table->status = 'reserved';
-            $table->save(); // Lưu lại thay đổi
+            $table->update(['status' => 'reserved']);
 
             return response()->json([
                 'success' => true,
                 'order' => $order,
                 'table_number' => $table->table_number,
-                'table_status' => $table->status // Trả về trạng thái bàn mới
+                'table_status' => $table->status,
             ]);
         } catch (\Exception $e) {
             Log::error('Lỗi khi tạo đơn hàng: ' . $e->getMessage());
@@ -101,72 +155,80 @@ class PosController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Đã xảy ra lỗi khi tạo đơn hàng.',
-            ], 500); // 500: Internal Server Error
-        }
-    }
-
-
-
-    // Thêm món vào order_items
-    public function addDishToOrder(Request $request)
-    {
-        Log::info('Dữ liệu nhận được từ frontend: ', $request->all());
-
-        $request->validate([
-            'order_id' => 'required|exists:orders,id',
-            'dish_id' => 'required|exists:dishes,id',
-            'quantity' => 'required|integer|min:1',
-        ]);
-
-        try {
-            $order = Order::findOrFail($request->order_id);
-            $dish = Dishes::findOrFail($request->dish_id);
-
-            // Kiểm tra món đã có trong đơn hàng hay chưa
-            $existingOrderItem = OrderItem::where('order_id', $order->id)
-                ->where('item_id', $dish->id)
-                ->where('item_type', 'dish')
-                ->first();
-
-            if ($existingOrderItem) {
-                Log::info('Cập nhật số lượng món đã tồn tại trong đơn hàng.');
-                $existingOrderItem->quantity += $request->quantity;
-                $existingOrderItem->total_price = $existingOrderItem->quantity * $existingOrderItem->price;
-                $existingOrderItem->save();
-            } else {
-                Log::info('Thêm món mới vào đơn hàng.');
-                $orderItem = OrderItem::create([
-                    'order_id' => $order->id,
-                    'item_id' => $dish->id,
-                    'item_type' => 'dish',
-                    'quantity' => $request->quantity,
-                    'price' => $dish->price,
-                    'total_price' => $dish->price * $request->quantity,
-                    'status' => 'preparing',
-                ]);
-            }
-
-            // Cập nhật tổng số tiền của đơn hàng
-            $order->total_amount += ($dish->price * $request->quantity);
-            $order->final_amount = $order->total_amount;
-            $order->save();
-
-            Log::info("Cập nhật tổng tiền của đơn hàng: {$order->total_amount}");
-
-            return response()->json([
-                'success' => true,
-                'orderItem' => $existingOrderItem ?? $orderItem,
-                'totalAmount' => $order->total_amount,
-            ]);
-        } catch (\Exception $e) {
-            Log::error('Lỗi khi thêm món vào đơn hàng: ' . $e->getMessage());
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Đã xảy ra lỗi khi thêm món vào đơn hàng.',
             ], 500);
         }
     }
+
+    // Thêm món vào order_items
+    public function addDishToOrder(Request $request)
+{
+    $request->validate([
+        'order_id' => 'required|exists:orders,id',
+        'dish_id' => 'required|exists:dishes,id',
+        'quantity' => 'required|integer|min:1',
+    ]);
+
+    try {
+        // Lấy đơn hàng và món ăn từ cơ sở dữ liệu
+        $order = Order::findOrFail($request->order_id);
+        $dish = Dishes::findOrFail($request->dish_id);
+
+        // Kiểm tra món đã có trong đơn hàng chưa
+        $existingOrderItem = OrderItem::where('order_id', $order->id)
+            ->where('item_id', $dish->id)
+            ->where('item_type', 'dish')
+            ->first();
+
+        // Cập nhật hoặc thêm món vào đơn hàng
+        if ($existingOrderItem) {
+            // Nếu món đã tồn tại, cập nhật số lượng và tổng giá
+            $existingOrderItem->quantity += $request->quantity; // Cộng dồn số lượng
+            $existingOrderItem->total_price = $existingOrderItem->quantity * $existingOrderItem->price; // Cập nhật tổng giá
+            $existingOrderItem->save();  // Lưu cập nhật vào cơ sở dữ liệu
+        } else {
+            // Nếu món chưa có trong đơn hàng, thêm món mới vào
+            $existingOrderItem = OrderItem::create([
+                'order_id' => $order->id,
+                'item_id' => $dish->id,
+                'item_type' => 'dish',
+                'quantity' => $request->quantity, // Lưu số lượng ban đầu
+                'price' => $dish->price,
+                'total_price' => $dish->price * $request->quantity, // Tính tổng giá
+                'status' => 'preparing',
+            ]);
+        }
+
+        // Cập nhật tổng số tiền của đơn hàng
+        $order->total_amount += ($dish->price * $request->quantity); // Cập nhật tổng số tiền
+        $order->final_amount = $order->total_amount; // Cập nhật tổng tiền cuối cùng
+        $order->save();  // Lưu đơn hàng vào cơ sở dữ liệu
+
+        return response()->json([
+            'success' => true,
+            'orderItem' => [
+                'dishName' => $dish->name, // Thêm tên món ăn vào phản hồi
+                'quantity' => $existingOrderItem->quantity,
+                'total_price' => $existingOrderItem->total_price
+            ],  // Trả về món vừa được thêm/cập nhật
+            'totalAmount' => $order->total_amount,  // Cập nhật tổng tiền
+        ]);
+    } catch (\Exception $e) {
+        // Ghi log lỗi nếu xảy ra vấn đề
+        Log::error('Lỗi khi thêm món vào đơn hàng: ' . $e->getMessage());
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Đã xảy ra lỗi khi thêm món vào đơn hàng.',
+        ], 500);
+    }
+}
+
+
+
+
+
+
+
     public function Ppayment($orderId, Request $request)
     {
         $order = Order::find($orderId);
@@ -194,44 +256,36 @@ class PosController extends Controller
     public function deleteDishFromOrder($orderId, $dishId)
     {
         try {
-            $orderItem = OrderItem::where('order_id', $orderId)
-                ->where('item_id', $dishId)
-                ->where('item_type', 'dish')
-                ->first();
+            // Tìm đơn hàng và món ăn trong đơn hàng
+            $order = Order::findOrFail($order_id);
+            $orderItem = OrderItem::where('order_id', $order_id)->where('id', $item_id)->firstOrFail();
 
-            if (!$orderItem) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Món ăn không tồn tại trong đơn hàng.',
-                ], 404);
-            }
-
-            // Lưu giá trị trước khi xóa để cập nhật tổng tiền
-            $totalPriceToRemove = $orderItem->total_price;
-
-            // Xóa món ăn khỏi đơn hàng
-            $orderItem->delete();
-
-            // Cập nhật tổng số tiền của đơn hàng dựa trên giá trị món vừa bị xóa
-            $order = Order::findOrFail($orderId);
-            $order->total_amount -= $totalPriceToRemove;
-            $order->final_amount = $order->total_amount;
+            // Trừ số tiền của món ăn bị xóa khỏi tổng tiền đơn hàng
+            $order->total_amount -= $orderItem->total_price;
+            $order->final_amount = $order->total_amount; // Cập nhật lại tổng tiền đơn hàng
             $order->save();
+
+            // Xóa món ăn vĩnh viễn (forceDelete) khỏi cơ sở dữ liệu
+            $orderItem->forceDelete();
 
             return response()->json([
                 'success' => true,
-                'message' => 'Đã xóa món khỏi đơn hàng.',
-                'totalAmount' => $order->total_amount,
+                'message' => 'Món ăn đã được xóa khỏi đơn hàng.',
+                'total_amount' => $order->total_amount, // Trả lại tổng tiền sau khi xóa
             ]);
         } catch (\Exception $e) {
-            Log::error('Lỗi khi xóa món khỏi đơn hàng: ' . $e->getMessage());
-
+            // Ghi log lỗi và trả về phản hồi lỗi
+            Log::error('Lỗi khi xóa món ăn khỏi đơn hàng: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Đã xảy ra lỗi khi xóa món khỏi đơn hàng.',
+                'message' => 'Đã xảy ra lỗi khi xóa món ăn.',
             ], 500);
         }
     }
+
+
+
+
 
     // Nạp thêm món ăn (phân trang món ăn qua AJAX)
     public function loadMoreDishes(Request $request)
@@ -244,10 +298,29 @@ class PosController extends Controller
 
             return response()->json(['dishes' => $view]);
         }
+
+        return response()->json(['success' => false, 'message' => 'Request is not AJAX.'], 400);
     }
 
-    // Trong PosController.php
+    // Lọc món ăn
+    public function filterDishes(Request $request)
+    {
+        $query = Dishes::query();
 
+        if ($request->has('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+
+        if ($request->has('price_min') && $request->has('price_max')) {
+            $query->whereBetween('price', [$request->price_min, $request->price_max]);
+        }
+
+        $dishes = $query->paginate(8);
+
+        return response()->json(['dishes' => $dishes]);
+    }
+
+    // Hiển thị thông tin đơn hàng cho bàn đã đặt
     public function showOrderForReservedTable(Request $request)
     {
         $request->validate([
@@ -255,104 +328,178 @@ class PosController extends Controller
         ]);
 
         try {
-            // Tìm bàn
             $table = Table::findOrFail($request->table_id);
 
             // Kiểm tra nếu trạng thái của bàn là "reserved"
-            if ($table->status == 'reserved') {
-                // Tìm đơn hàng đã tạo cho bàn
-                $order = Order::where('table_id', $table->id)
-                    ->whereIn('status', ['pending', 'in-progress', 'reserved']) // Các trạng thái hợp lệ cho đơn hàng
-                    ->first();
-
-                if ($order) {
-                    // Lấy danh sách các món ăn đã được thêm vào đơn hàng
-                    $orderItems = OrderItem::where('order_id', $order->id)->get();
-
-                    // Tính tổng tiền của đơn hàng
-                    $totalAmount = $orderItems->sum('total_price');
-
-                    // Trả về phản hồi với thông tin đơn hàng và món ăn
-                    return response()->json([
-                        'success' => true,
-                        'order' => $order,
-                        'orderItems' => $orderItems,
-                        'totalAmount' => $totalAmount,
-                    ]);
-                } else {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Không tìm thấy đơn hàng cho bàn này.',
-                    ], 404);
-                }
-            } else {
+            if ($table->status !== 'reserved') {
                 return response()->json([
                     'success' => false,
                     'message' => 'Bàn này không ở trạng thái đã đặt.',
                 ], 400);
             }
+
+            // Tìm đơn hàng đã tạo cho bàn
+            $order = Order::where('table_id', $table->id)
+                ->whereIn('status', ['pending', 'in-progress', 'reserved'])
+                ->first();
+
+            if ($order) {
+                $orderItems = OrderItem::where('order_id', $order->id)->get();
+                $totalAmount = $orderItems->sum('total_price');
+
+                return response()->json([
+                    'success' => true,
+                    'order' => $order,
+                    'orderItems' => $orderItems,
+                    'totalAmount' => $totalAmount,
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Không tìm thấy đơn hàng cho bàn này.',
+                ], 404);
+            }
         } catch (\Exception $e) {
-            Log::error('Lỗi khi hiển thị đơn hàng cho bàn đã đặt: ' . $e->getMessage());
+            Log::error('Lỗi khi hiển thị đơn hàng: ' . $e->getMessage());
 
             return response()->json([
                 'success' => false,
-                'message' => 'Đã xảy ra lỗi khi hiển thị đơn hàng cho bàn đã đặt.',
+                'message' => 'Đã xảy ra lỗi khi hiển thị đơn hàng.',
             ], 500);
         }
     }
 
-
-
-    public function getOrderForReservedTable(Request $request)
+    // Xác nhận đơn hàng
+    public function confirmOrder(Request $request)
     {
         $request->validate([
-            'table_id' => 'required|exists:tables,id',
+            'order_id' => 'required|exists:orders,id',
         ]);
 
         try {
-            // Tìm bàn theo ID
-            $table = Table::findOrFail($request->table_id);
+            $order = Order::findOrFail($request->order_id);
+            $order->status = 'in-progress';
+            $order->save();
 
-            // Kiểm tra trạng thái của bàn (đã đặt)
-            if ($table->status == 'reserved') {
-                // Tìm đơn hàng của bàn này
-                $order = Order::where('table_id', $table->id)
-                    ->whereIn('status', ['pending', 'reserved', 'in-progress'])
-                    ->first();
-
-                // Nếu tìm thấy đơn hàng
-                if ($order) {
-                    // Lấy danh sách các món ăn trong đơn hàng từ bảng order_items
-                    $orderItems = OrderItem::where('order_id', $order->id)->get();
-
-                    // Trả về dữ liệu đơn hàng và món ăn
-                    return response()->json([
-                        'success' => true,
-                        'order' => $order,
-                        'orderItems' => $orderItems,
-                        'totalAmount' => $orderItems->sum('total_price'),
-                    ]);
-                } else {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Không tìm thấy đơn hàng cho bàn này.',
-                    ], 404);
-                }
-            } else {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Bàn này không ở trạng thái đã đặt.',
-                ], 400);
-            }
+            return response()->json([
+                'success' => true,
+                'message' => 'Đơn hàng đã được xác nhận.',
+            ]);
         } catch (\Exception $e) {
-            Log::error('Lỗi khi lấy thông tin đơn hàng: ' . $e->getMessage());
+            Log::error('Lỗi khi xác nhận đơn hàng: ' . $e->getMessage());
 
             return response()->json([
                 'success' => false,
-                'message' => 'Đã xảy ra lỗi khi lấy thông tin đơn hàng.',
+                'message' => 'Đã xảy ra lỗi khi xác nhận đơn hàng.',
             ], 500);
         }
     }
+
+    // Thanh toán đơn hàng
+    public function payOrder(Request $request)
+    {
+        $request->validate([
+            'order_id' => 'required|exists:orders,id',
+        ]);
+
+        try {
+            $order = Order::findOrFail($request->order_id);
+            $order->status = 'completed';
+            $order->save();
+
+            // Cập nhật trạng thái bàn
+            $table = Table::findOrFail($order->table_id);
+            $table->status = 'available';
+            $table->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Đơn hàng đã được thanh toán thành công.',
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Lỗi khi thanh toán đơn hàng: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Đã xảy ra lỗi khi thanh toán đơn hàng.',
+            ], 500);
+        }
+    }
+
+
+    public function showReservations()
+    {
+        // Đảm bảo múi giờ nhất quán
+        $now = Carbon::now();
+        $next30Minutes = $now->copy()->addMinutes(30);
+
+        // Lọc các đơn đặt bàn trong ngày hôm nay và thời gian cụ thể
+        $upcomingReservations = Reservation::whereDate('reservation_date', today())
+            ->whereBetween('reservation_time', [$now->toTimeString(), $next30Minutes->toTimeString()])
+            ->orderBy('reservation_time', 'asc') // Thêm sắp xếp theo thời gian đặt trước
+            ->get();
+
+        // Trả về view với dữ liệu
+        return view('pos.index', compact('upcomingReservations'));
+    }
+
+
+    public function getLateReservations()
+    {
+        $now = now();
+        $fifteenMinutesAgo = $now->copy()->subMinutes(15);
+
+        // Lấy các đơn đặt bàn đã quá giờ nhưng chưa quá 15 phút
+        $lateReservations = Reservation::where('reservation_date', '=', today())
+            ->where('reservation_time', '<', $now->toTimeString())
+            ->where('reservation_time', '>=', $fifteenMinutesAgo->toTimeString())
+            ->where('status', 'Pending')  // Giả sử đơn này có trạng thái 'Pending'
+            ->orderBy('reservation_time', 'asc')
+            ->get();
+
+        return view('pos.index', [
+            'lateReservations' => $lateReservations,
+            // Các dữ liệu khác cần thiết...
+        ]);
+    }
+
+    public function store(Request $request)
+    {
+        // Validate dữ liệu
+        $request->validate([
+            'user_name' => 'required|string',
+            'user_phone' => 'required|string',
+            'reservation_date' => 'required|date',
+            'reservation_time' => 'required|date_format:H:i',
+            'table_number' => 'required|integer',
+            'guest_count' => 'required|integer|min:1',
+            'status' => 'required|string|in:Pending,Confirmed,Cancelled',
+            // Các trường khác nếu cần
+        ]);
+
+        try {
+            // Tạo đơn đặt bàn mới
+            Reservation::create([
+                'user_name' => $request->user_name,
+                'user_phone' => $request->user_phone,
+                'reservation_date' => $request->reservation_date,
+                'reservation_time' => $request->reservation_time,
+                'table_number' => $request->table_number,
+                'guest_count' => $request->guest_count,
+                'status' => $request->status,
+                'note' => $request->note,
+            ]);
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Lỗi khi thêm đặt bàn.']);
+        }
+    }
+
+  
+
+
+
     // public function Ppayment($tableNumber, Request $request)
     // {
     //     try {
@@ -439,6 +586,7 @@ class PosController extends Controller
     //         return back()->with('error', 'An error occurred during payment. Please try again.');
     //     }
     // }
+
 }
 
 
