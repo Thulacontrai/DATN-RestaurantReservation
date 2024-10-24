@@ -32,6 +32,7 @@ use App\Http\Controllers\Pos\PosController;
 use App\Http\Controllers\ProfileController;
 
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -43,7 +44,12 @@ use App\Http\Controllers\ProfileController;
 |
 */
 
+// import
+Route::get('admin/supplier/import', [SupplierController::class, 'showImportForm'])->name('admin.supplier.import');
+Route::post('admin/supplier/import', [SupplierController::class, 'import'])->name('admin.supplier.import');
 
+Route::get('admin/ingredient/import', [IngredientController::class, 'showImportForm'])->name('admin.ingredient.import');
+Route::post('admin/ingredient/import', [IngredientController::class, 'import'])->name('admin.ingredient.import.post');
 
 Route::get('/', [HomeController::class, 'index'])->name('client.index');
 Route::get('/menu', [MenuController::class, 'index'])->name('menu');

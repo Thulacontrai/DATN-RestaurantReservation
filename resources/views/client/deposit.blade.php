@@ -99,7 +99,9 @@
                     </div>
                     <div class="row d-flex justify-content-between mt-4">
                         <div class="col-3">
+
                             <a href="{{ route('customer.information', ['date' => $showDeposit['reservation_date'], 'time' => $showDeposit['reservation_time'], 'note' => $showDeposit['note'] ?? null, 'guest_count' => $showDeposit['guest_count'], 'user_phone' => $showDeposit['user_phone'], 'user_name' => $showDeposit['user_name']]) }}"
+
                                 class="text-secondary">Quay lại trang đặt bàn</a>
                         </div>
                         <div class="col-2">
@@ -110,6 +112,7 @@
             </form>
         </section>
     </div>
+
     @if (session('err'))
         <script>
             document.addEventListener("DOMContentLoaded", function() {

@@ -1,4 +1,5 @@
 <script>
+
     document.getElementById('booking-form').addEventListener('submit', function (event) {
         const guestCount = parseInt(document.getElementById('guest_count').value);
         if (guestCount > 6) {
@@ -14,7 +15,9 @@
                 confirmButtonText: "Đồng ý"
             }).then((result) => {
                 if (result.isConfirmed) {
+
                     document.getElementById('booking-form').submit(); 
+
                 }
             });
         }
