@@ -9,6 +9,10 @@ use App\Models\OrderItem;
 use App\Models\Reservation;
 use App\Models\Table;
 use Carbon\Carbon;
+
+use App\Models\ReservationTable;
+use App\Models\User;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -16,6 +20,17 @@ use Illuminate\Support\Facades\Log;
 class PosController extends Controller
 {
 
+    // public function __construct()
+    // {
+    //     // Gán middleware cho các phương thức
+    //     $this->middleware('permission:Xem pos', ['only' => ['index']]);
+    //     $this->middleware('permission:Tạo mới pos', ['only' => ['create']]);
+    //     $this->middleware('permission:Sửa pos', ['only' => ['edit']]);
+    //     $this->middleware('permission:Xóa pos', ['only' => ['destroy']]);
+
+    // }
+
+    // Trang chính của POS, hiển thị bàn và món ăn
     public function index()
     {
         // Lấy thời gian hiện tại và các mốc thời gian cần thiết
@@ -70,7 +85,6 @@ class PosController extends Controller
         $order = Order::with('table')->find($id); // Lấy đơn hàng cùng thông tin bàn
         return view('your-view-file', compact('order')); // Truyền dữ liệu $order sang view
     }
-
 
 
     // Phương thức upcomingReservations()
@@ -214,9 +228,32 @@ class PosController extends Controller
 
 
 
+    public function Ppayment($orderId, Request $request)
+    {
+        $order = Order::find($orderId);
+        $reservation = Reservation::find($order->reservation_id);
+        $table = Table::find($order->table_id);
+        $reservation_table = ReservationTable::where('reservation_id', $order->reservation_id)
+            ->where('table_id', $order->table_id)
+            ->first();
+        $order_items = Dishes::whereIn('id', $request->order_item)->get();
+        $item = OrderItem::where('order_id', $orderId)->get();
+        $items = $item->all();
+        $dishIds = $item->pluck('item_id')->toArray();
+        $dishes = Dishes::whereIn('id', $dishIds)->get();
+        $staff_id = User::find($order->staff_id);
+        $customer_id = User::find($order->customer_id);
+        $order_item = $request->order_item;
+        $final = 0;
+        return view(
+            'pos.payment',
+            compact('dishes', 'final', 'items', 'orderId', 'order', 'reservation', 'table', 'reservation_table', 'order_items', 'staff_id', 'customer_id', 'order_item', )
+        );
+    }
 
 
-    public function deleteOrderItem($order_id, $item_id)
+    // Xóa món khỏi order_items
+    public function deleteDishFromOrder($orderId, $dishId)
     {
         try {
             // Tìm đơn hàng và món ăn trong đơn hàng
@@ -357,12 +394,7 @@ class PosController extends Controller
             ], 500);
         }
     }
-    // public function Ppayment($tableNumber, Request $request)
-    // {
-    //     try {
-    //         $selectedItems = $request->input('items', []);
-    //     }
-    // }
+
     // Thanh toán đơn hàng
     public function payOrder(Request $request)
     {
@@ -393,7 +425,6 @@ class PosController extends Controller
             ], 500);
         }
     }
-
 
 
     public function showReservations()
@@ -466,6 +497,95 @@ class PosController extends Controller
     }
 
 
+
+
+
+    // public function Ppayment($tableNumber, Request $request)
+    // {
+    //     try {
+    //         $selectedItems = $request->input('items', []);
+    // public function payment($tableNumber, Request $request)
+    // {
+    //     try {
+    //         $selectedItems = $request->input('items', []);
+    //         if (!is_array($selectedItems) || empty($selectedItems)) {
+    //             return back()->with('error', 'No items selected for payment.');
+    //         }
+    //         return view('pos.payment', compact('tableNumber', 'selectedItems'));
+    //     } catch (\Exception $e) {
+    //         Log::error('Error loading payment page: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+    //         return back()->with('error', 'An error occurred while navigating to the payment page.');
+    //     }
+    // }
+    // public function processPaymentOffline(Request $request)
+    // {
+    //     return $this->handlePayment($request, 'offline');
+    // }
+    // public function processPaymentOnline(Request $request)
+    // {
+    //     return $this->handlePayment($request, 'online');
+    // }
+    // private function handlePayment(Request $request, $paymentType)
+    // {
+    //     try {
+    //         // Validate incoming request data
+    //         $rules = [
+    //             'paymentMethod' => 'required|string|in:cash,card,qr,momo,vnpay',
+    //             'items' => 'required|array',
+    //             'table' => 'required|string',
+    //         ];
+    //         if ($paymentType === 'online') {
+    //             $rules = array_merge($rules, [
+    //                 'cardNumber' => 'required_if:paymentMethod,card|numeric',
+    //                 'expiryDate' => 'required_if:paymentMethod,card|date_format:m/y',
+    //                 'cvc' => 'required_if:paymentMethod,card|digits:3',
+    //             ]);
+    //         }
+    //         $request->validate($rules);
+    //         // Extract necessary data
+    //         $table = $request->input('table');
+    //         $paymentMethod = $request->input('paymentMethod');
+    //         $selectedItems = $request->input('items');
+    //         $totalAmount = collect($selectedItems)->sum(function ($item) {
+    //             return isset($item['quantity'], $item['price']) ? $item['quantity'] * $item['price'] : 0;
+    //         });
+    //         DB::beginTransaction();
+    //         // Create payment record
+    //         $payment = Payment::create([
+    //             'reservation_id' => null,
+    //             'bill_id' => 'BILL_' . time(),
+    //             'transaction_amount' => $totalAmount,
+    //             'refund_amount' => 0,
+    //             'payment_method' => $paymentMethod,
+    //             'status' => 'Pending',
+    //             'transaction_status' => 'pending',
+    //         ]);
+    //         // Process payment status
+    //         switch ($paymentMethod) {
+    //             case 'cash':
+    //             case 'card':
+    //             case 'qr':
+    //             case 'momo':
+    //             case 'vnpay':
+    //                 $payment->status = 'Completed';
+    //                 $payment->transaction_status = 'completed';
+    //                 break;
+    //             default:
+    //                 throw new \Exception("Unsupported payment method: " . $paymentMethod);
+    //         }
+    //         $payment->save();
+    //         DB::commit();
+    //         return view('pos.receipt', [
+    //             'table' => $table,
+    //             'selectedItems' => $selectedItems,
+    //             'totalAmount' => $totalAmount
+    //         ])->with('success', 'Payment successful.');
+    //     } catch (\Exception $e) {
+    //         DB::rollBack();
+    //         Log::error('Error processing payment: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+    //         return back()->with('error', 'An error occurred during payment. Please try again.');
+    //     }
+    // }
 
 
 }

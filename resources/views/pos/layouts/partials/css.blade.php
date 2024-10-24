@@ -42,6 +42,10 @@
 
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 708c0db991482ce36b120cd4f525181585cf7ce7
 
 
 <style>
@@ -252,6 +256,10 @@
     }
 </style>
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 708c0db991482ce36b120cd4f525181585cf7ce7
 
 <style>
     /* Active Tab Styling */
@@ -294,6 +302,7 @@
     .form-control {
         background-color: transparent;
         border: none;
+
         border-bottom: 1px solid #eecece;
         color: #fff;
         width: 250px;
@@ -349,7 +358,10 @@
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 708c0db991482ce36b120cd4f525181585cf7ce7
 
     #orderTabs {
         overflow-x: auto;

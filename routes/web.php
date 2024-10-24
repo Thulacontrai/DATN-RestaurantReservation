@@ -43,7 +43,12 @@ use App\Http\Controllers\ProfileController;
 |
 */
 
+// import
+Route::get('admin/supplier/import', [SupplierController::class, 'showImportForm'])->name('admin.supplier.import');
+Route::post('admin/supplier/import', [SupplierController::class, 'import'])->name('admin.supplier.import');
 
+Route::get('admin/ingredient/import', [IngredientController::class, 'showImportForm'])->name('admin.ingredient.import');
+Route::post('admin/ingredient/import', [IngredientController::class, 'import'])->name('admin.ingredient.import.post');
 
 Route::get('/', [HomeController::class, 'index'])->name('client.index');
 Route::get('/menu', [MenuController::class, 'index'])->name('menu');
@@ -99,6 +104,9 @@ route::post(
     "MOMOCheckout",
     action: [OnlineCheckoutController::class, "onlineCheckout"]
 )->name("MOMOCheckout.client");
+Route::post('/check-order-status', [ReservationController::class, 'checkOrderStatus'])
+    ->name('checkOrderStatus');
+
 
 
 
@@ -136,7 +144,7 @@ Route::get('/customerInformation', [ReservationController::class, 'showInformati
 
 
 
-Route::get('/pos', [PosController::class, 'index']);
+Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
 Route::post('/create-order', [PosController::class, 'createOrder']);
 
 Route::post('/add-dish-to-order', [PosController::class, 'addDishToOrder']);
@@ -161,7 +169,10 @@ Route::delete('/order/{order_id}/item/{item_id}', [PosController::class, 'delete
 
 
 Route::post('/Ppayment/{table_number}', [PosController::class, 'Ppayment'])->name('Ppayment');
-
+route::post(
+    "checkout/{orderID}",
+    action: [ReservationController::class, "checkout"]
+)->name("checkout.admin");
 
 
 
@@ -205,7 +216,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::get('/', function () {
         return view('auth.login');
-    });
+
+    })->name('home');
+
+
 
     Route::resource('table', TableController::class);
     // Trash - Xoá mềm - Khôi Phục
@@ -343,10 +357,27 @@ Route::get('/login-client', [CustomerAuthController::class, 'showLoginForm'])->n
 Route::post('/login-client', [CustomerAuthController::class, 'login'])->name('client.login');
 Route::post('/logout-client', [CustomerAuthController::class, 'logout'])->name('client.logout');
 
+
+Route::post('/check-account', [CustomerAuthController::class, 'checkAccount']);
+Route::post('/login-success', [CustomerAuthController::class, 'loginSuccess'])->name('login.success');
+
+
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+
+});
+
+Route::post('/verify-code', [CustomerAuthController::class, 'verifyCode'])->name('verify.code');
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/member/profile', [MemberController::class, 'showProfile'])->name('member.profile');
+    Route::post('/member/update-booking', [MemberController::class, 'updateBooking'])->name('member.updateBooking');
+
+
 });
 
 
@@ -364,8 +395,8 @@ Route::post('/verify-otp', [ReservationController::class, 'verifyOtp'])->name('v
 Route::post('/api/cancel-booking/{id}', [ReservationController::class, 'cancelReservation'])->name('cancel.booking');
 Route::post('/cancel-booking/{id}', [ReservationController::class, 'cancelReservation'])->name('cancel.booking');
 
-Route::get('/login1',function(){
-        return view('client.login');
+Route::get('/login1', function () {
+    return view('client.login');
 });
 Route::get('/test', function () {
     return view('test');
@@ -409,9 +440,18 @@ Route::post('/api/cancel-booking/{id}', [ReservationController::class, 'cancelRe
 Route::post('/cancel-booking/{id}', [ReservationController::class, 'cancelReservation'])->name('cancel.booking');
 
 
+
+//session otp đặt bàn
+Route::post('/store-otp-session', [ReservationController::class, 'storeOtpSession'])->name('storeOtpSession');
+
+Route::get('/test', function () {
+    return view('test');
+});
+
 Route::get('/test', [ReservationController::class, 'getBanks']);
 Route::get('/print/{orderId}', [ReservationController::class, 'print'])->name('print.page');
+
 require __DIR__ . '/auth.php';
 
 
-require __DIR__ . '/auth.php';
+

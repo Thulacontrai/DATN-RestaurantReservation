@@ -677,6 +677,7 @@
     });
 </script>
 
+
 <script>
     function updateReservation() {
         const newStatus = document.getElementById('reservation-status').value;
@@ -978,3 +979,7 @@
 
     }
 </script>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 708c0db991482ce36b120cd4f525181585cf7ce7
