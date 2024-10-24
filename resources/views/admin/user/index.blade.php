@@ -27,10 +27,10 @@
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <div class="card-title">Danh Sách Người Dùng</div>
-                            <div class="heart-btn d-flex align-items-center" id="heartButton">
+                            {{-- <div class="heart-btn d-flex align-items-center" id="heartButton">
                                 <a href="{{ route('admin.user.trash') }}">
                                     <i class="bi bi-trash2-fill"></i></a>
-                            </div>
+                            </div> --}}
                             <a href="{{ route('admin.user.create') }}"
                                 class="btn btn-sm btn-primary d-flex align-items-center">
                                 <i class="bi bi-plus-circle me-2"></i> Thêm Mới
@@ -85,7 +85,7 @@
                                                         <span class="badge shade-red">Ngừng Hoạt Động</span>
                                                     @endif
                                                 </td>
-                                                
+
                                                 <td>{{ $user->created_at }}</td>
                                                 <td>
                                                     <div class="actions">
@@ -115,7 +115,7 @@
                                 </tbody>
                             </table>
                             </div>
-                          
+
                             <div class="pagination justify-content-center mt-3">
                                 {{ $users->links() }}
                             </div>

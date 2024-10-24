@@ -72,8 +72,10 @@
                                                 {{ $reservation['people'] }} người</p>
                                         </div>
                                         <div class="actions">
-                                            <a href="#" class="btn-outline-warning" >Chi tiết</a> <!-- Nút màu nâu nhạt -->
-                                            <a href="#" class="btn-outline-danger" >Cancel</a> <!-- Nút đỏ -->
+                                            <button class="text-warning" style="background: transparent; border: none;">Chi tiết</button>
+                                            <button id="cancelTableConfirm" class="text-danger" style="background: transparent; border: none;" >Cancel</button>
+                                             <!-- Nút màu nâu nhạt -->
+                                             <!-- Nút đỏ -->
                                             {{-- <a href="#" class="btn btn-secondary">Add to calendar</a> --}}
                                         </div>
                                     </div>
@@ -83,32 +85,73 @@
                             @endif
                         </div>
 
-                        <div id="accountDetailsSection" class="content-section" style="display:none;">
-                            <h3>Thông tin cá nhân</h3>
-                            <div class="profile-info" style="background-color: #2b2b2b; padding: 15px; border-radius: 5px; color: #d3d3d3;"> <!-- Nền tối và chữ xám nhạt -->
-                                <p>
-                                    <strong>Họ tên:</strong> 
-                                    <span id="displayName">{{ $memberData['name'] }}</span>
-                                    <input type="text" id="inputName" value="{{ $memberData['name'] }}" style="display:none;" />
-                                </p>
-                                <p>
-                                    <strong>Số điện thoại:</strong> 
-                                    <span id="displayPhone">{{ $memberData['phone'] }}</span>
-                                    <input type="text" id="inputPhone" value="{{ $memberData['phone'] }}" style="display:none;" />
-                                </p>
-                                <p>
-                                    <strong>Email:</strong> 
-                                    <span id="displayEmail">{{ $memberData['email'] }}</span>
-                                    <input type="email" id="inputEmail" value="{{ $memberData['email'] }}" style="display:none;" />
-                                </p>
-                                <p>
-                                    <strong>Địa chỉ:</strong> 
-                                    <span id="displayLocation">{{ $memberData['location'] }}</span>
-                                    <input type="text" id="inputLocation" value="{{ $memberData['location'] }}" style="display:none;" />
-                                </p>
-                                <p>
-                                    <strong>Thành viên từ:</strong> {{ $memberData['member_since'] }}
-                                </p>
+
+                        <!-- Modal -->
+                        <div id="cancelModal" class="modal fade" tabindex="-1" role="dialog">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Xác Nhận Hủy Đơn</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <i class="fas fa-times"></i> <!-- Biểu tượng "x" -->
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form id="cancelForm">
+                                            <div class="form-group">
+                                                <label for="fullName">Họ Và Tên:</label>
+                                                <input type="text" id="fullName" name="fullName" class="form-control" required>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="bankSelect">Chọn Ngân hàng:</label>
+                                                <select id="bankSelect" name="bankSelect" class="form-control" required>
+                                                    <option value="">Chọn ngân hàng</option>
+                                                    @foreach ($bankList as $bank)
+                                                        <option value="{{ $bank['code'] }}">{{ $bank['name'] }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <label for="accountNumber">Số tài khoản:</label>
+                                                <input type="text" id="accountNumber" name="accountNumber" class="form-control" required>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="email">Email:</label>
+                                                <input type="email" id="email" name="email" class="form-control" required>
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <label for="reason">Lí do hủy:</label>
+                                                <textarea id="reason" name="reason" class="form-control" required></textarea>
+                                            </div>
+                                            <br>
+
+                                            <div class="form-group text-end">
+                                                <button type="submit" class="btn btn-danger">Xác Nhận Hủy</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <form action="{{ route('member.update') }}" method="POST">
+                            @csrf
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">Tên</label>
+                                    <input type="text" class="form-control" id="name" name="name"
+                                        value="{{ $member->name }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="phone" class="form-label">Số điện thoại</label>
+                                    <input type="text" class="form-control" id="phone" name="phone"
+                                        value="{{ $member->phone }}">
+                                </div>
+                               
                             </div>
                             <button onclick="saveChanges()" style="display:none;" id="saveButton" class="btn-line">Lưu thay đổi</button>
                             <button onclick="toggleEdit()" id="editButton" class="btn-line">Chỉnh sửa thông tin</button>

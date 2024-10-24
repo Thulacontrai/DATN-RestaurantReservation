@@ -38,11 +38,98 @@
     .heart-btn.clicked i {
         color: #4267cd;
     }
+
     .bi-trash0::before {
         content: "\f5de";
         padding-top: 16px;
         padding-left: 2px;
     }
 
-    </style>
+    /* Scrollbar styling */
+    .sidebarMenuScroll {
+        max-height: 600px;
+        /* Chiều cao tối đa, có thể điều chỉnh theo ý muốn */
+        overflow-y: auto;
+        /* Kích hoạt thanh cuộn dọc */
+    }
 
+    .sidebarMenuScroll::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .sidebarMenuScroll::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 0, 0, 0.2);
+        border-radius: 4px;
+    }
+</style>
+<style>
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    /* Căn chỉnh các trường input, select và button */
+    form .form-control-sm,
+    form .form-select-sm {
+        height: 38px;
+    }
+
+    form .btn-sm {
+        height: 38px;
+        padding: 8px 16px;
+    }
+
+    .filter-btn i {
+        font-size: 24px;
+        margin-left: 10px;
+    }
+
+    /* Khoảng cách giữa các hàng trong bảng và các ô */
+    .table th,
+    .table td {
+        vertical-align: middle;
+        text-align: center;
+    }
+
+    .table th {
+        font-weight: bold;
+        color: #343a40;
+        background-color: #f8f9fa;
+    }
+
+    .table td .actions i {
+        font-size: 18px;
+        margin-right: 8px;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #f1f3f5;
+    }
+
+    .pagination {
+        animation: fadeIn 0.3s;
+    }
+
+
+.delete-svgIcon  {
+  width: 15px;
+  transition-duration: 0.3s;
+}
+
+.delete-svgIcon path {
+  fill: rgb(241, 21, 21);
+}
+.delete-svgIcon1 path {
+  fill: rgb(21, 104, 228);
+}
+.delete-svgIcon1  {
+  width: 15px;
+  transition-duration: 0.3s;
+}
+
+</style>
