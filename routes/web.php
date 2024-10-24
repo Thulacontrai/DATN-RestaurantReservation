@@ -125,7 +125,6 @@ route::get("/contact", function () {
 })->name("contact.client");
 route::get("/blog-single", function () {
     return view("client.blog-single");
-
 })->name("blog-single.client");
 route::get(
     "reservationSuccessfully",
@@ -150,9 +149,24 @@ Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
 Route::post('/create-order', [PosController::class, 'createOrder']);
 
 Route::post('/add-dish-to-order', [PosController::class, 'addDishToOrder']);
-Route::delete('/delete-dish-from-order/{orderId}/{dishId}', [PosController::class, 'deleteDishFromOrder']);
+
 Route::post('/load-more-dishes', [PosController::class, 'loadMoreDishes']);
 Route::get('/api/tables/{tableId}/order', [TableController::class, 'getOrderForReservedTable']);
+Route::get('/reservations', [ReservationController::class, 'showReservations'])
+    ->name('reservations.upcoming');
+Route::get('/reservations/late', [PosController::class, 'getLateReservations'])
+    ->name('reservations.late');
+Route::post('/reservations', [PosController::class, 'store'])->name('reservations.store');
+Route::delete('/order/{order_id}/item/{item_id}', [PosController::class, 'deleteOrderItem']);;
+
+
+
+
+
+
+
+
+
 
 
 Route::post('/Ppayment/{table_number}', [PosController::class, 'Ppayment'])->name('Ppayment');
@@ -204,6 +218,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/', function () {
         return view('auth.login');
     })->name('home');
+
 
     Route::resource('table', TableController::class);
     // Trash - Xoá mềm - Khôi Phục
@@ -346,12 +361,18 @@ Route::post('/login-success', [CustomerAuthController::class, 'loginSuccess'])->
 
 
 
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
 
 Route::post('/verify-code', [CustomerAuthController::class, 'verifyCode'])->name('verify.code');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/member/profile', [MemberController::class, 'showProfile'])->name('member.profile');
     Route::post('/member/update-booking', [MemberController::class, 'updateBooking'])->name('member.updateBooking');
+
 });
 
 
@@ -426,6 +447,8 @@ Route::get('/test', [ReservationController::class, 'getBanks']);
 Route::get('/print/{orderId}', [ReservationController::class, 'print'])->name('print.page');
 
 require __DIR__ . '/auth.php';
+
+
 
 
 

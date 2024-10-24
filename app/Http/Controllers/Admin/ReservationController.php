@@ -43,7 +43,6 @@ class ReservationController extends Controller
         $this->middleware('permission:Tạo mới đặt bàn', ['only' => ['create']]);
         $this->middleware('permission:Sửa đặt bàn', ['only' => ['edit']]);
         $this->middleware('permission:Xóa đặt bàn', ['only' => ['destroy']]);
-
     }
     protected $model = Reservation::class;
     protected $viewPath = 'admin.reservation';
@@ -333,6 +332,7 @@ class ReservationController extends Controller
             // Lưu thông tin khách hàng tạm thời để sử dụng ở trang cọc
             $customerInformation = $request->all();
             return redirect()->route('deposit.client', compact('customerInformation'));
+
         }
 
     
@@ -442,6 +442,7 @@ class ReservationController extends Controller
             } else {
                 return redirect()->back()->with('err', 'Thanh toán không thành công!');
             }
+
         } else {
             $reservation = $request->all();
             DB::transaction(function () use ($request) {
@@ -527,7 +528,6 @@ class ReservationController extends Controller
 
 
         return view('admin.reservation.table_layout', compact('tables', 'reservationId'));
-
     }
 
     public function assignTable(Request $request)
@@ -553,7 +553,6 @@ class ReservationController extends Controller
 
 
         return view('admin.reservation.table_layout', compact('tables', 'reservationId'));
-
     }
 
     public function submitTable(Request $request)
@@ -624,8 +623,8 @@ class ReservationController extends Controller
             'success' => true,
             'message' => 'Chuyển bàn thành công'
         ]);
-
     }
+
     public function cancelReservation(Request $request, $id)
     {
         try {
@@ -734,4 +733,5 @@ class ReservationController extends Controller
             return response()->json(['success' => false, 'message' => 'Mã OTP không đúng. Vui lòng thử lại.']);
         }
     }
+
 }
