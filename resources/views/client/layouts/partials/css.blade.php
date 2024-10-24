@@ -239,6 +239,16 @@
     outline: none; /* Bỏ viền focus */
 }
 
+.no-background {
+    background-color: transparent;
+    border: none; /* Hoặc border: 0; */
+    color: #007bff; /* Màu chữ mặc định của Bootstrap */
+    cursor: pointer;
+}
+
+.form-control{
+    /* color: black; */
+}
 
 
 /* Responsive Styles */
