@@ -263,33 +263,6 @@
     });
 </script>
 
-<script>
-    document.getElementById('confirmButton').addEventListener('click', function(e) {
-        e.preventDefault();
-
-        const userName = document.getElementById('user_name').value.trim();
-        const userPhone = document.getElementById('user_phone').value.trim();
-        const guestCount = document.getElementById('guest_count').value.trim();
-
-        if (!userName) {
-            alert('Vui lòng nhập tên khách hàng!');
-            return;
-        }
-        if (!userPhone) {
-            alert('Vui lòng nhập số điện thoại!');
-            return;
-        }
-        if (!guestCount) {
-            alert('Vui lòng nhập số người đặt bàn!');
-            return;
-        }
-
-        $('#otpModal').modal('show');
-    });
-</script>
-
-
-
 <script src="client/js/plugins.js"></script>
 <script src="client/js/designesia.js"></script>
 
@@ -331,6 +304,158 @@
             gridwidth: 1140,
             gridheight: 600,
             disableProgressBar: "on"
+        });
+    });
+</script>
+
+
+
+<!-- Lộc -->
+<script type="module">
+    import {
+        initializeApp
+    } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import {
+        getAuth,
+        RecaptchaVerifier,
+        signInWithPhoneNumber
+    } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDRiOTYCQgDDemeF7QCunNMvlhPwmhh9Tc",
+        authDomain: "datn-5b062.firebaseapp.com",
+        projectId: "datn-5b062",
+        storageBucket: "datn-5b062.appspot.com",
+        messagingSenderId: "630325973482",
+        appId: "1:630325973482:web:18498f0416b4123f05e293",
+        measurementId: "G-HRQ5XG4ELN"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    let countdownTimer;
+    let timeRemaining = 90; // Thời gian bắt đầu
+
+    window.onload = function() {
+        renderRecaptcha();
+        document.getElementById('closePopupButton').onclick = closePopup;
+    }
+
+    function renderRecaptcha() {
+        window.recaptchaVerifier = new RecaptchaVerifier('recaptcha-container', {
+            'size': 'normal',
+            'callback': function(response) {},
+            'expired-callback': function() {}
+        }, auth);
+
+        recaptchaVerifier.render().then(function() {
+            console.log('Recaptcha rendered');
+        }).catch(function(error) {
+            console.error("Error rendering recaptcha:", error);
+        });
+    }
+
+    window.sendOTP = function() {
+        let phoneNumber = document.getElementById("user_phone").value.trim();
+
+        if (phoneNumber.startsWith("0")) {
+            phoneNumber = '+84' + phoneNumber.slice(1); // Thay thế '0' bằng '+84'
+        }
+
+        if (!phoneNumber.match(/^\+\d{1,15}$/)) {
+            alert("Số điện thoại không hợp lệ. Vui lòng nhập số điện thoại đúng định dạng.");
+            return;
+        }
+
+        const appVerifier = window.recaptchaVerifier;
+
+        signInWithPhoneNumber(auth, phoneNumber, appVerifier)
+            .then((confirmationResult) => {
+                window.confirmationResult = confirmationResult;
+                document.getElementById("otp-popup").style.display = "flex"; // Hiển thị popup OTP
+                startOTPTimer(); // Bắt đầu bộ đếm thời gian
+            }).catch((error) => {
+                console.error("Error sending OTP:", error);
+                alert("Có lỗi xảy ra khi gửi OTP! Vui lòng thử lại.");
+            });
+    }
+
+    let otpTimer; // Khai báo biến bộ đếm thời gian
+
+    function startOTPTimer() {
+        let timeLeft = 90; // 90 giây
+        document.getElementById("otp-timer").innerText = `Thời gian còn lại: ${timeLeft} giây`;
+
+        otpTimer = setInterval(() => {
+            timeLeft--;
+            document.getElementById("otp-timer").innerText = `Thời gian còn lại: ${timeLeft} giây`;
+
+            if (timeLeft <= 0) {
+                clearInterval(otpTimer);
+                alert("Thời gian nhập OTP đã hết! Vui lòng thử lại.");
+                closePopup(); // Đóng popup
+            }
+        }, 1000);
+    }
+
+
+    window.verifyCode = function() {
+        let otpCode = '';
+        document.querySelectorAll('.otp-input').forEach(input => otpCode += input.value);
+
+        window.confirmationResult.confirm(otpCode).then((result) => {
+            alert('Xác thực OTP thành công! Đang xử lý đặt bàn.');
+
+            // Lưu trạng thái xác thực OTP vào session qua AJAX
+            fetch('{{ route('storeOtpSession') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    otpVerified: true
+                })
+            }).then(() => {
+                document.getElementById("booking-form")
+            .submit(); // Sau khi xác thực thành công, submit form
+            });
+
+        }).catch((error) => {
+            alert("Mã OTP không đúng! Vui lòng thử lại.");
+        });
+    }
+
+    function closePopup() {
+        clearInterval(countdownTimer); // Dừng bộ đếm nếu popup bị đóng
+        document.getElementById("otp-popup").style.display = "none";
+    }
+
+    window.onclick = function(event) {
+        const popup = document.getElementById("otp-popup");
+        if (event.target === popup) {
+            closePopup();
+        }
+    };
+
+    // Bắt sự kiện nhấn nút đóng popup
+    document.getElementById('closePopupButton').onclick = closePopup;
+
+    // Script to handle OTP input with focus control and deletion
+    document.querySelectorAll('.otp-input').forEach((input, index, inputs) => {
+        input.addEventListener('keydown', (event) => {
+            if (event.key === 'Backspace' && input.value === '' && index > 0) {
+                inputs[index - 1].focus();
+            }
+        });
+
+        input.addEventListener('input', (event) => {
+            const value = event.target.value;
+
+            if (value.length === 1 && index < inputs.length - 1) {
+                inputs[index + 1].focus();
+            }
         });
     });
 </script>
