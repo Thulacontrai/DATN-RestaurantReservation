@@ -61,7 +61,9 @@
 
     <div class="wrapper">
         <div class="container-fluid d-flex flex-grow-1 px-0">
-            <!-- Phần bên trái: Bàn và Thực đơn -->
+
+            <!-- Phần bên trái: Phòng bàn và Thực đơn -->
+
             <div class="col-md-8 bg-light-gray p-4">
 
 
@@ -81,11 +83,13 @@
                         <button class="btn btn-outline-danger filter-btn" data-status="occupied">
                             Đang sử dụng ({{ $occupiedTablesCount }})
                         </button>
+
                     </div>
 
                     <div class="table-container d-flex flex-wrap justify-content-start"
                         style="max-height: 600px; overflow-y: auto;">
                         @foreach ($tables as $table)
+
                             <div class="table-card {{ strtolower(trim($table->status)) }}"
                                 data-table-id="{{ $table->id }}">
                                 <span class="table-number">Bàn {{ $table->table_number }}</span>
@@ -106,6 +110,7 @@
                                     <span>Lỗi: Trạng thái không xác định!</span>
                                 @endif
 
+
                             </div>
                         @endforeach
                     </div>
@@ -121,8 +126,10 @@
                         <button class="btn btn-outline-info filter-btn" data-category="combo">Combo</button>
                     </div>
 
+
                     <!-- Phần Danh sách Món ăn -->
                     <div class="row" id="dish-list" style="max-height: 600px; overflow-y: auto;">
+
                         @foreach ($dishes as $dish)
                             <div class="col-md-3 dish-item"
                                 data-category="{{ strtolower(str_replace(' ', '-', $dish->category)) }}"
@@ -138,11 +145,14 @@
                                         <h5 class="card-price text-primary">{{ number_format($dish->price, 0, ',', '.') }}
                                             VND</h5>
                                         <p class="card-title">{{ \Str::limit($dish->name, 20, '...') }}</p>
+
+
                                     </div>
                                 </div>
                             </div>
                         @endforeach
                     </div>
+
                 </div>
             </div>
 
@@ -264,6 +274,7 @@
                     <button class="btn btn-primary" id="payment-button" aria-label="Thanh toán">
                         <i class="fas fa-dollar-sign"></i> Thanh toán (F9)
                     </button>
+
                     <div>
                         <p id="table-number"></p> <!-- Thay đổi số bàn phù hợp -->
                         <div id="order-details">
@@ -279,6 +290,7 @@
 
 
                     <button class="btn btn-warning" id="note-button" aria-label="Thêm Ghi chú">
+
                         <i class="fas fa-edit"></i> Ghi chú
                     </button>
                 </div>
@@ -287,7 +299,25 @@
     </div>
 
 
+  // cần xem lại 
+    <!-- Modal In hóa đơn tạm -->
+    <div id="printModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h3>In hóa đơn tạm thời</h3>
+            <label for="printTemplate">Chọn mẫu in:</label>
+            <input type="number" id="printTemplate" value="1">
+            <label for="copyCount">Số bản in:</label>
+            <input type="number" id="copyCount" value="1">
+            <div class="modal-actions">
+                <button class="btn btn-primary" id="confirmPrint">Xác nhận</button>
+                <button class="btn btn-secondary" id="cancelPrint">Hủy</button>
+            </div>
+        </div>
+    </div>
+
+
     <script src="{{ asset('js/pos.js') }}" defer></script>
+
 
 
 @endsection

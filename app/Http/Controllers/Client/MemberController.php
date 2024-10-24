@@ -3,119 +3,134 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
-use App\Models\Order;
 use App\Models\Reservation;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 
 class MemberController extends Controller
 {
     public function show()
-    {
-        // Giả lập dữ liệu thành viên, bạn có thể lấy từ database
-        $member = auth()->user(); // Lấy thông tin người dùng đã đăng nhập
+{
+    // Giả lập dữ liệu thành viên, bạn có thể lấy từ database
+    $memberData = [
+        'name' => 'Chang Anh',
+        'email' => 'chang@example.com',
+        'phone' => '0123456789',
+        'avatar' => 'https://i.pinimg.com/736x/63/2d/04/632d048703fae719fb1e8e3ea43939d5.jpg', // URL hình đại diện
+        'total_spend' => '3.137.000đ',
+        'reward_points' => 34800,
+        'expiring_points' => 11500,
+        // 'expiry_date' => '02/10/2024',
+        'membership_level' => 'VIP Pro',
+        'next_level_target' => 3000000,
+        'current_progress' => 3137000,
+        'location' => 'Việt Nam',
+        'member_since' => 'Tháng 9 năm 2024',
+        'reservations' => [
+            [
+                'restaurant' => 'InterContinental Hanoi Landmark72',
+                'status' => 'Đã xác nhận đặt chỗ',
+                'date' => date('Y-m-d', strtotime(now())), // Định dạng ngày
+                'time' => date('H:i', strtotime(now())), // Định dạng giờ
+                'people' => 2,
+                'table_name' => 'N5',
+            ],
+            [
+                'restaurant' => 'Nhà hàng B',
+                'status' => 'Chưa xác nhận',
+                'date' => '2024-10-18',
+                'time' => '19:00',
+                'people' => 4
+            ],
+            [
+                'restaurant' => 'Nhà hàng B',
+                'status' => 'Chưa xác nhận',
+                'date' => '2024-10-18',
+                'time' => '10:00',
+                'people' => 4
+            ],
+            [
+                'restaurant' => 'Nhà hàng B',
+                'status' => 'Chưa xác nhận',
+                'date' => '2024-10-18',
+                'time' => '19:00',
+                'people' => 4
+            ],
+            [
+                'restaurant' => 'Nhà hàng B',
+                'status' => 'Chưa xác nhận',
+                'date' => '2024-10-18',
+                'time' => '19:00',
+                'people' => 4
+            ],
+            [
+                'restaurant' => 'Nhà hàng C',
+                'status' => 'Đã hủy',
+                'date' => '2024-10-20',
+                'time' => '20:00',
+                'people' => 3
+            ],
+        ]
+    ];
+    // // $reservations = Reservation::where('user_id', 1)->get();
+
+    // // Truyền dữ liệu đặt chỗ đến view
+    // // return view('member.profile', ['reservations' => $reservations]);
+
+    // Gọi API để lấy thông tin ngân hàng
+    try {
+        // Gọi API sử dụng file_get_contents
+        $url = 'https://api.vietqr.io/v2/banks';
+        $response = file_get_contents($url);
+
+        if ($response === false) {
+            return ['error' => 'Failed to fetch data'];
+        }
         
-        // Nếu không có người dùng đã đăng nhập, chuyển hướng về trang đăng nhập hoặc xử lý lỗi
-        if (!$member) {
-            return redirect()->route('login')->with('error', 'Bạn cần đăng nhập để xem trang này.');
+        // Chuyển đổi JSON thành mảng
+        $banks = json_decode($response, true);
+
+        // Kiểm tra nếu có lỗi trong việc giải mã JSON
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return ['error' => 'Invalid JSON response'];
         }
-    
-        // Lấy tất cả thông tin đơn đặt bàn của khách hàng
-        $bookingData = Reservation::where('customer_id', $member->id)
-            ->orderBy('reservation_date', 'desc') // Sắp xếp theo ngày đặt
-            ->get(); // Lấy tất cả đơn đặt bàn
-    
-        return view('client.member', compact('member', 'bookingData')); // Truyền biến $member và $bookingData vào view
+
+        $bankList = $banks['data'];
+
+    } catch (\Exception $e) {
+        return ['error' => $e->getMessage()]; // Xử lý lỗi
     }
-    
-    // Giả sử bạn có một phương thức trong MemberController
 
-
+    // dd($banks);
     
+    return view('client.member', compact('memberData', 'bankList'));
+
+    // $memberData = User::findOrFail($id); // Lấy dữ liệu thành viên theo ID
+    // return view('client.member', compact('memberData')); // Trả về view kèm dữ liệu
+}
+      
 public function update(Request $request)
-    {
+{
+    // Lấy người dùng hiện tại
+    $user = Auth::user();
 
-        return back()->with('success', 'Thông tin tài khoản đã được cập nhật');
-    }
+    // Xác thực các trường dữ liệu
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'phone' => 'required|string|max:15',
+        'email' => 'required|email|max:255',
+        'location' => 'nullable|string|max:255',
+    ]);
 
-    public function changePassword(Request $request)
-    {
+    // Cập nhật thông tin người dùng
+    $user->name = $request->name;
+    $user->phone = $request->phone;
+    $user->email = $request->email;
+    $user->location = $request->location;
+    // $user->save();
 
-        return back()->with('success', 'Mật khẩu đã được thay đổi');
-    }
-
-
-    public function updateBooking(Request $request)
-    {
-        $validated = $request->validate([
-            'user_name' => 'required|string|max:255',
-            'user_phone' => 'required|string|max:15',
-            'guest_count' => 'required|integer|min:1',
-            'reservation_date' => 'required|date',
-            'reservation_time' => 'required',
-            'deposit_amount' => 'nullable|numeric',
-            'note' => 'nullable|string',
-        ]);
-    
-        $user = auth()->user(); // Lấy thông tin người dùng đã đăng nhập
-    
-        // Kiểm tra xem người dùng đã đăng nhập hay chưa
-        if (!$user) {
-            // Nếu chưa đăng nhập, có thể bạn muốn tạo một tài khoản mới
-            $user = User::create([
-                'name' => $validated['user_name'],
-                'phone' => $validated['user_phone'],
-                'email' => null, // Nếu không có email, có thể để null hoặc dùng thông tin khác
-                'status' => 'inactive', // Đặt trạng thái là inactive
-                // Thêm các trường khác nếu cần thiết
-            ]);
-        }
-    
-        // Kiểm tra xem đơn đặt bàn đã tồn tại chưa, nếu có thì cập nhật
-        $reservation = Reservation::where('customer_id', $user->id)
-            ->where('reservation_date', $validated['reservation_date'])
-            ->first();
-    
-        if ($reservation) {
-            // Cập nhật thông tin đơn đặt bàn
-            $reservation->update($validated);
-        } else {
-            // Nếu không tồn tại, tạo đơn mới
-            $reservation = Reservation::create([
-                'customer_id' => $user->id, // Gán ID của người dùng đã đăng nhập
-                'user_name' => $validated['user_name'],
-                'user_phone' => $validated['user_phone'],
-                'guest_count' => $validated['guest_count'],
-                'reservation_date' => $validated['reservation_date'],
-                'reservation_time' => $validated['reservation_time'],
-                'deposit_amount' => $validated['deposit_amount'] ?? 0,
-                'note' => $validated['note'],
-                'status' => 'active', // Hoặc trạng thái nào đó phù hợp
-            ]);
-        }
-    
-        return redirect()->route('member.profile')->with('success', 'Đơn đặt bàn đã được cập nhật thành công!');
-    }
-    
-    
-    
-    
-    
-
-    public function showProfile()
-    {
-        $member = auth()->user(); // Lấy thông tin người dùng đã đăng nhập
-    
-        // Lấy tất cả thông tin đơn đặt bàn của khách hàng
-        $bookingData = Reservation::where('customer_id', $member->id)
-            ->orderBy('reservation_date', 'desc') // Sắp xếp theo ngày đặt
-            ->get(); // Lấy tất cả đơn đặt bàn
-    
-        return view('client.member', compact('member', 'bookingData')); // Truyền biến $member và $bookingData vào view
-    }
-    
-    
-    
-
-
+    return response()->json(['success' => true]);
+}
 }

@@ -120,6 +120,7 @@
 
 
                 @can('Xem người dùng')
+
                     {{-- @can('Xem và quản lý người dùng') --}}
 
                     <li class="sidebar-dropdown">
@@ -155,6 +156,7 @@
                     {{-- @endcan --}}
                 @endcan
 
+
                 <li class="sidebar-dropdown">
                     <a href="#">
                         <i class="bi bi-pci-card"></i>
@@ -183,7 +185,6 @@
                         </ul>
                     </div>
                 </li>
-
 
 
 
