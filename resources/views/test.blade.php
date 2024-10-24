@@ -63,6 +63,7 @@ $orderId = 1;
             }
         });
 
+
         function handleVnpayTask() {
             return new Promise((resolve, reject) => {
                 $(document).ready(function() {
