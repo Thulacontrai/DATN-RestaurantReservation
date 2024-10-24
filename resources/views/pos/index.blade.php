@@ -18,19 +18,15 @@
                     aria-label="Tìm món">
             </div>
 
-
-
             <!-- Right Section: Icons -->
             <div class="header-right d-flex align-items-center ms-auto">
-                <!-- Right Section: Icons -->
-                <ul class="navbar-nav ms-auto d-flex align-items-center">
+                <ul class="navbar-nav d-flex align-items-center">
                     <li class="nav-item">
                         <button class="btn btn-link text-white">
                             <i class="fas fa-volume-mute"></i>
                         </button>
                     </li>
                     <li class="nav-item">
-                        <!-- Notification Button -->
                         <button class="btn btn-link text-white" id="notificationButton">
                             <i class="fas fa-bell"></i>
                         </button>
@@ -41,22 +37,20 @@
                         </button>
                     </li>
                     <li class="nav-item">
-                        <!-- Print Button -->
                         <button class="btn btn-link text-white" id="printButton">
                             <i class="fas fa-print"></i>
                         </button>
                     </li>
                     <li class="nav-item">
-                        <!-- Hamburger Menu -->
                         <button class="btn btn-link text-white" id="hamburgerMenu">
                             <i class="fas fa-bars"></i>
                         </button>
-
                     </li>
                 </ul>
             </div>
         </div>
     </header>
+
 
 
     <div class="wrapper">
@@ -288,7 +282,14 @@
 
 
     <script src="{{ asset('js/pos.js') }}" defer></script>
+    <script>
+        const hamburgerMenu = document.getElementById('hamburgerMenu');
+        const navMenu = document.querySelector('.navbar-nav');
 
+        hamburgerMenu.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+        });
+    </script>
 
 @endsection
 
@@ -302,8 +303,8 @@
         background-size: cover;
         background-position: center center;
         background-repeat: no-repeat;
-        min-height: 100vh;
-        max-height: 100vh;
+        /* min-height: 100vh;
+        max-height: 100vh; */
         /* Đặt chiều cao tối đa cho wrapper */
         overflow-y: hidden;
         /* Tránh việc hiển thị thanh cuộn không cần thiết */
@@ -335,51 +336,6 @@
         text-align: center;
         transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
     }
-
-    /* Responsive cho các màn hình nhỏ */
-    @media (max-width: 768px) {
-        .table-card {
-            width: 80px;
-            height: 100px;
-        }
-    }
-
-    @media (max-width: 576px) {
-        .table-card {
-            width: 60px;
-            height: 80px;
-        }
-
-        .navbar .form-control {
-            width: 100%;
-        }
-
-        .order-section {
-            padding: 5px;
-        }
-
-        .table-container {
-            max-height: calc(100vh - 200px);
-            /* Giảm chiều cao cho màn hình nhỏ hơn để đảm bảo không bị tràn */
-        }
-
-        .progress {
-            height: 6px;
-            /* Giảm chiều cao của thanh tiến trình */
-        }
-
-        .nav-link {
-            font-size: 14px;
-            /* Giảm kích thước font trên thiết bị nhỏ */
-        }
-
-        .btn {
-            padding: 8px 10px;
-            font-size: 12px;
-            /* Giảm kích thước nút trên thiết bị nhỏ */
-        }
-    }
-
 
     .table-container {
         display: flex;
@@ -503,6 +459,78 @@
         box-shadow: inset 0 0 0 5px #fff;
         transform: translate3d(0, 0, 2em);
     }
+
+
+    .container {
+        width: 100%;
+        /* Chiếm toàn bộ chiều rộng */
+        padding: 2em;
+        /* Đệm dựa trên kích thước phông chữ */
+    }
+
+    /* Màn hình nhỏ hơn 768px */
+    @media (max-width: 768px) {
+        .container {
+            flex-direction: column;
+            /* Điều chỉnh giao diện dọc */
+        }
+    }
+
+    /* Màn hình lớn hơn 1024px */
+    @media (min-width: 1024px) {
+        .container {
+            flex-direction: row;
+            /* Điều chỉnh giao diện ngang */
+        }
+    }
+
+    .header-left {
+        flex: 1;
+    }
+
+    .header-right {
+        display: flex;
+    }
+
+    .navbar {
+        height: auto;
+        /* Đảm bảo chiều cao tự động */
+    }
+
+    @media (max-width: 768px) {
+        .header-left {
+            display: none;
+            /* Ẩn phần này khi màn hình nhỏ */
+        }
+
+        .header-right {
+            flex-grow: 1;
+            /* Cho phép phần bên phải phát triển */
+            justify-content: flex-end;
+            /* Đặt các biểu tượng về bên phải */
+        }
+
+        .navbar-nav {
+            display: none;
+            /* Ẩn menu */
+            flex-direction: column;
+            position: absolute;
+            background: linear-gradient(90deg, #004a89, #007bb5);
+            width: 100%;
+            top: 60px;
+            /* Chiều cao của header */
+            left: 0;
+            z-index: 1000;
+        }
+
+        .navbar-nav.active {
+            display: flex;
+            /* Hiện menu khi có class active */
+        }
+
+        #hamburgerMenu {
+            display: flex;
+            /* Hiện nút hamburger */
+        }
+    }
 </style>
-
-

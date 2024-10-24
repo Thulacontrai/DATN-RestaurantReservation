@@ -343,7 +343,7 @@
         flex-direction: column;
         justify-content: space-between;
         background-color: #ffffff;
-        height: 675px;
+        height: 700px;
         padding: 20px;
         margin-top: 0;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);

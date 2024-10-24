@@ -357,7 +357,12 @@ class PosController extends Controller
             ], 500);
         }
     }
-
+    // public function Ppayment($tableNumber, Request $request)
+    // {
+    //     try {
+    //         $selectedItems = $request->input('items', []);
+    //     }
+    // }
     // Thanh toán đơn hàng
     public function payOrder(Request $request)
     {
@@ -460,7 +465,9 @@ class PosController extends Controller
         }
     }
 
-  
+
 
 
 }
+
+
