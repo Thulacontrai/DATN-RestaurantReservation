@@ -1,4 +1,7 @@
+<<<<<<< HEAD
+=======
 
+>>>>>>> 708c0db991482ce36b120cd4f525181585cf7ce7
   <!-- Dropdown Menu -->
   <div id="dropdownMenu" class="dropdown-content"
   style="display: none; background-color: #f8f9fa; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); padding: 15px; width: 250px;">
@@ -31,6 +34,9 @@
               class="fas fa-sign-out-alt"></i> Đăng xuất</button>
   </div>
 </div>
+<<<<<<< HEAD
+
+=======
 
 
 
@@ -252,6 +258,7 @@
 
 </header>
 
+>>>>>>> 708c0db991482ce36b120cd4f525181585cf7ce7
 
 <!-- Print Settings Dropdown Form -->
 <div id="printDropdownForm" class="print-dropdown" style="display: none;">
@@ -275,11 +282,46 @@
 </div>
 
 
+<<<<<<< HEAD
+=======
 
+>>>>>>> 708c0db991482ce36b120cd4f525181585cf7ce7
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const notificationButton = document.getElementById('notificationButton');
         const printButton = document.getElementById('printButton');
+<<<<<<< HEAD
+
+        // Notification Badge Animation
+        notificationButton.addEventListener('click', function() {
+            alert("Bạn có 3 thông báo mới!");
+        });
+
+        // Print Button
+        printButton.addEventListener('click', function() {
+            alert("Đang in...");
+        });
+
+        // Search Bar
+        const searchInput = document.getElementById('searchInput');
+        const dishItems = document.querySelectorAll('.dish-item');
+
+        searchInput.addEventListener('input', function() {
+            const searchTerm = searchInput.value.toLowerCase();
+
+            dishItems.forEach(function(dish) {
+                const dishName = dish.querySelector('.menu-item p').textContent.toLowerCase();
+
+                if (dishName.includes(searchTerm)) {
+                    dish.style.display = 'block';
+                } else {
+                    dish.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>
+=======
 
         // Notification Badge Animation
         notificationButton.addEventListener('click', function() {
@@ -618,3 +660,4 @@ input:checked + .slider:before {
 
  </script>
 
+>>>>>>> 708c0db991482ce36b120cd4f525181585cf7ce7

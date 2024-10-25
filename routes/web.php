@@ -32,7 +32,6 @@ use App\Http\Controllers\Pos\PosController;
 use App\Http\Controllers\ProfileController;
 
 
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -68,7 +67,7 @@ Route::post('/member/update-booking', [MemberController::class, 'updateBooking']
 
 
 
-// login 
+// login
 
 Route::get('/home', [HomeController::class, 'index'])->middleware('auth');
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login.client');
@@ -217,7 +216,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::get('/', function () {
         return view('auth.login');
+
     })->name('home');
+
 
 
     Route::resource('table', TableController::class);
@@ -356,6 +357,7 @@ Route::get('/login-client', [CustomerAuthController::class, 'showLoginForm'])->n
 Route::post('/login-client', [CustomerAuthController::class, 'login'])->name('client.login');
 Route::post('/logout-client', [CustomerAuthController::class, 'logout'])->name('client.logout');
 
+
 Route::post('/check-account', [CustomerAuthController::class, 'checkAccount']);
 Route::post('/login-success', [CustomerAuthController::class, 'loginSuccess'])->name('login.success');
 
@@ -367,11 +369,14 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
 
+});
+
 Route::post('/verify-code', [CustomerAuthController::class, 'verifyCode'])->name('verify.code');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/member/profile', [MemberController::class, 'showProfile'])->name('member.profile');
     Route::post('/member/update-booking', [MemberController::class, 'updateBooking'])->name('member.updateBooking');
+
 
 });
 
@@ -447,9 +452,6 @@ Route::get('/test', [ReservationController::class, 'getBanks']);
 Route::get('/print/{orderId}', [ReservationController::class, 'print'])->name('print.page');
 
 require __DIR__ . '/auth.php';
-
-
-
 
 
 
