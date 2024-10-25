@@ -105,7 +105,7 @@
 }
 
 .nav-link {
-    color: #000; /* Màu mặc định */
+    color: #ffffff; /* Màu mặc định */
     text-decoration: none; /* Bỏ gạch chân */
 }
 
@@ -239,6 +239,16 @@
     outline: none; /* Bỏ viền focus */
 }
 
+.no-background {
+    background-color: transparent;
+    border: none; /* Hoặc border: 0; */
+    color: #007bff; /* Màu chữ mặc định của Bootstrap */
+    cursor: pointer;
+}
+
+.form-control{
+    /* color: black; */
+}
 
 
 /* Responsive Styles */
@@ -246,7 +256,7 @@
     .side-menu {
         margin-bottom: 20px;
     }
-    
+
     .reservation-card {
         flex-direction: column;
         align-items: flex-start;
@@ -259,3 +269,4 @@
     }
 }
 </style>
+{{--  --}}
