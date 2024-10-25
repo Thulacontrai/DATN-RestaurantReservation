@@ -9,8 +9,10 @@ use App\Models\OrderItem;
 use App\Models\Reservation;
 use App\Models\Table;
 use Carbon\Carbon;
+
 use App\Models\ReservationTable;
 use App\Models\User;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -25,7 +27,7 @@ class PosController extends Controller
     //     $this->middleware('permission:Tạo mới pos', ['only' => ['create']]);
     //     $this->middleware('permission:Sửa pos', ['only' => ['edit']]);
     //     $this->middleware('permission:Xóa pos', ['only' => ['destroy']]);
-        
+
     // }
 
     // Trang chính của POS, hiển thị bàn và món ăn
@@ -226,9 +228,6 @@ class PosController extends Controller
 
 
 
-
-
-
     public function Ppayment($orderId, Request $request)
     {
         $order = Order::find($orderId);
@@ -251,6 +250,7 @@ class PosController extends Controller
             compact('dishes', 'final', 'items', 'orderId', 'order', 'reservation', 'table', 'reservation_table', 'order_items', 'staff_id', 'customer_id', 'order_item', )
         );
     }
+
 
     // Xóa món khỏi order_items
     public function deleteDishFromOrder($orderId, $dishId)
@@ -496,7 +496,7 @@ class PosController extends Controller
         }
     }
 
-  
+
 
 
 
@@ -586,6 +586,7 @@ class PosController extends Controller
     //         return back()->with('error', 'An error occurred during payment. Please try again.');
     //     }
     // }
+
 
 }
 

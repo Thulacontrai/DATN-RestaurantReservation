@@ -18,19 +18,15 @@
                     aria-label="Tìm món">
             </div>
 
-
-
             <!-- Right Section: Icons -->
             <div class="header-right d-flex align-items-center ms-auto">
-                <!-- Right Section: Icons -->
-                <ul class="navbar-nav ms-auto d-flex align-items-center">
+                <ul class="navbar-nav d-flex align-items-center">
                     <li class="nav-item">
                         <button class="btn btn-link text-white">
                             <i class="fas fa-volume-mute"></i>
                         </button>
                     </li>
                     <li class="nav-item">
-                        <!-- Notification Button -->
                         <button class="btn btn-link text-white" id="notificationButton">
                             <i class="fas fa-bell"></i>
                         </button>
@@ -41,17 +37,14 @@
                         </button>
                     </li>
                     <li class="nav-item">
-                        <!-- Print Button -->
                         <button class="btn btn-link text-white" id="printButton">
                             <i class="fas fa-print"></i>
                         </button>
                     </li>
                     <li class="nav-item">
-                        <!-- Hamburger Menu -->
                         <button class="btn btn-link text-white" id="hamburgerMenu">
                             <i class="fas fa-bars"></i>
                         </button>
-
                     </li>
                 </ul>
             </div>
@@ -59,11 +52,16 @@
     </header>
 
 
+
     <div class="wrapper">
         <div class="container-fluid d-flex flex-grow-1 px-0">
+<<<<<<< HEAD
+            <!-- Phần bên trái: Bàn và Thực đơn -->
+=======
 
             <!-- Phần bên trái: Phòng bàn và Thực đơn -->
 
+>>>>>>> 708c0db991482ce36b120cd4f525181585cf7ce7
             <div class="col-md-8 bg-light-gray p-4">
 
 
@@ -83,13 +81,19 @@
                         <button class="btn btn-outline-danger filter-btn" data-status="occupied">
                             Đang sử dụng ({{ $occupiedTablesCount }})
                         </button>
+<<<<<<< HEAD
+=======
 
+>>>>>>> 708c0db991482ce36b120cd4f525181585cf7ce7
                     </div>
 
                     <div class="table-container d-flex flex-wrap justify-content-start"
                         style="max-height: 600px; overflow-y: auto;">
                         @foreach ($tables as $table)
+<<<<<<< HEAD
+=======
 
+>>>>>>> 708c0db991482ce36b120cd4f525181585cf7ce7
                             <div class="table-card {{ strtolower(trim($table->status)) }}"
                                 data-table-id="{{ $table->id }}">
                                 <span class="table-number">Bàn {{ $table->table_number }}</span>
@@ -110,7 +114,10 @@
                                     <span>Lỗi: Trạng thái không xác định!</span>
                                 @endif
 
+<<<<<<< HEAD
+=======
 
+>>>>>>> 708c0db991482ce36b120cd4f525181585cf7ce7
                             </div>
                         @endforeach
                     </div>
@@ -126,10 +133,15 @@
                         <button class="btn btn-outline-info filter-btn" data-category="combo">Combo</button>
                     </div>
 
+<<<<<<< HEAD
+                    <!-- Phần Danh sách Món ăn -->
+                    <div class="row" id="dish-list" style="max-height: 600px; overflow-y: auto;">
+=======
 
                     <!-- Phần Danh sách Món ăn -->
                     <div class="row" id="dish-list" style="max-height: 600px; overflow-y: auto;">
 
+>>>>>>> 708c0db991482ce36b120cd4f525181585cf7ce7
                         @foreach ($dishes as $dish)
                             <div class="col-md-3 dish-item"
                                 data-category="{{ strtolower(str_replace(' ', '-', $dish->category)) }}"
@@ -145,14 +157,20 @@
                                         <h5 class="card-price text-primary">{{ number_format($dish->price, 0, ',', '.') }}
                                             VND</h5>
                                         <p class="card-title">{{ \Str::limit($dish->name, 20, '...') }}</p>
+<<<<<<< HEAD
+=======
 
 
+>>>>>>> 708c0db991482ce36b120cd4f525181585cf7ce7
                                     </div>
                                 </div>
                             </div>
                         @endforeach
                     </div>
+<<<<<<< HEAD
+=======
 
+>>>>>>> 708c0db991482ce36b120cd4f525181585cf7ce7
                 </div>
             </div>
 
@@ -298,6 +316,13 @@
         </div>
     </div>
 
+<<<<<<< HEAD
+
+    <script src="{{ asset('js/pos.js') }}" defer></script>
+    <script>
+        const hamburgerMenu = document.getElementById('hamburgerMenu');
+        const navMenu = document.querySelector('.navbar-nav');
+=======
 
   // cần xem lại 
     <!-- Modal In hóa đơn tạm -->
@@ -318,7 +343,12 @@
 
     <script src="{{ asset('js/pos.js') }}" defer></script>
 
+>>>>>>> 708c0db991482ce36b120cd4f525181585cf7ce7
 
+        hamburgerMenu.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+        });
+    </script>
 
 @endsection
 
@@ -332,8 +362,8 @@
         background-size: cover;
         background-position: center center;
         background-repeat: no-repeat;
-        min-height: 100vh;
-        max-height: 100vh;
+        /* min-height: 100vh;
+        max-height: 100vh; */
         /* Đặt chiều cao tối đa cho wrapper */
         overflow-y: hidden;
         /* Tránh việc hiển thị thanh cuộn không cần thiết */
@@ -365,51 +395,6 @@
         text-align: center;
         transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
     }
-
-    /* Responsive cho các màn hình nhỏ */
-    @media (max-width: 768px) {
-        .table-card {
-            width: 80px;
-            height: 100px;
-        }
-    }
-
-    @media (max-width: 576px) {
-        .table-card {
-            width: 60px;
-            height: 80px;
-        }
-
-        .navbar .form-control {
-            width: 100%;
-        }
-
-        .order-section {
-            padding: 5px;
-        }
-
-        .table-container {
-            max-height: calc(100vh - 200px);
-            /* Giảm chiều cao cho màn hình nhỏ hơn để đảm bảo không bị tràn */
-        }
-
-        .progress {
-            height: 6px;
-            /* Giảm chiều cao của thanh tiến trình */
-        }
-
-        .nav-link {
-            font-size: 14px;
-            /* Giảm kích thước font trên thiết bị nhỏ */
-        }
-
-        .btn {
-            padding: 8px 10px;
-            font-size: 12px;
-            /* Giảm kích thước nút trên thiết bị nhỏ */
-        }
-    }
-
 
     .table-container {
         display: flex;
@@ -533,6 +518,78 @@
         box-shadow: inset 0 0 0 5px #fff;
         transform: translate3d(0, 0, 2em);
     }
+
+
+    .container {
+        width: 100%;
+        /* Chiếm toàn bộ chiều rộng */
+        padding: 2em;
+        /* Đệm dựa trên kích thước phông chữ */
+    }
+
+    /* Màn hình nhỏ hơn 768px */
+    @media (max-width: 768px) {
+        .container {
+            flex-direction: column;
+            /* Điều chỉnh giao diện dọc */
+        }
+    }
+
+    /* Màn hình lớn hơn 1024px */
+    @media (min-width: 1024px) {
+        .container {
+            flex-direction: row;
+            /* Điều chỉnh giao diện ngang */
+        }
+    }
+
+    .header-left {
+        flex: 1;
+    }
+
+    .header-right {
+        display: flex;
+    }
+
+    .navbar {
+        height: auto;
+        /* Đảm bảo chiều cao tự động */
+    }
+
+    @media (max-width: 768px) {
+        .header-left {
+            display: none;
+            /* Ẩn phần này khi màn hình nhỏ */
+        }
+
+        .header-right {
+            flex-grow: 1;
+            /* Cho phép phần bên phải phát triển */
+            justify-content: flex-end;
+            /* Đặt các biểu tượng về bên phải */
+        }
+
+        .navbar-nav {
+            display: none;
+            /* Ẩn menu */
+            flex-direction: column;
+            position: absolute;
+            background: linear-gradient(90deg, #004a89, #007bb5);
+            width: 100%;
+            top: 60px;
+            /* Chiều cao của header */
+            left: 0;
+            z-index: 1000;
+        }
+
+        .navbar-nav.active {
+            display: flex;
+            /* Hiện menu khi có class active */
+        }
+
+        #hamburgerMenu {
+            display: flex;
+            /* Hiện nút hamburger */
+        }
+    }
 </style>
-
-
