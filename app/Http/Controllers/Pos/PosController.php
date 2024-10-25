@@ -30,6 +30,66 @@ class PosController extends Controller
 
     // }
 
+
+    public function checkTable(Request $request)
+    {
+        $reservation = Reservation::findOrFail($request->reservation_id);
+        $hasTable = $reservation->tables()->exists(); // Kiểm tra xem đơn đặt có bàn chưa
+    
+        return response()->json([
+            'hasTable' => $hasTable
+        ]);
+    }
+    
+    public function convertToOrder(Request $request)
+    {
+        $reservation = Reservation::findOrFail($request->reservation_id);
+    
+        // Kiểm tra trạng thái của đơn đặt
+        if ($reservation->status !== 'Confirmed') {
+            return response()->json([
+                'error' => 'Chỉ có thể chuyển đơn đã xác nhận.'
+            ], 400);
+        }
+    
+        // Nếu chưa có bàn, cần phải chọn bàn
+        if (!$reservation->tables()->exists() && !$request->has('table_id')) {
+            return response()->json([
+                'error' => 'Bạn cần chọn bàn trước khi chuyển đơn.'
+            ], 400);
+        }
+    
+        // Gán bàn được chọn nếu đơn đặt chưa có bàn
+        if ($request->has('table_id')) {
+            $reservation->tables()->attach($request->table_id); // Thêm bàn vào reservation
+        }
+    
+        $table = $reservation->tables()->first(); // Lấy bàn đầu tiên trong danh sách
+    
+        // Tạo order từ reservation
+        $order = Order::create([
+            'reservation_id' => $reservation->id,
+            'table_id'       => $table->id,
+            'customer_id'    => $reservation->customer_id,
+            'total_amount'   => $reservation->deposit_amount,
+            'order_type'     => 'dine_in',
+            'status'         => 'pending',
+            'discount_amount'=> 0,
+            'final_amount'   => $reservation->deposit_amount,
+        ]);
+    
+        // Cập nhật trạng thái của bàn và đơn đặt
+        $table->status = 'occupied'; // Đánh dấu bàn là "occupied" sau khi được sử dụng
+        $reservation->status = 'checked-in';
+        $table->save();
+        $reservation->save();
+    
+        return response()->json([
+            'success' => 'Chuyển đơn thành công!',
+            'order' => $order
+        ]);
+    }
+
     // Trang chính của POS, hiển thị bàn và món ăn
     public function index()
     {

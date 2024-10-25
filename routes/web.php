@@ -158,7 +158,8 @@ Route::get('/reservations/late', [PosController::class, 'getLateReservations'])
 Route::post('/reservations', [PosController::class, 'store'])->name('reservations.store');
 Route::delete('/order/{order_id}/item/{item_id}', [PosController::class, 'deleteOrderItem']);;
 
-
+Route::post('/reservation/check-table', [PosController::class, 'checkTable'])->name('reservation.checkTable');
+Route::post('/reservations/convert-to-order', [PosController::class, 'convertToOrder'])->name('reservation.convertToOrder');
 
 
 

@@ -43,7 +43,7 @@
                                 </div>
                             </div>
                             <div class="row mt-2">
-                                <img src="client/03_images/background/28fd6562f18548db1194.jpg" alt="">
+                             
                             </div>
                         </div>
                     </div>

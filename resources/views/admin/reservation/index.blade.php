@@ -21,12 +21,7 @@
                             <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
                         </div>
                         <div class="toast-body">
-<<<<<<< HEAD
-                            Có {{ $upcomingReservations->count() }} đơn đặt bàn sắp đến hạn trong vòng 30 phút tới
-                        </div>
-=======
                             Có {{ $upcomingReservations->count() }} đơn đặt bàn sắp đến giờ nhận bàn trong vòng 30 phút tới                       </div>
->>>>>>> 708c0db991482ce36b120cd4f525181585cf7ce7
                     </div>
                 @endif
 
@@ -132,11 +127,8 @@
                                             <th>Tên Khách Hàng</th>
                                             <th>Số Lượng Khách</th>
                                             <th>Thời Gian Đặt</th>
-<<<<<<< HEAD
-=======
                                             <th>Bàn</th>
                                             <th>Tiền cọc</th>
->>>>>>> 708c0db991482ce36b120cd4f525181585cf7ce7
                                             <th>Ghi Chú</th>
                                             <th>Trạng Thái</th>
                                             <th>Hành Động</th>
@@ -174,29 +166,6 @@
                                                 </td>
 
 
-<<<<<<< HEAD
-                                                        </a>
-                                                        <a href="{{ route('admin.reservation.assignTables', $reservation->id) }}"
-                                                            class="editRow" data-id="{{ $reservation->id }}">
-                                                            <i class="bi bi-box-arrow-in-right"></i>
-                                                        </a>
-                                                        <form
-                                                            action="{{ route('admin.reservation.destroy', $reservation->id) }}"
-                                                            method="POST" style="display:inline-block;">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <a href="#" style="margin-top: 18px;">
-                                                                <button type="submit" class="btn btn-link p-0"
-                                                                    onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
-                                                                    <svg class="delete-svgIcon" viewBox="0 0 448 512">
-                                                                        <path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"></path>
-                                                                      </svg>
-                                                                </button></a>
-                                                        </form>
-                                                    </div>
-                                                </td>
-                                            </tr>
-=======
                                             <td>
                                                 <div class="actions">
                                                     <a href="{{ route('admin.reservation.show', $reservation->id) }}" class="editRow" data-id="{{ $reservation->id }}">
@@ -230,7 +199,6 @@
                                                 </div>
                                             </td>
                                         </tr>
->>>>>>> 708c0db991482ce36b120cd4f525181585cf7ce7
                                         @empty
                                             <tr>
                                                 <td colspan="8">Không có đặt bàn nào được tìm thấy.</td>
