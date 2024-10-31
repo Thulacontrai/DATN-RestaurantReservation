@@ -78,7 +78,7 @@
             </ul>
         </div>
 
-        <!-- Modal Popup Danh Sách Đặt Bàn-->
+        {{-- <!-- Modal Popup Danh Sách Đặt Bàn-->
         <div class="modal fade" id="reservationListModal" tabindex="-1" role="dialog"
             aria-labelledby="reservationListModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-xl" role="document">
@@ -261,7 +261,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
     </header>
 
