@@ -334,66 +334,43 @@ class ReservationController extends Controller
             return redirect()->route('deposit.client', compact('customerInformation'));
 
         } else {
-            DB::transaction(function () use ($request) {
-                $user = User::create([
-                    'name' => $request->user_name,
-                    'phone' => $request->user_phone,
-                    'password' => fake()->password(),
-                    'status' => 'inactive',
-                ]);
+            // Thực hiện giao dịch đặt bàn mà không cần cọc
+            $reservation = DB::transaction(function () use ($request) {
+                $customer_id = null;
 
-                Reservation::create([
-                    'customer_id' => $user->id,
+
+                if (auth()->check()) {
+                    // Nếu đã đăng nhập, chỉ lấy customer_id
+                    $customer_id = auth()->id();
+                } else {
+
+                    $user = User::where('phone', $request->user_phone)->first();
+                    if (!isset($user) && $user == null) {
+                        // Nếu chưa đăng nhập, tạo tài khoản tạm thời
+                        $user = User::create([
+                            'name' => $request->user_name,
+                            'phone' => $request->user_phone,
+                            'password' => bcrypt(Str::random(10)),
+                            'status' => 'inactive',
+                        ]);
+                    }
+                    $customer_id = $user->id;
+                }
+
+                // Luôn sử dụng thông tin từ form
+                return Reservation::create([
+                    'customer_id' => $customer_id,
                     'user_name' => $request->user_name,
                     'user_phone' => $request->user_phone,
                     'guest_count' => $request->guest_count,
                     'note' => $request->note,
                     'reservation_date' => $request->reservation_date,
                     'reservation_time' => $request->reservation_time,
+                    // 'deposit_amount' => 0,  // Không cần cọc validate ss
                 ]);
             });
-
-            return redirect()->route('reservationSuccessfully.client', compact('reservation'));
-
+            return redirect()->route('reservationSuccessfully.client')->with('reservation', $reservation);
         }
-
-
-        // Thực hiện giao dịch đặt bàn mà không cần cọc
-        $reservation = DB::transaction(function () use ($request) {
-            $customer_id = null;
-
-
-            if (auth()->check()) {
-                // Nếu đã đăng nhập, chỉ lấy customer_id
-                $customer_id = auth()->id();
-            } else {
-
-                $user = User::where('phone', $request->user_phone)->first();
-                if (!isset($user) && $user == null) {
-                    // Nếu chưa đăng nhập, tạo tài khoản tạm thời
-                    $user = User::create([
-                        'name' => $request->user_name,
-                        'phone' => $request->user_phone,
-                        'password' => bcrypt(Str::random(10)),
-                        'status' => 'inactive',
-                    ]);
-                }
-                $customer_id = $user->id;
-            }
-
-            // Luôn sử dụng thông tin từ form
-            return Reservation::create([
-                'customer_id' => $customer_id,
-                'user_name' => $request->user_name,
-                'user_phone' => $request->user_phone,
-                'guest_count' => $request->guest_count,
-                'note' => $request->note,
-                'reservation_date' => $request->reservation_date,
-                'reservation_time' => $request->reservation_time,
-                // 'deposit_amount' => 0,  // Không cần cọc validate ss
-            ]);
-        });
-         return redirect()->route('reservationSuccessfully.client')->with('reservation', $reservation);
     }
 
 

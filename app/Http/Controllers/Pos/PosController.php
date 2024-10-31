@@ -124,7 +124,8 @@ class PosController extends Controller
 
         // Lấy danh sách các bàn trống (available)
         $availableTables = Table::where('status', 'available')->get();
-
+        //lấy  danh sách đơn đặt bàn đã được xác nhận
+        $reservations=Reservation::where('status','Confirmed')->paginate(5);
         // Truyền dữ liệu tới view
         return view('pos.index', [
             'tables' => $tables,
@@ -133,10 +134,11 @@ class PosController extends Controller
             'upcomingReservations' => $upcomingReservations,
             'lateReservations' => $lateReservations,
             'availableTables' => $availableTables,  // Truyền danh sách bàn trống vào view
-            'availableTablesCount' => $tables->where('status', 'available')->count(),
-            'reservedTablesCount' => $tables->where('status', 'reserved')->count(),
-            'occupiedTablesCount' => $tables->where('status', 'occupied')->count(),
+            'availableTablesCount' => Table::query()->where('status', 'available')->count(),
+            'reservedTablesCount' => Table::query()->where('status', 'reserved')->count(),
+            'occupiedTablesCount' => Table::query()->where('status', 'occupied')->count(),
             'totalTablesCount' => $tables->count(),
+            'reservations'=>$reservations,
         ]);
     }
 
@@ -203,7 +205,7 @@ class PosController extends Controller
             ]);
 
             // Cập nhật trạng thái của bàn thành "reserved"
-            $table->update(['status' => 'reserved']);
+            $table->update(['status' => 'occupied']);
 
             return response()->json([
                 'success' => true,

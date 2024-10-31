@@ -22,7 +22,7 @@ class CreatePaymentsTable extends Migration
             $table->softDeletes(); // deleted_at cho soft delete
 
             // Khóa ngoại
-            $table->foreign('reservation_id')->references('id')->on('reservations')->onDelete('cascade');
+            // $table->foreign('reservation_id')->references('id')->on('reservations')->onDelete('cascade');
         });
     }
 
