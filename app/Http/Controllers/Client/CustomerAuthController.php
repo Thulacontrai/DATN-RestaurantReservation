@@ -10,36 +10,7 @@ use App\Models\User;
 
 class CustomerAuthController extends Controller
 {   
-    public function showRegisterForm()
-    {
-        return view('client.RegisterLoginOTP');
-    }
-
-    public function register(Request $request)
-{
-    // Xác thực thông tin người dùng
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|string|email|max:255|unique:users',
-        // 'phone' => 'required|unique:users',
-       // Thêm kiểm tra phone không trùng lặp
-        'password' => 'required|string|min:8|confirmed',
-    ]);
-
-    // Tạo người dùng mới và mã hóa mật khẩu
-    User::create([
-        'name' => $request->name,
-        'email' => $request->email,
-        'phone' => $request->phone,
-        'password' => bcrypt($request->password), // Mã hóa mật khẩu
-    ]);
-
-    // Chuyển hướng đến trang đăng nhập
-    return redirect()->route('login.form')->with('success', 'Đăng ký thành công! Bạn có thể đăng nhập.');
-}
-
-    
-    
+   
     public function showLoginForm()
     {
         return view('client.loginOTP');
@@ -50,80 +21,60 @@ class CustomerAuthController extends Controller
         // Xác thực thông tin đầu vào
         $request->validate([
             'phone' => 'required|string',
-            'password' => 'required|string',
+            'username' => 'required|string',
         ]);
-    
-        // Thông tin đăng nhập: sử dụng 'phone' và 'password'
-        $credentials = ['phone' => $request->phone, 'password' => $request->password];
-    
-        // Kiểm tra thông tin xác thực
-        if (Auth::attempt($credentials)) {
-            // Đăng nhập thành công
-            return redirect()->route('client.index')->with('success', 'Đăng nhập thành công!');
+
+        // Tìm người dùng theo số điện thoại
+        $user = User::where('phone', $request->phone)->first();
+
+        if (!$user) {
+            // Nếu không tìm thấy, tạo tài khoản mới
+            $user = User::create([             
+                'phone' => $request->phone,
+            ]);
         }
-    
-        // Thông tin không đúng, trả về thông báo lỗi
-        return back()->withErrors(['phone' => 'Thông tin xác thực không đúng. Vui lòng thử lại.']);
+
+        // Đăng nhập người dùng
+        Auth::login($user);
+
+        // Chuyển đến trang xác thực OTP
+        return response()->json(['success' => true, 'message' => 'Tài khoản đã được tạo hoặc tồn tại. Vui lòng xác thực OTP.']);
     }
-    
-    
-    
-    
+
     public function verifyCode(Request $request)
     {
+        // Chỉ cần xác thực phone và verificationCode
         $request->validate([
             'verificationCode' => 'required|string',
+            'phone' => 'required|string|max:15',
         ]);
+        
+        // Kiểm tra xem số điện thoại đã tồn tại trong database chưa
+        $user = User::where('phone', $request->phone)->first();
     
-        try {
-            $confirmationResult = session('confirmationResult');
-    
-            if (!$confirmationResult) {
-                return back()->withErrors(['verificationCode' => 'Mã OTP đã hết hạn hoặc không hợp lệ.']);
-            }
-    
-            $confirmationResult->confirm($request->verificationCode);
-    
-            // Sau khi xác thực OTP thành công, chuyển hướng về trang chủ
-            return redirect()->route('client.index')->with('success', 'Xác thực thành công!');
-            
-        } catch (InvalidToken $e) {
-            return back()->withErrors(['verificationCode' => 'Mã OTP không hợp lệ!']);
-        } catch (\Exception $e) {
-            return back()->withErrors(['verificationCode' => 'Có lỗi xảy ra! Vui lòng thử lại.']);
+        if (!$user) {
+            // Nếu không tồn tại, tạo tài khoản mới với tên mặc định hoặc tên không cần thiết
+            $user = User::create([
+                'name' => 'User_' . uniqid(), // Tạo tên ngẫu nhiên
+                'phone' => $request->phone,
+            ]);
         }
-    }
-
-    public function checkAccount(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
     
-        // Kiểm tra xem có tài khoản với email và password không
-        $user = User::where('email', $request->email)->first();
+        // Đăng nhập người dùng
+        Auth::login($user);
     
-        if ($user && Hash::check($request->password, $user->password)) {
-            // Trả về thành công, cho phép gửi OTP
-            return response()->json(['success' => true]);
-        } else {
-            // Sai thông tin tài khoản hoặc mật khẩu
-            return response()->json(['success' => false, 'message' => 'Email hoặc mật khẩu không chính xác.']);
-        }
+        // Chuyển hướng đến trang chính
+        return response()->json(['success' => true, 'message' => 'Xác thực OTP thành công và đăng nhập.']);
     }
     
     
 
-    
-    
-    
-    
-
-    public function logout()
+    public function logout(Request $request)
     {
         Auth::logout();
-        return redirect()->route('client.index')->with('success', 'Bạn đã đăng xuất.');
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect()->route('client.index');
     }
     
 }

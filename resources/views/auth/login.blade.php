@@ -1,47 +1,52 @@
-<x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+<!doctype html>
+<html class="no-js" lang="en">
 
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login</title>
+    <!-- Các file CSS -->
+    <link rel="stylesheet" href="{{ asset('adminn/assets/css/css_login/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('adminn/assets/css/css_login/fontawesome-all.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('adminn/assets/css/css_login/style.css') }}">
+</head>
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+<body>
+    <section class="fxt-template-animation fxt-template-layout6"
+        data-bg-image="{{ asset('adminn/assets/images/img/figure/e741496597ca9b434b6b989bdb1e41f5.jpg') }}">
+        <div class="fxt-header">
+            <a href="{{ route('login/admin') }}" class="fxt-logo">
+                <img src="{{ asset('adminn/assets/images/img/logo-6.png') }}" alt="Logo">
+            </a>
         </div>
-
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+        <div class="fxt-content">
+            <div class="fxt-form">
+                <h2>Login</h2>
+                <!-- Form đăng nhập -->
+                <form method="POST" action="{{ route('login/admin') }}">
+                    @csrf
+                    <div class="form-group">
+                        <input id="email" type="email" class="form-control" name="email"
+                            placeholder="Email Address" required autofocus>
+                    </div>
+                    <div class="form-group">
+                        <input id="password" type="password" class="form-control" name="password"
+                            placeholder="Password" required>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="fxt-btn-fill">Log in</button>
+                        <a href="{{ route('password.request') }}" class="switcher-text">Forgot Password</a>
+                    </div>
+                </form>
+            </div>
         </div>
+    </section>
+    <!-- Các file JS -->
+    <script src="{{ asset('adminn/assets/js/js_login/jquery.min.js') }}"></script>
+    <script src="{{ asset('adminn/assets/js/js_login/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('adminn/assets/js/js_login/imagesloaded.pkgd.min.js') }}"></script>
+    <script src="{{ asset('adminn/assets/js/js_login/validator.min.js') }}"></script>
+    <script src="{{ asset('adminn/assets/js/js_login/main.js') }}"></script>
+</body>
 
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
-            </label>
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
-            @endif
-
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+</html>

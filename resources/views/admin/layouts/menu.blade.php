@@ -61,168 +61,99 @@
                 @can('Xem danh mục')
 
 
-                {{-- @can('Xem và quản lý danh mục') --}}
+                    {{-- @can('Xem và quản lý danh mục') --}}
 
-                <li class="sidebar-dropdown">
-                    <a href="#">
-                        <i class="bi bi-folder"></i>
-                        <span class="menu-text">Quản lý Danh Mục</span>
-                    </a>
-                    <div class="sidebar-submenu">
-                        <ul>
-                            <li>
-                                <a href="{{ route('admin.category.index') }}">Danh Mục</a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                {{-- @endcan --}}
+                    <li class="sidebar-dropdown">
+                        <a href="#">
+                            <i class="bi bi-folder"></i>
+                            <span class="menu-text">Quản lý Danh Mục</span>
+                        </a>
+                        <div class="sidebar-submenu">
+                            <ul>
+                                <li>
+                                    <a href="{{ route('admin.category.index') }}">Danh Mục</a>
+                                </li>
+                                @can('Xem món ăn')
+                                    <li>
+                                        <a href="{{ route('admin.dishes.index') }}">Danh sách món</a>
+                                    </li>
+                                @endcan
+                                @can('Xem combo')
+                                    <li>
+                                        <a href="{{ route('admin.combo.index') }}">Danh sách combo</a>
+                                    </li>
+                                @endcan
+                            </ul>
+                        </div>
+                    </li>
+                    {{-- @endcan --}}
 
                 @endcan
 
-
-                @can('Xem món ăn')
-                <li class="sidebar-dropdown">
-                    <a href="#">
-                        <i class="bi bi-journal-bookmark-fill"></i>
-                        <span class="menu-text"> Quản lý Món ăn</span>
-                    </a>
-                    <div class="sidebar-submenu">
-                        <ul>
-                            <li>
-                                <a href="{{ route('admin.dishes.index') }}">Danh sách món</a>
-                            </li>
-
-                        </ul>
-                    </div>
-                </li>
-                @endcan
-
-                @can('Xem combo')
-                <li class="sidebar-dropdown">
-                    <a href="#">
-                        <i class="bi bi-boxes"></i>
-                        <span class="menu-text">Quản lý Combo </span>
-                    </a>
-                    <div class="sidebar-submenu">
-                        <ul>
-                            <li>
-                                <a href="{{ route('admin.combo.index') }}">Danh sách combo</a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                @endcan
-
-                @can('Xem thanh toán')
-                <li class="sidebar-dropdown">
-                    <a href="#">
-                        <i class="bi bi-clipboard-check"></i>
-                        <span class="menu-text">Quản lý Payment</span>
-                    </a>
-                    <div class="sidebar-submenu">
-                        <ul>
-                            <li>
-                                <a href="{{ route('admin.payment.index') }}">Danh sách Payment</a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                @endcan
-
-                @can('Xem mã giảm giá')
-                <li class="sidebar-dropdown">
-                    <a href="#">
-                        <i class="bi bi-receipt-cutoff"></i>
-                        <span class="menu-text">Quản lý Coupons</span>
-                    </a>
-                    <div class="sidebar-submenu">
-                        <ul>
-                            <li>
-                                <a href="{{ route('admin.coupon.index') }}">Danh sách coupon</a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                @endcan
 
                 @can('Xem order')
-                <li class="sidebar-dropdown">
-                    <a href="#">
-                        <i class="bi bi-clipboard-data"></i>
-                        <span class="menu-text">Quản lý Order</span>
-                    </a>
-                    <div class="sidebar-submenu">
-                        <ul>
-                            <li>
-                                <a href="{{ route('admin.order.index') }}">Danh sách Order</a>
+                    <li class="sidebar-dropdown">
+                        <a href="#">
+                            <i class="bi bi-clipboard-data"></i>
+                            <span class="menu-text">Quản lý Hoá đơn</span>
+                        </a>
+                        <div class="sidebar-submenu">
+                            <ul>
+                                <li>
+                                    <a href="{{ route('admin.order.index') }}">Danh sách Order</a>
+                                </li>
 
-                            </li>
-                        </ul>
-                    </div>
-                </li>
+                                @can('Xem mã giảm giá')
+                                    <li>
+                                        <a href="{{ route('admin.coupon.index') }}">Danh sách coupon</a>
+                                    </li>
+                                @endcan
+                                @can('Xem thanh toán')
+                                    <li>
+                                        <a href="{{ route('admin.payment.index') }}">Danh sách Payment</a>
+                                    </li>
+                                @endcan
+                            </ul>
+                        </div>
+                    </li>
                 @endcan
-
-                @can('Xem feedback')
-                <li class="sidebar-dropdown">
-                    <a href="#">
-                        <i class="bi bi-person-workspace"></i>
-                        <span class="menu-text">Quản lý Feedback</span>
-                    </a>
-                    <div class="sidebar-submenu">
-                        <ul>
-                            <li>
-                                <a href="{{ route('admin.feedback.index') }}">Danh sách Feedback</a>
-
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                @endcan
-
-                {{-- <li class="sidebar-dropdown">
-                    <a href="#">
-                        <i class="bi bi-person-workspace"></i>
-                        <span class="menu-text">Quản lý nhân viên</span>
-                    </a>
-                    <div class="sidebar-submenu">
-                        <ul>
-                            <li>
-                                <a href="">Danh sách nhân viên</a>
-
-                            </li>
-                        </ul>
-                    </div>
-                </li> --}}
-
 
 
                 @can('Xem người dùng')
 
-                <li class="sidebar-dropdown">
-                    <a href="#">
-                        <i class="bi bi-people-fill"></i>
-                        <span class="menu-text">Quản lý người dùng</span>
-                    </a>
-                    <div class="sidebar-submenu">
-                        <ul>
-                            <li>
-                                <a href="{{ route('admin.role.index') }}">Vai trò</a>
+                    {{-- @can('Xem và quản lý người dùng') --}}
 
-                            </li>
-                            <li>
-                                <a href="{{ route('admin.permissions.index') }}">Quyền hạn</a>
+                    <li class="sidebar-dropdown">
+                        <a href="#">
+                            <i class="bi bi-people-fill"></i>
+                            <span class="menu-text">Quản lý người dùng</span>
+                        </a>
+                        <div class="sidebar-submenu">
+                            <ul>
+                                <li>
+                                    <a href="{{ route('admin.role.index') }}">Vai trò</a>
 
-                            </li>
-                            <li>
-                                <a href="{{ route('admin.user.index') }}">Danh sách người dùng</a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('admin.permissions.index') }}">Quyền hạn</a>
 
-                            </li>
+                                </li>
 
-                        </ul>
-                    </div>
-                </li>
-               
+                                <li>
+                                    <a href="{{ route('admin.user.index') }}">Danh sách người dùng</a>
+
+                                </li>
+                                @can('Xem feedback')
+                                    <li>
+                                        <a href="{{ route('admin.feedback.index') }}">Danh sách Feedback</a>
+
+                                    </li>
+                                @endcan
+
+                            </ul>
+                        </div>
+                    </li>
+                    {{-- @endcan --}}
                 @endcan
 
                 <li class="sidebar-dropdown">
@@ -236,16 +167,13 @@
                                 <a href="{{ route('admin.supplier.index') }}">Nhà cung cấp</a>
                             <li>
                             <li>
-                                <a href="{{ route('admin.ingredientType.index')}}">Loại Nguyên Liệu</a>
+                                <a href="{{ route('admin.ingredientType.index') }}">Loại Nguyên Liệu</a>
                             </li>
                             <li>
-                                <a href="{{ route('admin.ingredient.index')}}">Danh sách Nguyên Liệu</a>
+                                <a href="{{ route('admin.ingredient.index') }}">Danh sách Nguyên Liệu</a>
                             </li>
                             <li>
                                 <a href="#">Phiếu nhập kho</a>
-                            </li>
-                            <li>
-                                <a href="#">Combo món ăn</a>
                             </li>
                             <li>
                                 <a href="#">Hàng tồn kho</a>
@@ -258,7 +186,6 @@
                 </li>
 
 
-               
 
             </ul>
         </div>
@@ -266,3 +193,4 @@
     <!-- Sidebar menu ends -->
 </nav>
 <!-- Sidebar wrapper end -->
+

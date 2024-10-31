@@ -15,8 +15,8 @@ return new class extends Migration
         if (!Schema::hasTable('orders')) {
             Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('reservation_id');
-            $table->unsignedBigInteger('staff_id');
+            $table->unsignedBigInteger('reservation_id')->nullable();
+            $table->unsignedBigInteger('staff_id')->nullable();
             $table->unsignedBigInteger('table_id')->nullable();
             $table->unsignedBigInteger('customer_id')->nullable();
             $table->decimal('total_amount', 10, 2)->nullable();
