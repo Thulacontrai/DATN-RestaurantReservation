@@ -23,7 +23,7 @@ return new class extends Migration
             $table->unsignedBigInteger('inventory_transaction_id'); 
             $table->foreign('inventory_transaction_id')->references('id')->on('inventory_transactions')->onDelete('cascade');
             
-            $table->integer('quantity',10,2);
+            $table->decimal('quantity',10,2);
         });
 
         Schema::enableForeignKeyConstraints();
