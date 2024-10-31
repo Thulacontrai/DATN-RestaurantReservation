@@ -163,67 +163,67 @@ class PosController extends Controller
 
     // Thêm món vào order_items
     public function addDishToOrder(Request $request)
-{
-    $request->validate([
-        'order_id' => 'required|exists:orders,id',
-        'dish_id' => 'required|exists:dishes,id',
-        'quantity' => 'required|integer|min:1',
-    ]);
-
-    try {
-        // Lấy đơn hàng và món ăn từ cơ sở dữ liệu
-        $order = Order::findOrFail($request->order_id);
-        $dish = Dishes::findOrFail($request->dish_id);
-
-        // Kiểm tra món đã có trong đơn hàng chưa
-        $existingOrderItem = OrderItem::where('order_id', $order->id)
-            ->where('item_id', $dish->id)
-            ->where('item_type', 'dish')
-            ->first();
-
-        // Cập nhật hoặc thêm món vào đơn hàng
-        if ($existingOrderItem) {
-            // Nếu món đã tồn tại, cập nhật số lượng và tổng giá
-            $existingOrderItem->quantity += $request->quantity; // Cộng dồn số lượng
-            $existingOrderItem->total_price = $existingOrderItem->quantity * $existingOrderItem->price; // Cập nhật tổng giá
-            $existingOrderItem->save();  // Lưu cập nhật vào cơ sở dữ liệu
-        } else {
-            // Nếu món chưa có trong đơn hàng, thêm món mới vào
-            $existingOrderItem = OrderItem::create([
-                'order_id' => $order->id,
-                'item_id' => $dish->id,
-                'item_type' => 'dish',
-                'quantity' => $request->quantity, // Lưu số lượng ban đầu
-                'price' => $dish->price,
-                'total_price' => $dish->price * $request->quantity, // Tính tổng giá
-                'status' => 'preparing',
-            ]);
-        }
-
-        // Cập nhật tổng số tiền của đơn hàng
-        $order->total_amount += ($dish->price * $request->quantity); // Cập nhật tổng số tiền
-        $order->final_amount = $order->total_amount; // Cập nhật tổng tiền cuối cùng
-        $order->save();  // Lưu đơn hàng vào cơ sở dữ liệu
-
-        return response()->json([
-            'success' => true,
-            'orderItem' => [
-                'dishName' => $dish->name, // Thêm tên món ăn vào phản hồi
-                'quantity' => $existingOrderItem->quantity,
-                'total_price' => $existingOrderItem->total_price
-            ],  // Trả về món vừa được thêm/cập nhật
-            'totalAmount' => $order->total_amount,  // Cập nhật tổng tiền
+    {
+        $request->validate([
+            'order_id' => 'required|exists:orders,id',
+            'dish_id' => 'required|exists:dishes,id',
+            'quantity' => 'required|integer|min:1',
         ]);
-    } catch (\Exception $e) {
-        // Ghi log lỗi nếu xảy ra vấn đề
-        Log::error('Lỗi khi thêm món vào đơn hàng: ' . $e->getMessage());
 
-        return response()->json([
-            'success' => false,
-            'message' => 'Đã xảy ra lỗi khi thêm món vào đơn hàng.',
-        ], 500);
+        try {
+            // Lấy đơn hàng và món ăn từ cơ sở dữ liệu
+            $order = Order::findOrFail($request->order_id);
+            $dish = Dishes::findOrFail($request->dish_id);
+
+            // Kiểm tra món đã có trong đơn hàng chưa
+            $existingOrderItem = OrderItem::where('order_id', $order->id)
+                ->where('item_id', $dish->id)
+                ->where('item_type', 'dish')
+                ->first();
+
+            // Cập nhật hoặc thêm món vào đơn hàng
+            if ($existingOrderItem) {
+                // Nếu món đã tồn tại, cập nhật số lượng và tổng giá
+                $existingOrderItem->quantity += $request->quantity; // Cộng dồn số lượng
+                $existingOrderItem->total_price = $existingOrderItem->quantity * $existingOrderItem->price; // Cập nhật tổng giá
+                $existingOrderItem->save();  // Lưu cập nhật vào cơ sở dữ liệu
+            } else {
+                // Nếu món chưa có trong đơn hàng, thêm món mới vào
+                $existingOrderItem = OrderItem::create([
+                    'order_id' => $order->id,
+                    'item_id' => $dish->id,
+                    'item_type' => 'dish',
+                    'quantity' => $request->quantity, // Lưu số lượng ban đầu
+                    'price' => $dish->price,
+                    'total_price' => $dish->price * $request->quantity, // Tính tổng giá
+                    'status' => 'preparing',
+                ]);
+            }
+
+            // Cập nhật tổng số tiền của đơn hàng
+            $order->total_amount += ($dish->price * $request->quantity); // Cập nhật tổng số tiền
+            $order->final_amount = $order->total_amount; // Cập nhật tổng tiền cuối cùng
+            $order->save();  // Lưu đơn hàng vào cơ sở dữ liệu
+
+            return response()->json([
+                'success' => true,
+                'orderItem' => [
+                    'dishName' => $dish->name, // Thêm tên món ăn vào phản hồi
+                    'quantity' => $existingOrderItem->quantity,
+                    'total_price' => $existingOrderItem->total_price
+                ],  // Trả về món vừa được thêm/cập nhật
+                'totalAmount' => $order->total_amount,  // Cập nhật tổng tiền
+            ]);
+        } catch (\Exception $e) {
+            // Ghi log lỗi nếu xảy ra vấn đề
+            Log::error('Lỗi khi thêm món vào đơn hàng: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Đã xảy ra lỗi khi thêm món vào đơn hàng.',
+            ], 500);
+        }
     }
-}
 
 
 
@@ -247,41 +247,11 @@ class PosController extends Controller
         $final = 0;
         return view(
             'pos.payment',
-            compact('dishes', 'final', 'items', 'orderId', 'order', 'reservation', 'table', 'reservation_table', 'order_items', 'staff_id', 'customer_id', 'order_item', )
+            compact('dishes', 'final', 'items', 'orderId', 'order', 'reservation', 'table', 'reservation_table', 'order_items', 'staff_id', 'customer_id', 'order_item',)
         );
     }
 
 
-    // Xóa món khỏi order_items
-    public function deleteDishFromOrder($orderId, $dishId)
-    {
-        try {
-            // Tìm đơn hàng và món ăn trong đơn hàng
-            $order = Order::findOrFail($order_id);
-            $orderItem = OrderItem::where('order_id', $order_id)->where('id', $item_id)->firstOrFail();
-
-            // Trừ số tiền của món ăn bị xóa khỏi tổng tiền đơn hàng
-            $order->total_amount -= $orderItem->total_price;
-            $order->final_amount = $order->total_amount; // Cập nhật lại tổng tiền đơn hàng
-            $order->save();
-
-            // Xóa món ăn vĩnh viễn (forceDelete) khỏi cơ sở dữ liệu
-            $orderItem->forceDelete();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Món ăn đã được xóa khỏi đơn hàng.',
-                'total_amount' => $order->total_amount, // Trả lại tổng tiền sau khi xóa
-            ]);
-        } catch (\Exception $e) {
-            // Ghi log lỗi và trả về phản hồi lỗi
-            Log::error('Lỗi khi xóa món ăn khỏi đơn hàng: ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Đã xảy ra lỗi khi xóa món ăn.',
-            ], 500);
-        }
-    }
 
 
 
@@ -500,6 +470,33 @@ class PosController extends Controller
 
 
 
+    public function showOrderDetails($orderId)
+    {
+        try {
+            $order = Order::with('table', 'items')->find($orderId);
+
+            if (!$order) {
+                return response()->json(['success' => false, 'message' => 'Đơn hàng không tồn tại'], 404);
+            }
+
+            // Bạn có thể bao gồm thông tin bàn trong phản hồi nếu cần
+            return response()->json([
+                'success' => true,
+                'order' => $order,
+                'table' => $order->table // Thêm thông tin bàn nếu cần
+            ]);
+        } catch (\Exception $e) {
+            Log::error("Lỗi khi lấy chi tiết đơn hàng: " . $e->getMessage());
+
+            return response()->json(['success' => false, 'message' => 'Đã xảy ra lỗi khi lấy chi tiết đơn hàng'], 500);
+        }
+    }
+
+
+
+
+
+
     // public function Ppayment($tableNumber, Request $request)
     // {
     //     try {
@@ -589,5 +586,3 @@ class PosController extends Controller
 
 
 }
-
-

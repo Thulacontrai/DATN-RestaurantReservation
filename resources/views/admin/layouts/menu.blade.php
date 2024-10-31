@@ -155,10 +155,6 @@
                     </li>
                     {{-- @endcan --}}
                 @endcan
-<<<<<<< HEAD
-=======
-
->>>>>>> 708c0db991482ce36b120cd4f525181585cf7ce7
 
                 <li class="sidebar-dropdown">
                     <a href="#">
@@ -191,10 +187,6 @@
 
 
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 708c0db991482ce36b120cd4f525181585cf7ce7
             </ul>
         </div>
     </div>

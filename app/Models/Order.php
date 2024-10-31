@@ -47,6 +47,10 @@ class Order extends Model
     {
         return $this->belongsTo(Table::class, 'table_id');
     }
+    public function items()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
 
     // Quan hệ với bảng User (Khách hàng)
     public function customer()

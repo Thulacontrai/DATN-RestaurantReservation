@@ -156,7 +156,10 @@ Route::get('/reservations', [ReservationController::class, 'showReservations'])
 Route::get('/reservations/late', [PosController::class, 'getLateReservations'])
     ->name('reservations.late');
 Route::post('/reservations', [PosController::class, 'store'])->name('reservations.store');
-Route::delete('/order/{order_id}/item/{item_id}', [PosController::class, 'deleteOrderItem']);;
+Route::delete('/order/{order_id}/item/{item_id}', [PosController::class, 'deleteOrderItem']);
+
+
+
 
 
 
@@ -216,7 +219,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::get('/', function () {
         return view('auth.login');
-
     })->name('home');
 
 
@@ -367,8 +369,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-
 });
 
 Route::post('/verify-code', [CustomerAuthController::class, 'verifyCode'])->name('verify.code');
@@ -376,8 +376,6 @@ Route::post('/verify-code', [CustomerAuthController::class, 'verifyCode'])->name
 Route::middleware(['auth'])->group(function () {
     Route::get('/member/profile', [MemberController::class, 'showProfile'])->name('member.profile');
     Route::post('/member/update-booking', [MemberController::class, 'updateBooking'])->name('member.updateBooking');
-
-
 });
 
 
@@ -403,7 +401,7 @@ Route::get('/test', function () {
 });
 
 
-//Route đăng nhập của khách hàng
+
 // Route đăng nhập của khách hàng
 Route::get('/register-client', [CustomerAuthController::class, 'showRegisterForm'])->name('register.form');
 Route::post('/register-client', [CustomerAuthController::class, 'register'])->name('client.register');
@@ -452,6 +450,3 @@ Route::get('/test', [ReservationController::class, 'getBanks']);
 Route::get('/print/{orderId}', [ReservationController::class, 'print'])->name('print.page');
 
 require __DIR__ . '/auth.php';
-
-
-

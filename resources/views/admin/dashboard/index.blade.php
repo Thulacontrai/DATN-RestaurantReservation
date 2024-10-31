@@ -16,8 +16,8 @@
                             <i class="bi bi-pie-chart"></i>
                         </div>
                         <div class="sale-details">
-                            <h3 class="text-red">250k</h3>
-                            <p>Sales</p>
+                            <h3 class="text-red">{{$tableCount}}</h3>
+                            <p><a href="{{route('admin.table.index')}}">Bàn</a></p>
                         </div>
                     </div>
                 </div>
@@ -27,8 +27,8 @@
                             <i class="bi bi-emoji-smile"></i>
                         </div>
                         <div class="sale-details">
-                            <h3 class="text-blue">24m</h3>
-                            <p>Customers</p>
+                            <h3 class="text-blue">{{$userCount}}</h3>
+                            <p><a href="{{route('admin.user.index')}}">Tài Khoản</a></p>
                         </div>
                     </div>
                 </div>
@@ -38,8 +38,8 @@
                             <i class="bi bi-box-seam"></i>
                         </div>
                         <div class="sale-details">
-                            <h3 class="text-yellow">15k</h3>
-                            <p>Products</p>
+                            <h3 class="text-yellow">{{$categoryCount}}</h3>
+                            <p><a href="{{route('admin.category.index')}}">Danh Mục Món</a></p>
                         </div>
                     </div>
                 </div>
@@ -49,8 +49,8 @@
                             <i class="bi bi-handbag"></i>
                         </div>
                         <div class="sale-details">
-                            <h3 class="text-green">180m</h3>
-                            <p>Revenue</p>
+                            <h3 class="text-green">{{$orderCount}}</h3>
+                            <p><a href="{{route('admin.order.index')}}">Đơn Hàng</a></p>
                         </div>
                     </div>
                 </div>
@@ -512,5 +512,5 @@
                 </div>
             </div>
             <!-- Row end -->
-            
+
         @endsection
