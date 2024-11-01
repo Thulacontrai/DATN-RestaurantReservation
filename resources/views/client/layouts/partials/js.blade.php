@@ -56,11 +56,79 @@
             }
         });
 
+         // Khi người dùng bấm vào ngày
+         $('.day-selector').click(function() {
+            var index = $(this).data('index'); // Lấy chỉ số của ngày được bấm
+
+            // Ẩn tất cả các khung thời gian
+            $('.time-slots').hide();
+
+            // Hiển thị khung thời gian của ngày được chọn
+            $('#day-' + index).show();
+
+            // Đổi màu chữ cho ngày đã chọn
+            $('.day-selector .fw-bold').removeClass('text-warning').addClass('text-light');
+            $(this).find('.fw-bold').removeClass('text-light').addClass('text-warning');
+        });
+
+        // Khi người dùng chọn khung giờ
+        $('.time-slot').click(function() {
+            // Bỏ chọn khung giờ trước đó
+            $('.time-slot').removeClass('bg-warning');
+            $('.time-slot p').removeClass('text-light').addClass(
+                'text-warning');
+
+            // Đánh dấu khung giờ được chọn
+            $(this).addClass('bg-warning');
+            $(this).find('p').removeClass('text-warning').addClass(
+                'text-light');
+
+            // Lưu lại khung giờ và ngày được chọn
+            selectedTime = $(this).data('time');
+            selectedDate = $(this).data('date');
+        });
+
+        $('#confirm-button').click(function() {
+
+            function convertDateFormat(dateStr) {
+                const [year, month, day] = dateStr.split("-");
+                return `${day}-${month}-${year}`;
+            }
+            if (selectedTime && selectedDate) {
+                Swal.fire({
+                    icon: "question",
+                    html: 'Bạn đã chọn thời gian dùng bữa lúc <b>' + selectedTime +
+                        '</b> vào ngày <b>' + convertDateFormat(selectedDate) + '</b>',
+                    title: 'Vui lòng xác nhận!',
+                    showCancelButton: true,
+                    confirmButtonText: "Xác nhận",
+                    cancelButtonText: "Hủy"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        var url = '/customerInformation?date=' + encodeURIComponent(
+                                selectedDate) +
+                            '&time=' +
+                            encodeURIComponent(selectedTime);
+                        window.location.href = url;
+                    }
+                });
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    title: "Lỗi",
+                    text: "Vui lòng chọn khung giờ!",
+                    timer: 4000
+                });
+            }
+        });
+
         // Hàm kiểm tra định dạng email
         function validateEmail(email) {
             const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             return re.test(String(email).toLowerCase());
         }
+
+
     });
 </script>
 
