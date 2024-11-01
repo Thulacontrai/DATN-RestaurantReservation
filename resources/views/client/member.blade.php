@@ -47,38 +47,35 @@
                             <h3>Đặt chỗ sắp tới</h3>
                             <!-- Reservation Details -->
                             @foreach ($bookingData as $reservation)
-                                    <div class="reservation-card mb-3" style="background-color: #2b2b2b; border-radius: 5px; color: #d3d3d3;"> <!-- Nền tối và chữ xám nhạt -->
-                                        <div>
-                                                <h3 style="color:white">Họ tên:{{$reservation->user_name}}-{{$reservation->user_phone}}</h3>
-                                                <div class="d-flex">
-                                                    <div class=""><p style=" color:white ;">Ngày:
-                                                {{ $reservation->reservation_date}}</p>
-                                                <p style=" display: inline;color:white ;">Giờ: {{ $reservation->reservation_time}}
-                                                </p></div>
-                                                <div><p style=" color:white ; margin-left: 10px;"><i class="bi bi-people"></i>
-                                                    {{ $reservation->guest_count }} người</p>
-                                                <p style=" color:white ; margin-right: 10px;">
-                                                       Cọc: {{ number_format($reservation->deposit_amount ?? 0, 0, ',', '.') . ' VNĐ'}}</p>
-                                                  </div>
-                                                </div>
-                                                <strong class="{{$reservation->status === 'Confirmed' ? 'status-confirmed' : ($reservation->status === 'Checked-in' ? 'status-checked-in' : ($reservation->status === 'Cancelled' ? 'status-cancelled' : 'status-pending')) }}">
-                                                    {{$reservation->status === 'Confirmed' ? 'Đã xác nhận' : ($reservation->status === 'Checked-in' ? 'Đã nhận bàn' : ($reservation->status === 'Cancelled' ? 'Đã hủy' : 'Chờ xử lý')) }}
-                                            </strong>
+                                <div class="reservation-card mb-3" style="background-color: #2b2b2b; border-radius: 5px; color: #d3d3d3;">
+                                    <div>
+                                        <h3 style="color:white">Họ tên: {{ $reservation->user_name }} - {{ $reservation->user_phone }}</h3>
+                                        <div class="d-flex">
+                                            <div>
+                                                <p style="color:white;">Ngày: {{ $reservation->reservation_date }}</p>
+                                                <p style="display: inline; color:white;">Giờ: {{ $reservation->reservation_time }}</p>
+                                            </div>
+                                            <div>
+                                                <p style="color:white; margin-left: 10px;"><i class="bi bi-people"></i> {{ $reservation->guest_count }} người</p>
+                                                <p style="color:white; margin-right: 10px;">
+                                                    Cọc: {{ number_format($reservation->deposit_amount ?? 0, 0, ',', '.') . ' VNĐ' }}
+                                                </p>
+                                            </div>
                                         </div>
-                                        <div class="actions">
-                                            {{-- <button class="text-warning" style="background: transparent; border: none;">Chi tiết</button> --}}
-                                            <button id="cancelTableConfirm" class="text-danger" style="background: transparent; border: none;" >Hủy </button>
-                                             <!-- Nút màu nâu nhạt -->
-                                             <!-- Nút đỏ -->
-                                            {{-- <a href="#" class="btn btn-secondary">Add to calendar</a> --}}
-                                        </div>
+                                        <strong class="{{ $reservation->status === 'Confirmed' ? 'status-confirmed' : ($reservation->status === 'Checked-in' ? 'status-checked-in' : ($reservation->status === 'Cancelled' ? 'status-cancelled' : 'status-pending')) }}">
+                                            {{ $reservation->status === 'Confirmed' ? 'Đã xác nhận' : ($reservation->status === 'Checked-in' ? 'Đã nhận bàn' : ($reservation->status === 'Cancelled' ? 'Đã hủy' : 'Chờ xử lý')) }}
+                                        </strong>
                                     </div>
-                                @endforeach
+                                    <div class="actions">
+                                        <button class="text-danger cancel-btn" style="background: transparent; border: none;" data-reservation-id="{{ $reservation->id }}">Hủy</button>
+                                    </div>
+                                </div>
+                            @endforeach
+
                                 <div class="justify-content-center mt-3">
                                     {{ $bookingData->links() }}
                                 </div>
                         </div>
-
 
                         <!-- Modal -->
                         <div id="cancelModal" class="modal fade" tabindex="-1" role="dialog">
@@ -86,8 +83,8 @@
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <h5 class="modal-title">Xác Nhận Hủy Đơn</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <i class="fas fa-times"></i> <!-- Biểu tượng "x" -->
+                                        <button type="button" class="closeCancalledModal" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span> 
                                         </button>
                                     </div>
                                     <div class="modal-body">
@@ -102,43 +99,49 @@
                                         <form id="cancelForm">
                                             <div class="form-group">
                                                 <label for="fullName">Họ Và Tên:</label>
-                                                <input type="text" id="fullName" name="fullName" class="form-control" required>
+                                                <input type="text" id="fullName" name="fullName" class="form-control">
+                                                <div class="invalid-feedback" id="fullNameError" style="display: none;">Vui lòng nhập họ và tên.</div>
                                             </div>
-                            
+                                            
                                             <div class="form-group">
                                                 <label for="bankSelect">Chọn Ngân hàng:</label>
-                                                <select id="bankSelect" name="bankSelect" class="form-control" required>
+                                                <select id="bankSelect" name="bankSelect" class="form-control">
                                                     <option value="">Chọn ngân hàng</option>
                                                     @foreach ($bankList as $bank)
                                                         <option value="{{ $bank['code'] }}">{{ $bank['name'] }}</option>
                                                     @endforeach
                                                 </select>
+                                                <div class="invalid-feedback" id="bankSelectError" style="display: none;">Vui lòng chọn ngân hàng.</div>
                                             </div>
                                             
                                             <div class="form-group">
                                                 <label for="accountNumber">Số tài khoản:</label>
-                                                <input type="text" id="accountNumber" name="accountNumber" class="form-control" required>
+                                                <input type="text" id="accountNumber" name="accountNumber" class="form-control">
+                                                <div class="invalid-feedback" id="accountNumberError" style="display: none;">Vui lòng nhập số tài khoản.</div>
                                             </div>
-                            
+
                                             <div class="form-group">
                                                 <label for="email">Email:</label>
-                                                <input type="email" id="email" name="email" class="form-control" required>
+                                                <input type="email" id="email" name="email" class="form-control">
+                                                <div class="invalid-feedback" id="emailError" style="display: none;">Vui lòng nhập email hợp lệ.</div>
                                             </div>
                                             
                                             <div class="form-group">
                                                 <label for="reason">Lí do hủy:</label>
-                                                <textarea id="reason" name="reason" class="form-control" required></textarea>
+                                                <textarea id="reason" name="reason" class="form-control"></textarea>
+                                                <div class="invalid-feedback" id="reasonError" style="display: none;">Vui lòng nhập lý do hủy.</div>
                                             </div>
                                             <br>
-                            
+
                                             <div class="form-group text-end">
-                                                <button type="submit" class="btn btn-danger">Xác Nhận Hủy</button>
+                                                <button type="submit" class="btn-danger">Xác Nhận Hủy</button>
                                             </div>
                                         </form>
                                     </div>
                                 </div>
-                            </div>                            
+                            </div>
                         </div>
+
 
                         <div id="accountDetailsSection" class="content-section" style="display:none;">
                             <h3>Thông tin cá nhân</h3>

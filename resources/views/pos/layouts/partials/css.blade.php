@@ -1376,6 +1376,11 @@
     border: none;
 }
 
+#reservationListModal, #orderDetailModal {
+    display: none;
+}
+
+
 /* Đảm bảo modal hiển thị ở trung tâm và có hiệu ứng mờ */
 .modal {
     display: none;
