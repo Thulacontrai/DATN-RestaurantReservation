@@ -12,6 +12,7 @@ class Reservation extends Model
     protected $table = 'reservations';
 
     protected $fillable = [
+        'id',
         'customer_id',
         'user_name',
         'user_phone',
@@ -26,6 +27,11 @@ class Reservation extends Model
     ];
 
     protected $dates = ['deleted_at'];
+    
+    public function orders(){
+        return $this->hasMany(Order::class);
+    }
+
 
     public function customer()
     {
@@ -38,7 +44,7 @@ class Reservation extends Model
     }
     public function tables()
     {
-        return $this->belongsToMany(Table::class, 'reservation_table');
-                   
+        return $this->belongsToMany(Table::class, 'reservation_tables');
+
     }
 }

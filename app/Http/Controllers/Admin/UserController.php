@@ -47,7 +47,6 @@ class UserController extends Controller
             'roles' => $roles
         ]);
 
-
     }
 
     /**

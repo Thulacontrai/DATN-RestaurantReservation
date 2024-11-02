@@ -17,6 +17,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'phone',
+        'firebase_uid',
         'address',
         'email',
         'gender',
@@ -41,6 +42,12 @@ class User extends Authenticatable
     {
         return $this->belongsTo(User::class, 'parent_id');
     }
+
+    public function isPosStaff()
+{
+    return $this->role === 'pos' || $this->role === 'staff';
+}
+
 
 
     /**

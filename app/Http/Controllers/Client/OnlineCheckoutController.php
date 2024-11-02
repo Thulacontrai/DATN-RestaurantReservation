@@ -3,7 +3,12 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
+use App\Models\Reservation;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+
 
 class OnlineCheckoutController extends Controller
 {
@@ -39,9 +44,9 @@ class OnlineCheckoutController extends Controller
             $orderInfo = "Thanh toán qua MoMo";
             $amount = "$request->deposit";
             $orderId = time() . "";
-            $redirectUrl = route("reservationSuccessfully.client");
-            $ipnUrl = route("reservationSuccessfully.client");
-            $note = $request->user_note ?? null;
+            $redirectUrl = route("createReservationWithMomo.client");
+            $ipnUrl = route("createReservationWithMomo.client");
+            $note = $request->note ?? null;
             $extraData = "{'user_name':'$request->user_name','user_phone':'$request->user_phone','reservation_time':'$request->reservation_time','reservation_date':'$request->reservation_date','guest_count':'$request->guest_count','note':'$note','deposit_amount':'$request->deposit'}";
             $requestId = time() . "";
             $requestType = "payWithATM";
@@ -66,6 +71,10 @@ class OnlineCheckoutController extends Controller
             $result = $this->execPostRequest($endpoint, json_encode($data));
             $jsonResult = json_decode($result, true);  // decode json
             return redirect()->to($jsonResult['payUrl']);
+        }
+        if ($request->payment == "vnpay") {
+            $data = $request->all();
+            return view('client.QR-checkout',compact('data'));
         }
     }
 }

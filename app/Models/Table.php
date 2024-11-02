@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -27,9 +28,33 @@ class Table extends Model
     }
     public function reservations()
     {
-        return $this->belongsToMany(Reservation::class, 'reservation_table')
+        return $this->belongsToMany(Reservation::class, 'reservation_tables')
             ->withPivot('start_date', 'start_time', 'end_time', 'status');
     }
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
 
-    
+
+
+
+
+    //Giải thích:
+    // Carbon: Sử dụng thư viện Carbon để tính thời gian khách đã ngồi tại bàn.
+    // Tính toán phần trăm chiếm dụng: Hàm getOccupancyPercentage() sẽ trả về giá trị phần trăm
+    // dựa trên thời gian khách đã ngồi, với mức tối đa là 120 phút.
+
+    public function getOccupancyPercentage()
+    {
+        $maxTime = 120; // Giả định thời gian tối đa một bàn có thể chiếm dụng là 120 phút
+        $timeSpent = Carbon::now()->diffInMinutes($this->occupied_since);
+
+        return min(100, ($timeSpent / $maxTime) * 100); // Tính toán phần trăm chiếm dụng
+    }
+
+    //occupied_since: Thoi gian hien tai---- xem thử nhé nhóm trưởng có cần cho vào dtb ko ??????????
+
+
+
 }

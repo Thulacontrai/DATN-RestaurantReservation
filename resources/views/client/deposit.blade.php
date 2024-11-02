@@ -9,11 +9,12 @@
     ])
     <div id="content" class="no-bottom no-top">
         <section id="section-book-form">
-            <form action="{{ route('MOMOCheckout.client') }}" method="POST">
+            <form id="depositForm" action="{{ route('MOMOCheckout.client') }}" method="POST">
                 @csrf
                 <div class="container">
-                    <div class="row ">
+                    <div class="row">
                         <div class="col-7 p-5 border-color-1 rounded">
+                            <!-- Thông tin đặt chỗ -->
                             <div class="">
                                 <div class="row">
                                     <div class="col-5">
@@ -49,6 +50,7 @@
                                                 <p id="info-notes">{{ $showDeposit['note'] ?? null }}</p>
                                                 <input type="hidden" name="note"
                                                     value="{{ $showDeposit['note'] ?? null }}">
+                                                <input type="hidden" name="orderId" value="{{ $orderId }}">
                                             </div>
                                         </div>
                                     </div>
@@ -56,8 +58,9 @@
                             </div>
                         </div>
                         <div class="col-5">
+                            <!-- Chi tiết cọc -->
                             <div class="row">
-                                <div class="col ">
+                                <div class="col">
                                     <div class="p-4 bg-dark rounded">
                                         <h3 class="">Chi tiết cọc</h3>
                                         <div class="row pt-2">
@@ -76,6 +79,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <!-- Phương thức thanh toán -->
                             <div class="row mt-2">
                                 <div class="col">
                                     <div class="p-4 bg-dark rounded">
@@ -86,7 +90,7 @@
                                             <label for="payUrl">Momo</label>
                                             <br>
                                             <input type="radio" name="payment" id="vnpay" value="vnpay">
-                                            <label for="vnpay">VNPay</label>
+                                            <label for="vnpay">QR Code</label>
                                         </div>
                                     </div>
                                 </div>
@@ -95,7 +99,10 @@
                     </div>
                     <div class="row d-flex justify-content-between mt-4">
                         <div class="col-3">
-                            <a href="#" class="text-secondary">Quay lại trang đặt bàn</a>
+
+                            <a href="{{ route('customer.information', ['date' => $showDeposit['reservation_date'], 'time' => $showDeposit['reservation_time'], 'note' => $showDeposit['note'] ?? null, 'guest_count' => $showDeposit['guest_count'], 'user_phone' => $showDeposit['user_phone'], 'user_name' => $showDeposit['user_name']]) }}"
+
+                                class="text-secondary">Quay lại trang đặt bàn</a>
                         </div>
                         <div class="col-2">
                             <button type="submit" class="btn-line">Thanh toán</button>
@@ -105,4 +112,18 @@
             </form>
         </section>
     </div>
+
+    @if (session('err'))
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi!',
+                    text: '{{ session('err') }}',
+                    timer: 2000,
+                    confirmButtonText: 'OK'
+                });
+            });
+        </script>
+    @endif
 @endsection
