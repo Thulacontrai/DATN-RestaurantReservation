@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\CalendarController;
 use App\Http\Controllers\Admin\IngredientController;
 use App\Http\Controllers\Admin\IngredientTypeController;
 use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\Admin\RefundController;
 use App\Http\Controllers\Admin\ReservationController;
 use App\Http\Controllers\Admin\ReservationHistoryController;
 use App\Http\Controllers\Admin\ReservationTableController;
@@ -72,6 +73,15 @@ Route::post('/member/update-booking', [MemberController::class, 'updateBooking']
 Route::get('/home', [HomeController::class, 'index'])->middleware('auth');
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login.client');
 
+
+
+
+
+
+// account
+// Route::get('/account', [AccountController::class, 'show'])->name('account.show');
+// Route::post('/update-account', [AccountController::class, 'update'])->name('account.update');
+// Route::post('/change-password', [AccountController::class, 'changePassword'])->name('account.changePassword');
 
 
 
@@ -144,11 +154,18 @@ Route::get('/customerInformation', [ReservationController::class, 'showInformati
 
 
 
+
+
+
+Route::post('/Ppayment/{table_number}', [PosController::class, 'Ppayment'])->name('Ppayment');
+// hoàn cọc
+Route::get('/refunds/create/{reservation_id}', [RefundController::class, 'create'])->name('refunds.create');
+Route::post('/refunds', [RefundController::class, 'store'])->name('refunds.store');
+Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');
+
 Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
 Route::post('/create-order', [PosController::class, 'createOrder']);
-
 Route::post('/add-dish-to-order', [PosController::class, 'addDishToOrder']);
-
 Route::post('/load-more-dishes', [PosController::class, 'loadMoreDishes']);
 Route::get('/api/tables/{tableId}/order', [TableController::class, 'getOrderForReservedTable']);
 Route::get('/reservations', [ReservationController::class, 'showReservations'])
@@ -218,6 +235,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/', function () {
         return view('auth.login');
 
+
     })->name('home');
 
 
@@ -227,6 +245,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('tables/trash', [TableController::class, 'trash'])->name('tables.trash');
     Route::patch('table/{id}/restore', [TableController::class, 'restore'])->name('table.restore');
     Route::delete('table/{id}/force-delete', [TableController::class, 'forceDelete'])->name('table.forceDelete');
+
+    /// xếp bàn cho khách
+    Route::get('reservation/{reservationId}/assign-tables', [ReservationController::class, 'assignTables'])->name('reservation.assignTables');
+    Route::get('reservation/assign-table', [ReservationController::class, 'assignTable'])->name('assignTable');
+    Route::post('reservation/submit-table', [ReservationController::class, 'submitTable'])->name('submit.tables');
+    Route::post('reservation/submit-move-table', [ReservationController::class, 'submitMoveTable'])->name('submit.Movetables');
 
     /// xếp bàn cho khách
     Route::get('reservation/{reservationId}/assign-tables', [ReservationController::class, 'assignTables'])->name('reservation.assignTables');
@@ -311,26 +335,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('ingredient', IngredientController::class);
     Route::resource('dashboard', DashboardController::class);
     Route::resource('accountSetting', SettingController::class);
+
     // Lịch
     Route::resource('calendar', CalendarController::class);
-
-    //permission route
-    Route::get('/admin/permission', [PermissionController::class, 'index'])->name('permissions.index');
-    Route::get('/admin/permission/create', [PermissionController::class, 'create'])->name('permissions.create');
-    Route::post('/admin/permission', [PermissionController::class, 'store'])->name('permissions.store');
-    Route::get('/admin/permission/{id}/edit', [PermissionController::class, 'edit'])->name('permissions.edit');
-    Route::put('/admin/permission/{id}', [PermissionController::class, 'update'])->name('permissions.update');
-    Route::delete('admin/permission/{id}', [PermissionController::class, 'destroy'])->name('permissions.destroy');
-
-    //roles route
-    // Route::get('/admin/permission', [PermissionController::class, 'index'])->name('permissions.index');
-    // Route::get('/admin/permission/create', [PermissionController::class, 'create'])->name('permissions.create');
-    // Route::post('/admin/permission', [PermissionController::class, 'store'])->name('permissions.store');
-    // Route::get('/admin/permission/{id}/edit', [PermissionController::class, 'edit'])->name('permissions.edit');
-    // Route::put('/admin/permission/{id}', [PermissionController::class, 'update'])->name('permissions.update');
-    // Route::delete('admin/permission/{id}', [PermissionController::class, 'destroy'])->name('permissions.destroy');
-
-
 
     //permission route
     Route::get('/admin/permission', [PermissionController::class, 'index'])->name('permissions.index');
@@ -353,6 +360,27 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 
 Route::get('/register-client', [CustomerAuthController::class, 'showRegisterForm'])->name('register.form');
+Route::post('/register-client', [CustomerAuthController::class, 'register'])->name('client.register'); 
+Route::get('/login-client', [CustomerAuthController::class, 'showLoginForm'])->name('login.form');
+Route::post('/login-client', [CustomerAuthController::class, 'login'])->name('client.login'); 
+Route::post('/logout-client', [CustomerAuthController::class, 'logout'])->name('client.logout');
+
+Route::post('/check-account', [CustomerAuthController::class, 'checkAccount']);
+Route::post('/login-success', [CustomerAuthController::class, 'loginSuccess'])->name('login.success');
+
+
+
+Route::post('/verify-code', [CustomerAuthController::class, 'verifyCode'])->name('verify.code');
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/member/profile', [MemberController::class, 'showProfile'])->name('member.profile');
+    Route::post('/member/update-booking', [MemberController::class, 'updateBooking'])->name('member.updateBooking');
+    Route::post('/cancel-reservation', [ReservationController::class, 'cancelReservation'])->name('cancel.reservation');
+});
+
+
+
+Route::get('/register-client', [CustomerAuthController::class, 'showRegisterForm'])->name('register.form');
 Route::post('/register-client', [CustomerAuthController::class, 'register'])->name('client.register');
 Route::get('/login-client', [CustomerAuthController::class, 'showLoginForm'])->name('login.form');
 Route::post('/login-client', [CustomerAuthController::class, 'login'])->name('client.login');
@@ -364,10 +392,10 @@ Route::post('/login-success', [CustomerAuthController::class, 'loginSuccess'])->
 
 
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+
+
+
 
 
 });
@@ -377,8 +405,6 @@ Route::post('/verify-code', [CustomerAuthController::class, 'verifyCode'])->name
 Route::middleware(['auth'])->group(function () {
     Route::get('/member/profile', [MemberController::class, 'showProfile'])->name('member.profile');
     Route::post('/member/update-booking', [MemberController::class, 'updateBooking'])->name('member.updateBooking');
-
-
 });
 
 
@@ -395,6 +421,7 @@ Route::post('/verify-otp', [ReservationController::class, 'verifyOtp'])->name('v
 
 Route::post('/api/cancel-booking/{id}', [ReservationController::class, 'cancelReservation'])->name('cancel.booking');
 Route::post('/cancel-booking/{id}', [ReservationController::class, 'cancelReservation'])->name('cancel.booking');
+
 
 Route::get('/login1', function () {
     return view('client.login');
@@ -451,6 +478,7 @@ Route::get('/test', function () {
 
 Route::get('/test', [ReservationController::class, 'getBanks']);
 Route::get('/print/{orderId}', [ReservationController::class, 'print'])->name('print.page');
+
 
 require __DIR__ . '/auth.php';
 

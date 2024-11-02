@@ -159,6 +159,9 @@
                                                         <span class="badge shade-yellow min-70">Chờ xử lý</span>
                                                     @elseif ($reservation->status === 'Cancelled')
                                                         <span class="badge shade-red min-70">Đã hủy</span>
+                                                        @elseif ($reservation->status === 'Refund')
+                                                        <span class="badge bg-info">Đã hoàn cọc</span>
+                                                   
                                                     @else
                                                         <span class="badge shade-gray min-70">Không rõ</span>
                                                     @endif
@@ -187,6 +190,17 @@
                                                             </button></a>
 
                                                     </form>
+                                                     {{-- Hoàn cọc --}}
+                                                      <form action="" method="POST"
+                                                      style="display:inline-block;">
+                                                      <div style="display: flex; gap: 10px; align-items: center;">
+                                                          <a href="{{ route('refunds.create', ['reservation_id' => $reservation->id]) }}"
+                                                              class="btn btn-link p-0 return-button"
+                                                              style="margin-top: 15px; border: 1px solid #e8e7e7; padding: 10px; width: 37px; height: 35px; display: inline-flex; justify-content: center; align-items: center;">
+                                                              <i class="bi bi-cash-coin"></i>
+                                                          </a>
+                                                      </div>
+                                                  </form>
                                                     <form action="{{ route('admin.reservation.destroy', $reservation->id) }}" method="POST" style="display:inline-block;">
                                                         @csrf
                                                         @method('DELETE')
@@ -206,6 +220,7 @@
                                     </tbody>
                                 </table>
                             </div>
+
 
                             <!-- Pagination -->
                             <div class="pagination justify-content-center mt-3">
