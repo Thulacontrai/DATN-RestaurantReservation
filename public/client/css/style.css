@@ -80,7 +80,9 @@ html,body{
 height:100%;
 }
 
-
+html {
+	overflow-x: hidden;
+  }
 body {
 	font-family: var(--body-font);
 	font-size: var(--body-font-size);
@@ -662,7 +664,7 @@ color:#fff !important;
 /* section */
 /* ================================================== */
 	section{padding:90px 0 90px 0;}
-	section{background:#473529;}
+	section{background:#000000;}
 
 	.full-height{
 		height:100%;
@@ -4250,7 +4252,7 @@ figure.hover-zoom:hover img{
 }
 
 img.w-100px{
-	width: 100px !important;x
+	width: 100px !important;
 	height: auto;
 }
 

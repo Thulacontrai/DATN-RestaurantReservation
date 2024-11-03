@@ -31,7 +31,7 @@
                                         <option value="Tầng 2" {{ $table->area == 'Tầng 2' ? 'selected' : '' }}>Tầng 2</option>
                                     </select>
                                     <div class="invalid-feedback">Vui lòng chọn khu vực.</div>
-                                    <div class="valid-feedback">Looks good!</div>
+                                    
                                     @error('area')
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror
@@ -42,7 +42,7 @@
                                     <label for="table_number" class="form-label">Số Bàn</label>
                                     <input type="text" name="table_number" id="table_number" class="form-control" value="{{ $table->table_number }}" required>
                                     <div class="invalid-feedback">Vui lòng nhập số bàn.</div>
-                                    <div class="valid-feedback">Looks good!</div>
+                                    
                                     @error('table_number')
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror
@@ -56,7 +56,7 @@
                                         <option value="VIP" {{ $table->table_type == 'VIP' ? 'selected' : '' }}>VIP</option>
                                     </select>
                                     <div class="invalid-feedback">Vui lòng chọn loại bàn.</div>
-                                    <div class="valid-feedback">Looks good!</div>
+                                    
                                     @error('table_type')
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror
@@ -71,7 +71,7 @@
                                         <option value="Occupied" {{ $table->status == 'Occupied' ? 'selected' : '' }}>Đang sử dụng</option>
                                     </select>
                                     <div class="invalid-feedback">Vui lòng chọn trạng thái bàn.</div>
-                                    <div class="valid-feedback">Looks good!</div>
+                                    
                                     @error('status')
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror

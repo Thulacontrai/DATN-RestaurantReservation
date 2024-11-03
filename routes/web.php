@@ -15,11 +15,12 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\CalendarController;
 use App\Http\Controllers\Admin\IngredientController;
-use App\Http\Controllers\Admin\IngredientTypeController;
 use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\Admin\RecipeController;
+use App\Http\Controllers\Admin\RecipesController;
 use App\Http\Controllers\Admin\ReservationController;
 use App\Http\Controllers\Admin\ReservationHistoryController;
-use App\Http\Controllers\Admin\ReservationTableController;
+
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\TableController;
@@ -161,7 +162,8 @@ Route::delete('/order/{order_id}/item/{item_id}', [PosController::class, 'delete
 
 
 
-
+Route::post('/reservation/check-table', [PosController::class, 'checkTable'])->name('reservation.checkTable');
+Route::post('/reservations/convert-to-order', [PosController::class, 'convertToOrder'])->name('reservation.convertToOrder');
 
 
 
@@ -243,7 +245,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::resource('reservation', ReservationController::class);
     Route::post('reservation/cancel/{id}', [ReservationController::class, 'cancel'])->name('reservation.cancel');
-    Route::resource('reservationTable', ReservationTableController::class);
+
     Route::resource('reservationHistory', ReservationHistoryController::class);
 
 
@@ -260,6 +262,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('dishes-trash', [DishesController::class, 'trash'])->name('dishes.trash');
     Route::patch('dishes-restore/{id}', [DishesController::class, 'restore'])->name('dishes.restore');
     Route::delete('dishes-force-delete/{id}', [DishesController::class, 'forceDelete'])->name('dishes.forceDelete');
+    Route::get('dishes/{id}', [DishesController::class, 'show'])->name('dishes.detail');
+    Route::get('dishes/{id}/update-ingredients', [DishesController::class, 'editIngredients'])->name('dishes.updateIngredients');
+    Route::post('dishes/{id}/update-ingredients', [DishesController::class, 'updateIngredients'])->name('dishes.updateIngredients');
+    Route::delete('dishes/{recipeId}/deleteIngredient', [DishesController::class, 'deleteIngredient'])->name('dishes.deleteIngredient');
+    Route::post('dishes/{dish}/add-ingredient', [DishesController::class, 'addIngredient'])->name('dishes.addIngredient');
+
+
+
+
+
 
 
     Route::resource('combo', ComboController::class);
@@ -308,7 +320,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // Route::resource('permission', PermissionController::class);
     Route::resource('supplier', SupplierController::class);
-    Route::resource('ingredientType', IngredientTypeController::class);
+    // Route::resource('recipes', RecipesController::class);
+
     Route::resource('ingredient', IngredientController::class);
     Route::resource('dashboard', DashboardController::class);
     Route::resource('accountSetting', SettingController::class);

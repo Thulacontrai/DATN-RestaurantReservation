@@ -30,6 +30,66 @@ class PosController extends Controller
 
     // }
 
+
+    public function checkTable(Request $request)
+    {
+        $reservation = Reservation::findOrFail($request->reservation_id);
+        $hasTable = $reservation->tables()->exists(); // Kiểm tra xem đơn đặt có bàn chưa
+    
+        return response()->json([
+            'hasTable' => $hasTable
+        ]);
+    }
+    
+    public function convertToOrder(Request $request)
+    {
+        $reservation = Reservation::findOrFail($request->reservation_id);
+    
+        // Kiểm tra trạng thái của đơn đặt
+        if ($reservation->status !== 'Confirmed') {
+            return response()->json([
+                'error' => 'Chỉ có thể chuyển đơn đã xác nhận.'
+            ], 400);
+        }
+    
+        // Nếu chưa có bàn, cần phải chọn bàn
+        if (!$reservation->tables()->exists() && !$request->has('table_id')) {
+            return response()->json([
+                'error' => 'Bạn cần chọn bàn trước khi chuyển đơn.'
+            ], 400);
+        }
+    
+        // Gán bàn được chọn nếu đơn đặt chưa có bàn
+        if ($request->has('table_id')) {
+            $reservation->tables()->attach($request->table_id); // Thêm bàn vào reservation
+        }
+    
+        $table = $reservation->tables()->first(); // Lấy bàn đầu tiên trong danh sách
+    
+        // Tạo order từ reservation
+        $order = Order::create([
+            'reservation_id' => $reservation->id,
+            'table_id'       => $table->id,
+            'customer_id'    => $reservation->customer_id,
+            'total_amount'   => $reservation->deposit_amount,
+            'order_type'     => 'dine_in',
+            'status'         => 'pending',
+            'discount_amount'=> 0,
+            'final_amount'   => $reservation->deposit_amount,
+        ]);
+    
+        // Cập nhật trạng thái của bàn và đơn đặt
+        $table->status = 'occupied'; // Đánh dấu bàn là "occupied" sau khi được sử dụng
+        $reservation->status = 'checked-in';
+        $table->save();
+        $reservation->save();
+    
+        return response()->json([
+            'success' => 'Chuyển đơn thành công!',
+            'order' => $order
+        ]);
+    }
+
     // Trang chính của POS, hiển thị bàn và món ăn
     public function index()
     {
@@ -64,7 +124,8 @@ class PosController extends Controller
 
         // Lấy danh sách các bàn trống (available)
         $availableTables = Table::where('status', 'available')->get();
-
+        //lấy  danh sách đơn đặt bàn đã được xác nhận
+        $reservations=Reservation::where('status','Confirmed')->paginate(5);
         // Truyền dữ liệu tới view
         return view('pos.index', [
             'tables' => $tables,
@@ -73,10 +134,11 @@ class PosController extends Controller
             'upcomingReservations' => $upcomingReservations,
             'lateReservations' => $lateReservations,
             'availableTables' => $availableTables,  // Truyền danh sách bàn trống vào view
-            'availableTablesCount' => $tables->where('status', 'available')->count(),
-            'reservedTablesCount' => $tables->where('status', 'reserved')->count(),
-            'occupiedTablesCount' => $tables->where('status', 'occupied')->count(),
+            'availableTablesCount' => Table::query()->where('status', 'available')->count(),
+            'reservedTablesCount' => Table::query()->where('status', 'reserved')->count(),
+            'occupiedTablesCount' => Table::query()->where('status', 'occupied')->count(),
             'totalTablesCount' => $tables->count(),
+            'reservations'=>$reservations,
         ]);
     }
 
@@ -143,7 +205,7 @@ class PosController extends Controller
             ]);
 
             // Cập nhật trạng thái của bàn thành "reserved"
-            $table->update(['status' => 'reserved']);
+            $table->update(['status' => 'occupied']);
 
             return response()->json([
                 'success' => true,

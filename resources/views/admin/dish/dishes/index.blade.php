@@ -52,12 +52,10 @@
                                 <table class="table v-middle m-0">
                                     <thead>
                                         <tr>
-                                            <th>Mã Món Ăn</th>
                                             <th>Tên Món Ăn</th>
                                             <th>Loại Món Ăn</th>
                                             <th>Giá</th>
                                             <th>Hình Ảnh</th>
-                                            <th>Số Lượng</th>
                                             <th>Trạng Thái</th>
                                             <th>Hành Động</th>
                                         </tr>
@@ -65,7 +63,7 @@
                                     <tbody>
                                         @forelse ($dishes as $dish)
                                             <tr>
-                                                <td>{{ $dish->id }}</td>
+                                                
                                                 <td>{{ $dish->name }}</td>
                                                 <td>{{ $dish->category->name ?? 'N/A' }}</td>
                                                 <td>{{ number_format($dish->price, 0, ',', '.') }} VND</td>
@@ -78,7 +76,7 @@
                                                             width="50">
                                                     @endif
                                                 </td>
-                                                <td>{{ $dish->quantity }}</td>
+
                                                 <td>
                                                     @if ($dish->status == 'available')
                                                         <span class="badge bg-success">Có sẵn</span>

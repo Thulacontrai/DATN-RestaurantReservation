@@ -14,4 +14,8 @@ class Supplier extends Model
         'email',
         'address',
     ];
+    public function inventoryTransactions()
+    {
+        return $this->hasMany(InventoryTransaction::class);
+    }
 }

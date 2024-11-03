@@ -129,7 +129,6 @@
                                             <th>Thời Gian Đặt</th>
                                             <th>Bàn</th>
                                             <th>Tiền cọc</th>
-
                                             <th>Ghi Chú</th>
                                             <th>Trạng Thái</th>
                                             <th>Hành Động</th>
@@ -143,9 +142,8 @@
                                                 <td>{{ $reservation->id }}</td>
                                                 <td>{{ $reservation->customer->name ?? 'Không rõ' }}</td>
                                                 <td>{{ $reservation->guest_count ?? 'N/A' }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($reservation->reservation_time)->format('H:i:s') }}
-                                                </td>
-                                                <td>{{ $reservation->reservation_date }}
+                                                <td>
+                                               {{ $reservation->reservation_date }}
                                                     <br> {{ $reservation->reservation_time }}
                                                 </td>
                                                 <td>

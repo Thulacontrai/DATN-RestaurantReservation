@@ -15,8 +15,10 @@
                     <i class="material-icons">restaurant</i> Thực đơn
                 </a>
                 <input class="form-control1 me-2" id="searchInput" type="search" placeholder="Tìm món (F3)"
+                <input class="form-control1 me-2" id="searchInput" type="search" placeholder="Tìm món (F3)"
                     aria-label="Tìm món">
             </div>
+
 
 
             <!-- Right Section: Icons -->
@@ -159,6 +161,7 @@
                         </div>
                         <div class="tabs" id="orderTabs"></div>
                         <input class="form-control1 me-2" id="searchInput" type="search" placeholder="Tìm khách (F4)"
+                        <input class="form-control1 me-2" id="searchInput" type="search" placeholder="Tìm khách (F4)"
                             aria-label="Tìm khách hàng">
                     </div>
                     <button class="btn btn-success ms-2" id="openReservationModal">
@@ -173,11 +176,11 @@
                         <div class="cube">
                             <span class="side top">
                                 <i class="fas fa-chair"></i> <!-- Icon cho Bàn -->
-                                {{ $order->table->table_number }}
+                                {{ $order->table->table_number ?? 'trống'}}
                             </span>
                             <span class="side front">
                                 <i class="fas fa-receipt"></i> <!-- Icon cho Đơn -->
-                                {{ $order->id }}
+                                {{ $order->id ?? '0'}}
                             </span>
                         </div>
                     </div>
@@ -369,6 +372,51 @@
     }
 
 
+    /* Responsive cho các màn hình nhỏ */
+    @media (max-width: 768px) {
+        .table-card {
+            width: 80px;
+            height: 100px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .table-card {
+            width: 60px;
+            height: 80px;
+        }
+
+        .navbar .form-control {
+            width: 100%;
+        }
+
+        .order-section {
+            padding: 5px;
+        }
+
+        .table-container {
+            max-height: calc(100vh - 200px);
+            /* Giảm chiều cao cho màn hình nhỏ hơn để đảm bảo không bị tràn */
+        }
+
+        .progress {
+            height: 6px;
+            /* Giảm chiều cao của thanh tiến trình */
+        }
+
+        .nav-link {
+            font-size: 14px;
+            /* Giảm kích thước font trên thiết bị nhỏ */
+        }
+
+        .btn {
+            padding: 8px 10px;
+            font-size: 12px;
+            /* Giảm kích thước nút trên thiết bị nhỏ */
+        }
+    }
+
+
     .table-container {
         display: flex;
         flex-wrap: wrap;
@@ -492,6 +540,13 @@
         transform: translate3d(0, 0, 2em);
     }
 </style>
+
+<script>
+    // Modal danh sách đặt bàn
+    document.getElementById('modalListReservation').addEventListener('click', function() {
+        $('#reservationListModal').modal('show');
+    });
+</script>
 
 <script>
     // Modal danh sách đặt bàn

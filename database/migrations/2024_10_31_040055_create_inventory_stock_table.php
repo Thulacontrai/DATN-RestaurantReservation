@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::disableForeignKeyConstraints();
 
-        Schema::create('ingredients', function (Blueprint $table) {
+        Schema::create('inventory_stock', function (Blueprint $table) {
             $table->id();
-            $table->string('name',50);
-            $table->decimal('price',10,2);
-            $table->string('unit',20);
-            $table->enum('category',['Đồ tươi','Đồ đóng hộp']);
+            $table->unsignedBigInteger('ingredient_id'); // Thay đổi từ integer sang unsignedBigInteger
+            $table->foreign('ingredient_id')->references('id')->on('ingredients')->onDelete('cascade');
+            $table->integer('quantity_stock');
+            $table->bigInteger('last_update');
         });
 
         Schema::enableForeignKeyConstraints();
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ingredients');
+        Schema::dropIfExists('inventory_stock');
     }
 };

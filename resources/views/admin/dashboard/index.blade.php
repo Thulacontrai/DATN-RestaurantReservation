@@ -39,7 +39,7 @@
                         </div>
                         <div class="sale-details">
                             <h3 class="text-yellow">{{$categoryCount}}</h3>
-                            <p><a href="{{route('admin.category.index')}}">Danh Mục Món</a></p>
+                            <p><a href="{{route('admin.category.index')}}">Thực Đơn</a></p>
                         </div>
                     </div>
                 </div>

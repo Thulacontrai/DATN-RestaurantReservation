@@ -21,7 +21,7 @@ class CreateOrderItemsTable extends Migration
             $table->integer('quantity'); // Số lượng
             $table->decimal('price', 10, 2); // Đơn giá của từng item
             $table->decimal('total_price', 10, 2); // Tổng giá cho từng item (quantity * price)
-            $table->string('status', 50)->nullable(); // Trạng thái đơn hàng (nullable)
+            $table->enum('status', ['chờ xử lý', 'đang chế biến', 'hoàn thành', 'hủy'])->default('chờ xử lý');
             $table->timestamps(); // created_at và updated_at tự động
 
             // Thiết lập khóa ngoại cho order_id

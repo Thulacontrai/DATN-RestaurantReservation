@@ -20,5 +20,15 @@ class Combo extends Model
     ];
 
     protected $dates = ['deleted_at'];
+
+    public function dishes()
+    {
+        return $this->belongsToMany(Dishes::class, 'combo_dishes');
+    }
+
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class, 'item_id');
+    }
 }
 
