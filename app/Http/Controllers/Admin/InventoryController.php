@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Session;
 use Whoops\Exception\Formatter;
 use Illuminate\Support\Str;
 use App\Models\InventoryStock;
+use App\Models\Ingredient;
 
 class InventoryController extends Controller
 {
@@ -62,5 +63,58 @@ class InventoryController extends Controller
 
         return view('admin.inventory.index', compact('inventoryStocks', 'outOfStock', 'lowStock', 'highStock'));
     }
+
+    public function edit($id)
+    {
+        try {
+            $inventory = InventoryStock::findOrFail($id);
+            $ingredients = Ingredient::all(); // Thay thế Ingredient bằng model phù hợp với nguyên liệu của bạn
+            return view('admin.inventory.edit', compact('inventory', 'ingredients'));
+        } catch (\Exception $e) {
+            return redirect()->route('admin.inventory.index')->with('error', 'Có lỗi xảy ra khi lấy dữ liệu kho.');
+        }
+    }
+
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'product_name' => 'required|string|max:255',
+            'quantity_stock' => 'required|integer',
+        ], [
+            'product_name.required' => 'Trường tên sản phẩm không được để trống.',
+            'quantity_stock.required' => 'Trường số lượng không được để trống.',
+            'quantity_stock.integer' => 'Trường số lượng phải là một số nguyên.',
+        ]);
+
+        try {
+            $inventory = InventoryStock::findOrFail($id);
+            $inventory->update([
+                'product_name' => $request->input('product_name'),
+                'quantity_stock' => $request->input('quantity_stock'),
+                'last_update' => now()
+            ]);
+
+            return redirect()->route('admin.inventory.index')->with('success', 'Cập nhật kho thành công.');
+        } catch (\Exception $e) {
+            Log::error('Error updating inventory: ' . $e->getMessage()); // Ghi nhận lỗi vào log
+            return redirect()->route('admin.inventory.index')->with('error', 'Có lỗi xảy ra khi cập nhật kho.');
+        }
+    }
+
+
+
+    public function destroy($id)
+    {
+        try {
+            $inventoryStock = InventoryStock::findOrFail($id);
+            $inventoryStock->delete();
+
+            return redirect()->route('admin.inventory.index')->with('success', 'Xóa kho thành công.');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.inventory.index')->with('error', 'Có lỗi xảy ra khi xóa kho.');
+        }
+    }
+
 }
 

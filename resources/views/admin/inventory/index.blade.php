@@ -95,6 +95,7 @@
                                         <tr>
                                             <th>ID</th>
                                             <th>Tên Nguyên Liệu</th>
+                                            <th>Đơn Vị</th>
                                             <th>Số Lượng Tồn Kho</th>
                                             <th>Hành Động</th>
                                         </tr>
@@ -104,6 +105,7 @@
                                             <tr id="inventory-stock-{{ $stock->id }}">
                                                 <td>{{ $stock->id }}</td>
                                                 <td>{{ $stock->ingredient->name   ?? 'Không rõ' }}</td>
+                                                <td>{{ $stock->ingredient->unit }}</td>
                                                 <td>{{ $stock->quantity_stock }}</td>
                                                 <td>
                                                     <div class="actions">
