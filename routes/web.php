@@ -391,15 +391,6 @@ Route::post('/check-account', [CustomerAuthController::class, 'checkAccount']);
 Route::post('/login-success', [CustomerAuthController::class, 'loginSuccess'])->name('login.success');
 
 
-
-
-
-
-
-
-
-});
-
 Route::post('/verify-code', [CustomerAuthController::class, 'verifyCode'])->name('verify.code');
 
 Route::middleware(['auth'])->group(function () {
