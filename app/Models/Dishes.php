@@ -39,7 +39,7 @@ class Dishes extends Model
 
     public function combos()
     {
-        return $this->belongsToMany(Combo::class, 'combo_dishes');
+        return $this->belongsToMany(Combo::class, 'combo_dish')->withPivot('quantity')->withTimestamps();
     }
 
     public function orderItems()

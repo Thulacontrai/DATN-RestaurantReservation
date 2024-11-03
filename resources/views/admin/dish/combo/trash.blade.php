@@ -44,7 +44,7 @@
                                             <tr>
                                                 <td>{{ $combo->name }}</td>
                                                 <td>{{ number_format($combo->price, 0, ',', '.') }} VND</td>
-                                                <td>{{ $combo->description }}</td>
+                                                <td>{!! $combo->description !!}</></td>
                                                 <td class="text-center">
                                                     @if ($combo->image)
                                                         <img src="{{ asset('storage/' . $combo->image) }}"
