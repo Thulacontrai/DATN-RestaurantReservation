@@ -94,7 +94,7 @@
                                                             <i class="bi bi-pencil-square text-warning"></i>
                                                         </a>
                                                         <a href="" class="viewRow">
-                                                            <form action="{{ route('admin.combo.destroy', $combo->id) }}"
+                                                            <form action="{{ route('admin.combo.forceDelete', $combo->id) }}"
                                                                 method="POST" style="display:inline-block;padding-bottom: 7px;"
                                                                 onsubmit="return confirm('Bạn có chắc chắn muốn xóa?');">
                                                                 @csrf
