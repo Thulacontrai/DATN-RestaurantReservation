@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\CalendarController;
 use App\Http\Controllers\Admin\IngredientController;
 use App\Http\Controllers\Admin\IngredientTypeController;
+use App\Http\Controllers\Admin\InventoryTransactionController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\ReservationController;
 use App\Http\Controllers\Admin\ReservationHistoryController;
@@ -32,6 +33,7 @@ use App\Http\Controllers\Pos\PosController;
 use App\Http\Controllers\ProfileController;
 
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -42,6 +44,24 @@ use App\Http\Controllers\ProfileController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+
+//route tạo phiếu nhập kho
+Route::resource('transactions', InventoryTransactionController::class); 
+Route::post('/transactions', [InventoryTransactionController::class, 'storeTransaction'])->name('transactions.store');
+Route::get('/transactions/{id}/add-items', [InventoryTransactionController::class, 'addItemForm'])->name('transactions.add_items');
+Route::post('/transactions/{id}/add-items', [InventoryTransactionController::class, 'storeItem'])->name('transactions.store_item');
+Route::post('/transactions/{id}/update-status', [InventoryTransactionController::class, 'updateStatus'])->name('transactions.update_status');
+Route::post('/transactions/{id}/finalize', [InventoryTransactionController::class, 'finalizeTransaction'])->name('transactions.finalize');
+Route::get('transactions/{id}', [InventoryTransactionController::class, 'show'])->name('transactions.show');
+Route::get('transactions/{id}/edit', [InventoryTransactionController::class, 'edit'])->name('transactions.edit');
+Route::put('transactions/{id}', [InventoryTransactionController::class, 'update'])->name('transactions.update');
+Route::patch('transactions/{id}/status', [InventoryTransactionController::class, 'updateStatus'])->name('transactions.update.status');
+Route::get('admin/transactions/create', [InventoryTransactionController::class, 'createTransaction'])->name('transactions.create');
+Route::delete('transactions/{id}', [InventoryTransactionController::class, 'destroy'])->name('transactions.destroy');
+
+
+
 
 // import
 Route::get('admin/supplier/import', [SupplierController::class, 'showImportForm'])->name('admin.supplier.import');
@@ -313,6 +333,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('accountSetting', SettingController::class);
     // Lịch
     Route::resource('calendar', CalendarController::class);
+
+    //inventoy
+    
+
+    
+
+    
+
+
+
 
     //permission route
     Route::get('/admin/permission', [PermissionController::class, 'index'])->name('permissions.index');
