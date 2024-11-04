@@ -16,13 +16,18 @@ class Ingredient extends Model
         'ingredient_type_id',
     ];
 
-    public function supplier()
+    public function recipes()
     {
-        return $this->belongsTo(Supplier::class);
+        return $this->hasMany(Recipe::class);
     }
 
-    public function ingredientType()
+    public function inventoryStock()
     {
-        return $this->belongsTo(IngredientType::class);
+        return $this->hasOne(InventoryStock::class);
+    }
+
+    public function inventoryItems()
+    {
+        return $this->hasMany(InventoryItem::class);
     }
 }

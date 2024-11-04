@@ -33,6 +33,15 @@ return new class extends Migration
      */
     public function down(): void
     {
+        // Schema::dropIfExists('inventory_transactions');
+        Schema::table('inventory_items', function (Blueprint $table) {
+            $table->dropForeign(['inventory_transaction_id']);
+        });
+    
+        // Xóa bảng `inventory_transactions`
         Schema::dropIfExists('inventory_transactions');
+    
+        // Xóa bảng `inventory_items` (nếu cần thiết)
+        Schema::dropIfExists('inventory_items');
     }
 };

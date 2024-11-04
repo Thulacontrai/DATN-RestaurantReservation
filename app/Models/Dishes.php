@@ -32,4 +32,18 @@ class Dishes extends Model
     {
         return $this->belongsTo(Category::class, 'category_id');
     }
+    public function recipes()
+    {
+        return $this->hasMany(Recipe::class);
+    }
+
+    public function combos()
+    {
+        return $this->belongsToMany(Combo::class, 'combo_dishes');
+    }
+
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class, 'item_id');
+    }
 }

@@ -10,7 +10,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Reservation;
 use App\Models\Table;
-use App\Models\ReservationTable;
+use App\Models\OrderTable;
 use App\Models\User;
 use App\Traits\TraitCRUD;
 use Carbon\Carbon;
@@ -509,7 +509,7 @@ class ReservationController extends Controller
                     ->update(['status' => 'completed']);
                 Table::where('id', '=', $table->id)
                     ->update(['status' => 'Available']);
-                ReservationTable::where('reservation_id', $order->reservation_id)
+                OrderTable::where('reservation_id', $order->reservation_id)
                     ->where('table_id', $order->table_id)
                     ->update(['status' => 'available']);
                 ;
@@ -680,7 +680,7 @@ class ReservationController extends Controller
         $data = $request->end_time;
         $order = Order::find($orderId);
         $table = Table::find($order->table_id);
-        $reservation_table = ReservationTable::where('reservation_id', $order->reservation_id)
+        $reservation_table = OrderTable::where('reservation_id', $order->reservation_id)
             ->where('table_id', $order->table_id)
             ->first();
         $items = OrderItem::where('order_id', $orderId)->get();

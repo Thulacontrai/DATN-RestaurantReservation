@@ -10,7 +10,7 @@ use App\Models\Reservation;
 use App\Models\Table;
 use Carbon\Carbon;
 
-use App\Models\ReservationTable;
+use App\Models\OrderTable;
 use App\Models\User;
 
 use Illuminate\Http\Request;
@@ -35,55 +35,55 @@ class PosController extends Controller
     {
         $reservation = Reservation::findOrFail($request->reservation_id);
         $hasTable = $reservation->tables()->exists(); // Kiểm tra xem đơn đặt có bàn chưa
-    
+
         return response()->json([
             'hasTable' => $hasTable
         ]);
     }
-    
+
     public function convertToOrder(Request $request)
     {
         $reservation = Reservation::findOrFail($request->reservation_id);
-    
+
         // Kiểm tra trạng thái của đơn đặt
         if ($reservation->status !== 'Confirmed') {
             return response()->json([
                 'error' => 'Chỉ có thể chuyển đơn đã xác nhận.'
             ], 400);
         }
-    
+
         // Nếu chưa có bàn, cần phải chọn bàn
         if (!$reservation->tables()->exists() && !$request->has('table_id')) {
             return response()->json([
                 'error' => 'Bạn cần chọn bàn trước khi chuyển đơn.'
             ], 400);
         }
-    
+
         // Gán bàn được chọn nếu đơn đặt chưa có bàn
         if ($request->has('table_id')) {
             $reservation->tables()->attach($request->table_id); // Thêm bàn vào reservation
         }
-    
+
         $table = $reservation->tables()->first(); // Lấy bàn đầu tiên trong danh sách
-    
+
         // Tạo order từ reservation
         $order = Order::create([
             'reservation_id' => $reservation->id,
-            'table_id'       => $table->id,
-            'customer_id'    => $reservation->customer_id,
-            'total_amount'   => $reservation->deposit_amount,
-            'order_type'     => 'dine_in',
-            'status'         => 'pending',
-            'discount_amount'=> 0,
-            'final_amount'   => $reservation->deposit_amount,
+            'table_id' => $table->id,
+            'customer_id' => $reservation->customer_id,
+            'total_amount' => $reservation->deposit_amount,
+            'order_type' => 'dine_in',
+            'status' => 'pending',
+            'discount_amount' => 0,
+            'final_amount' => $reservation->deposit_amount,
         ]);
-    
+
         // Cập nhật trạng thái của bàn và đơn đặt
         $table->status = 'occupied'; // Đánh dấu bàn là "occupied" sau khi được sử dụng
         $reservation->status = 'checked-in';
         $table->save();
         $reservation->save();
-    
+
         return response()->json([
             'success' => 'Chuyển đơn thành công!',
             'order' => $order
@@ -99,10 +99,12 @@ class PosController extends Controller
         $fifteenMinutesAgo = $now->copy()->subMinutes(15);
 
         // Lấy danh sách các bàn
-        $tables = Table::withCount(['orders' => function ($query) {
-            $query->whereIn('status', ['pending', 'in-progress']);
-        }])->get();
-
+        $tables = Table::withCount([
+            'orders' => function ($query) {
+                $query->whereIn('status', ['pending', 'in-progress']);
+            }
+        ])->get();
+        $orders = Order::where('');
         // Lấy danh sách món ăn
         $dishes = Dishes::all();
         $order = Order::latest()->first();
@@ -125,7 +127,7 @@ class PosController extends Controller
         // Lấy danh sách các bàn trống (available)
         $availableTables = Table::where('status', 'available')->get();
         //lấy  danh sách đơn đặt bàn đã được xác nhận
-        $reservations=Reservation::where('status','Confirmed')->paginate(5);
+        $reservations = Reservation::where('status', 'Confirmed')->paginate(5);
         // Truyền dữ liệu tới view
         return view('pos.index', [
             'tables' => $tables,
@@ -138,7 +140,7 @@ class PosController extends Controller
             'reservedTablesCount' => Table::query()->where('status', 'reserved')->count(),
             'occupiedTablesCount' => Table::query()->where('status', 'occupied')->count(),
             'totalTablesCount' => $tables->count(),
-            'reservations'=>$reservations,
+            'reservations' => $reservations,
         ]);
     }
 
@@ -225,67 +227,67 @@ class PosController extends Controller
 
     // Thêm món vào order_items
     public function addDishToOrder(Request $request)
-{
-    $request->validate([
-        'order_id' => 'required|exists:orders,id',
-        'dish_id' => 'required|exists:dishes,id',
-        'quantity' => 'required|integer|min:1',
-    ]);
-
-    try {
-        // Lấy đơn hàng và món ăn từ cơ sở dữ liệu
-        $order = Order::findOrFail($request->order_id);
-        $dish = Dishes::findOrFail($request->dish_id);
-
-        // Kiểm tra món đã có trong đơn hàng chưa
-        $existingOrderItem = OrderItem::where('order_id', $order->id)
-            ->where('item_id', $dish->id)
-            ->where('item_type', 'dish')
-            ->first();
-
-        // Cập nhật hoặc thêm món vào đơn hàng
-        if ($existingOrderItem) {
-            // Nếu món đã tồn tại, cập nhật số lượng và tổng giá
-            $existingOrderItem->quantity += $request->quantity; // Cộng dồn số lượng
-            $existingOrderItem->total_price = $existingOrderItem->quantity * $existingOrderItem->price; // Cập nhật tổng giá
-            $existingOrderItem->save();  // Lưu cập nhật vào cơ sở dữ liệu
-        } else {
-            // Nếu món chưa có trong đơn hàng, thêm món mới vào
-            $existingOrderItem = OrderItem::create([
-                'order_id' => $order->id,
-                'item_id' => $dish->id,
-                'item_type' => 'dish',
-                'quantity' => $request->quantity, // Lưu số lượng ban đầu
-                'price' => $dish->price,
-                'total_price' => $dish->price * $request->quantity, // Tính tổng giá
-                'status' => 'preparing',
-            ]);
-        }
-
-        // Cập nhật tổng số tiền của đơn hàng
-        $order->total_amount += ($dish->price * $request->quantity); // Cập nhật tổng số tiền
-        $order->final_amount = $order->total_amount; // Cập nhật tổng tiền cuối cùng
-        $order->save();  // Lưu đơn hàng vào cơ sở dữ liệu
-
-        return response()->json([
-            'success' => true,
-            'orderItem' => [
-                'dishName' => $dish->name, // Thêm tên món ăn vào phản hồi
-                'quantity' => $existingOrderItem->quantity,
-                'total_price' => $existingOrderItem->total_price
-            ],  // Trả về món vừa được thêm/cập nhật
-            'totalAmount' => $order->total_amount,  // Cập nhật tổng tiền
+    {
+        $request->validate([
+            'order_id' => 'required|exists:orders,id',
+            'dish_id' => 'required|exists:dishes,id',
+            'quantity' => 'required|integer|min:1',
         ]);
-    } catch (\Exception $e) {
-        // Ghi log lỗi nếu xảy ra vấn đề
-        Log::error('Lỗi khi thêm món vào đơn hàng: ' . $e->getMessage());
 
-        return response()->json([
-            'success' => false,
-            'message' => 'Đã xảy ra lỗi khi thêm món vào đơn hàng.',
-        ], 500);
+        try {
+            // Lấy đơn hàng và món ăn từ cơ sở dữ liệu
+            $order = Order::findOrFail($request->order_id);
+            $dish = Dishes::findOrFail($request->dish_id);
+
+            // Kiểm tra món đã có trong đơn hàng chưa
+            $existingOrderItem = OrderItem::where('order_id', $order->id)
+                ->where('item_id', $dish->id)
+                ->where('item_type', 'dish')
+                ->first();
+
+            // Cập nhật hoặc thêm món vào đơn hàng
+            if ($existingOrderItem) {
+                // Nếu món đã tồn tại, cập nhật số lượng và tổng giá
+                $existingOrderItem->quantity += $request->quantity; // Cộng dồn số lượng
+                $existingOrderItem->total_price = $existingOrderItem->quantity * $existingOrderItem->price; // Cập nhật tổng giá
+                $existingOrderItem->save();  // Lưu cập nhật vào cơ sở dữ liệu
+            } else {
+                // Nếu món chưa có trong đơn hàng, thêm món mới vào
+                $existingOrderItem = OrderItem::create([
+                    'order_id' => $order->id,
+                    'item_id' => $dish->id,
+                    'item_type' => 'dish',
+                    'quantity' => $request->quantity, // Lưu số lượng ban đầu
+                    'price' => $dish->price,
+                    'total_price' => $dish->price * $request->quantity, // Tính tổng giá
+                    'status' => 'preparing',
+                ]);
+            }
+
+            // Cập nhật tổng số tiền của đơn hàng
+            $order->total_amount += ($dish->price * $request->quantity); // Cập nhật tổng số tiền
+            $order->final_amount = $order->total_amount; // Cập nhật tổng tiền cuối cùng
+            $order->save();  // Lưu đơn hàng vào cơ sở dữ liệu
+
+            return response()->json([
+                'success' => true,
+                'orderItem' => [
+                    'dishName' => $dish->name, // Thêm tên món ăn vào phản hồi
+                    'quantity' => $existingOrderItem->quantity,
+                    'total_price' => $existingOrderItem->total_price
+                ],  // Trả về món vừa được thêm/cập nhật
+                'totalAmount' => $order->total_amount,  // Cập nhật tổng tiền
+            ]);
+        } catch (\Exception $e) {
+            // Ghi log lỗi nếu xảy ra vấn đề
+            Log::error('Lỗi khi thêm món vào đơn hàng: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Đã xảy ra lỗi khi thêm món vào đơn hàng.',
+            ], 500);
+        }
     }
-}
 
 
 
@@ -295,7 +297,7 @@ class PosController extends Controller
         $order = Order::find($orderId);
         $reservation = Reservation::find($order->reservation_id);
         $table = Table::find($order->table_id);
-        $reservation_table = ReservationTable::where('reservation_id', $order->reservation_id)
+        $reservation_table = OrderTable::where('reservation_id', $order->reservation_id)
             ->where('table_id', $order->table_id)
             ->first();
         $order_items = Dishes::whereIn('id', $request->order_item)->get();
@@ -650,6 +652,11 @@ class PosController extends Controller
     // }
 
 
+    public function orderDetails($id)
+    {
+        $order = OrderItem::where('order_id ', $id)->first();
+        dd($order);
+    }
 }
 
 

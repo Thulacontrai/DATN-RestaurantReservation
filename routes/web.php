@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Client\OnlineCheckoutController;
+use App\Http\Controllers\KitchenController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\CalendarController;
@@ -142,11 +143,14 @@ Route::get('/customerInformation', [ReservationController::class, 'showInformati
 
 
 
+Route::get('/kitchen', [KitchenController::class, 'index'])->name('kitchen.index');
+Route::post('/kitchen/{id}/cook-all', [KitchenController::class, 'cookAll'])->name('order-item.cook-all');
+Route::post('/kitchen/{id}/done-all', [KitchenController::class, 'doneAll'])->name('order-item.cook-all');
 
 
 Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
 Route::post('/create-order', [PosController::class, 'createOrder']);
-
+Route::post('/order-details/{tableId}', [PosController::class, 'orderDetails'])->name('order-details');
 Route::post('/add-dish-to-order', [PosController::class, 'addDishToOrder']);
 
 Route::post('/load-more-dishes', [PosController::class, 'loadMoreDishes']);
@@ -156,7 +160,8 @@ Route::get('/reservations', [ReservationController::class, 'showReservations'])
 Route::get('/reservations/late', [PosController::class, 'getLateReservations'])
     ->name('reservations.late');
 Route::post('/reservations', [PosController::class, 'store'])->name('reservations.store');
-Route::delete('/order/{order_id}/item/{item_id}', [PosController::class, 'deleteOrderItem']);;
+Route::delete('/order/{order_id}/item/{item_id}', [PosController::class, 'deleteOrderItem']);
+;
 
 Route::post('/reservation/check-table', [PosController::class, 'checkTable'])->name('reservation.checkTable');
 Route::post('/reservations/convert-to-order', [PosController::class, 'convertToOrder'])->name('reservation.convertToOrder');

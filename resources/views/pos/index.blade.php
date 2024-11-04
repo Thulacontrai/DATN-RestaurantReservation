@@ -22,11 +22,6 @@
             <!-- Right Section: Icons -->
             <ul class="navbar-nav ms-auto d-flex align-items-center">
                 <li class="nav-item">
-                    <button class="btn btn-link text-white">
-                        <i class="fas fa-volume-mute"></i>
-                    </button>
-                </li>
-                <li class="nav-item">
                     <!-- Notification Button -->
                     <button class="btn btn-link text-white" id="notificationButton">
                         <i class="fas fa-bell"></i>
@@ -38,236 +33,14 @@
                     </button>
                 </li>
                 <li class="nav-item">
-                    <!-- Print Button -->
-                    <button class="btn btn-link text-white" id="printButton">
-                        <i class="fas fa-print"></i>
-                    </button>
-                </li>
-                <li class="nav-item">
                     <!-- Hamburger Menu -->
                     <button class="btn btn-link text-white" id="hamburgerMenu">
                         <i class="fas fa-bars"></i>
                     </button>
-                    <!-- Dropdown Menu -->
-                    {{-- <div id="dropdownMenu" class="dropdown-content" style="display: none;">
-                        <div class="user-info">
-                            <img src="path/to/avatar.png" alt="User Avatar"
-                                style="width: 40px; height: 40px; border-radius: 50%;">
-                            <p>Thu Ngân</p>
-                            <span style="cursor: pointer;">X</span>
-                        </div>
-                        <div class="menu-options">
-                            <div class="menu-row">
-                                <button class="btn btn-primary"><i class="fas fa-cogs"></i> Quản lý</button>
-                            </div>
-                            <button class="btn"><i class="fas fa-chart-bar"></i> Báo cáo cuối ngày</button>
-                            <button class="btn"><i class="fas fa-file-invoice"></i> Lập phiếu thu</button>
-                            <button class="btn"><i class="fas fa-clipboard-list"></i> Chọn hóa đơn trả hàng</button>
-                            <button class="btn" id="modalListReservation" data-toggle="modal"
-                                data-target="#reservationListModal"><i class="fas fa-list"></i> Xem danh sách đặt
-                                bàn</button>
-                            <button class="btn"><i class="fas fa-cog"></i> Cài đặt chung</button>
-                            <button class="btn"><i class="fas fa-tag"></i> Thiết lập giá</button>
-                            <button class="btn"><i class="fas fa-box"></i> Món có sẵn trong đơn</button>
-                            <button class="btn"><i class="fas fa-keyboard"></i> Phím tắt</button>
-                            <button class="btn"><i class="fas fa-undo"></i> Chuyển về giao diện cũ</button>
-                            <button class="btn btn-danger"><i class="fas fa-sign-out-alt"></i> Đăng xuất</button>
-                        </div>
-                    </div> --}}
                 </li>
             </ul>
         </div>
-
-        {{-- <!-- Modal Popup Danh Sách Đặt Bàn-->
-        <div class="modal fade" id="reservationListModal" tabindex="-1" role="dialog"
-            aria-labelledby="reservationListModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-xl" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="reservationListModalLabel">Danh sách đặt bàn</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="search-filter">
-                            <div class="input-group">
-                                <label for="search">Tìm kiếm</label>
-                                <input type="text" id="search" placeholder="Theo mã phiếu đặt">
-                            </div>
-                            <div class="input-group">
-                                <label for="roomTable">Phòng/bàn</label>
-                                <select id="roomTable">
-                                    <option value="">Chọn phòng bàn</option>
-                                    <!-- Các tùy chọn khác -->
-                                </select>
-                            </div>
-                        </div>
-                        <div class="time-group" style="flex-basis: 100%;">
-                            <label for="fromDate">Thời Gian</label>
-                            <input type="text" id="fromDate" placeholder="Từ ngày" onfocus="(this.type='date')"
-                                onblur="if(!this.value){this.type='text'}">
-                            <input type="text" id="toDate" placeholder="Đến ngày" onfocus="(this.type='date')"
-                                onblur="if(!this.value){this.type='text'}">
-                        </div>
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Mã đặt bàn</th>
-                                    <th scope="col">Phòng/bàn</th>
-                                    <th scope="col">Giờ đến</th>
-                                    <th scope="col">Khách hàng</th>
-                                    <th scope="col">Số điện thoại</th>
-                                    <th scope="col">Số khách</th>
-                                    <th scope="col">Trạng thái</th>
-                                    <th scope="col">hành động</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Dữ liệu bảng-->
-                                @forelse ($reservations as $reservation)
-                                <tr id="reservation-{{ $reservation->id }}">
-                                    <td class="text-center" ><button type="button" class="transparent-button" data-toggle="modal" data-target="#orderDetailModal">{{$reservation->id}}</button></td>
-                                    <td class="text-center">
-                                        @foreach ($reservation->tables as $table)
-                                            {{ $table->table_number ?? 'Chưa xếp bàn' }} 
-                                        @endforeach
-                                    </td>
-                                    <td class="text-center">{{ $reservation->reservation_date }} <br> {{ $reservation->reservation_time }}</td>
-                                    <td class="text-center">{{ $reservation->user_name ?? 'Không rõ' }}</td>
-                                    <td class="text-center">{{ $reservation->user_phone ?? 'Không rõ' }}</td>
-                                    <td class="text-center">{{ $reservation->guest_count ?? 'N/A' }}</td>
-                                    <td class="text-center">
-                                        @if ($reservation->status === 'Confirmed')
-                                            <span class="badge bg-success">Đã xác nhận</span>
-                                        @elseif ($reservation->status === 'Pending')
-                                            <span class="badge bg-warning">Chờ xử lý</span>
-                                        @elseif ($reservation->status === 'Cancelled')
-                                            <span class="badge bg-danger">Đã hủy</span>
-                                        @elseif ($reservation->status === 'checked-in')
-                                            <span class="badge bg-primary">Đã nhận bàn</span>
-                                        @else
-                                            <span class="badge bg-secondary">Không rõ</span>
-                                        @endif
-                                    </td>
-                                    <td class="text-center">
-                                        <div class="actions">
-                                            <button class="btn btn-primary convertToOrder" data-id="{{ $reservation->id }}">
-                                                Chuyển Đơn
-                                            </button>
-                                            <!-- Các hành động khác như Xem, Sửa, Hủy đơn đặt bàn -->
-                                        </div>
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="10">Không có đặt bàn nào được tìm thấy.</td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Modal Chi Tiết -->
-        <div class="modal fade" id="orderDetailModal" tabindex="-1" role="dialog"
-            aria-labelledby="orderDetailModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="orderDetailModalLabel">Nguyễn Bá Thư - 0283982424</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <form action="">
-                            <div class="row">
-                                <!-- Cột trái -->
-                                <div class="col-md-6">
-                                    <div class="input-group">
-                                        <label for="customerName">Khách hàng</label>
-                                        <input type="text" class="form-control" id="customerName"
-                                            value="Nguyễn Bá Thư">
-                                    </div>
-                                    <div class="input-group">
-                                        <label for="orderCode">Mã đặt bàn</label>
-                                        <input type="text" class="form-control" id="orderCode" value="DB0000004"
-                                            readonly>
-                                    </div>
-                                    <div class="input-group">
-                                        <label for="arrivalTime">Giờ đến</label>
-                                        <input type="text" class="form-control" id="arrivalTime"
-                                            value="14/10/2024 21:30">
-                                    </div>
-                                    <div class="input-group">
-                                        <label for="duration">Thời lượng</label>
-                                        <select class="form-control" id="duration">
-                                            <option selected>1 Giờ</option>
-                                            <option>2 Giờ</option>
-                                        </select>
-                                    </div>
-                                    <div class="input-group">
-                                        <label for="numGuests">Số khách</label>
-                                        <input type="number" class="form-control" id="numGuests" value="1"
-                                            min="1">
-                                    </div>
-                                </div>
-                                <!-- Cột phải -->
-                                <div class="col-md-6">
-                                    <div class="input-group">
-                                        <label for="employee">Nhân viên nhận đặt</label>
-                                        <select class="form-control" id="employee">
-                                            <option>Nguyễn Văn Quang</option>
-                                            <option>Nguyễn Văn A</option>
-                                            <option>Nguyễn Văn B</option>
-                                        </select>
-                                    </div>
-                                    <div class="input-group">
-                                        <label for="status">Trạng thái</label>
-                                        <select class="form-control" id="status">
-                                            <option selected>Chờ xếp bàn</option>
-                                            <option>Đã xếp bàn</option>
-                                            <option>Đã hủy</option>
-                                        </select>
-                                    </div>
-                                    <div class="input-group">
-                                        <label for="tableInfo">Phòng/Bàn</label>
-                                        <select class="form-control" id="tableInfo">
-                                            <option selected>Chờ xếp bàn</option>
-                                            <option>Bàn 1</option>
-                                            <option>Bàn 2</option>
-                                        </select>
-                                    </div>
-                                    <div class="input-group">
-                                        <input class="form-control" id="notes" placeholder="Ghi Chú">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="btnGroup text-right mt-3">
-                                <button type="button" class="btnEdit btn btn-danger">Xóa</button>
-                                <button type="button" class="btnEdit btn btn-warning">Hủy đặt</button>
-                                <button type="button" class="btnEdit btn btn-primary">Lưu & In</button>
-                                <button type="button" class="btnEdit btn btn-success">Lưu</button>
-                                <button type="button" class="btnEdit btn btn-secondary" data-dismiss="modal">Bỏ
-                                    qua</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div> --}}
-
     </header>
-
-
-    
-
     <div class="wrapper">
         <div class="container-fluid d-flex flex-grow-1 px-0">
             <!-- Phần bên trái: Bàn và Thực đơn -->
@@ -298,7 +71,6 @@
                             <div class="table-card {{ strtolower(trim($table->status)) }}"
                                 data-table-id="{{ $table->id }}">
                                 <span class="table-number">Bàn {{ $table->table_number }}</span>
-
                                 @if (strtolower(trim($table->status)) == 'available')
                                     <i class="material-icons text-success"
                                         style="font-size: 35px;padding-top: 50%;">event_seat</i>
@@ -361,46 +133,19 @@
                 <nav class="navbar">
                     <div class="col-md-5 d-flex align-items-center">
                         <div class="btn-group flex-wrap">
-
                             <button class="btn btn-warning" id="addCustomerButton" title="Thêm khách hàng">
                                 <i class="fas fa-user-plus"></i>
                             </button>
 
                         </div>
                         <div class="tabs" id="orderTabs"></div>
-                        <input class="form-control1 me-2" id="searchInput" type="search" placeholder="Tìm khách (F4)"
+                        <input clafss="form-control1 me-2" id="searchInput" type="search" placeholder="Tìm khách (F4)"
                             aria-label="Tìm khách hàng">
                     </div>
                     <button class="btn btn-success ms-2" id="openReservationModal">
                         <i class="fas fa-calendar-alt"></i>
                     </button>
                 </nav>
-
-                <div class="d-flex justify-content-center mt-5">
-
-                    {{-- <span id="orderInfoText">
-                            <!-- Thêm icon cho Bàn và Đơn -->
-                            <i class="fas fa-chair"></i> <!-- Icon cho Bàn -->
-                            {{ $order->table->table_number }} -
-                            <i class="fas fa-receipt"></i> <!-- Icon cho Đơn -->
-                            {{ $order->id }}
-                        </span> --}}
-                    <div class="scene">
-                        <div class="cube">
-                            <span class="side top">
-                                <i class="fas fa-chair"></i> <!-- Icon cho Bàn -->
-                                {{ $order->table->table_number ?? 'trống'}}
-                            </span>
-                            <span class="side front">
-                                <i class="fas fa-receipt"></i> <!-- Icon cho Đơn -->
-                                {{ $order->id ?? '0'}}
-                            </span>
-                        </div>
-                    </div>
-
-                </div>
-
-                <!-- Nội dung Đơn hàng -->
                 <div id="order-details" class="order-content-container" style="padding-left: 20px;">
                     @if (isset($orderItems) && count($orderItems) > 0)
                         @foreach ($orderItems as $item)
@@ -408,13 +153,6 @@
                                 <span>{{ $item->name }} x {{ $item->quantity }}</span>
                                 <span style="color: #28a745;">{{ number_format($item->total_price, 0, ',', '.') }}
                                     VND</span>
-
-                                <!-- Nút Xóa món ăn -->
-                                {{-- <button class="btn btn-danger btn-delete" data-item-id="{{ $item->id }}"
-                                    data-order-id="{{ $order->id }}">
-                                    Xóa
-                                </button> --}}
-
                                 <button class="bin-button " data-item-id="{{ $item->id }}"
                                     data-order-id="{{ $order->id }}">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 39 7"
@@ -449,14 +187,12 @@
                     @else
                         <!-- Hiển thị khi không có món trong đơn hàng -->
                         <div id="order-details" class="order-content-container">
-                            <div class="empty-order" style="display: none;">
-                                <svg fill="none" height="40" viewBox="0 0 40 40" width="40" xmlns="http://www.w3.org/2000/svg">
-                                    <!-- SVG nội dung -->
+                            <div class="empty-order">
                                 </svg>
                                 <p>Chưa có món trong đơn</p>
                                 <p>Vui lòng chọn món trong thực đơn bên trái màn hình</p>
                             </div>
-                        
+
                             <div class="order-items" style="display: none;">
                                 <!-- Đây sẽ là nơi hiển thị các món đã chọn -->
                             </div>
@@ -464,17 +200,16 @@
                     @endif
                 </div>
 
-                <!-- Tổng tiền -->
                 <div class="total mt-4">Tổng tiền: <span
                         id="totalAmount">{{ number_format($order->total_amount ?? 0, 0, ',', '.') }}</span>₫</div>
 
 
                 <div class="btn-group">
                     <button class="btn btn-secondary" id="notification-button" aria-label="Thông báo">
-                        <i class="fas fa-bell"></i> Thông báo (F10)
+                        <i class="fas fa-bell"></i> Thông báo
                     </button>
                     <button class="btn btn-primary" id="payment-button" aria-label="Thanh toán">
-                        <i class="fas fa-dollar-sign"></i> Thanh toán (F9)
+                        <i class="fas fa-dollar-sign"></i> Thanh toán
                     </button>
                     <div>
                         <p id="table-number"></p> <!-- Thay đổi số bàn phù hợp -->
@@ -483,13 +218,6 @@
                         </div>
                         <div id="totalAmount"></div> <!-- Tổng tiền sẽ được cập nhật -->
                     </div>
-
-                    <button class="btn btn-info" id="print-button" aria-label="In Hóa đơn"
-                        onclick="printTemporaryInvoice()">
-                        <i class="fas fa-print"></i> In hóa đơn tạm
-                    </button>
-
-
                     <button class="btn btn-warning" id="note-button" aria-label="Thêm Ghi chú">
                         <i class="fas fa-edit"></i> Ghi chú
                     </button>
@@ -497,11 +225,6 @@
             </div>
         </div>
     </div>
-
-
-    <script src="{{ asset('js/pos.js') }}" defer></script>
-
-
 @endsection
 
 <style>
@@ -716,10 +439,3 @@
         transform: translate3d(0, 0, 2em);
     }
 </style>
-
-<script>
-    // Modal danh sách đặt bàn
-    document.getElementById('modalListReservation').addEventListener('click', function() {
-        $('#reservationListModal').modal('show');
-    });
-</script>
