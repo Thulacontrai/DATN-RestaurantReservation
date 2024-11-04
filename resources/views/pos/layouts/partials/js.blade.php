@@ -116,10 +116,12 @@
             const dishPrice = parseFloat($(this).data('dish-price'));
             const dishName = $(this).data('dish-name');
 
+
             if (!orderId) {
                 showNotification('Vui lòng chọn bàn trước khi thêm món!', 'warning');
                 return;
             }
+
 
             currentOrder[dishId] = (currentOrder[dishId] || {
                 dishName,
