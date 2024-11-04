@@ -398,7 +398,7 @@ window.onload = loadOrderFromLocalStorage;
                         quantity: 1 // Đặt số lượng ban đầu
                     };
                 }
-
+                
                 // Cập nhật tổng số tiền
                 totalAmount = Object.values(currentOrder).reduce((total, item) => total + (item
                     .dishPrice * item.quantity), 0);
