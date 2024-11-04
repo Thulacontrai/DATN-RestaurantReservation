@@ -79,10 +79,8 @@ class InventoryController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'product_name' => 'required|string|max:255',
             'quantity_stock' => 'required|integer',
         ], [
-            'product_name.required' => 'Trường tên sản phẩm không được để trống.',
             'quantity_stock.required' => 'Trường số lượng không được để trống.',
             'quantity_stock.integer' => 'Trường số lượng phải là một số nguyên.',
         ]);
@@ -97,7 +95,7 @@ class InventoryController extends Controller
 
             return redirect()->route('admin.inventory.index')->with('success', 'Cập nhật kho thành công.');
         } catch (\Exception $e) {
-            Log::error('Error updating inventory: ' . $e->getMessage()); // Ghi nhận lỗi vào log
+            Log::error('Error updating inventory: ' . $e->getMessage());
             return redirect()->route('admin.inventory.index')->with('error', 'Có lỗi xảy ra khi cập nhật kho.');
         }
     }
