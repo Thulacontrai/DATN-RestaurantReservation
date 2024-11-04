@@ -127,7 +127,7 @@
                                             <th>Tên Khách Hàng</th>
                                             <th>Số Lượng Khách</th>
                                             <th>Thời Gian Đặt</th>
-                                            <th>Bàn</th>
+                                            {{-- <th>Bàn</th> --}}
                                             <th>Tiền cọc</th>
                                             <th>Ghi Chú</th>
                                             <th>Trạng Thái</th>
@@ -147,9 +147,7 @@
                                                     <br> {{ $reservation->reservation_time }}
                                                 </td>
                                                 <td>
-                                                    @foreach ($reservation->tables as $table)
-                                                        {{ $table->table_number }},
-                                                    @endforeach
+                                                    {{ $reservation->deposit_amount }}
                                                 </td>
                                                 <td>{{ $reservation->note ?? 'Không có' }}</td>
                                                 <td>
