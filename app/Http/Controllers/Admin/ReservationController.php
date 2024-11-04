@@ -163,11 +163,11 @@ class ReservationController extends Controller
             ->update(['status' => 'Cancelled']);
     }
 
+
     // Lấy danh sách đặt bàn sắp đến hạn
     private function getUpcomingReservations()
     {
         $now = Carbon::now();
-
         return Reservation::where('reservation_date', '=', $now->toDateString())
             ->where('reservation_time', '>=', $now->toTimeString())
             ->where('reservation_time', '<=', $now->copy()->addMinutes(30)->toTimeString())
@@ -175,6 +175,7 @@ class ReservationController extends Controller
 
             ->get();
     }
+
 
     // Lấy danh sách đặt bàn đang chờ
     private function getWaitingReservations()
@@ -332,7 +333,6 @@ class ReservationController extends Controller
             // Lưu thông tin khách hàng tạm thời để sử dụng ở trang cọc
             $customerInformation = $request->all();
             return redirect()->route('deposit.client', compact('customerInformation'));
-
         } else {
             // Thực hiện giao dịch đặt bàn mà không cần cọc
             $reservation = DB::transaction(function () use ($request) {
@@ -411,6 +411,7 @@ class ReservationController extends Controller
                 $data = str_replace("'", '"', $reservation);
                 $reservation = json_decode($data, true);
                 DB::transaction(function () use ($reservation, $request) {
+
                     $customer_id = null;
                     if (auth()->check()) {
                         $customer_id = auth()->id();
@@ -441,6 +442,7 @@ class ReservationController extends Controller
             } else {
                 return redirect()->back()->with('err', 'Thanh toán không thành công!');
             }
+
 
         } else {
             $reservation = $request->all();
@@ -624,6 +626,8 @@ class ReservationController extends Controller
         ]);
     }
 
+   
+
     public function cancelReservation(Request $request, $id)
     {
         try {
@@ -673,6 +677,24 @@ class ReservationController extends Controller
             ], 500);
         }
     }
+
+
+    public function getBanks()
+    {
+
+        $client = new Client();
+        $response = $client->get('https://api.vietqr.io/v2/banks');
+        $data = json_decode($response->getBody(), true);
+
+        if ($data['code'] == '00') {
+            $banks = $data['data'];
+            return view('test', compact('banks'));
+        }
+
+        return 'Lỗi khi lấy danh sách ngân hàng';
+    }
+  
+
 
     public function print($orderId, Request $request)
     {

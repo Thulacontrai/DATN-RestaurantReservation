@@ -176,7 +176,7 @@
                                 <a href="#">Phiếu nhập kho</a>
                             </li>
                             <li>
-                                <a href="#">Hàng tồn kho</a>
+                                <a href="{{ route('admin.inventory.index') }}">Hàng tồn kho</a>
                             </li>
                             <li>
                                 <a href="#">Xuất kho</a>
