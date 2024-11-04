@@ -9,6 +9,7 @@ class InventoryStock extends Model
 {
     use HasFactory;
     protected $fillable = ['ingredient_id', 'quantity_stock', 'last_update'];
+    public $timestamps = false;
     public function ingredient()
     {
         return $this->belongsTo(Ingredient::class);

@@ -31,6 +31,7 @@ use App\Http\Controllers\Client\MemberController;
 use App\Http\Controllers\Client\MenuController;
 use App\Http\Controllers\Pos\PosController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Admin\InventoryController;
 
 
 /*
@@ -335,6 +336,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('ingredient', IngredientController::class);
     Route::resource('dashboard', DashboardController::class);
     Route::resource('accountSetting', SettingController::class);
+    Route::resource('inventory', InventoryController::class);
 
     // Lịch
     Route::resource('calendar', CalendarController::class);
@@ -389,6 +391,8 @@ Route::post('/logout-client', [CustomerAuthController::class, 'logout'])->name('
 
 Route::post('/check-account', [CustomerAuthController::class, 'checkAccount']);
 Route::post('/login-success', [CustomerAuthController::class, 'loginSuccess'])->name('login.success');
+
+
 
 
 Route::post('/verify-code', [CustomerAuthController::class, 'verifyCode'])->name('verify.code');
