@@ -1,3 +1,10 @@
+<!-- Tải jQuery trước -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Bootstrap JS nếu sử dụng -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+<!-- Các thư viện và tệp JavaScript khác -->
 <script src="{{ asset('poss/assets/js/backend-bundle.min.js') }}"></script>
 <script src="{{ asset('poss/assets/js/flex-tree.min.js') }}"></script>
 <script src="{{ asset('poss/assets/js/tree.js') }}"></script>
@@ -16,12 +23,99 @@
 <script src="{{ asset('poss/assets/js/chart-custom.js') }}"></script>
 <script src="{{ asset('poss/assets/js/slider.js') }}"></script>
 <script src="{{ asset('poss/assets/js/app.js') }}"></script>
-<script src="/path/to/your/javascript-file.js" defer></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
 
 
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const printButton = document.getElementById("printButton");
+        const printDropdownForm = document.getElementById("printDropdownForm");
+        const hamburgerMenu = document.getElementById("hamburgerMenu");
+        const dropdownMenu = document.getElementById("dropdownMenu");
+        const bellButton = document.querySelector('.fa-bell');
+        const notificationDropdown = document.createElement('div');
+
+        // Thêm nội dung dropdown cho chuông thông báo
+        notificationDropdown.classList.add('notification-dropdown');
+        notificationDropdown.style.display = 'none'; // Bắt đầu ẩn
+        notificationDropdown.innerHTML = `
+        <h4 class="notification-header">Chưa thanh toán</h4>
+        <div class="notification-body">
+            <i class="fas fa-file-alt notification-icon"></i>
+            <p>Không có đơn đặt hàng chờ thanh toán</p>
+        </div>
+    `;
+        document.body.appendChild(notificationDropdown);
+
+        // Điều khiển hiển thị dropdown của chuông thông báo
+        bellButton.addEventListener("click", function(event) {
+            event.stopPropagation();
+            toggleDropdown(notificationDropdown);
+            hideDropdown(printDropdownForm);
+            hideDropdown(dropdownMenu);
+        });
+
+        // Toggle print form
+        printButton.addEventListener("click", function(event) {
+            event.stopPropagation();
+            toggleDropdown(printDropdownForm);
+            hideDropdown(dropdownMenu);
+            hideDropdown(notificationDropdown);
+        });
+
+        // Toggle hamburger menu
+        hamburgerMenu.addEventListener("click", function(event) {
+            event.stopPropagation();
+            toggleDropdown(dropdownMenu);
+            hideDropdown(printDropdownForm);
+            hideDropdown(notificationDropdown);
+        });
+
+        // Close all menus when clicking outside
+        window.addEventListener("click", function() {
+            hideDropdown(printDropdownForm);
+            hideDropdown(dropdownMenu);
+            hideDropdown(notificationDropdown);
+        });
+
+        // Add functionality to Confirm and Cancel buttons
+        document.getElementById("confirmButton").addEventListener("click", function() {
+            hideDropdown(printDropdownForm);
+            alert('Hóa đơn đã được chọn!');
+        });
+
+        document.getElementById("cancelButton").addEventListener("click", function() {
+            hideDropdown(printDropdownForm);
+        });
+
+        // Hàm chung để hiển thị/ẩn dropdown
+        function toggleDropdown(element) {
+            if (element.style.display === "none" || element.style.display === "") {
+                element.style.display = "block";
+            } else {
+                element.style.display = "none";
+            }
+        }
+
+        // Hàm để ẩn dropdown
+        function hideDropdown(element) {
+            element.style.display = "none";
+        }
+
+        // Ngăn chặn đóng khi nhấp vào bên trong dropdown
+        printDropdownForm.addEventListener("click", function(event) {
+            event.stopPropagation();
+        });
+
+        dropdownMenu.addEventListener("click", function(event) {
+            event.stopPropagation();
+        });
+
+        notificationDropdown.addEventListener("click", function(event) {
+            event.stopPropagation();
+        });
+    });
+</script>
 
 <script>
     $(document).ready(function() {
