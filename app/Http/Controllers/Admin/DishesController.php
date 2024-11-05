@@ -34,14 +34,30 @@ class DishesController extends Controller
     {
         $query = Dishes::query();
 
-        if ($request->filled('name')) {
-            $query->where('name', 'like', '%' . $request->name . '%');
+        if ($request->filled('dish_name')) {
+            $query->where('name', 'like', '%' . $request->dish_name . '%');
+        }
+
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
         }
 
         $dishes = $query->paginate(10);
 
-        return view('admin.dish.dishes.index', compact('dishes'));
+        if ($request->ajax()) {
+            return response()->json([
+                'html' => view('admin.dish.dishes.partials.dishes_table', compact('dishes'))->render(),
+            ]);
+        }
+
+        $categories = Category::all();
+        return view('admin.dish.dishes.index', compact('dishes', 'categories'));
     }
+
 
     public function create()
     {
@@ -190,8 +206,13 @@ class DishesController extends Controller
 
     public function editIngredients($id)
     {
+        // Lấy món ăn cùng nguyên liệu thông qua mối quan hệ
         $dish = Dishes::with('recipes.ingredient')->findOrFail($id);
-        return view('admin.dish.dishes.edit-ingredients', compact('dish'));
+
+        // Lấy tất cả nguyên liệu để hiển thị trong dropdown
+        $ingredients = Ingredient::all();
+
+        return view('admin.dish.dishes.edit-ingredients', compact('dish', 'ingredients'));
     }
 
     public function updateIngredients(Request $request, $id)
@@ -200,58 +221,59 @@ class DishesController extends Controller
         $request->validate([
             'ingredients' => 'required|array',
             'quantities' => 'required|array',
+            'recipe_ids' => 'required|array',
         ]);
 
         // Tìm món ăn cần cập nhật
         $dish = Dishes::findOrFail($id);
 
         // Cập nhật từng nguyên liệu
-        foreach ($request->ingredients as $index => $ingredient) {
-            $recipeId = $request->recipe_ids[$index]; // Lấy id của công thức
-            $quantity = $request->quantities[$index]; // Lấy số lượng
+        foreach ($request->ingredients as $index => $ingredientId) {
+            $recipeId = $request->recipe_ids[$index];
+            $quantity = $request->quantities[$index];
 
             // Tìm công thức tương ứng
             $recipe = Recipe::findOrFail($recipeId);
 
-            // Cập nhật tên nguyên liệu (nếu bạn muốn lưu tên nguyên liệu vào cơ sở dữ liệu)
-            // Giả sử bạn có một trường 'name' trong bảng ingredients để lưu tên
-            $recipe->ingredient->name = $ingredient; // Cập nhật tên nguyên liệu
-            $recipe->quantity_need = $quantity; // Cập nhật số lượng
+            // Cập nhật thông tin vào công thức
+            $recipe->ingredient_id = $ingredientId; // Cập nhật ID nguyên liệu
+            $recipe->quantity_need = $quantity;
 
             // Lưu thay đổi
-            $recipe->ingredient->save();
             $recipe->save();
         }
 
-        // Chuyển hướng về trang chi tiết món ăn với thông báo thành công
         return redirect()->route('admin.dishes.show', $dish->id)->with('success', 'Cập nhật nguyên liệu thành công!');
     }
 
 
+    public function addIngredient(Request $request, $dishId)
+{
+    // Xác thực dữ liệu đầu vào
+    $request->validate([
+        'new_ingredient' => 'required|array',
+        'new_quantity' => 'required|array',
+        // 'new_unit' => 'required|array',
+    ]);
 
-    public function addIngredient(Request $request, Dishes $dish)
-    {
-        // Validate the incoming request
-        $request->validate([
-            'new_ingredient' => 'required|string|max:255',
-            'new_quantity' => 'required|numeric|min:0',
-            'new_unit' => 'required|string|max:50',
-        ]);
+    // Tìm món ăn cần thêm nguyên liệu
+    $dish = Dishes::findOrFail($dishId);
 
-        // Find or create the ingredient
-        $ingredient = Ingredient::firstOrCreate(
-            ['name' => $request->new_ingredient],
-            ['unit' => $request->new_unit] // Set the unit when creating a new ingredient
-        );
+    // Thêm từng nguyên liệu mới vào món ăn
+    foreach ($request->new_ingredient as $index => $ingredientId) {
+        $quantity = $request->new_quantity[$index];
+        // $unit = $request->new_unit[$index];
 
-        // Create a new recipe for the dish
+        // Tạo một công thức mới cho món ăn, chỉ lưu ingredient_id và quantity_need
         $dish->recipes()->create([
-            'ingredient_id' => $ingredient->id, // Use the ID of the found or created ingredient
-            'quantity_need' => $request->new_quantity,
+            'ingredient_id' => $ingredientId,
+            'quantity_need' => $quantity,
         ]);
-
-        return redirect()->route('admin.dishes.show', $dish->id)->with('success', 'Nguyên liệu đã được thêm thành công.');
     }
+
+    return redirect()->route('admin.dishes.show', $dish->id)->with('success', 'Nguyên liệu đã được thêm thành công.');
+}
+
 
 
     public function deleteIngredient($recipeId)

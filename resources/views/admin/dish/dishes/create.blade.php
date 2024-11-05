@@ -79,11 +79,11 @@
                                     </div>
                                 </div>
 
-                                <div class="card-header d-flex justify-content-between align-items-center">
-                                    <div class="card-title">Thêm Mới Công Thức Món Ăn</div>
-                                </div>
                                 <div id="ingredientsSection">
                                     <div id="ingredientsContainer">
+                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                            <div class="card-title">Thêm Mới Công Thức Món Ăn</div>
+                                        </div>
                                         <!-- Chọn Nguyên Liệu (multiple) -->
                                         <div class="mb-4">
                                             <label for="ingredients" class="form-label fw-bold">Nguyên Liệu</label>
@@ -92,16 +92,13 @@
                                                     <option value="{{ $ingredient->id }}">{{ $ingredient->name }}</option>
                                                 @endforeach
                                             </select>
-                                            <div class="invalid-feedback">Vui lòng chọn nguyên liệu.</div>
                                         </div>
 
                                         <!-- Định lượng cho từng Nguyên Liệu -->
                                         <div id="ingredient-quantities" class="mb-4"></div>
-
                                     </div>
                                 </div>
 
-                               
                                 <button type="submit" class="btn btn-sm btn-primary">Thêm Mới</button>
                             </form>
                         </div>
@@ -114,104 +111,97 @@
 @endsection
 
 @section('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('addDishForm');
-            const inputs = form.querySelectorAll('input, select, textarea');
-            const dishTypeSelect = document.getElementById('dish-category');
-            const ingredientsSection = document.getElementById('ingredientsSection');
-            const ingredientSelect = document.getElementById('ingredients');
-            const ingredientQuantitiesDiv = document.getElementById('ingredient-quantities');
+<script>
+   document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('addDishForm');
+    const dishTypeSelect = document.getElementById('dish-category');
+    const ingredientsSection = document.getElementById('ingredientsSection');
+    const ingredientSelect = document.getElementById('ingredients');
+    const ingredientQuantitiesDiv = document.getElementById('ingredient-quantities');
 
-            // Ẩn phần công thức mặc định nếu chọn loại là đồ uống
+    // Ẩn phần nguyên liệu ban đầu
+    ingredientsSection.style.display = 'none';
+
+    dishTypeSelect.addEventListener('change', function() {
+        const selectedValue = this.value;
+        // Hiển thị phần nguyên liệu nếu là loại món ăn có id là 1, 2, hoặc 3
+        if (selectedValue === "1" || selectedValue === "2" || selectedValue === "3") {
+            ingredientsSection.style.display = 'block';
+
+            // Thêm thuộc tính required cho các trường bên trong ingredientsSection
+            ingredientSelect.setAttribute('required', 'true');
+            Array.from(ingredientQuantitiesDiv.querySelectorAll('input')).forEach(input => {
+                input.setAttribute('required', 'true');
+            });
+        } else {
+            // Ẩn phần nguyên liệu nếu không phải loại đã chỉ định
             ingredientsSection.style.display = 'none';
 
-            dishTypeSelect.addEventListener('change', function() {
-                ingredientsSection.style.display = this.value == "1" ? 'block' : 'none';
+            // Xóa thuộc tính required cho các trường bên trong ingredientsSection
+            ingredientSelect.removeAttribute('required');
+            Array.from(ingredientQuantitiesDiv.querySelectorAll('input')).forEach(input => {
+                input.removeAttribute('required');
             });
+        }
+    });
 
-            ingredientSelect.addEventListener('change', () => {
-                ingredientQuantitiesDiv.innerHTML = '';
+    ingredientSelect.addEventListener('change', () => {
+        ingredientQuantitiesDiv.innerHTML = '';
 
-                Array.from(ingredientSelect.selectedOptions).forEach(option => {
-                    const ingredientId = option.value;
-                    const ingredientName = option.text;
+        Array.from(ingredientSelect.selectedOptions).forEach(option => {
+            const ingredientId = option.value;
+            const ingredientName = option.text;
 
-                    const quantityDiv = document.createElement('div');
-                    quantityDiv.classList.add('mb-3');
+            const quantityDiv = document.createElement('div');
+            quantityDiv.classList.add('mb-3');
 
-                    const label = document.createElement('label');
-                    label.classList.add('form-label', 'fw-bold');
-                    label.textContent = `Định lượng cho ${ingredientName}`;
+            const label = document.createElement('label');
+            label.classList.add('form-label', 'fw-bold');
+            label.textContent = `Định lượng cho ${ingredientName}`;
 
-                    const input = document.createElement('input');
-                    input.type = 'number';
-                    input.name = `ingredient_quantity[${ingredientId}]`;
-                    input.classList.add('form-control');
-                    input.placeholder = `Nhập định lượng cho ${ingredientName}`;
-                    input.required = true;
-                    input.min = 0.01;
-                    input.step = 0.01;
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.name = `ingredient_quantity[${ingredientId}]`;
+            input.classList.add('form-control');
+            input.placeholder = `Nhập định lượng cho ${ingredientName}`;
+            input.required = true;
+            input.min = 0.01;
+            input.step = 0.01;
 
-                    // Thêm sự kiện kiểm tra tính hợp lệ cho từng input
-                    input.addEventListener('input', () => {
-                        if (input.checkValidity()) {
-                            input.classList.remove('is-invalid');
-                            input.classList.add('is-valid');
-                        } else {
-                            input.classList.remove('is-valid');
-                            input.classList.add('is-invalid');
-                        }
-                    });
-
-                    quantityDiv.append(label, input);
-                    ingredientQuantitiesDiv.appendChild(quantityDiv);
-                });
-            });
-
-            form.addEventListener('submit', function (event) {
-                let isValid = true;
-
-                inputs.forEach(input => {
-                    if (!input.checkValidity()) {
-                        input.classList.add('is-invalid');
-                        isValid = false;
-                    } else {
-                        input.classList.remove('is-invalid');
-                        input.classList.add('is-valid');
-                    }
-                });
-
-                if (!isValid) {
-                    event.preventDefault(); // Ngăn biểu mẫu gửi nếu không hợp lệ
+            input.addEventListener('input', () => {
+                if (input.checkValidity()) {
+                    input.classList.remove('is-invalid');
+                    input.classList.add('is-valid');
+                } else {
+                    input.classList.remove('is-valid');
+                    input.classList.add('is-invalid');
                 }
             });
 
-            const addIngredientBtn = document.getElementById('addIngredientBtn');
-            const ingredientsContainer = document.getElementById('ingredientsContainer');
-
-            addIngredientBtn.addEventListener('click', function() {
-                const ingredientRow = document.createElement('div');
-                ingredientRow.className = 'row mb-3 ingredient-row';
-                ingredientRow.innerHTML = `
-                    <div class="col-md-6">
-                        <label for="ingredient-name" class="form-label">Nguyên Liệu</label>
-                        <input type="text" name="ingredient_name[]" class="form-control" placeholder="Nhập Nguyên liệu">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="ingredient-quantity" class="form-label">Định Lượng</label>
-                        <input type="number" name="ingredient_quantity[]" class="form-control" placeholder="Nhập định lượng" min="0" required>
-                    </div>
-                    <div class="col-md-12">
-                        <button type="button" class="btn btn-danger btn-sm remove-ingredient-btn">Xóa</button>
-                    </div>
-                `;
-                ingredientsContainer.appendChild(ingredientRow);
-
-                ingredientRow.querySelector('.remove-ingredient-btn').addEventListener('click', function() {
-                    ingredientsContainer.removeChild(ingredientRow);
-                });
-            });
+            quantityDiv.append(label, input);
+            ingredientQuantitiesDiv.appendChild(quantityDiv);
         });
-    </script>
+    });
+
+    form.addEventListener('submit', function (event) {
+        let isValid = true;
+
+        // Kiểm tra tất cả các trường bắt buộc
+        Array.from(form.querySelectorAll('input, select, textarea')).forEach(input => {
+            if (!input.checkValidity()) {
+                input.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                input.classList.remove('is-invalid');
+                input.classList.add('is-valid');
+            }
+        });
+
+        if (!isValid) {
+            event.preventDefault(); // Ngăn biểu mẫu gửi nếu không hợp lệ
+        }
+    });
+});
+</script>
 @endsection
+
