@@ -10,7 +10,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Reservation;
 use App\Models\Table;
-use App\Models\ReservationTable;
+use App\Models\OrderTable;
 use App\Models\User;
 use App\Traits\TraitCRUD;
 use Carbon\Carbon;
@@ -163,11 +163,11 @@ class ReservationController extends Controller
             ->update(['status' => 'Cancelled']);
     }
 
+
     // Lấy danh sách đặt bàn sắp đến hạn
     private function getUpcomingReservations()
     {
         $now = Carbon::now();
-
         return Reservation::where('reservation_date', '=', $now->toDateString())
             ->where('reservation_time', '>=', $now->toTimeString())
             ->where('reservation_time', '<=', $now->copy()->addMinutes(30)->toTimeString())
@@ -175,6 +175,7 @@ class ReservationController extends Controller
 
             ->get();
     }
+
 
     // Lấy danh sách đặt bàn đang chờ
     private function getWaitingReservations()
@@ -332,7 +333,6 @@ class ReservationController extends Controller
             // Lưu thông tin khách hàng tạm thời để sử dụng ở trang cọc
             $customerInformation = $request->all();
             return redirect()->route('deposit.client', compact('customerInformation'));
-
         } else {
             // Thực hiện giao dịch đặt bàn mà không cần cọc
             $reservation = DB::transaction(function () use ($request) {
@@ -411,6 +411,7 @@ class ReservationController extends Controller
                 $data = str_replace("'", '"', $reservation);
                 $reservation = json_decode($data, true);
                 DB::transaction(function () use ($reservation, $request) {
+
                     $customer_id = null;
                     if (auth()->check()) {
                         $customer_id = auth()->id();
@@ -441,6 +442,7 @@ class ReservationController extends Controller
             } else {
                 return redirect()->back()->with('err', 'Thanh toán không thành công!');
             }
+
 
         } else {
             $reservation = $request->all();
@@ -509,7 +511,7 @@ class ReservationController extends Controller
                     ->update(['status' => 'completed']);
                 Table::where('id', '=', $table->id)
                     ->update(['status' => 'Available']);
-                ReservationTable::where('reservation_id', $order->reservation_id)
+                OrderTable::where('reservation_id', $order->reservation_id)
                     ->where('table_id', $order->table_id)
                     ->update(['status' => 'available']);
                 ;
@@ -624,6 +626,8 @@ class ReservationController extends Controller
         ]);
     }
 
+   
+
     public function cancelReservation(Request $request, $id)
     {
         try {
@@ -674,13 +678,31 @@ class ReservationController extends Controller
         }
     }
 
+
+    public function getBanks()
+    {
+
+        $client = new Client();
+        $response = $client->get('https://api.vietqr.io/v2/banks');
+        $data = json_decode($response->getBody(), true);
+
+        if ($data['code'] == '00') {
+            $banks = $data['data'];
+            return view('test', compact('banks'));
+        }
+
+        return 'Lỗi khi lấy danh sách ngân hàng';
+    }
+  
+
+
     public function print($orderId, Request $request)
     {
         $final = 0;
         $data = $request->end_time;
         $order = Order::find($orderId);
         $table = Table::find($order->table_id);
-        $reservation_table = ReservationTable::where('reservation_id', $order->reservation_id)
+        $reservation_table = OrderTable::where('reservation_id', $order->reservation_id)
             ->where('table_id', $order->table_id)
             ->first();
         $items = OrderItem::where('order_id', $orderId)->get();

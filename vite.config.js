@@ -6,10 +6,11 @@ export default defineConfig({
         laravel({
             input: [
                 'resources/css/app.css',
+                'resources/css/kitchen.css',
                 'resources/js/app.js',
+                'resources/js/kitchen.js',
             ],
             refresh: true,
         }),
     ],
 });
-

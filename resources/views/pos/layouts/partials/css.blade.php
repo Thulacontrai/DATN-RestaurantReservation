@@ -11,7 +11,6 @@
 
 <link rel="stylesheet" href="{{ asset('poss/assets/css/backend.min.css') }}">
 
-
 <!-- Dripicons -->
 <link rel="stylesheet" href="{{ asset('poss/assets/vendor/@icon/dripicons/dripicons.css') }}">
 
@@ -1375,6 +1374,11 @@
     color: #0056b3;
     border: none;
 }
+
+#reservationListModal, #orderDetailModal {
+    display: none;
+}
+
 
 /* Đảm bảo modal hiển thị ở trung tâm và có hiệu ứng mờ */
 .modal {

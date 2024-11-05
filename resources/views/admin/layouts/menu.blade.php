@@ -159,6 +159,9 @@
                                 <a href="{{ route('transactions.index') }}">                                  
                                     <span class="menu-text">Phiếu nhập kho</span>
                                 </a>
+
+                                <a href="{{ route('admin.inventory.index') }}">Hàng tồn kho</a>
+
                             </li>
 
                             <li>

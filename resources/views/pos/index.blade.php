@@ -4,7 +4,7 @@
 
 @section('content')
 
-    <header class="navbar navbar-expand-lg p-2" style="background: linear-gradient(90deg, #004a89, #007bb5);">
+<header class="navbar navbar-expand-lg p-2" style="background: linear-gradient(90deg, #004a89, #007bb5);">
         <div class="container-fluid">
             <!-- Left Section: Tabs for Phòng bàn and Thực đơn -->
             <div class="header-left d-flex align-items-center">
@@ -81,7 +81,7 @@
         <!-- Modal Popup Danh Sách Đặt Bàn-->
         <div class="modal fade" id="reservationListModal" tabindex="-1" role="dialog"
             aria-labelledby="reservationListModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="reservationListModalLabel">Danh sách đặt bàn</h5>
@@ -177,7 +177,7 @@
         <!-- Modal Chi Tiết -->
         <div class="modal fade" id="orderDetailModal" tabindex="-1" role="dialog"
             aria-labelledby="orderDetailModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="orderDetailModalLabel">Nguyễn Bá Thư - 0283982424</h5>
@@ -264,10 +264,6 @@
         </div>
 
     </header>
-
-
-    
-
     <div class="wrapper">
         <div class="container-fluid d-flex flex-grow-1 px-0">
             <!-- Phần bên trái: Bàn và Thực đơn -->
@@ -298,7 +294,6 @@
                             <div class="table-card {{ strtolower(trim($table->status)) }}"
                                 data-table-id="{{ $table->id }}">
                                 <span class="table-number">Bàn {{ $table->table_number }}</span>
-
                                 @if (strtolower(trim($table->status)) == 'available')
                                     <i class="material-icons text-success"
                                         style="font-size: 35px;padding-top: 50%;">event_seat</i>
@@ -319,7 +314,7 @@
                         @endforeach
                     </div>
                 </div>
-
+                
                 <!-- Phần hiển thị Thực đơn -->
                 <div class="menu-section transition-section" id="menu-section" style="display: none;">
                     <div class="filter-section mb-4 d-flex justify-content-start flex-nowrap">
@@ -361,46 +356,19 @@
                 <nav class="navbar">
                     <div class="col-md-5 d-flex align-items-center">
                         <div class="btn-group flex-wrap">
-
                             <button class="btn btn-warning" id="addCustomerButton" title="Thêm khách hàng">
                                 <i class="fas fa-user-plus"></i>
                             </button>
 
                         </div>
                         <div class="tabs" id="orderTabs"></div>
-                        <input class="form-control1 me-2" id="searchInput" type="search" placeholder="Tìm khách (F4)"
+                        <input clafss="form-control1 me-2" id="searchInput" type="search" placeholder="Tìm khách (F4)"
                             aria-label="Tìm khách hàng">
                     </div>
                     <button class="btn btn-success ms-2" id="openReservationModal">
                         <i class="fas fa-calendar-alt"></i>
                     </button>
                 </nav>
-
-                <div class="d-flex justify-content-center mt-5">
-
-                    {{-- <span id="orderInfoText">
-                            <!-- Thêm icon cho Bàn và Đơn -->
-                            <i class="fas fa-chair"></i> <!-- Icon cho Bàn -->
-                            {{ $order->table->table_number }} -
-                            <i class="fas fa-receipt"></i> <!-- Icon cho Đơn -->
-                            {{ $order->id }}
-                        </span> --}}
-                    <div class="scene">
-                        <div class="cube">
-                            <span class="side top">
-                                <i class="fas fa-chair"></i> <!-- Icon cho Bàn -->
-                                {{ $order->table->table_number ?? 'trống'}}
-                            </span>
-                            <span class="side front">
-                                <i class="fas fa-receipt"></i> <!-- Icon cho Đơn -->
-                                {{ $order->id ?? '0'}}
-                            </span>
-                        </div>
-                    </div>
-
-                </div>
-
-                <!-- Nội dung Đơn hàng -->
                 <div id="order-details" class="order-content-container" style="padding-left: 20px;">
                     @if (isset($orderItems) && count($orderItems) > 0)
                         @foreach ($orderItems as $item)
@@ -408,13 +376,6 @@
                                 <span>{{ $item->name }} x {{ $item->quantity }}</span>
                                 <span style="color: #28a745;">{{ number_format($item->total_price, 0, ',', '.') }}
                                     VND</span>
-
-                                <!-- Nút Xóa món ăn -->
-                                {{-- <button class="btn btn-danger btn-delete" data-item-id="{{ $item->id }}"
-                                    data-order-id="{{ $order->id }}">
-                                    Xóa
-                                </button> --}}
-
                                 <button class="bin-button " data-item-id="{{ $item->id }}"
                                     data-order-id="{{ $order->id }}">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 39 7"
@@ -449,14 +410,12 @@
                     @else
                         <!-- Hiển thị khi không có món trong đơn hàng -->
                         <div id="order-details" class="order-content-container">
-                            <div class="empty-order" style="display: none;">
-                                <svg fill="none" height="40" viewBox="0 0 40 40" width="40" xmlns="http://www.w3.org/2000/svg">
-                                    <!-- SVG nội dung -->
+                            <div class="empty-order">
                                 </svg>
                                 <p>Chưa có món trong đơn</p>
                                 <p>Vui lòng chọn món trong thực đơn bên trái màn hình</p>
                             </div>
-                        
+
                             <div class="order-items" style="display: none;">
                                 <!-- Đây sẽ là nơi hiển thị các món đã chọn -->
                             </div>
@@ -464,17 +423,16 @@
                     @endif
                 </div>
 
-                <!-- Tổng tiền -->
                 <div class="total mt-4">Tổng tiền: <span
                         id="totalAmount">{{ number_format($order->total_amount ?? 0, 0, ',', '.') }}</span>₫</div>
 
 
                 <div class="btn-group">
                     <button class="btn btn-secondary" id="notification-button" aria-label="Thông báo">
-                        <i class="fas fa-bell"></i> Thông báo (F10)
+                        <i class="fas fa-bell"></i> Thông báo
                     </button>
                     <button class="btn btn-primary" id="payment-button" aria-label="Thanh toán">
-                        <i class="fas fa-dollar-sign"></i> Thanh toán (F9)
+                        <i class="fas fa-dollar-sign"></i> Thanh toán
                     </button>
                     <div>
                         <p id="table-number"></p> <!-- Thay đổi số bàn phù hợp -->
@@ -483,13 +441,6 @@
                         </div>
                         <div id="totalAmount"></div> <!-- Tổng tiền sẽ được cập nhật -->
                     </div>
-
-                    <button class="btn btn-info" id="print-button" aria-label="In Hóa đơn"
-                        onclick="printTemporaryInvoice()">
-                        <i class="fas fa-print"></i> In hóa đơn tạm
-                    </button>
-
-
                     <button class="btn btn-warning" id="note-button" aria-label="Thêm Ghi chú">
                         <i class="fas fa-edit"></i> Ghi chú
                     </button>
@@ -498,10 +449,7 @@
         </div>
     </div>
 
-
     <script src="{{ asset('js/pos.js') }}" defer></script>
-
-
 @endsection
 
 <style>
@@ -718,8 +666,42 @@
 </style>
 
 <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const notificationButton = document.getElementById('notificationButton');
+        const printButton = document.getElementById('printButton');
+
+        // Notification Badge Animation
+        notificationButton.addEventListener('click', function() {
+            alert("Bạn có 3 thông báo mới!");
+        });
+
+        // Print Button
+        printButton.addEventListener('click', function() {
+            alert("Đang in...");
+        });
+
+        // Search Bar
+        const searchInput = document.getElementById('searchInput');
+        const dishItems = document.querySelectorAll('.dish-item');
+
+        searchInput.addEventListener('input', function() {
+            const searchTerm = searchInput.value.toLowerCase();
+
+            dishItems.forEach(function(dish) {
+                const dishName = dish.querySelector('.menu-item p').textContent.toLowerCase();
+
+                if (dishName.includes(searchTerm)) {
+                    dish.style.display = 'block';
+                } else {
+                    dish.style.display = 'none';
+                }
+            });
+        });
+    });
+
     // Modal danh sách đặt bàn
     document.getElementById('modalListReservation').addEventListener('click', function() {
         $('#reservationListModal').modal('show');
     });
 </script>
+

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Combo;
+use App\Models\Dishes;
 use App\Traits\TraitCRUD;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -56,12 +57,14 @@ class ComboController extends Controller
     public function create()
     {
         $categories = Category::all();
-        return view($this->viewPath . '.create', compact('categories'));
+        $dishes = Dishes::all();
+        return view($this->viewPath . '.create', compact('categories','dishes'));
     }
 
 
     public function store(Request $request)
     {
+        // dd($request->all());
         $request->validate([
             'name'             => 'required|string|max:255',
             'price'            => 'required|numeric',
@@ -82,13 +85,18 @@ class ComboController extends Controller
                 $imagePath = $request->file('image')->store('combo_images', 'public');
             }
 
-            $this->model::create([
+            $combo = Combo::create([
                 'name'             => $request->name,
                 'price'            => $request->price,
                 'description'      => $request->description,
                 'image'            => $imagePath,
                 'quantity_dishes'  => $request->quantity_dishes,
             ]);
+
+            foreach ($request->dishes as $dishId) {
+                // Tạo bản ghi trong bảng combo_dish
+                $combo->dishes()->attach($dishId, ['quantity' => 1]); 
+            }
         });
 
         return redirect()->route($this->routePath . '.index')->with('success', 'Combo đã được thêm thành công!');
@@ -99,8 +107,9 @@ class ComboController extends Controller
     {
         $combo = $this->model::findOrFail($id);
         $categories = Category::all();
+        $dishes = Dishes::all();
 
-        return view($this->viewPath . '.edit', compact('combo', 'categories'));
+        return view($this->viewPath . '.edit', compact('combo', 'categories','dishes'));
     }
 
 
@@ -132,6 +141,7 @@ class ComboController extends Controller
             }
 
             $combo->update($request->except('image'));
+            $combo->dishes()->sync($request->dishes);
         });
 
         return redirect()->route($this->routePath . '.index')->with('success', 'Combo đã được cập nhật thành công!');
@@ -140,8 +150,9 @@ class ComboController extends Controller
     public function show($id)
     {
         $combo = $this->model::findOrFail($id);
+        $dishes = $combo->dishes;
 
-        return view($this->viewPath . '.detail', compact('combo'));
+        return view($this->viewPath . '.detail', compact('combo','dishes'));
     }
 
 

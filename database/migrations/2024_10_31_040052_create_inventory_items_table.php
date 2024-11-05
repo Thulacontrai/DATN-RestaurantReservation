@@ -27,6 +27,7 @@ return new class extends Migration
 
             // Thêm created_at và updated_at
             $table->timestamps();
+
         });
 
         Schema::enableForeignKeyConstraints();
