@@ -23,6 +23,11 @@
 <script src="{{ asset('poss/assets/js/chart-custom.js') }}"></script>
 <script src="{{ asset('poss/assets/js/slider.js') }}"></script>
 <script src="{{ asset('poss/assets/js/app.js') }}"></script>
+<script src="/path/to/your/javascript-file.js" defer></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+
 
 
 
@@ -193,7 +198,7 @@
                 url: '/order-details/' + tableId,
                 type: 'GET',
                 success: function(order) {
-                    
+
                 },
                 error: function() {
                     showNotification('Không thể lấy chi tiết đơn hàng.', 'error');

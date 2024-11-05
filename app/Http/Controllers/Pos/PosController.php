@@ -311,41 +311,11 @@ class PosController extends Controller
         $final = 0;
         return view(
             'pos.payment',
-            compact('dishes', 'final', 'items', 'orderId', 'order', 'reservation', 'table', 'reservation_table', 'order_items', 'staff_id', 'customer_id', 'order_item', )
+            compact('dishes', 'final', 'items', 'orderId', 'order', 'reservation', 'table', 'reservation_table', 'order_items', 'staff_id', 'customer_id', 'order_item',)
         );
     }
 
 
-    // Xóa món khỏi order_items
-    public function deleteDishFromOrder($orderId, $dishId)
-    {
-        try {
-            // Tìm đơn hàng và món ăn trong đơn hàng
-            $order = Order::findOrFail($order_id);
-            $orderItem = OrderItem::where('order_id', $order_id)->where('id', $item_id)->firstOrFail();
-
-            // Trừ số tiền của món ăn bị xóa khỏi tổng tiền đơn hàng
-            $order->total_amount -= $orderItem->total_price;
-            $order->final_amount = $order->total_amount; // Cập nhật lại tổng tiền đơn hàng
-            $order->save();
-
-            // Xóa món ăn vĩnh viễn (forceDelete) khỏi cơ sở dữ liệu
-            $orderItem->forceDelete();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Món ăn đã được xóa khỏi đơn hàng.',
-                'total_amount' => $order->total_amount, // Trả lại tổng tiền sau khi xóa
-            ]);
-        } catch (\Exception $e) {
-            // Ghi log lỗi và trả về phản hồi lỗi
-            Log::error('Lỗi khi xóa món ăn khỏi đơn hàng: ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Đã xảy ra lỗi khi xóa món ăn.',
-            ], 500);
-        }
-    }
 
 
 
@@ -564,6 +534,33 @@ class PosController extends Controller
 
 
 
+    public function showOrderDetails($orderId)
+    {
+        try {
+            $order = Order::with('table', 'items')->find($orderId);
+
+            if (!$order) {
+                return response()->json(['success' => false, 'message' => 'Đơn hàng không tồn tại'], 404);
+            }
+
+            // Bạn có thể bao gồm thông tin bàn trong phản hồi nếu cần
+            return response()->json([
+                'success' => true,
+                'order' => $order,
+                'table' => $order->table // Thêm thông tin bàn nếu cần
+            ]);
+        } catch (\Exception $e) {
+            Log::error("Lỗi khi lấy chi tiết đơn hàng: " . $e->getMessage());
+
+            return response()->json(['success' => false, 'message' => 'Đã xảy ra lỗi khi lấy chi tiết đơn hàng'], 500);
+        }
+    }
+
+
+
+
+
+
     // public function Ppayment($tableNumber, Request $request)
     // {
     //     try {
@@ -658,5 +655,3 @@ class PosController extends Controller
         dd($order);
     }
 }
-
-

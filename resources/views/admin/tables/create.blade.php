@@ -29,7 +29,7 @@
                                         <option value="Tầng 2" {{ old('area') == 'Tầng 2' ? 'selected' : '' }}>Tầng 2</option>
                                     </select>
                                     <div class="invalid-feedback">Vui lòng chọn khu vực.</div>
-                                    <div class="valid-feedback">Looks good!</div>
+                                    
                                 </div>
 
                                 <!-- Số Bàn -->
@@ -37,7 +37,7 @@
                                     <label for="table_number" class="form-label">Số Bàn</label>
                                     <input type="number" class="form-control" id="table_number" name="table_number" value="{{ old('table_number') }}" required>
                                     <div class="invalid-feedback">Vui lòng nhập số bàn.</div>
-                                    <div class="valid-feedback">Looks good!</div>
+                                    
                                 </div>
 
                                 <!-- Loại Bàn -->
@@ -48,7 +48,7 @@
                                         <option value="VIP" {{ old('table_type') == 'VIP' ? 'selected' : '' }}>VIP</option>
                                     </select>
                                     <div class="invalid-feedback">Vui lòng chọn loại bàn.</div>
-                                    <div class="valid-feedback">Looks good!</div>
+                                    
                                 </div>
 
                                 <!-- Trạng Thái -->
@@ -60,7 +60,7 @@
                                         <option value="Occupied" {{ old('status') == 'Occupied' ? 'selected' : '' }}>Đang sử dụng</option>
                                     </select>
                                     <div class="invalid-feedback">Vui lòng chọn trạng thái bàn.</div>
-                                    <div class="valid-feedback">Looks good!</div>
+                                    
                                 </div>
 
                                 <button type="submit" class="btn btn-primary">Thêm Bàn</button>

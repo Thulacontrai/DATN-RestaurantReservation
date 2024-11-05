@@ -269,4 +269,77 @@
     }
 }
 </style>
-{{--  --}}
+<style>
+
+    /* Bao bọc cho phần */
+    .wrapper {
+        width: 80%; /* Điều chỉnh chiều rộng tổng thể của form */
+        max-width: 1200px; /* Đặt chiều rộng tối đa */
+        margin: 0 auto; /* Căn giữa container */
+        padding: 0 20px; /* Thêm khoảng cách hai bên trái, phải */
+    }
+
+    /* Flexbox cho các phần tử trong form */
+    .d-flex {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px; /* Khoảng cách giữa các phần tử */
+    }
+
+    /* Các cột */
+    .col-md-4, .col-md-8 {
+        flex: 1; /* Cân đối chiều rộng cho hình ảnh và nội dung */
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    /* Đảm bảo hình ảnh nằm gọn trong cột của nó */
+    .col-md-4 img {
+        width: 100%; /* Đảm bảo hình ảnh không bị tràn ra ngoài */
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        border: 1px solid #444; /* Đường viền cho hình ảnh */
+    }
+
+    /* Thêm khoảng cách cho nút bấm */
+    .btn-danger {
+        display: inline-block;
+        margin-top: 15px;
+        padding: 10px 20px;
+        background-color: #ff5252;
+        border-radius: 5px;
+        border: none;
+        color: #fff;
+        font-weight: 600;
+        font-size: 16px;
+    }
+
+    /* Điều chỉnh bố cục văn bản */
+    .col-md-8 {
+        padding-left: 15px;
+        color: #f0f0f0;
+    }
+
+    /* Kiểu dáng giá */
+    .text-danger {
+        font-size: 16px;
+        font-weight: 600;
+        color: #ff5252;
+    }
+
+    /* Điều chỉnh container */
+    .container {
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    /* Khoảng cách giữa các section */
+    .category-section {
+        margin-bottom: 30px;
+    }
+
+
+    </style>

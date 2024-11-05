@@ -348,7 +348,10 @@
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 708c0db991482ce36b120cd4f525181585cf7ce7
 
     #orderTabs {
         overflow-x: auto;
@@ -1375,11 +1378,6 @@
     border: none;
 }
 
-#reservationListModal, #orderDetailModal {
-    display: none;
-}
-
-
 /* Đảm bảo modal hiển thị ở trung tâm và có hiệu ứng mờ */
 .modal {
     display: none;
@@ -1484,6 +1482,7 @@
 }
 
     </style>
+
 
 
 

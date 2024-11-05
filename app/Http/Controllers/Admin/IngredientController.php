@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\Ingredient;
-use App\Models\IngredientType;
+use App\Models\Recipe;
 use App\Models\Supplier;
 use App\Traits\TraitCRUD;
 use Illuminate\Http\Request;
@@ -21,7 +22,7 @@ class IngredientController extends Controller
         $this->middleware('permission:Tạo mới nguyên liệu', ['only' => ['create']]);
         $this->middleware('permission:Sửa nguyên liệu', ['only' => ['edit']]);
         $this->middleware('permission:Xóa nguyên liệu', ['only' => ['destroy']]);
-        
+
     }
 
     use TraitCRUD;
@@ -30,32 +31,57 @@ class IngredientController extends Controller
     protected $viewPath = 'admin.ingredient';
     protected $routePath = 'admin.ingredient';
 
-    public function index()
+    public function index(Request $request)
     {
-        $ingredients = Ingredient::paginate(10);
-        return view('admin.ingredientType.ingredient.index', compact('ingredients'));
+        // Nhận các tham số sắp xếp từ request
+        $sort = $request->input('sort', 'id'); // Mặc định sắp xếp theo id
+        $direction = $request->input('direction', 'asc'); // Mặc định theo thứ tự tăng dần
+
+        // Nhận tham số tìm kiếm từ request
+        $searchTerm = $request->input('search', ''); // Mặc định là chuỗi rỗng nếu không tìm
+
+        // Lấy danh sách nguyên liệu theo loại và sắp xếp, đồng thời áp dụng tìm kiếm
+        $freshIngredients = Ingredient::where('category', 'Đồ Tươi')
+            ->where('name', 'like', '%' . $searchTerm . '%') // Tìm kiếm theo tên
+            ->orderBy($sort, $direction)
+            ->paginate(6);
+
+        $cannedIngredients = Ingredient::where('category', 'Đồ Đóng Hộp')
+            ->where('name', 'like', '%' . $searchTerm . '%') // Tìm kiếm theo tên
+            ->orderBy($sort, $direction)
+            ->paginate(6);
+
+        // Truyền biến sang view
+        return view('admin.ingredientType.ingredient.index', compact('freshIngredients', 'cannedIngredients', 'searchTerm'));
     }
+
+
+
 
     public function create()
     {
         $suppliers = Supplier::all();
-        $ingredientTypes = IngredientType::all();
-
-        return view('admin..ingredientType.ingredient.create', compact('suppliers', 'ingredientTypes'));
+        return view('admin.ingredientType.ingredient.create', compact('suppliers'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'supplier_id' => 'required|exists:suppliers,id',
+            // 'supplier_id' => 'required|exists:suppliers,id',
             'price' => 'required|numeric',
             'unit' => 'required|string|max:50',
-            'ingredient_type_id' => 'required|exists:ingredient_types,id',
+            'category' => 'required|in:Đồ tươi,Đồ đóng hộp',
         ]);
 
         DB::transaction(function () use ($request) {
-            Ingredient::create($request->all());
+            Ingredient::create([
+                'name' => $request->name,
+                // 'supplier_id' => $request->supplier_id, // Bỏ comment nếu cần sử dụng
+                'price' => $request->price,
+                'unit' => $request->unit,
+                'category' => $request->category,
+            ]);
         });
 
         return redirect()->route('admin.ingredient.index')->with('success', 'Nguyên liệu đã được tạo thành công.');
@@ -64,29 +90,36 @@ class IngredientController extends Controller
     public function edit($id)
     {
         $ingredient = Ingredient::findOrFail($id);
-        $suppliers = Supplier::all();
-        $ingredientTypes = IngredientType::all();
+        // $suppliers = Supplier::all(); // Bỏ comment nếu cần sử dụng
 
-        return view('admin..ingredientType.ingredient.edit', compact('ingredient', 'suppliers', 'ingredientTypes'));
+        return view('admin.ingredientType.ingredient.edit', compact('ingredient'));
     }
 
     public function update(Request $request, $id)
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'supplier_id' => 'required|exists:suppliers,id',
+            // 'supplier_id' => 'required|exists:suppliers,id', // Bỏ comment nếu cần sử dụng
             'price' => 'required|numeric',
             'unit' => 'required|string|max:50',
-            'ingredient_type_id' => 'required|exists:ingredient_types,id',
+            'category' => 'required|in:Đồ tươi,Đồ đóng hộp',
         ]);
 
         DB::transaction(function () use ($request, $id) {
             $ingredient = Ingredient::findOrFail($id);
-            $ingredient->update($request->all());
+            $ingredient->update([
+                'name' => $request->name,
+                // 'supplier_id' => $request->supplier_id, // Bỏ comment nếu cần sử dụng
+                'price' => $request->price,
+                'unit' => $request->unit,
+                'category' => $request->category,
+            ]);
         });
 
         return redirect()->route('admin.ingredient.index')->with('success', 'Nguyên liệu đã được cập nhật thành công.');
     }
+
+
 
     public function show($id)
     {
@@ -135,12 +168,12 @@ class IngredientController extends Controller
                 'name'               => $row[0],  // Tên nguyên liệu
                 'supplier_id'        => $row[1],  // ID nhà cung cấp
                 'price'              => $row[2],  // Giá nguyên liệu
-                'ingredient_type_id' => $row[3],  // ID loại nguyên liệu
+                'recipe_id' => $row[3],  // ID loại nguyên liệu
             ], [
                 'name'               => 'required|string|max:255',
                 'supplier_id'        => 'required|exists:suppliers,id', // Kiểm tra tồn tại supplier
                 'price'              => 'required|numeric|min:0', // Giá phải là số và >= 0
-                'ingredient_type_id' => 'required|exists:ingredient_types,id', // Kiểm tra tồn tại loại nguyên liệu
+                'recipe_id' => 'required|exists:recipes,id', // Kiểm tra tồn tại loại nguyên liệu
             ]);
 
             // Kiểm tra nếu dữ liệu không hợp lệ
@@ -153,7 +186,7 @@ class IngredientController extends Controller
                 'name'               => $row[0],
                 'supplier_id'        => $row[1],
                 'price'              => $row[2],
-                'ingredient_type_id' => $row[3],
+                'recipe_id' => $row[3],
             ]);
         }
 

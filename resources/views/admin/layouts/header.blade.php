@@ -6,7 +6,7 @@
             <i class="bi bi-house"></i>
             <a href="{{ url('admin') }}">Home</a>
         </li>
-        <li class="breadcrumb-item breadcrumb-active" aria-current="page">Sales</li>
+        {{-- <li class="breadcrumb-item breadcrumb-active" aria-current="page">Sales</li> --}}
     </ol>
 
     <div class="header-actions-container">
@@ -32,7 +32,7 @@
                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="userSettings">
                     <div class="header-profile-actions">
                         <a href="{{ route('admin.accountSetting.index') }}">Settings</a>
-                        
+
                         <!-- Form Logout -->
                         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                             @csrf
@@ -40,8 +40,18 @@
                         <a href="{{ url('/') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
                     </div>
                 </div>
-                
+
             </li>
         </ul>
     </div>
 </div>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<!-- Thư viện jQuery -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<!-- Thư viện OverlayScrollbars CSS và JS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/overlayscrollbars/1.13.1/css/OverlayScrollbars.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/overlayscrollbars/1.13.1/js/jquery.overlayScrollbars.min.js"></script>
+
+<!-- Tệp custom-scrollbar.js -->
+<script src="path/to/custom-scrollbar.js"></script>

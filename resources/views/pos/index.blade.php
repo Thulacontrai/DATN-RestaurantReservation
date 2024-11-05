@@ -15,8 +15,10 @@
                     <i class="material-icons">restaurant</i> Thực đơn
                 </a>
                 <input class="form-control1 me-2" id="searchInput" type="search" placeholder="Tìm món (F3)"
+                <input class="form-control1 me-2" id="searchInput" type="search" placeholder="Tìm món (F3)"
                     aria-label="Tìm món">
             </div>
+
 
 
             <!-- Right Section: Icons -->
@@ -48,32 +50,6 @@
                     <button class="btn btn-link text-white" id="hamburgerMenu">
                         <i class="fas fa-bars"></i>
                     </button>
-                    <!-- Dropdown Menu -->
-                    {{-- <div id="dropdownMenu" class="dropdown-content" style="display: none;">
-                        <div class="user-info">
-                            <img src="path/to/avatar.png" alt="User Avatar"
-                                style="width: 40px; height: 40px; border-radius: 50%;">
-                            <p>Thu Ngân</p>
-                            <span style="cursor: pointer;">X</span>
-                        </div>
-                        <div class="menu-options">
-                            <div class="menu-row">
-                                <button class="btn btn-primary"><i class="fas fa-cogs"></i> Quản lý</button>
-                            </div>
-                            <button class="btn"><i class="fas fa-chart-bar"></i> Báo cáo cuối ngày</button>
-                            <button class="btn"><i class="fas fa-file-invoice"></i> Lập phiếu thu</button>
-                            <button class="btn"><i class="fas fa-clipboard-list"></i> Chọn hóa đơn trả hàng</button>
-                            <button class="btn" id="modalListReservation" data-toggle="modal"
-                                data-target="#reservationListModal"><i class="fas fa-list"></i> Xem danh sách đặt
-                                bàn</button>
-                            <button class="btn"><i class="fas fa-cog"></i> Cài đặt chung</button>
-                            <button class="btn"><i class="fas fa-tag"></i> Thiết lập giá</button>
-                            <button class="btn"><i class="fas fa-box"></i> Món có sẵn trong đơn</button>
-                            <button class="btn"><i class="fas fa-keyboard"></i> Phím tắt</button>
-                            <button class="btn"><i class="fas fa-undo"></i> Chuyển về giao diện cũ</button>
-                            <button class="btn btn-danger"><i class="fas fa-sign-out-alt"></i> Đăng xuất</button>
-                        </div>
-                    </div> --}}
                 </li>
             </ul>
         </div>
@@ -130,7 +106,7 @@
                                     <td class="text-center" ><button type="button" class="transparent-button" data-toggle="modal" data-target="#orderDetailModal">{{$reservation->id}}</button></td>
                                     <td class="text-center">
                                         @foreach ($reservation->tables as $table)
-                                            {{ $table->table_number ?? 'Chưa xếp bàn' }} 
+                                            {{ $table->table_number ?? 'Chưa xếp bàn' }}
                                         @endforeach
                                     </td>
                                     <td class="text-center">{{ $reservation->reservation_date }} <br> {{ $reservation->reservation_time }}</td>
@@ -314,7 +290,7 @@
                         @endforeach
                     </div>
                 </div>
-                
+
                 <!-- Phần hiển thị Thực đơn -->
                 <div class="menu-section transition-section" id="menu-section" style="display: none;">
                     <div class="filter-section mb-4 d-flex justify-content-start flex-nowrap">
@@ -370,14 +346,16 @@
                     </button>
                 </nav>
                 <div id="order-details" class="order-content-container" style="padding-left: 20px;">
-                    @if (isset($orderItems) && count($orderItems) > 0)
-                        @foreach ($orderItems as $item)
+                    @if (isset($order) && $order->items->count() > 0)
+                        <h5>Thông tin đơn hàng cho Bàn {{ $order->table->number }}</h5> <!-- Thêm thông tin bàn -->
+                        @foreach ($order->items as $item)
                             <div class="order-item d-flex justify-content-between align-items-center">
                                 <span>{{ $item->name }} x {{ $item->quantity }}</span>
                                 <span style="color: #28a745;">{{ number_format($item->total_price, 0, ',', '.') }}
                                     VND</span>
                                 <button class="bin-button " data-item-id="{{ $item->id }}"
                                     data-order-id="{{ $order->id }}">
+                                    <!-- SVG của nút xóa -->
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 39 7"
                                         class="bin-top">
                                         <line stroke-width="4" stroke="white" y2="5" x2="39"
@@ -404,7 +382,6 @@
                                         </path>
                                     </svg>
                                 </button>
-
                             </div>
                         @endforeach
                     @else
@@ -462,8 +439,8 @@
         background-size: cover;
         background-position: center center;
         background-repeat: no-repeat;
-        /* min-height: 100vh;
-        max-height: 100vh; */
+        min-height: 100vh;
+
         /* Đặt chiều cao tối đa cho wrapper */
         overflow-y: hidden;
         /* Tránh việc hiển thị thanh cuộn không cần thiết */
@@ -495,6 +472,51 @@
         text-align: center;
         transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
     }
+
+    /* Responsive cho các màn hình nhỏ */
+    @media (max-width: 768px) {
+        .table-card {
+            width: 80px;
+            height: 100px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .table-card {
+            width: 60px;
+            height: 80px;
+        }
+
+        .navbar .form-control {
+            width: 100%;
+        }
+
+        .order-section {
+            padding: 5px;
+        }
+
+        .table-container {
+            max-height: calc(100vh - 200px);
+            /* Giảm chiều cao cho màn hình nhỏ hơn để đảm bảo không bị tràn */
+        }
+
+        .progress {
+            height: 6px;
+            /* Giảm chiều cao của thanh tiến trình */
+        }
+
+        .nav-link {
+            font-size: 14px;
+            /* Giảm kích thước font trên thiết bị nhỏ */
+        }
+
+        .btn {
+            padding: 8px 10px;
+            font-size: 12px;
+            /* Giảm kích thước nút trên thiết bị nhỏ */
+        }
+    }
+
 
     /* Responsive cho các màn hình nhỏ */
     @media (max-width: 768px) {

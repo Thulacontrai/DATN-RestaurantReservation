@@ -17,16 +17,16 @@
             <!-- mainmenu begin -->
             <nav>
                 <ul id="mainmenu">
-                    <li><a href="{{ route('client.index') }}">Home</a></li>
-                    <li><a href="{{ route('menu') }}">Menu</a></li>
-                    <li><a href="{{ route('booking.client') }}">Booking</a></li>
-                    <li><a href="{{ route('about.client') }}">About</a>
+                    <li><a href="{{ route('client.index') }}">TRANG CHỦ</a></li>
+                    <li><a href="{{ route('menu') }}">THỰC ĐƠN</a></li>
+                    <li><a href="{{ route('booking.client') }}">ĐẶT BÀN</a></li>
+                    <li><a href="{{ route('about.client') }}">VỀ CHÚNG TÔI</a>
                         <ul>
                             <li><a href="{{ route('about.client') }}">About</a></li>
                             <li><a href="{{ route('gallery.client') }}">Gallery</a></li>
                         </ul>
                     </li>
-            
+
                     @auth
                     <li><a href="{{ route('client.member') }}">Profile</a></li>
                     {{-- <li>
@@ -42,8 +42,8 @@
                         </ul>
                     </li>
                 @endauth
-            
-                    <li><a href="{{ route('contact.client') }}">Contact</a></li>
+
+                    <li><a href="{{ route('contact.client') }}">LIÊN HỆ</a></li>
                     {{-- <li><a href="{{ route('client.member') }}"><i class="bi bi-person-fill"></i></a>
                         <ul>
                             <li><a href="{{ route('login.client') }}">Login</a></li>
@@ -52,7 +52,7 @@
 
                 </ul>
             </nav>
-            
+
             {{-- Debugging --}}
             <div style="display: none;">
                 Is logged in: {{ var_export(auth()->check(), true) }}

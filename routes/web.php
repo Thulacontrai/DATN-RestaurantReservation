@@ -22,7 +22,7 @@ use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\RefundController;
 use App\Http\Controllers\Admin\ReservationController;
 use App\Http\Controllers\Admin\ReservationHistoryController;
-use App\Http\Controllers\Admin\ReservationTableController;
+
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\TableController;
@@ -50,7 +50,7 @@ use App\Http\Controllers\Admin\InventoryController;
 
 
 //route tạo phiếu nhập kho
-Route::resource('transactions', InventoryTransactionController::class); 
+Route::resource('transactions', InventoryTransactionController::class);
 Route::post('/transactions', [InventoryTransactionController::class, 'storeTransaction'])->name('transactions.store');
 Route::get('/transactions/{id}/add-items', [InventoryTransactionController::class, 'addItemForm'])->name('transactions.add_items');
 Route::post('/transactions/{id}/add-items', [InventoryTransactionController::class, 'storeItem'])->name('transactions.store_item');
@@ -200,10 +200,10 @@ Route::get('/reservations/late', [PosController::class, 'getLateReservations'])
     ->name('reservations.late');
 Route::post('/reservations', [PosController::class, 'store'])->name('reservations.store');
 Route::delete('/order/{order_id}/item/{item_id}', [PosController::class, 'deleteOrderItem']);
-;
+
+
 
 Route::post('/reservation/check-table', [PosController::class, 'checkTable'])->name('reservation.checkTable');
-Route::post('/reservations/convert-to-order', [PosController::class, 'convertToOrder'])->name('reservation.convertToOrder');
 
 
 
@@ -262,7 +262,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/', function () {
         return view('auth.login');
 
-
     })->name('home');
 
 
@@ -293,7 +292,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::resource('reservation', ReservationController::class);
     Route::post('reservation/cancel/{id}', [ReservationController::class, 'cancel'])->name('reservation.cancel');
-    Route::resource('reservationTable', ReservationTableController::class);
+
     Route::resource('reservationHistory', ReservationHistoryController::class);
 
 
@@ -310,6 +309,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('dishes-trash', [DishesController::class, 'trash'])->name('dishes.trash');
     Route::patch('dishes-restore/{id}', [DishesController::class, 'restore'])->name('dishes.restore');
     Route::delete('dishes-force-delete/{id}', [DishesController::class, 'forceDelete'])->name('dishes.forceDelete');
+    Route::get('dishes/{id}', [DishesController::class, 'show'])->name('dishes.detail');
+    Route::get('dishes/{id}/update-ingredients', [DishesController::class, 'editIngredients'])->name('dishes.updateIngredients');
+    Route::post('dishes/{id}/update-ingredients', [DishesController::class, 'updateIngredients'])->name('dishes.updateIngredients');
+    Route::delete('dishes/{recipeId}/deleteIngredient', [DishesController::class, 'deleteIngredient'])->name('dishes.deleteIngredient');
+    Route::post('dishes/{dish}/add-ingredient', [DishesController::class, 'addIngredient'])->name('dishes.addIngredient');
+
+
+
+
+
 
 
     Route::resource('combo', ComboController::class);
@@ -358,7 +367,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // Route::resource('permission', PermissionController::class);
     Route::resource('supplier', SupplierController::class);
-    Route::resource('ingredientType', IngredientTypeController::class);
+    // Route::resource('recipes', RecipesController::class);
+
     Route::resource('ingredient', IngredientController::class);
     Route::resource('dashboard', DashboardController::class);
     Route::resource('accountSetting', SettingController::class);
@@ -368,11 +378,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('calendar', CalendarController::class);
 
     //inventoy
-    
 
-    
 
-    
+
+
+
 
 
 
@@ -398,36 +408,23 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 
 Route::get('/register-client', [CustomerAuthController::class, 'showRegisterForm'])->name('register.form');
-Route::post('/register-client', [CustomerAuthController::class, 'register'])->name('client.register'); 
-Route::get('/login-client', [CustomerAuthController::class, 'showLoginForm'])->name('login.form');
-Route::post('/login-client', [CustomerAuthController::class, 'login'])->name('client.login'); 
-Route::post('/logout-client', [CustomerAuthController::class, 'logout'])->name('client.logout');
-
-Route::post('/check-account', [CustomerAuthController::class, 'checkAccount']);
-Route::post('/login-success', [CustomerAuthController::class, 'loginSuccess'])->name('login.success');
-
-
-
-Route::post('/verify-code', [CustomerAuthController::class, 'verifyCode'])->name('verify.code');
-
-Route::middleware(['auth'])->group(function () {
-    Route::get('/member/profile', [MemberController::class, 'showProfile'])->name('member.profile');
-    Route::post('/member/update-booking', [MemberController::class, 'updateBooking'])->name('member.updateBooking');
-    Route::post('/cancel-reservation', [ReservationController::class, 'cancelReservation'])->name('cancel.reservation');
-});
-
-
-
-Route::get('/register-client', [CustomerAuthController::class, 'showRegisterForm'])->name('register.form');
 Route::post('/register-client', [CustomerAuthController::class, 'register'])->name('client.register');
 Route::get('/login-client', [CustomerAuthController::class, 'showLoginForm'])->name('login.form');
 Route::post('/login-client', [CustomerAuthController::class, 'login'])->name('client.login');
 Route::post('/logout-client', [CustomerAuthController::class, 'logout'])->name('client.logout');
 
-
 Route::post('/check-account', [CustomerAuthController::class, 'checkAccount']);
 Route::post('/login-success', [CustomerAuthController::class, 'loginSuccess'])->name('login.success');
 
+
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+
+});
 
 
 
@@ -462,7 +459,7 @@ Route::get('/test', function () {
 });
 
 
-//Route đăng nhập của khách hàng
+
 // Route đăng nhập của khách hàng
 Route::get('/register-client', [CustomerAuthController::class, 'showRegisterForm'])->name('register.form');
 Route::post('/register-client', [CustomerAuthController::class, 'register'])->name('client.register');
@@ -512,6 +509,3 @@ Route::get('/print/{orderId}', [ReservationController::class, 'print'])->name('p
 
 
 require __DIR__ . '/auth.php';
-
-
-
