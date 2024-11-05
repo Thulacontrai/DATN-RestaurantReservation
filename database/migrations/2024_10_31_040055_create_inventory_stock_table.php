@@ -18,7 +18,8 @@ return new class extends Migration
             $table->unsignedBigInteger('ingredient_id'); // Thay đổi từ integer sang unsignedBigInteger
             $table->foreign('ingredient_id')->references('id')->on('ingredients')->onDelete('cascade');
             $table->integer('quantity_stock');
-            $table->bigInteger('last_update');
+            $table->timestamp('last_update'); // Đổi từ bigInteger sang timestamp
+
         });
 
         Schema::enableForeignKeyConstraints();

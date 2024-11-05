@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class OrderItem extends Model
 {
     use HasFactory;
-    use SoftDeletes;
 
     // Xác định tên bảng (nếu khác với quy ước mặc định)
     protected $table = 'order_items';
@@ -25,7 +24,7 @@ class OrderItem extends Model
         'status', // Trạng thái của món (preparing, served, etc.)
         'deleted_at',
     ];
-
+    public $timestamps = true;
     /**
      * Mối quan hệ với model Order (mỗi mục thuộc về một đơn hàng)
      */

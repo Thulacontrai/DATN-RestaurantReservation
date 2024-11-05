@@ -1,3 +1,10 @@
+<!-- Tải jQuery trước -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Bootstrap JS nếu sử dụng -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+<!-- Các thư viện và tệp JavaScript khác -->
 <script src="{{ asset('poss/assets/js/backend-bundle.min.js') }}"></script>
 <script src="{{ asset('poss/assets/js/flex-tree.min.js') }}"></script>
 <script src="{{ asset('poss/assets/js/tree.js') }}"></script>
@@ -22,6 +29,98 @@
 
 
 
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const printButton = document.getElementById("printButton");
+        const printDropdownForm = document.getElementById("printDropdownForm");
+        const hamburgerMenu = document.getElementById("hamburgerMenu");
+        const dropdownMenu = document.getElementById("dropdownMenu");
+        const bellButton = document.querySelector('.fa-bell');
+        const notificationDropdown = document.createElement('div');
+
+        // Thêm nội dung dropdown cho chuông thông báo
+        notificationDropdown.classList.add('notification-dropdown');
+        notificationDropdown.style.display = 'none'; // Bắt đầu ẩn
+        notificationDropdown.innerHTML = `
+        <h4 class="notification-header">Chưa thanh toán</h4>
+        <div class="notification-body">
+            <i class="fas fa-file-alt notification-icon"></i>
+            <p>Không có đơn đặt hàng chờ thanh toán</p>
+        </div>
+    `;
+        document.body.appendChild(notificationDropdown);
+
+        // Điều khiển hiển thị dropdown của chuông thông báo
+        bellButton.addEventListener("click", function(event) {
+            event.stopPropagation();
+            toggleDropdown(notificationDropdown);
+            hideDropdown(printDropdownForm);
+            hideDropdown(dropdownMenu);
+        });
+
+        // Toggle print form
+        printButton.addEventListener("click", function(event) {
+            event.stopPropagation();
+            toggleDropdown(printDropdownForm);
+            hideDropdown(dropdownMenu);
+            hideDropdown(notificationDropdown);
+        });
+
+        // Toggle hamburger menu
+        hamburgerMenu.addEventListener("click", function(event) {
+            event.stopPropagation();
+            toggleDropdown(dropdownMenu);
+            hideDropdown(printDropdownForm);
+            hideDropdown(notificationDropdown);
+        });
+
+        // Close all menus when clicking outside
+        window.addEventListener("click", function() {
+            hideDropdown(printDropdownForm);
+            hideDropdown(dropdownMenu);
+            hideDropdown(notificationDropdown);
+        });
+
+        // Add functionality to Confirm and Cancel buttons
+        document.getElementById("confirmButton").addEventListener("click", function() {
+            hideDropdown(printDropdownForm);
+            alert('Hóa đơn đã được chọn!');
+        });
+
+        document.getElementById("cancelButton").addEventListener("click", function() {
+            hideDropdown(printDropdownForm);
+        });
+
+        // Hàm chung để hiển thị/ẩn dropdown
+        function toggleDropdown(element) {
+            if (element.style.display === "none" || element.style.display === "") {
+                element.style.display = "block";
+            } else {
+                element.style.display = "none";
+            }
+        }
+
+        // Hàm để ẩn dropdown
+        function hideDropdown(element) {
+            element.style.display = "none";
+        }
+
+        // Ngăn chặn đóng khi nhấp vào bên trong dropdown
+        printDropdownForm.addEventListener("click", function(event) {
+            event.stopPropagation();
+        });
+
+        dropdownMenu.addEventListener("click", function(event) {
+            event.stopPropagation();
+        });
+
+        notificationDropdown.addEventListener("click", function(event) {
+            event.stopPropagation();
+        });
+    });
+</script>
 
 <script>
     $(document).ready(function() {
@@ -79,37 +178,8 @@
         $('.table-card').click(function() {
             const tableId = $(this).data('table-id');
             const tableStatus = $(this).data('status');
-            tableStatus === 'reserved' ? showOrderDetails(tableId) : createOrder(tableId);
+            showOrderDetails(tableId);
         });
-
-        function createOrder(tableId) {
-            showLoading(true);
-
-            $.ajax({
-                url: '/create-order',
-                type: 'POST',
-                data: {
-                    table_id: tableId,
-                    _token: '{{ csrf_token() }}'
-                },
-                success: function(data) {
-                    showLoading(false);
-                    if (data.success) {
-                        orderId = data.order.id;
-                        showNotification(`Đã tạo đơn hàng thành công cho Bàn ${data.table_number}`);
-                        updateTableStatus(tableId);
-                        menuSection.fadeIn();
-                        tableSection.fadeOut();
-                    } else {
-                        showOrderDetails(tableId);
-                    }
-                },
-                error: function() {
-                    showLoading(false);
-                    showNotification('Không thể tạo đơn hàng mới.', 'error');
-                }
-            });
-        }
 
         function updateTableStatus(tableId) {
             const tableCard = $(`.table-card[data-table-id="${tableId}"]`);
@@ -124,44 +194,16 @@
         }
 
         function showOrderDetails(tableId) {
-            // Implement AJAX call to fetch order details and update UI
             $.ajax({
                 url: '/order-details/' + tableId,
                 type: 'GET',
                 success: function(order) {
-                    updateOrderDisplay(order);
+
                 },
                 error: function() {
                     showNotification('Không thể lấy chi tiết đơn hàng.', 'error');
                 }
             });
-        }
-
-        function updateOrderDisplay(order) {
-            let itemsHTML = `
-            <div class="order-info">
-                <h4>Đơn hàng cho Bàn ${order.table_number}</h4>
-                <p>Trạng thái: ${order.status}</p>
-            </div>`;
-
-            if (order.items.length === 0) {
-                itemsHTML += `
-                <div class="empty-cart text-center">
-                    <p>Chưa có món trong đơn</p>
-                    <span>Vui lòng chọn món từ thực đơn</span>
-                </div>`;
-            } else {
-                order.items.forEach(item => {
-                    itemsHTML += `
-                <div class="order-item d-flex justify-content-between align-items-center">
-                    <span>${item.name} x ${item.quantity}</span>
-                    <span style="color: #28a745;">${item.total_price} ₫</span>
-                </div>`;
-                });
-            }
-
-            orderDetails.html(itemsHTML);
-            updateTotalAmount(order.total_amount);
         }
 
         function updateTotalAmount(newAmount) {
@@ -173,10 +215,12 @@
             const dishPrice = parseFloat($(this).data('dish-price'));
             const dishName = $(this).data('dish-name');
 
+
             if (!orderId) {
                 showNotification('Vui lòng chọn bàn trước khi thêm món!', 'warning');
                 return;
             }
+
 
             currentOrder[dishId] = (currentOrder[dishId] || {
                 dishName,
@@ -206,7 +250,6 @@
                 success: function(data) {
                     if (data.success) {
                         showNotification(`Đã thêm ${data.orderItem.dishName} vào đơn hàng.`);
-                        updateOrderDisplay(data.order);
                     } else {
                         showNotification('Lỗi khi thêm món vào đơn hàng: ' + data.message, 'error');
                     }
@@ -277,4 +320,3 @@
 
     });
 </script>
-

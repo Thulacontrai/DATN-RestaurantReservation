@@ -23,6 +23,7 @@
 
     <!-- Vendor Css Files -->
     <link rel="stylesheet" href="{{ asset('adminn/assets/vendor/overlay-scroll/OverlayScrollbars.min.css') }}">
+    @yield('css')
 </head>
 
 <body class="hold-transition skin-blue sidebar-mini">
@@ -59,7 +60,7 @@
 
         </div>
         <!-- ./wrapper -->
-
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <!-- jQuery 3 -->
         <script src="{{ asset('adminn/assets/js/jquery.min.js') }}"></script>
         <script src="{{ asset('adminn/assets/js/bootstrap.bundle.min.js') }}"></script>
@@ -87,7 +88,7 @@
         @yield('scripts')
     </div>
 </body>
-<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+{{-- <script src="https://code.jquery.com/jquery-3.7.1.js"></script> --}}
 
 @isset($script)
     {{ $script }}

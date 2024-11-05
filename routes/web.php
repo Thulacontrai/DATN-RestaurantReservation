@@ -11,10 +11,13 @@ use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Client\OnlineCheckoutController;
+use App\Http\Controllers\KitchenController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\CalendarController;
 use App\Http\Controllers\Admin\IngredientController;
+use App\Http\Controllers\Admin\IngredientTypeController;
+use App\Http\Controllers\Admin\InventoryTransactionController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\RefundController;
 use App\Http\Controllers\Admin\ReservationController;
@@ -30,6 +33,8 @@ use App\Http\Controllers\Client\MemberController;
 use App\Http\Controllers\Client\MenuController;
 use App\Http\Controllers\Pos\PosController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Admin\InventoryController;
+
 
 
 /*
@@ -42,6 +47,24 @@ use App\Http\Controllers\ProfileController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+
+//route tạo phiếu nhập kho
+Route::resource('transactions', InventoryTransactionController::class);
+Route::post('/transactions', [InventoryTransactionController::class, 'storeTransaction'])->name('transactions.store');
+Route::get('/transactions/{id}/add-items', [InventoryTransactionController::class, 'addItemForm'])->name('transactions.add_items');
+Route::post('/transactions/{id}/add-items', [InventoryTransactionController::class, 'storeItem'])->name('transactions.store_item');
+Route::post('/transactions/{id}/update-status', [InventoryTransactionController::class, 'updateStatus'])->name('transactions.update_status');
+Route::post('/transactions/{id}/finalize', [InventoryTransactionController::class, 'finalizeTransaction'])->name('transactions.finalize');
+Route::get('transactions/{id}', [InventoryTransactionController::class, 'show'])->name('transactions.show');
+Route::get('transactions/{id}/edit', [InventoryTransactionController::class, 'edit'])->name('transactions.edit');
+Route::put('transactions/{id}', [InventoryTransactionController::class, 'update'])->name('transactions.update');
+Route::patch('transactions/{id}/status', [InventoryTransactionController::class, 'updateStatus'])->name('transactions.update.status');
+Route::get('admin/transactions/create', [InventoryTransactionController::class, 'createTransaction'])->name('transactions.create');
+Route::delete('transactions/{id}', [InventoryTransactionController::class, 'destroy'])->name('transactions.destroy');
+
+
+
 
 // import
 Route::get('admin/supplier/import', [SupplierController::class, 'showImportForm'])->name('admin.supplier.import');
@@ -151,6 +174,9 @@ Route::get('/customerInformation', [ReservationController::class, 'showInformati
 
 
 
+Route::get('/kitchen', [KitchenController::class, 'index'])->name('kitchen.index');
+Route::post('/kitchen/{id}/cook-all', [KitchenController::class, 'cookAll'])->name('order-item.cook-all');
+Route::post('/kitchen/{id}/done-all', [KitchenController::class, 'doneAll'])->name('order-item.cook-all');
 
 
 
@@ -164,6 +190,7 @@ Route::get('/reservations', [ReservationController::class, 'index'])->name('rese
 
 Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
 Route::post('/create-order', [PosController::class, 'createOrder']);
+Route::post('/order-details/{tableId}', [PosController::class, 'orderDetails'])->name('order-details');
 Route::post('/add-dish-to-order', [PosController::class, 'addDishToOrder']);
 Route::post('/load-more-dishes', [PosController::class, 'loadMoreDishes']);
 Route::get('/api/tables/{tableId}/order', [TableController::class, 'getOrderForReservedTable']);
@@ -176,9 +203,7 @@ Route::delete('/order/{order_id}/item/{item_id}', [PosController::class, 'delete
 
 
 
-
 Route::post('/reservation/check-table', [PosController::class, 'checkTable'])->name('reservation.checkTable');
-Route::post('/reservations/convert-to-order', [PosController::class, 'convertToOrder'])->name('reservation.convertToOrder');
 
 
 
@@ -347,9 +372,20 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('ingredient', IngredientController::class);
     Route::resource('dashboard', DashboardController::class);
     Route::resource('accountSetting', SettingController::class);
+    Route::resource('inventory', InventoryController::class);
 
     // Lịch
     Route::resource('calendar', CalendarController::class);
+
+    //inventoy
+
+
+
+
+
+
+
+
 
     //permission route
     Route::get('/admin/permission', [PermissionController::class, 'index'])->name('permissions.index');
@@ -382,13 +418,6 @@ Route::post('/login-success', [CustomerAuthController::class, 'loginSuccess'])->
 
 
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-
-});
 
 Route::post('/verify-code', [CustomerAuthController::class, 'verifyCode'])->name('verify.code');
 
