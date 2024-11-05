@@ -22,6 +22,7 @@ return new class extends Migration
             $table->foreign('supplier_id')->references('id')->on('suppliers')->onDelete('cascade');
             $table->unsignedBigInteger('staff_id'); // Thay đổi thành unsignedBigInteger
             $table->timestamp('created_at')->useCurrent(); // Sử dụng thời gian hiện tại
+            $table->timestamp('updated_at')->useCurrent()->nullable(); // Thêm cột updated_at
             $table->enum('status', ["chờ xử lý","hoàn thành","Hủy"]); // Kiểu dữ liệu cho status
         });
 
