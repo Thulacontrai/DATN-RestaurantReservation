@@ -33,7 +33,7 @@ class InventoryTransactionController extends Controller
         // Phân trang kết quả
         $transactions = $query->paginate(10);
 
-        return view('admin.inventory.index', compact('transactions'));
+        return view('admin.inventoryTransaction.index', compact('transactions'));
     }
 
 
@@ -44,7 +44,7 @@ class InventoryTransactionController extends Controller
         $suppliers = Supplier::all();
         $ingredients = Ingredient::all();
 
-        return view('admin.inventory.create', compact('user', 'suppliers', 'ingredients'));
+        return view('admin.inventoryTransaction.create', compact('user', 'suppliers', 'ingredients'));
     }
 
 
@@ -56,7 +56,7 @@ class InventoryTransactionController extends Controller
         // Lấy thông tin nhân viên từ bảng users
         $staff = User::find($transaction->staff_id);
 
-        return view('admin.inventory.show', compact('transaction', 'staff'));
+        return view('admin.inventoryTransaction.show', compact('transaction', 'staff'));
     }
 
 
@@ -118,15 +118,22 @@ class InventoryTransactionController extends Controller
     }
 
     public function edit($id)
-    {
-        $transaction = InventoryTransaction::findOrFail($id);
-        $user = auth()->user(); // Lấy thông tin người dùng hiện tại
+{
+    $transaction = InventoryTransaction::findOrFail($id);
 
-        $suppliers = Supplier::all();
-        $ingredients = Ingredient::all();
-
-        return view('admin.inventory.edit', compact('transaction', 'suppliers', 'ingredients', 'user'));
+    // Kiểm tra nếu trạng thái là "hoàn thành" thì ngăn chỉnh sửa
+    if ($transaction->status === 'hoàn thành') {
+        return redirect()->route('transactions.show', $transaction->id)
+            ->with('error', 'Phiếu đã hoàn thành và không thể chỉnh sửa.');
     }
+
+    $user = auth()->user();
+    $suppliers = Supplier::all();
+    $ingredients = Ingredient::all();
+
+    return view('admin.inventoryTransaction.edit', compact('transaction', 'suppliers', 'ingredients', 'user'));
+}
+
 
 
     public function update(Request $request, $id)

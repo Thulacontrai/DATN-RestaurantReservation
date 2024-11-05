@@ -2,8 +2,7 @@
 
 @section('content')
 <div class="container">
-   
-
+    {{-- Hiển thị thông báo thành công hoặc lỗi --}}
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             {{ session('success') }}
@@ -27,12 +26,11 @@
         @method('PUT')
 
         <div class="card mb-4">
-            
             <div class="card-body">
-                <h3 class="mb-4">Chỉnh sửa phiếu nhập kho</h1>
+                <h3 class="mb-4">Chỉnh sửa phiếu nhập kho</h3>
                 <div class="form-group">
                     <label for="total_amount">Tổng số tiền</label>
-                    <input type="number" name="total_amount" class="form-control" value="{{ old('total_amount', $transaction->total_amount) }}" required>
+                    <input type="number" id="total_amount" name="total_amount" class="form-control" value="{{ old('total_amount', $transaction->total_amount) }}" readonly required>
                 </div>
 
                 <div class="form-group">
@@ -49,15 +47,14 @@
                         @endforeach
                     </select>
                 </div>
-                
 
-                <h4 class="mt-4">Nguyên liệu</h3>
+                <h4 class="mt-4">Nguyên liệu</h4>
                 <div id="ingredients-container">
                     @foreach($transaction->inventoryItems as $index => $item)
                         <div class="ingredient-item mb-3 p-3 border rounded">
                             <div class="form-group">
                                 <label for="ingredient_id">Nguyên liệu:</label>
-                                <select name="ingredients[{{ $index }}][ingredient_id]" class="form-select" required>
+                                <select name="ingredients[{{ $index }}][ingredient_id]" class="form-select" required data-price="{{ $ingredients->firstWhere('id', $item->ingredient_id)->price ?? 0 }}">
                                     <option value="">Chọn nguyên liệu</option>
                                     @foreach($ingredients as $ingredient)
                                         <option value="{{ $ingredient->id }}" {{ $ingredient->id == $item->ingredient_id ? 'selected' : '' }}>{{ $ingredient->name }}</option>
@@ -66,7 +63,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="quantity">Số lượng:</label>
-                                <input type="number" name="ingredients[{{ $index }}][quantity]" class="form-control" value="{{ $item->quantity }}" required>
+                                <input type="number" name="ingredients[{{ $index }}][quantity]" class="form-control quantity-input" value="{{ $item->quantity }}" required>
                             </div>
                         </div>
                     @endforeach
@@ -79,4 +76,30 @@
 
     <a href="{{ route('transactions.index') }}" class="btn btn-secondary">Trở về</a>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const quantityInputs = document.querySelectorAll('.quantity-input');
+    const totalAmountInput = document.getElementById('total_amount');
+
+    function updateTotalAmount() {
+        let totalAmount = 0;
+        quantityInputs.forEach(input => {
+            const price = parseFloat(input.closest('.ingredient-item').querySelector('select').dataset.price);
+            const quantity = parseFloat(input.value);
+            if (!isNaN(price) && !isNaN(quantity)) {
+                totalAmount += price * quantity;
+            }
+        });
+        totalAmountInput.value = totalAmount.toFixed(2);
+    }
+
+    quantityInputs.forEach(input => {
+        input.addEventListener('input', updateTotalAmount);
+    });
+
+    // Tính tổng số tiền ban đầu
+    updateTotalAmount();
+});
+</script>
 @endsection
