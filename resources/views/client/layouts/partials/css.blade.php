@@ -284,7 +284,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        gap: 20px; /* Khoảng cách giữa các phần tử */
+        /* gap: 20px; Khoảng cách giữa các phần tử */
     }
 
     /* Các cột */
