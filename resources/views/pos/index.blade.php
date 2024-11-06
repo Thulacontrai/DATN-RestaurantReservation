@@ -4,7 +4,7 @@
 
 @section('content')
 
-    <header class="navbar navbar-expand-lg p-2" style="background: linear-gradient(90deg, #004a89, #007bb5);">
+<header class="navbar navbar-expand-lg p-2" style="background: linear-gradient(90deg, #004a89, #007bb5);">
         <div class="container-fluid">
             <!-- Left Section: Tabs for Phòng bàn and Thực đơn -->
             <div class="header-left d-flex align-items-center">
@@ -15,8 +15,10 @@
                     <i class="material-icons">restaurant</i> Thực đơn
                 </a>
                 <input class="form-control1 me-2" id="searchInput" type="search" placeholder="Tìm món (F3)"
+                <input class="form-control1 me-2" id="searchInput" type="search" placeholder="Tìm món (F3)"
                     aria-label="Tìm món">
             </div>
+
 
 
             <!-- Right Section: Icons -->
@@ -48,32 +50,6 @@
                     <button class="btn btn-link text-white" id="hamburgerMenu">
                         <i class="fas fa-bars"></i>
                     </button>
-                    <!-- Dropdown Menu -->
-                    {{-- <div id="dropdownMenu" class="dropdown-content" style="display: none;">
-                        <div class="user-info">
-                            <img src="path/to/avatar.png" alt="User Avatar"
-                                style="width: 40px; height: 40px; border-radius: 50%;">
-                            <p>Thu Ngân</p>
-                            <span style="cursor: pointer;">X</span>
-                        </div>
-                        <div class="menu-options">
-                            <div class="menu-row">
-                                <button class="btn btn-primary"><i class="fas fa-cogs"></i> Quản lý</button>
-                            </div>
-                            <button class="btn"><i class="fas fa-chart-bar"></i> Báo cáo cuối ngày</button>
-                            <button class="btn"><i class="fas fa-file-invoice"></i> Lập phiếu thu</button>
-                            <button class="btn"><i class="fas fa-clipboard-list"></i> Chọn hóa đơn trả hàng</button>
-                            <button class="btn" id="modalListReservation" data-toggle="modal"
-                                data-target="#reservationListModal"><i class="fas fa-list"></i> Xem danh sách đặt
-                                bàn</button>
-                            <button class="btn"><i class="fas fa-cog"></i> Cài đặt chung</button>
-                            <button class="btn"><i class="fas fa-tag"></i> Thiết lập giá</button>
-                            <button class="btn"><i class="fas fa-box"></i> Món có sẵn trong đơn</button>
-                            <button class="btn"><i class="fas fa-keyboard"></i> Phím tắt</button>
-                            <button class="btn"><i class="fas fa-undo"></i> Chuyển về giao diện cũ</button>
-                            <button class="btn btn-danger"><i class="fas fa-sign-out-alt"></i> Đăng xuất</button>
-                        </div>
-                    </div> --}}
                 </li>
             </ul>
         </div>
@@ -81,7 +57,7 @@
         <!-- Modal Popup Danh Sách Đặt Bàn-->
         <div class="modal fade" id="reservationListModal" tabindex="-1" role="dialog"
             aria-labelledby="reservationListModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="reservationListModalLabel">Danh sách đặt bàn</h5>
@@ -130,7 +106,7 @@
                                     <td class="text-center" ><button type="button" class="transparent-button" data-toggle="modal" data-target="#orderDetailModal">{{$reservation->id}}</button></td>
                                     <td class="text-center">
                                         @foreach ($reservation->tables as $table)
-                                            {{ $table->table_number ?? 'Chưa xếp bàn' }} 
+                                            {{ $table->table_number ?? 'Chưa xếp bàn' }}
                                         @endforeach
                                     </td>
                                     <td class="text-center">{{ $reservation->reservation_date }} <br> {{ $reservation->reservation_time }}</td>
@@ -177,7 +153,7 @@
         <!-- Modal Chi Tiết -->
         <div class="modal fade" id="orderDetailModal" tabindex="-1" role="dialog"
             aria-labelledby="orderDetailModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="orderDetailModalLabel">Nguyễn Bá Thư - 0283982424</h5>
@@ -264,10 +240,6 @@
         </div>
 
     </header>
-
-
-    
-
     <div class="wrapper">
         <div class="container-fluid d-flex flex-grow-1 px-0">
             <!-- Phần bên trái: Bàn và Thực đơn -->
@@ -298,7 +270,6 @@
                             <div class="table-card {{ strtolower(trim($table->status)) }}"
                                 data-table-id="{{ $table->id }}">
                                 <span class="table-number">Bàn {{ $table->table_number }}</span>
-
                                 @if (strtolower(trim($table->status)) == 'available')
                                     <i class="material-icons text-success"
                                         style="font-size: 35px;padding-top: 50%;">event_seat</i>
@@ -361,62 +332,30 @@
                 <nav class="navbar">
                     <div class="col-md-5 d-flex align-items-center">
                         <div class="btn-group flex-wrap">
-
                             <button class="btn btn-warning" id="addCustomerButton" title="Thêm khách hàng">
                                 <i class="fas fa-user-plus"></i>
                             </button>
 
                         </div>
                         <div class="tabs" id="orderTabs"></div>
-                        <input class="form-control1 me-2" id="searchInput" type="search" placeholder="Tìm khách (F4)"
+                        <input clafss="form-control1 me-2" id="searchInput" type="search" placeholder="Tìm khách (F4)"
                             aria-label="Tìm khách hàng">
                     </div>
                     <button class="btn btn-success ms-2" id="openReservationModal">
                         <i class="fas fa-calendar-alt"></i>
                     </button>
                 </nav>
-
-                <div class="d-flex justify-content-center mt-5">
-
-                    {{-- <span id="orderInfoText">
-                            <!-- Thêm icon cho Bàn và Đơn -->
-                            <i class="fas fa-chair"></i> <!-- Icon cho Bàn -->
-                            {{ $order->table->table_number }} -
-                            <i class="fas fa-receipt"></i> <!-- Icon cho Đơn -->
-                            {{ $order->id }}
-                        </span> --}}
-                    <div class="scene">
-                        <div class="cube">
-                            <span class="side top">
-                                <i class="fas fa-chair"></i> <!-- Icon cho Bàn -->
-                                {{ $order->table->table_number ?? 'trống'}}
-                            </span>
-                            <span class="side front">
-                                <i class="fas fa-receipt"></i> <!-- Icon cho Đơn -->
-                                {{ $order->id ?? '0'}}
-                            </span>
-                        </div>
-                    </div>
-
-                </div>
-
-                <!-- Nội dung Đơn hàng -->
                 <div id="order-details" class="order-content-container" style="padding-left: 20px;">
-                    @if (isset($orderItems) && count($orderItems) > 0)
-                        @foreach ($orderItems as $item)
+                    @if (isset($order) && $order->items->count() > 0)
+                        <h5>Thông tin đơn hàng cho Bàn {{ $order->table->number }}</h5> <!-- Thêm thông tin bàn -->
+                        @foreach ($order->items as $item)
                             <div class="order-item d-flex justify-content-between align-items-center">
                                 <span>{{ $item->name }} x {{ $item->quantity }}</span>
                                 <span style="color: #28a745;">{{ number_format($item->total_price, 0, ',', '.') }}
                                     VND</span>
-
-                                <!-- Nút Xóa món ăn -->
-                                {{-- <button class="btn btn-danger btn-delete" data-item-id="{{ $item->id }}"
-                                    data-order-id="{{ $order->id }}">
-                                    Xóa
-                                </button> --}}
-
                                 <button class="bin-button " data-item-id="{{ $item->id }}"
                                     data-order-id="{{ $order->id }}">
+                                    <!-- SVG của nút xóa -->
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 39 7"
                                         class="bin-top">
                                         <line stroke-width="4" stroke="white" y2="5" x2="39"
@@ -443,20 +382,17 @@
                                         </path>
                                     </svg>
                                 </button>
-
                             </div>
                         @endforeach
                     @else
                         <!-- Hiển thị khi không có món trong đơn hàng -->
                         <div id="order-details" class="order-content-container">
-                            <div class="empty-order" style="display: none;">
-                                <svg fill="none" height="40" viewBox="0 0 40 40" width="40" xmlns="http://www.w3.org/2000/svg">
-                                    <!-- SVG nội dung -->
+                            <div class="empty-order">
                                 </svg>
                                 <p>Chưa có món trong đơn</p>
                                 <p>Vui lòng chọn món trong thực đơn bên trái màn hình</p>
                             </div>
-                        
+
                             <div class="order-items" style="display: none;">
                                 <!-- Đây sẽ là nơi hiển thị các món đã chọn -->
                             </div>
@@ -464,17 +400,16 @@
                     @endif
                 </div>
 
-                <!-- Tổng tiền -->
                 <div class="total mt-4">Tổng tiền: <span
                         id="totalAmount">{{ number_format($order->total_amount ?? 0, 0, ',', '.') }}</span>₫</div>
 
 
                 <div class="btn-group">
                     <button class="btn btn-secondary" id="notification-button" aria-label="Thông báo">
-                        <i class="fas fa-bell"></i> Thông báo (F10)
+                        <i class="fas fa-bell"></i> Thông báo
                     </button>
                     <button class="btn btn-primary" id="payment-button" aria-label="Thanh toán">
-                        <i class="fas fa-dollar-sign"></i> Thanh toán (F9)
+                        <i class="fas fa-dollar-sign"></i> Thanh toán
                     </button>
                     <div>
                         <p id="table-number"></p> <!-- Thay đổi số bàn phù hợp -->
@@ -483,13 +418,6 @@
                         </div>
                         <div id="totalAmount"></div> <!-- Tổng tiền sẽ được cập nhật -->
                     </div>
-
-                    <button class="btn btn-info" id="print-button" aria-label="In Hóa đơn"
-                        onclick="printTemporaryInvoice()">
-                        <i class="fas fa-print"></i> In hóa đơn tạm
-                    </button>
-
-
                     <button class="btn btn-warning" id="note-button" aria-label="Thêm Ghi chú">
                         <i class="fas fa-edit"></i> Ghi chú
                     </button>
@@ -498,10 +426,7 @@
         </div>
     </div>
 
-
     <script src="{{ asset('js/pos.js') }}" defer></script>
-
-
 @endsection
 
 <style>
@@ -514,8 +439,8 @@
         background-size: cover;
         background-position: center center;
         background-repeat: no-repeat;
-        /* min-height: 100vh;
-        max-height: 100vh; */
+        min-height: 100vh;
+
         /* Đặt chiều cao tối đa cho wrapper */
         overflow-y: hidden;
         /* Tránh việc hiển thị thanh cuộn không cần thiết */
@@ -547,6 +472,51 @@
         text-align: center;
         transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
     }
+
+    /* Responsive cho các màn hình nhỏ */
+    @media (max-width: 768px) {
+        .table-card {
+            width: 80px;
+            height: 100px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .table-card {
+            width: 60px;
+            height: 80px;
+        }
+
+        .navbar .form-control {
+            width: 100%;
+        }
+
+        .order-section {
+            padding: 5px;
+        }
+
+        .table-container {
+            max-height: calc(100vh - 200px);
+            /* Giảm chiều cao cho màn hình nhỏ hơn để đảm bảo không bị tràn */
+        }
+
+        .progress {
+            height: 6px;
+            /* Giảm chiều cao của thanh tiến trình */
+        }
+
+        .nav-link {
+            font-size: 14px;
+            /* Giảm kích thước font trên thiết bị nhỏ */
+        }
+
+        .btn {
+            padding: 8px 10px;
+            font-size: 12px;
+            /* Giảm kích thước nút trên thiết bị nhỏ */
+        }
+    }
+
 
     /* Responsive cho các màn hình nhỏ */
     @media (max-width: 768px) {
@@ -718,8 +688,42 @@
 </style>
 
 <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const notificationButton = document.getElementById('notificationButton');
+        const printButton = document.getElementById('printButton');
+
+        // Notification Badge Animation
+        notificationButton.addEventListener('click', function() {
+            alert("Bạn có 3 thông báo mới!");
+        });
+
+        // Print Button
+        printButton.addEventListener('click', function() {
+            alert("Đang in...");
+        });
+
+        // Search Bar
+        const searchInput = document.getElementById('searchInput');
+        const dishItems = document.querySelectorAll('.dish-item');
+
+        searchInput.addEventListener('input', function() {
+            const searchTerm = searchInput.value.toLowerCase();
+
+            dishItems.forEach(function(dish) {
+                const dishName = dish.querySelector('.menu-item p').textContent.toLowerCase();
+
+                if (dishName.includes(searchTerm)) {
+                    dish.style.display = 'block';
+                } else {
+                    dish.style.display = 'none';
+                }
+            });
+        });
+    });
+
     // Modal danh sách đặt bàn
     document.getElementById('modalListReservation').addEventListener('click', function() {
         $('#reservationListModal').modal('show');
     });
 </script>
+

@@ -3,6 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
+use App\Models\Order;
+use App\Models\Table;
+use App\Models\User;
 use App\Traits\TraitCRUD;
 
 class DashboardController extends Controller
@@ -15,7 +19,11 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        return view('admin.dashboard.index');
+        $tableCount = Table::count();
+        $categoryCount = Category::count();
+        $orderCount = Order::count();
+        $userCount = User::count();
+        return view('admin.dashboard.index', compact('tableCount', 'categoryCount', 'orderCount', 'userCount'));
     }
     /**
      * Display the dashboard with a specific ID, if provided.

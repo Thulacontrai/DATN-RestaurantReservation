@@ -23,11 +23,10 @@ class UpdateTableRequest extends FormRequest
     {
         return [
             'area' => 'required|string|max:255',
-            'table_number' => 'required|integer|unique:tables,table_number,' , // Đảm bảo số bàn không bị trùng (trừ bàn hiện tại)
+            'table_number' => 'required|integer|exists:tables,table_number', // Ràng buộc tồn tại
             'table_type' => 'required|string|max:255',
             'status' => 'required|in:Available,Reserved,Occupied',
         ];
     }
 
 }
-    

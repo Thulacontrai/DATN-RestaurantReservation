@@ -72,10 +72,7 @@
                                                 </span>
                                             </p>
 
-                                            <p class="text-muted">
-                                                <i class="bi bi-calendar"></i> <!-- Icon lịch Bootstrap -->
-                                                {{ $combo->created_at->isoFormat('DD/MM/YYYY, h:mm A') }}
-                                            </p>
+
 
 
                                             <button class="learn-more">
@@ -124,10 +121,7 @@
                                                     </span>
                                                 </p>
 
-                                                <p class="text-muted">
-                                                    <i class="bi bi-calendar"></i> <!-- Icon lịch Bootstrap -->
-                                                    {{ $dish->created_at->isoFormat('DD/MM/YYYY, h:mm A') }}
-                                                </p>
+
 
 
                                                 <button class="learn-more">

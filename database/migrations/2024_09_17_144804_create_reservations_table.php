@@ -19,7 +19,7 @@ class CreateReservationsTable extends Migration
             $table->date('reservation_date')->nullable(); // datetime, cho phép NULL
             $table->integer('guest_count')->nullable(); // int, cho phép NULL
             $table->decimal('deposit_amount', 15, 2)->nullable(); // decimal(15,2), cho phép NULL
-            $table->enum('status', ['Confirmed', 'Pending','checked-in','Cancelled'])->default('Pending'); // enum, không cho phép NULL
+            $table->enum('status', ['Confirmed', 'Pending','checked-in','Cancelled','Refund'])->default('Pending'); // enum, không cho phép NULL
             $table->string('cancelled_reason', 255)->nullable(); // varchar(255), cho phép NULL
             $table->string('note', 255)->nullable(); // varchar(255), cho phép NULL
             $table->timestamps(); // created_at và updated_at

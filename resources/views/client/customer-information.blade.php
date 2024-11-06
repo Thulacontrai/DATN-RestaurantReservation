@@ -43,8 +43,7 @@
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
 
-                                <!-- Căn chỉnh reCAPTCHA ra giữa -->
-                                <div id="recaptcha-container" class="mt-3"></div>
+                               
                             </div>
 
                             <div class="col">
@@ -71,10 +70,13 @@
                             <div class="alert alert-danger">Không có ngày hoặc giờ đặt bàn! Vui lòng quay lại bước trước.
                             </div>
                         @endif
-
+                             <!-- Căn chỉnh reCAPTCHA ra giữa -->
+                             <div id="recaptcha-container" class="mt-3"></div>
 
 
                         <div class="row m-4 d-flex justify-content-center">
+                             <!-- Căn chỉnh reCAPTCHA ra giữa -->
+                                <div id="recaptcha-container" class="mt-3"></div>
                             <div class="col-2">
                                 <a href="{{ route('booking.client') }}" class="text-secondary">Quay lại</a>
                             </div>

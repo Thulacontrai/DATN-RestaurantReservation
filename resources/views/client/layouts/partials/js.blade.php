@@ -147,7 +147,7 @@
         document.getElementById(sectionId).style.display = 'block';
     }
 
-    // edit thông tin 
+    // edit thông tin
 
     function toggleEdit() {
         // Ẩn các phần hiển thị và hiện các input để chỉnh sửa
@@ -221,7 +221,7 @@
     }
 
 
-    // login 
+    // login
     document.getElementById('phoneOption').addEventListener('click', function() {
         document.getElementById('phoneOption').classList.add('active');
         document.getElementById('emailOption').classList.remove('active');
@@ -517,3 +517,19 @@
         });
     });
 </script>
+
+
+{{-- <script>
+    // Chặn click chuột phải
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+    });
+
+    // Chặn F12 (mở console)
+    document.onkeydown = function(e) {
+        if (e.key == 'F12') {
+            e.preventDefault();
+            return false;
+        }
+    };
+</script> --}}

@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class InventoryStock extends Model
 {
     use HasFactory;
+     protected $table = 'inventory_stock'; // Đặt tên bảng đúng
+    //  public $timestamps = false;
     protected $fillable = ['ingredient_id', 'quantity_stock', 'last_update'];
     public function ingredient()
     {
