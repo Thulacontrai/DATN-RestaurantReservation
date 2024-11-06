@@ -45,7 +45,7 @@
                                 <a href="{{ route('admin.reservation.index') }}">Danh sách đặt bàn</a>
                             </li>
                             <li>
-                                <a href="{{ route('admin.reservationTable.index') }}">Bàn đặt trước</a>
+                                {{-- <a href="{{ route('admin.reservationTable.index') }}">Bàn đặt trước</a> --}}
                             </li>
                             <li>
                                 <a href="{{ route('admin.reservationHistory.index') }}">Lịch sử đặt bàn</a>
@@ -165,7 +165,7 @@
                                 <a href="{{ route('admin.supplier.index') }}">Nhà cung cấp</a>
                             <li>
                             <li>
-                                <a href="{{ route('admin.ingredientType.index') }}">Loại Nguyên Liệu</a>
+                                {{-- <a href="{{ route('admin.ingredientType.index') }}">Loại Nguyên Liệu</a> --}}
                             </li>
                             <li>
                                 <a href="{{ route('admin.ingredient.index') }}">Danh sách Nguyên Liệu</a>
