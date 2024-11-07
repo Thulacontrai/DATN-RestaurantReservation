@@ -3,15 +3,17 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Category;
 use App\Models\Ingredient;
-use App\Models\Recipe;
+use App\Models\IngredientType;
 use App\Models\Supplier;
 use App\Traits\TraitCRUD;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Validator;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use App\Models\InventoryStock;
 
 class IngredientController extends Controller
 {
@@ -22,7 +24,7 @@ class IngredientController extends Controller
         $this->middleware('permission:Tạo mới nguyên liệu', ['only' => ['create']]);
         $this->middleware('permission:Sửa nguyên liệu', ['only' => ['edit']]);
         $this->middleware('permission:Xóa nguyên liệu', ['only' => ['destroy']]);
-
+        
     }
 
     use TraitCRUD;
@@ -31,57 +33,32 @@ class IngredientController extends Controller
     protected $viewPath = 'admin.ingredient';
     protected $routePath = 'admin.ingredient';
 
-    public function index(Request $request)
+    public function index()
     {
-        // Nhận các tham số sắp xếp từ request
-        $sort = $request->input('sort', 'id'); // Mặc định sắp xếp theo id
-        $direction = $request->input('direction', 'asc'); // Mặc định theo thứ tự tăng dần
-
-        // Nhận tham số tìm kiếm từ request
-        $searchTerm = $request->input('search', ''); // Mặc định là chuỗi rỗng nếu không tìm
-
-        // Lấy danh sách nguyên liệu theo loại và sắp xếp, đồng thời áp dụng tìm kiếm
-        $freshIngredients = Ingredient::where('category', 'Đồ Tươi')
-            ->where('name', 'like', '%' . $searchTerm . '%') // Tìm kiếm theo tên
-            ->orderBy($sort, $direction)
-            ->paginate(6);
-
-        $cannedIngredients = Ingredient::where('category', 'Đồ Đóng Hộp')
-            ->where('name', 'like', '%' . $searchTerm . '%') // Tìm kiếm theo tên
-            ->orderBy($sort, $direction)
-            ->paginate(6);
-
-        // Truyền biến sang view
-        return view('admin.ingredientType.ingredient.index', compact('freshIngredients', 'cannedIngredients', 'searchTerm'));
+        $ingredients = Ingredient::paginate(10);
+        return view('admin.ingredientType.ingredient.index', compact('ingredients'));
     }
-
-
-
 
     public function create()
     {
         $suppliers = Supplier::all();
-        return view('admin.ingredientType.ingredient.create', compact('suppliers'));
+        // $ingredientTypes = IngredientType::all();
+
+        return view('admin..ingredientType.ingredient.create', compact('suppliers', 'ingredientTypes'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            // 'supplier_id' => 'required|exists:suppliers,id',
+            'supplier_id' => 'required|exists:suppliers,id',
             'price' => 'required|numeric',
             'unit' => 'required|string|max:50',
-            'category' => 'required|in:Đồ tươi,Đồ đóng hộp',
+            'ingredient_type_id' => 'required|exists:ingredient_types,id',
         ]);
 
         DB::transaction(function () use ($request) {
-            Ingredient::create([
-                'name' => $request->name,
-                // 'supplier_id' => $request->supplier_id, // Bỏ comment nếu cần sử dụng
-                'price' => $request->price,
-                'unit' => $request->unit,
-                'category' => $request->category,
-            ]);
+            Ingredient::create($request->all());
         });
 
         return redirect()->route('admin.ingredient.index')->with('success', 'Nguyên liệu đã được tạo thành công.');
@@ -90,36 +67,29 @@ class IngredientController extends Controller
     public function edit($id)
     {
         $ingredient = Ingredient::findOrFail($id);
-        // $suppliers = Supplier::all(); // Bỏ comment nếu cần sử dụng
+        $suppliers = Supplier::all();
+        // $ingredientTypes = IngredientType::all();
 
-        return view('admin.ingredientType.ingredient.edit', compact('ingredient'));
+        return view('admin..ingredientType.ingredient.edit', compact('ingredient', 'suppliers', 'ingredientTypes'));
     }
 
     public function update(Request $request, $id)
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            // 'supplier_id' => 'required|exists:suppliers,id', // Bỏ comment nếu cần sử dụng
+            'supplier_id' => 'required|exists:suppliers,id',
             'price' => 'required|numeric',
             'unit' => 'required|string|max:50',
-            'category' => 'required|in:Đồ tươi,Đồ đóng hộp',
+            'ingredient_type_id' => 'required|exists:ingredient_types,id',
         ]);
 
         DB::transaction(function () use ($request, $id) {
             $ingredient = Ingredient::findOrFail($id);
-            $ingredient->update([
-                'name' => $request->name,
-                // 'supplier_id' => $request->supplier_id, // Bỏ comment nếu cần sử dụng
-                'price' => $request->price,
-                'unit' => $request->unit,
-                'category' => $request->category,
-            ]);
+            $ingredient->update($request->all());
         });
 
         return redirect()->route('admin.ingredient.index')->with('success', 'Nguyên liệu đã được cập nhật thành công.');
     }
-
-
 
     public function show($id)
     {
@@ -140,63 +110,138 @@ class IngredientController extends Controller
     }
 
     public function import(Request $request)
-    {
-        // Xác thực file upload
-        $request->validate([
-            'file' => 'required|mimes:xlsx,xls',
-        ]);
+{
+    // Xác thực file upload
+    $request->validate([
+        'file' => 'required|mimes:xlsx,xls',
+    ], [
+        'file.required' => 'Vui lòng chọn file.',
+        'file.mimes' => 'File phải là định dạng Excel (.xlsx, .xls).',
+    ]);
 
-        // Đọc file Excel
-        $file = $request->file('file');
-        $spreadsheet = IOFactory::load($file->getPathname());
+    // Đọc file Excel
+    $file = $request->file('file');
+    $spreadsheet = IOFactory::load($file->getPathname());
 
-        // Lấy dữ liệu từ sheet đầu tiên
-        $sheetData = $spreadsheet->getActiveSheet()->toArray();
+    // Lấy dữ liệu từ sheet đầu tiên
+    $sheetData = $spreadsheet->getActiveSheet()->toArray();
 
-        // Bỏ qua hàng tiêu đề nếu có
-        $headerRow = true;
+    // Các cột cần thiết
+    $requiredColumns = ['name', 'price', 'unit', 'quantity'];
+    $numRequiredColumns = count($requiredColumns);
 
-        foreach ($sheetData as $row) {
-            // Bỏ qua dòng đầu tiên nếu là header
-            if ($headerRow) {
-                $headerRow = false;
-                continue;
+    $headerRow = true;
+    $errors = [];
+
+    foreach ($sheetData as $index => $row) {
+        // Bỏ qua dòng tiêu đề nếu có
+        if ($headerRow) {
+            $headerRow = false;
+
+            // Kiểm tra xem header có nhiều hơn số cột yêu cầu không
+            if (count($row) > $numRequiredColumns) {
+                $errors[] = "File không đúng, vui lòng kiểm tra lại file của bạn.";
+                break;
             }
 
-            // Thực hiện validation cho từng dòng
-            $validator = Validator::make([
-                'name'               => $row[0],  // Tên nguyên liệu
-                'supplier_id'        => $row[1],  // ID nhà cung cấp
-                'price'              => $row[2],  // Giá nguyên liệu
-                'recipe_id' => $row[3],  // ID loại nguyên liệu
-            ], [
-                'name'               => 'required|string|max:255',
-                'supplier_id'        => 'required|exists:suppliers,id', // Kiểm tra tồn tại supplier
-                'price'              => 'required|numeric|min:0', // Giá phải là số và >= 0
-                'recipe_id' => 'required|exists:recipes,id', // Kiểm tra tồn tại loại nguyên liệu
-            ]);
-
-            // Kiểm tra nếu dữ liệu không hợp lệ
-            if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator)->withInput();
-            }
-
-            // Tạo nguyên liệu mới nếu dữ liệu hợp lệ
-            Ingredient::create([
-                'name'               => $row[0],
-                'supplier_id'        => $row[1],
-                'price'              => $row[2],
-                'recipe_id' => $row[3],
-            ]);
+            continue;
         }
 
-        // Sau khi import thành công, quay lại trang danh sách nguyên liệu
-        return redirect()->route('admin.ingredient.index')->with('success', 'Import nguyên liệu thành công!');
+        // Kiểm tra nếu hàng hiện tại có nhiều cột hơn số cột cần thiết
+        if (count($row) > $numRequiredColumns) {
+            $errors[] = "Dòng " . ($index + 1) . ": File không đúng, vui lòng kiểm tra lại file của bạn.";
+            continue;
+        }
+
+        // Thực hiện validation cho từng dòng
+        $validator = Validator::make([
+            'name'     => $row[0],
+            'price'    => $row[1],
+            'unit'     => $row[2],
+            'quantity' => $row[3],
+        ], [
+            'name'     => 'required|string|max:255',
+            'price'    => 'required|numeric|min:0',
+            'unit'     => 'required|string|max:50',
+            'quantity' => 'required|numeric|min:0', // Quy tắc xác thực cho số lượng
+        ]);
+
+        // Kiểm tra nếu dữ liệu không hợp lệ
+        if ($validator->fails()) {
+            $errors[] = "Dòng " . ($index + 1) . ": " . implode(', ', $validator->errors()->all());
+            continue;
+        }
+
+        // Kiểm tra trùng lặp trước khi thêm mới
+        $existingIngredient = Ingredient::where('name', $row[0])
+            ->where('price', $row[1])
+            ->where('unit', $row[2])
+            ->first();
+
+        if ($existingIngredient) {
+            $errors[] = "Dòng " . ($index + 1) . ": Nguyên liệu đã tồn tại.";
+            continue;
+        }
+
+        // Tạo nguyên liệu mới nếu dữ liệu hợp lệ
+        $ingredient = Ingredient::create([
+            'name'     => $row[0],
+            'price'    => $row[1],
+            'unit'     => $row[2],
+        ]);
+
+        // Thêm nguyên liệu vào bảng tồn kho (inventory_stock) với số lượng từ file Excel
+        InventoryStock::create([
+            'ingredient_id'  => $ingredient->id, // Thêm dòng này để liên kết với bảng Ingredient
+            'name'           => $ingredient->name,
+            'unit'           => $ingredient->unit,
+            'quantity_stock' => $row[3], // Số lượng tồn kho từ file Excel
+        ]);
     }
 
+    // Kiểm tra nếu có lỗi trong quá trình import
+    if (!empty($errors)) {
+        return redirect()->back()->withErrors(['errors' => $errors]);
+    }
+
+    // Sau khi import thành công, quay lại trang danh sách nguyên liệu
+    return redirect()->route('admin.ingredient.index')->with('success', 'Import nguyên liệu thành công!');
+}
+
+
+    
     // Hiển thị form import
     public function showImportForm()
     {
         return view('admin.ingredientType.ingredient.import');
     }
+
+    public function downloadTemplate()
+    {
+        // Tạo một file Excel mới
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Thiết lập tiêu đề cho các cột
+        $sheet->setCellValue('A1', 'Name');      // Tên nguyên liệu
+        $sheet->setCellValue('B1', 'Price');     // Giá
+        $sheet->setCellValue('C1', 'Unit');      // Đơn vị
+
+        // Thiết lập một số ví dụ dữ liệu mẫu (tùy chọn)
+        $sheet->setCellValue('A2', 'Đường');
+        $sheet->setCellValue('B2', '10000');      // Giá mẫu
+        $sheet->setCellValue('C2', 'g');          // Đơn vị mẫu
+
+        // Tạo writer và xuất file Excel
+        $writer = new Xlsx($spreadsheet);
+        $fileName = 'template_ingredients.xlsx';
+
+         // Thiết lập header để download file
+         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+         header("Content-Disposition: attachment; filename=\"$fileName\"");
+         header('Cache-Control: max-age=0');
+ 
+         $writer->save('php://output');
+         exit;
+     }
 }

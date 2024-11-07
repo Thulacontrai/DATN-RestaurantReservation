@@ -70,6 +70,11 @@ Route::delete('transactions/{id}', [InventoryTransactionController::class, 'dest
 Route::get('admin/supplier/import', [SupplierController::class, 'showImportForm'])->name('admin.supplier.import');
 Route::post('admin/supplier/import', [SupplierController::class, 'import'])->name('admin.supplier.import');
 
+Route::get('admin/supplier/download-template', [SupplierController::class, 'downloadTemplate'])->name('admin.supplier.download-template');
+Route::get('admin/ingredient/download-template', [IngredientController::class, 'downloadTemplate'])->name('admin.ingredient.download-template');
+
+
+
 Route::get('admin/ingredient/import', [IngredientController::class, 'showImportForm'])->name('admin.ingredient.import');
 Route::post('admin/ingredient/import', [IngredientController::class, 'import'])->name('admin.ingredient.import.post');
 
