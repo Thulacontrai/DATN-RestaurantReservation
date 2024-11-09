@@ -50,6 +50,10 @@
                             <li>
                                 <a href="{{ route('admin.reservationHistory.index') }}">Lịch sử đặt bàn</a>
                             </li>
+                            <li>
+                                <a href="{{ route('admin.refunds.index') }}">Quản lý hoàn tiền</a>
+                            </li>
+
                         </ul>
                     </div>
                 </li>

@@ -186,7 +186,11 @@ Route::post('/Ppayment/{table_number}', [PosController::class, 'Ppayment'])->nam
 // hoàn cọc
 Route::get('/refunds/create/{reservation_id}', [RefundController::class, 'create'])->name('refunds.create');
 Route::post('/refunds', [RefundController::class, 'store'])->name('refunds.store');
-Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');
+Route::get('/reservation', [ReservationController::class, 'index'])->name('reservation.index');
+Route::post('/refunds/cancel', [RefundController::class, 'storeCancellation'])->name('refunds.cancel');
+Route::patch('/refunds/{id}/updateStatus', [RefundController::class, 'updateStatus'])->name('refunds.updateStatus');
+
+Route::get('/admin/refunds', [RefundController::class, 'index'])->name('admin.refunds.index');
 
 Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
 Route::post('/create-order', [PosController::class, 'createOrder']);

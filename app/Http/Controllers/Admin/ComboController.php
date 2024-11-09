@@ -180,6 +180,6 @@ class ComboController extends Controller
 
         $combo->forceDelete();
 
-        return redirect()->route($this->routePath . '.trash')->with('success', 'Combo đã được xóa vĩnh viễn!');
+        return redirect()->route($this->routePath . '.trash')->with('success', 'Combo đã được xóa!!');
     }
 }
