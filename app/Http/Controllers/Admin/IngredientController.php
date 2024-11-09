@@ -33,10 +33,28 @@ class IngredientController extends Controller
     protected $viewPath = 'admin.ingredient';
     protected $routePath = 'admin.ingredient';
 
-    public function index()
+    public function index(Request $request)
     {
+
+          // Nhận các tham số sắp xếp từ request
+          $sort = $request->input('sort', 'id'); // Mặc định sắp xếp theo id
+          $direction = $request->input('direction', 'asc'); // Mặc định theo thứ tự tăng dần
+  
+          // Nhận tham số tìm kiếm từ request
+          $searchTerm = $request->input('search', ''); // Mặc định là chuỗi rỗng nếu không tìm
+  
+          // Lấy danh sách nguyên liệu theo loại và sắp xếp, đồng thời áp dụng tìm kiếm
+          $freshIngredients = Ingredient::where('category', 'Đồ Tươi')
+              ->where('name', 'like', '%' . $searchTerm . '%') // Tìm kiếm theo tên
+              ->orderBy($sort, $direction)
+              ->paginate(6);
+  
+          $cannedIngredients = Ingredient::where('category', 'Đồ Đóng Hộp')
+              ->where('name', 'like', '%' . $searchTerm . '%') // Tìm kiếm theo tên
+              ->orderBy($sort, $direction)
+              ->paginate(6);
         $ingredients = Ingredient::paginate(10);
-        return view('admin.ingredientType.ingredient.index', compact('ingredients'));
+        return view('admin.ingredientType.ingredient.index', compact('freshIngredients', 'cannedIngredients', 'searchTerm'));
     }
 
     public function create()
@@ -44,48 +62,58 @@ class IngredientController extends Controller
         $suppliers = Supplier::all();
         // $ingredientTypes = IngredientType::all();
 
-        return view('admin..ingredientType.ingredient.create', compact('suppliers', 'ingredientTypes'));
+        return view('admin.ingredientType.ingredient.create', compact('suppliers'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'supplier_id' => 'required|exists:suppliers,id',
+            // 'supplier_id' => 'required|exists:suppliers,id',
             'price' => 'required|numeric',
             'unit' => 'required|string|max:50',
-            'ingredient_type_id' => 'required|exists:ingredient_types,id',
+            'category' => 'required|in:Đồ tươi,Đồ đóng hộp',
         ]);
 
         DB::transaction(function () use ($request) {
-            Ingredient::create($request->all());
+            Ingredient::create([
+                'name' => $request->name,
+                // 'supplier_id' => $request->supplier_id, // Bỏ comment nếu cần sử dụng
+                'price' => $request->price,
+                'unit' => $request->unit,
+                'category' => $request->category,
+            ]);
         });
 
         return redirect()->route('admin.ingredient.index')->with('success', 'Nguyên liệu đã được tạo thành công.');
     }
-
     public function edit($id)
     {
         $ingredient = Ingredient::findOrFail($id);
-        $suppliers = Supplier::all();
-        // $ingredientTypes = IngredientType::all();
+        // $suppliers = Supplier::all(); // Bỏ comment nếu cần sử dụng
 
-        return view('admin..ingredientType.ingredient.edit', compact('ingredient', 'suppliers', 'ingredientTypes'));
+        return view('admin.ingredientType.ingredient.edit', compact('ingredient'));
     }
 
     public function update(Request $request, $id)
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'supplier_id' => 'required|exists:suppliers,id',
+            // 'supplier_id' => 'required|exists:suppliers,id', // Bỏ comment nếu cần sử dụng
             'price' => 'required|numeric',
             'unit' => 'required|string|max:50',
-            'ingredient_type_id' => 'required|exists:ingredient_types,id',
+            'category' => 'required|in:Đồ tươi,Đồ đóng hộp',
         ]);
 
         DB::transaction(function () use ($request, $id) {
             $ingredient = Ingredient::findOrFail($id);
-            $ingredient->update($request->all());
+            $ingredient->update([
+                'name' => $request->name,
+                // 'supplier_id' => $request->supplier_id, // Bỏ comment nếu cần sử dụng
+                'price' => $request->price,
+                'unit' => $request->unit,
+                'category' => $request->category,
+            ]);
         });
 
         return redirect()->route('admin.ingredient.index')->with('success', 'Nguyên liệu đã được cập nhật thành công.');
@@ -158,12 +186,12 @@ class IngredientController extends Controller
             'name'     => $row[0],
             'price'    => $row[1],
             'unit'     => $row[2],
-            'quantity' => $row[3],
+            // 'quantity' => $row[3],
         ], [
             'name'     => 'required|string|max:255',
             'price'    => 'required|numeric|min:0',
             'unit'     => 'required|string|max:50',
-            'quantity' => 'required|numeric|min:0', // Quy tắc xác thực cho số lượng
+            // 'quantity' => 'required|numeric|min:0', // Quy tắc xác thực cho số lượng
         ]);
 
         // Kiểm tra nếu dữ liệu không hợp lệ
@@ -195,7 +223,7 @@ class IngredientController extends Controller
             'ingredient_id'  => $ingredient->id, // Thêm dòng này để liên kết với bảng Ingredient
             'name'           => $ingredient->name,
             'unit'           => $ingredient->unit,
-            'quantity_stock' => $row[3], // Số lượng tồn kho từ file Excel
+            'quantity_stock' => 0, // Số lượng tồn kho từ file Excel
         ]);
     }
 

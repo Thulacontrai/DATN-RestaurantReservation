@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('dish_id');
             $table->unsignedBigInteger('ingredient_id');
             $table->decimal('quantity_need', 8, 2); // Thêm độ chính xác cho quantity_need
-
+            $table->timestamps();
             // Thiết lập khóa ngoại cho dish_id
             $table->foreign('dish_id')->references('id')->on('dishes')->onDelete('cascade');
             // Thiết lập khóa ngoại cho ingredient_id

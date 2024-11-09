@@ -22,6 +22,7 @@ return new class extends Migration
             $table->dateTime('start_time');
             $table->dateTime('end_time');
             $table->enum('status', ['trống', 'Đặt trước', 'Đang sử dụng', 'Đang chờ khách']);
+            $table->timestamps();
         });
 
         Schema::enableForeignKeyConstraints();
