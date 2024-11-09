@@ -139,6 +139,7 @@ class IngredientController extends Controller
 
     public function import(Request $request)
 {
+    DB::transaction(function () use ($request) {
     // Xác thực file upload
     $request->validate([
         'file' => 'required|mimes:xlsx,xls',
@@ -155,7 +156,7 @@ class IngredientController extends Controller
     $sheetData = $spreadsheet->getActiveSheet()->toArray();
 
     // Các cột cần thiết
-    $requiredColumns = ['name', 'price', 'unit', 'quantity'];
+    $requiredColumns = ['name', 'price', 'unit', 'quantity', 'category'];
     $numRequiredColumns = count($requiredColumns);
 
     $headerRow = true;
@@ -186,12 +187,14 @@ class IngredientController extends Controller
             'name'     => $row[0],
             'price'    => $row[1],
             'unit'     => $row[2],
-            // 'quantity' => $row[3],
+            'quantity' => $row[3],
+            'category' => $row[4],
         ], [
             'name'     => 'required|string|max:255',
             'price'    => 'required|numeric|min:0',
             'unit'     => 'required|string|max:50',
-            // 'quantity' => 'required|numeric|min:0', // Quy tắc xác thực cho số lượng
+            'quantity' => 'required|numeric|min:0',
+            'category' => 'required|string|max:100', // Quy tắc xác thực cho 'category'
         ]);
 
         // Kiểm tra nếu dữ liệu không hợp lệ
@@ -216,6 +219,7 @@ class IngredientController extends Controller
             'name'     => $row[0],
             'price'    => $row[1],
             'unit'     => $row[2],
+            'category' => $row[4], // Thêm 'category'
         ]);
 
         // Thêm nguyên liệu vào bảng tồn kho (inventory_stock) với số lượng từ file Excel
@@ -223,7 +227,8 @@ class IngredientController extends Controller
             'ingredient_id'  => $ingredient->id, // Thêm dòng này để liên kết với bảng Ingredient
             'name'           => $ingredient->name,
             'unit'           => $ingredient->unit,
-            'quantity_stock' => 0, // Số lượng tồn kho từ file Excel
+            'quantity_stock' => $row[3], // Số lượng tồn kho từ file Excel
+            'last_update' => now(), // Thêm giá trị cho 'last_update'
         ]);
     }
 
@@ -232,9 +237,14 @@ class IngredientController extends Controller
         return redirect()->back()->withErrors(['errors' => $errors]);
     }
 
+    });
+
     // Sau khi import thành công, quay lại trang danh sách nguyên liệu
     return redirect()->route('admin.ingredient.index')->with('success', 'Import nguyên liệu thành công!');
+
+
 }
+
 
 
     
@@ -249,27 +259,32 @@ class IngredientController extends Controller
         // Tạo một file Excel mới
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
-
+    
         // Thiết lập tiêu đề cho các cột
         $sheet->setCellValue('A1', 'Name');      // Tên nguyên liệu
         $sheet->setCellValue('B1', 'Price');     // Giá
         $sheet->setCellValue('C1', 'Unit');      // Đơn vị
-
+        $sheet->setCellValue('D1', 'Quantity');  // Số lượng
+        $sheet->setCellValue('E1', 'Category');  // Phân loại
+    
         // Thiết lập một số ví dụ dữ liệu mẫu (tùy chọn)
         $sheet->setCellValue('A2', 'Đường');
         $sheet->setCellValue('B2', '10000');      // Giá mẫu
         $sheet->setCellValue('C2', 'g');          // Đơn vị mẫu
-
+        $sheet->setCellValue('D2', '500');        // Số lượng mẫu
+        $sheet->setCellValue('E2', 'Đồ đóng hộp');     // Phân loại mẫu
+    
         // Tạo writer và xuất file Excel
         $writer = new Xlsx($spreadsheet);
         $fileName = 'template_ingredients.xlsx';
-
-         // Thiết lập header để download file
-         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-         header("Content-Disposition: attachment; filename=\"$fileName\"");
-         header('Cache-Control: max-age=0');
- 
-         $writer->save('php://output');
-         exit;
-     }
+    
+        // Thiết lập header để download file
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header("Content-Disposition: attachment; filename=\"$fileName\"");
+        header('Cache-Control: max-age=0');
+    
+        $writer->save('php://output');
+        exit;
+    }
+    
 }
