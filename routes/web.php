@@ -319,7 +319,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('dishes/{id}/update-ingredients', [DishesController::class, 'updateIngredients'])->name('dishes.updateIngredients');
     Route::delete('dishes/{recipeId}/deleteIngredient', [DishesController::class, 'deleteIngredient'])->name('dishes.deleteIngredient');
     Route::post('dishes/{dish}/add-ingredient', [DishesController::class, 'addIngredient'])->name('dishes.addIngredient');
-
+    // Route::resource('recipes', RecipesController::class);
 
 
 
