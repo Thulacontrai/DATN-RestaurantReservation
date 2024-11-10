@@ -19,6 +19,7 @@ return new class extends Migration
             $table->decimal('price',10,2);
             $table->string('unit',20);
             $table->enum('category',['Đồ tươi','Đồ đóng hộp']);
+            $table->timestamps();
         });
 
         Schema::enableForeignKeyConstraints();

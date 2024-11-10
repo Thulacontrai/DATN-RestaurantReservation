@@ -347,7 +347,7 @@
                 </nav>
                 <div id="order-details" class="order-content-container" style="padding-left: 20px;">
                     @if (isset($order) && $order->items->count() > 0)
-                        <h5>Thông tin đơn hàng cho Bàn {{ $order->table->number }}</h5> <!-- Thêm thông tin bàn -->
+                        {{-- <h5>Thông tin đơn hàng cho Bàn {{ $order->table->number }}</h5> <!-- Thêm thông tin bàn --> --}}
                         @foreach ($order->items as $item)
                             <div class="order-item d-flex justify-content-between align-items-center">
                                 <span>{{ $item->name }} x {{ $item->quantity }}</span>
@@ -722,8 +722,8 @@
     });
 
     // Modal danh sách đặt bàn
-    document.getElementById('modalListReservation').addEventListener('click', function() {
-        $('#reservationListModal').modal('show');
-    });
+    // document.getElementById('modalListReservation').addEventListener('click', function() {
+    //     $('#reservationListModal').modal('show');
+    // });
 </script>
 
