@@ -19,7 +19,7 @@ window.Echo.channel('kitchen')
                                 </div>
                                 <div class="col-md-4">
                                     <strong>Bàn</strong>
-                                    <p>${item.order.table.table_number}</p>
+                                    <p>${item.order.tables['0'].table_number}</p>
                                 </div>
                                 <div class="col-md-4 btn-group-custom">
                                     <button class="btn btn-danger cook-all" title="Chế biến toàn bộ">&gt;&gt;</button>
@@ -47,7 +47,7 @@ window.Echo.channel('kitchen')
                                 </div>
                                 <div class="col-md-4">
                                     <strong>Bàn</strong>
-                                    <p>${item.order.table.table_number}</p>
+                                    <p>${item.order.tables['0'].table_number}</p>
                                 </div>
                                 <div class="col-md-4 btn-group-custom">
                                     <button class="btn btn-success done-all" title="Cung ứng toàn bộ">&gt;&gt;</button>

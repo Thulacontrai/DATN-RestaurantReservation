@@ -6,29 +6,30 @@ use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 
-class KitchenUpdated implements ShouldBroadcastNow
+
+class MessageSent implements ShouldBroadcastNow
 {
     use InteractsWithSockets, SerializesModels;
 
-    public $items;
 
-    public function __construct($items)
+    /**
+     * Create a new event instance.
+     */
+    public $tables;
+
+    public function __construct($tables)
     {
-        $this->items = $items->map(function ($item) {
-            $item->formatted_updated_at = $item->updated_at->format('d-m-Y H:i');
-            return $item;
-        });
+        $this->tables = $tables;
     }
-
-
     public function broadcastOn()
     {
-        return new Channel('kitchen');
+        return
+            new Channel('table')
+        ;
     }
-    
 }
-

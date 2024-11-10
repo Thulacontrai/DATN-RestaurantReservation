@@ -16,36 +16,30 @@ class KitchenController extends Controller
     {
         $items = OrderItem::where('status', 'đang chế biến')
             ->orWhere('status', 'chờ cung ứng')
-            ->with(['dish', 'order.table'])
+            ->with(['dish', 'order.tables'])
             ->get();
         return view("kitchen.index", compact("items"));
     }
     public function cookAll($id)
     {
         $item = OrderItem::find($id);
-        if ($item) {
-            $item->status = 'chờ cung ứng';
-            $item->save();
-            $items = OrderItem::whereIn('status', ['đang chế biến', 'chờ cung ứng'])
-                ->with(['dish', 'order.table'])
-                ->get();
-            broadcast(new KitchenUpdated($items))->toOthers();
-            return response()->json(['status' => 'success']);
-        }
-        return response()->json(['status' => 'error', 'message' => 'Item không tồn tại'], 404);
+        $item->status = 'chờ cung ứng';
+        $item->save();
+        $items = OrderItem::whereIn('status', ['đang chế biến', 'chờ cung ứng'])
+            ->with(['dish', 'order.tables'])
+            ->get();
+        broadcast(new KitchenUpdated($items))->toOthers();
+        return response()->json(['status' => 'success']);
     }
     public function doneAll($id)
     {
         $item = OrderItem::find($id);
-        if ($item) {
-            $item->status = 'hoàn thành';
-            $item->save();
-            $items = OrderItem::whereIn('status', ['đang chế biến', 'chờ cung ứng'])
-                ->with(['dish', 'order.table'])
-                ->get();
-            broadcast(new KitchenUpdated($items))->toOthers();
-            return response()->json(['status' => 'success']);
-        }
-        return response()->json(['status' => 'error', 'message' => 'Item không tồn tại'], 404);
+        $item->status = 'hoàn thành';
+        $item->save();
+        $items = OrderItem::whereIn('status', ['đang chế biến', 'chờ cung ứng'])
+            ->with(['dish', 'order.tables'])
+            ->get();
+        broadcast(new KitchenUpdated($items))->toOthers();
+        return response()->json(['status' => 'success']);
     }
 }

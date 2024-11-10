@@ -16,7 +16,6 @@ class Order extends Model
     protected $fillable = [
         'reservation_id',
         'staff_id',
-        'table_id',
         'customer_id',
         'total_amount',
         'order_type',
@@ -33,7 +32,7 @@ class Order extends Model
     // Quan hệ với bảng Reservation (Đặt chỗ)
     public function reservation()
     {
-        return $this->belongsTo(Reservation::class);
+        return $this->belongsTo(Reservation::class, 'reservation_id');
     }
 
     // Quan hệ với bảng User (Nhân viên phụ trách đơn hàng)
@@ -43,9 +42,10 @@ class Order extends Model
     }
 
     // Quan hệ với bảng Table (Bàn mà đơn hàng thuộc về)
-    public function table()
+    public function tables()
     {
-        return $this->belongsTo(Table::class, 'table_id');
+        return $this->belongsToMany(Table::class, 'orders_tables')
+            ->withPivot('start_time', 'end_time', 'status');
     }
 
     // Quan hệ với bảng User (Khách hàng)

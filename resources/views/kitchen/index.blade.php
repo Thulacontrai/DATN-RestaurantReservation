@@ -12,13 +12,13 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-        
+
     <!-- Font Awesome CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
     </script>
 
 
@@ -29,18 +29,22 @@
         <div class="row flex-grow-1 w-100" style="background-color: #00408C;">
             <div class="col-md-6 d-flex flex-column" style="background-color: #00408C; padding: 0 13px 0 0;">
                 <div class="header">
-                    <div class=" p-2 d-flex justify-content-between align-items-center header-left" style="min-height: 60px; margin: 8px !important;">
+                    <div class=" p-2 d-flex justify-content-between align-items-center header-left"
+                        style="min-height: 60px; margin: 8px !important;">
                         <h3 class="title">Chờ chế biến</h3>
                         <div class="kv-tabs">
                             <ul class="nav nav-tabs" id="myTab" role="tablist">
                                 <li class="nav-item" role="presentation">
-                                    <a class="nav-link active" id="priority-tab" data-bs-toggle="tab" href="#priority" role="tab" aria-controls="priority" aria-selected="true">Ưu tiên</a>
+                                    <a class="nav-link active" id="priority-tab" data-bs-toggle="tab" href="#priority"
+                                        role="tab" aria-controls="priority" aria-selected="true">Ưu tiên</a>
                                 </li>
                                 <li class="nav-item" role="presentation">
-                                    <a class="nav-link" id="by-dish-tab" data-bs-toggle="tab" href="#by-dish" role="tab" aria-controls="by-dish" aria-selected="false">Theo món</a>
+                                    <a class="nav-link" id="by-dish-tab" data-bs-toggle="tab" href="#by-dish"
+                                        role="tab" aria-controls="by-dish" aria-selected="false">Theo món</a>
                                 </li>
                                 <li class="nav-item" role="presentation">
-                                    <a class="nav-link" id="by-room-tab" data-bs-toggle="tab" href="#by-room" role="tab" aria-controls="by-room" aria-selected="false">Theo phòng/bàn</a>
+                                    <a class="nav-link" id="by-room-tab" data-bs-toggle="tab" href="#by-room"
+                                        role="tab" aria-controls="by-room" aria-selected="false">Theo phòng/bàn</a>
                                 </li>
                             </ul>
                         </div>
@@ -48,7 +52,8 @@
                 </div>
                 <!-- Tab content -->
                 <div class="tab-content flex-grow-1" id="myTabContent">
-                    <div class="tab-pane fade show active" id="priority" role="tabpanel" aria-labelledby="priority-tab">
+                    <div class="tab-pane fade show active" id="priority" role="tabpanel"
+                        aria-labelledby="priority-tab">
                         <div class="bg-white m-2 p-2 rounded flex-grow-1 d-flex flex-column" id="DangCheBien">
                             @foreach ($items as $item)
                                 @if ($item->status == 'đang chế biến')
@@ -65,10 +70,11 @@
                                                 </div>
                                                 <div class="col-md-4">
                                                     <strong>Bàn</strong>
-                                                    <p>{{ $item->order->table->table_number }}</p>
+                                                    <p>{{ $item->order->tables['0']->table_number }}</p>
                                                 </div>
                                                 <div class="col-md-4 btn-group-custom">
-                                                    <button class="btn btn-danger cook-all" title="Chế biến toàn bộ">&gt;&gt;</button>
+                                                    <button class="btn btn-danger cook-all"
+                                                        title="Chế biến toàn bộ">&gt;&gt;</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -94,10 +100,11 @@
                                                 </div>
                                                 <div class="col-md-4">
                                                     <strong>Bàn</strong>
-                                                    <p>{{ $item->order->table->table_number }}</p>
+                                                    <p>{{ $item->order->tables['0']->table_number }}</p>
                                                 </div>
                                                 <div class="col-md-4 btn-group-custom">
-                                                    <button class="btn btn-danger cook-all" title="Chế biến toàn bộ">&gt;&gt;</button>
+                                                    <button class="btn btn-danger cook-all"
+                                                        title="Chế biến toàn bộ">&gt;&gt;</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -123,10 +130,11 @@
                                                 </div>
                                                 <div class="col-md-4">
                                                     <strong>Bàn</strong>
-                                                    <p>{{ $item->order->table->table_number }}</p>
+                                                    <p>{{ $item->order->tables['0']->table_number }}</p>
                                                 </div>
                                                 <div class="col-md-4 btn-group-custom">
-                                                    <button class="btn btn-danger cook-all" title="Chế biến toàn bộ">&gt;&gt;</button>
+                                                    <button class="btn btn-danger cook-all"
+                                                        title="Chế biến toàn bộ">&gt;&gt;</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -140,7 +148,8 @@
 
             <div class="col-md-6 d-flex flex-column" style="background-color: #00408C;">
                 <div class="header">
-                    <div class="m-2 p-2 d-flex justify-content-between align-items-center header-right" style="min-height: 60px;">
+                    <div class="m-2 p-2 d-flex justify-content-between align-items-center header-right"
+                        style="min-height: 60px;">
                         <h3 class="title">Chờ chế biến</h3>
 
                         <ul class="d-flex align-items-center">
@@ -190,14 +199,11 @@
                                                 </div>
                                                 <div class="col-md-4">
                                                     <strong>Bàn</strong>
-                                                    <p>{{ $item->order->table->table_number }}</p>
+                                                    <p>{{ $item->order->tables['0']->table_number }}</p>
                                                 </div>
                                                 <div class="col-md-4 btn-group-custom">
-                                                    @if ($item->status == 'chờ cung ứng')
-                                                        <button class="btn btn-success done-all" title="Cung ứng toàn bộ">&gt;&gt;</button>
-                                                    @else
-                                                        <button class="btn btn-info" title="Xem chi tiết">Xem</button>
-                                                    @endif
+                                                    <button class="btn btn-success done-all"
+                                                        title="Cung ứng toàn bộ">&gt;&gt;</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -208,33 +214,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Modal Cài Đặt-->
-            <div class="modal fade" id="sortingModal" tabindex="-1" aria-labelledby="sortingModalLabel" aria-hidden="true">
-                <div class="modal-dialog" id="modalDialog">
-                    <div class="modal-content">
-                        <div class="modal-header" id="modalHeader">
-                            <h5 class="modal-title" id="sortingModalLabel">Sắp xếp danh sách chờ cung ứng</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="form-group">
-                                <label for="sortingOptions">Chọn cách sắp xếp:</label>
-                                <select class="form-select" id="sortingOptions">
-                                    <option value="room">Phòng bàn</option>
-                                    <option value="newest">Mới nhất</option>
-                                    <option value="oldest">Cũ nhất</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                            <button type="button" class="btn btn-primary" id="applySorting">Áp dụng</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
         </div>
     </div>
     <script>
@@ -251,18 +230,15 @@
                             },
                             body: JSON.stringify({})
                         })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.status === 'success') {
-                                console.log('Trạng thái đã được cập nhật');
-                            } else {
-                                alert('Có lỗi xảy ra: ' + data.message);
-                            }
+                        .then(response => {
+                            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                            return response.json(); // Chuyển phản hồi thành JSON
                         })
-                        .catch(error => {
-                            console.error('Lỗi:', error);
-                            alert('Có lỗi xảy ra khi gửi yêu cầu');
-                        });
+                        .then(data => {
+                            console.log(data); // Xử lý JSON data
+                        })
+                        .catch(error => console.error('Error:', error));
+
                 }
             });
             document.getElementById('ChoCungUng').addEventListener('click', function(event) {
@@ -294,34 +270,32 @@
         });
     </script>
 
-<script>
-    const modalDialog = document.getElementById('modalDialog');
-    const modalHeader = document.getElementById('modalHeader');
-    let isDragging = false;
-    let offsetX, offsetY;
+    <script>
+        const modalDialog = document.getElementById('modalDialog');
+        const modalHeader = document.getElementById('modalHeader');
+        let isDragging = false;
+        let offsetX, offsetY;
 
-    modalHeader.addEventListener('mousedown', (e) => {
-        isDragging = true;
-        offsetX = e.clientX - modalDialog.getBoundingClientRect().left;
-        offsetY = e.clientY - modalDialog.getBoundingClientRect().top;
-        modalDialog.style.transition = 'none';
-    });
+        modalHeader.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            offsetX = e.clientX - modalDialog.getBoundingClientRect().left;
+            offsetY = e.clientY - modalDialog.getBoundingClientRect().top;
+            modalDialog.style.transition = 'none';
+        });
 
-    document.addEventListener('mousemove', (e) => {
-        if (isDragging) {
-            modalDialog.style.left = e.clientX - offsetX + 'px';
-            modalDialog.style.top = e.clientY - offsetY + 'px';
-        }
-    });
+        document.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                modalDialog.style.left = e.clientX - offsetX + 'px';
+                modalDialog.style.top = e.clientY - offsetY + 'px';
+            }
+        });
 
-    document.addEventListener('mouseup', () => {
-        isDragging = false;
-        modalDialog.style.transition = '';
-</script>
-
-
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            modalDialog.style.transition = '';
+        })
+    </script>
     @vite(['resources/js/app.js', 'resources/js/kitchen.js', 'resources/css/kitchen.css'])
-
 
 </body>
 

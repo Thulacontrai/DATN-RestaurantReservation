@@ -169,9 +169,13 @@ Route::post('/refunds', [RefundController::class, 'store'])->name('refunds.store
 Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');
 
 Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
-Route::post('/create-order', [PosController::class, 'createOrder']);
+Route::post('/create-order/{tableId}', [PosController::class, 'createOrder']);
 Route::post('/order-details/{tableId}', [PosController::class, 'orderDetails'])->name('order-details');
+Route::post('/order-detail/{id}', [PosController::class, 'orderDetail']);
 Route::post('/add-dish-to-order', [PosController::class, 'addDishToOrder']);
+Route::post('/deleteItem', [PosController::class, 'deleteItem']);
+Route::post('/increaseQuantity', [PosController::class, 'increaseQuantity']);
+Route::post('/decreaseQuantity', [PosController::class, 'decreaseQuantity']);
 Route::post('/load-more-dishes', [PosController::class, 'loadMoreDishes']);
 Route::get('/api/tables/{tableId}/order', [TableController::class, 'getOrderForReservedTable']);
 Route::get('/reservations', [ReservationController::class, 'showReservations'])
@@ -368,9 +372,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 
 Route::get('/register-client', [CustomerAuthController::class, 'showRegisterForm'])->name('register.form');
-Route::post('/register-client', [CustomerAuthController::class, 'register'])->name('client.register'); 
+Route::post('/register-client', [CustomerAuthController::class, 'register'])->name('client.register');
 Route::get('/login-client', [CustomerAuthController::class, 'showLoginForm'])->name('login.form');
-Route::post('/login-client', [CustomerAuthController::class, 'login'])->name('client.login'); 
+Route::post('/login-client', [CustomerAuthController::class, 'login'])->name('client.login');
 Route::post('/logout-client', [CustomerAuthController::class, 'logout'])->name('client.logout');
 
 Route::post('/check-account', [CustomerAuthController::class, 'checkAccount']);
