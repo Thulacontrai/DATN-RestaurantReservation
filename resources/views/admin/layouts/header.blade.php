@@ -31,16 +31,11 @@
                 </a>
                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="userSettings">
                     <div class="header-profile-actions">
-                        <a href="{{ route('admin.accountSetting.index') }}">Settings</a>
-                        
-                        <!-- Form Logout -->
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                            @csrf
-                        </form>
-                        <a href="{{ url('/') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
+                        {{-- <a href="#">Profile</a> --}}
+                        <a href="{{ route('admin.accountSetting.index')}}">Settings</a>
+                        <a href="login">Logout</a>
                     </div>
                 </div>
-                
             </li>
         </ul>
     </div>

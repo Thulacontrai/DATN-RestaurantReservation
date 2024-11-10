@@ -271,7 +271,8 @@
         }
 
 
-        window.verifyCode = function () {
+        window.verifyCode = function() {
+
             let otpCode = '';
             document.querySelectorAll('.otp-input').forEach(input => otpCode += input.value);
 
@@ -280,14 +281,17 @@
             window.confirmationResult.confirm(otpCode).then((result) => {
                 const phoneNumber = document.getElementById("number").value.trim();
                 fetch('{{ route('verify.code') }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': "{{ csrf_token() }}",
-                    },
-                    body: JSON.stringify({
-                        phone: phoneNumber,
-                        verificationCode: otpCode
+
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                        },
+                        body: JSON.stringify({
+                            phone: phoneNumber,
+                            verificationCode: otpCode
+                        })
+
                     })
                 })
                     .then(response => response.json())
@@ -296,8 +300,10 @@
                             window.location.href = "{{ route('client.index') }}";
                         } else {
                             document.getElementById("error").innerHTML = data.message;
-                            document.getElementById("error").style.display = "block";
-                            console.log("Verification failed:", data.message); // Ghi log khi xác minh thất bại
+
+                            console.log("Verification failed:", data
+                            .message); // Ghi log khi xác minh thất bại
+
                         }
                     })
                     .catch(error => {
@@ -311,6 +317,7 @@
                 console.error("Invalid OTP:", error); // Ghi log khi mã OTP không đúng
             });
         }
+
         const otpInputs = document.querySelectorAll('.otp-input');
         otpInputs.forEach((input, index) => {
             input.addEventListener('input', () => {

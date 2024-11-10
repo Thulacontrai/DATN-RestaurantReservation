@@ -21,6 +21,7 @@
                             <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
                         </div>
                         <div class="toast-body">
+
                             Có {{ $upcomingReservations->count() }} đơn đặt bàn sắp đến giờ nhận bàn trong vòng 30 phút tới                       </div>
                     </div>
                 @endif
@@ -60,15 +61,15 @@
                         </div>
                         <div class="card-body">
                             @if (session('error'))
-                                <div class="alert alert-danger">
-                                    {{ session('error') }}
-                                </div>
-                            @endif
-                            @if (session('success'))
-                                <div class="alert alert-success">
-                                    {{ session('success') }}
-                                </div>
-                            @endif
+                            <div class="alert alert-danger">
+                                {{ session('error') }}
+                            </div>
+                        @endif
+                    @if (session('success'))
+                    <div class="alert alert-success">
+                        {{ session('success') }}
+                    </div>
+                    @endif
                             <!-- Search form -->
                             <form method="GET" action="{{ route('admin.reservation.index') }}" class="mb-3">
                                 <div class="row g-3 align-items-center">
@@ -80,13 +81,9 @@
                                     <div class="col-auto">
                                         <select name="status" class="form-select form-select-sm" id="statusFilter">
                                             <option value="">Chọn trạng thái</option>
-                                            <option value="Confirmed"
-                                                {{ request('status') == 'Confirmed' ? 'selected' : '' }}>Đã xác nhận
-                                            </option>
-                                            <option value="Pending" {{ request('status') == 'Pending' ? 'selected' : '' }}>
-                                                Chờ xử lý</option>
-                                            <option value="Cancelled"
-                                                {{ request('status') == 'Cancelled' ? 'selected' : '' }}>Đã hủy</option>
+                                            <option value="Confirmed" {{ request('status') == 'Confirmed' ? 'selected' : '' }}>Đã xác nhận</option>
+                                            <option value="Pending" {{ request('status') == 'Pending' ? 'selected' : '' }}>Chờ xử lý</option>
+                                            <option value="Cancelled" {{ request('status') == 'Cancelled' ? 'selected' : '' }}>Đã hủy</option>
                                         </select>
                                     </div>
                                     <div class="col-auto">
@@ -96,18 +93,11 @@
 
                                     <!-- New filter for notifications -->
                                     <div class="col-auto">
-                                        <select name="notification_type" class="form-select form-select-sm"
-                                            id="notificationTypeFilter">
+                                        <select name="notification_type" class="form-select form-select-sm" id="notificationTypeFilter">
                                             <option value="">Chọn thông báo</option>
-                                            <option value="upcoming"
-                                                {{ request('notification_type') == 'upcoming' ? 'selected' : '' }}>Sắp đến
-                                                hạn </option>
-                                            <option value="waiting"
-                                                {{ request('notification_type') == 'waiting' ? 'selected' : '' }}>Chờ khách
-                                                đến </option>
-                                            <option value="overdue"
-                                                {{ request('notification_type') == 'overdue' ? 'selected' : '' }}>Quá hạn
-                                            </option>
+                                            <option value="upcoming" {{ request('notification_type') == 'upcoming' ? 'selected' : '' }}>Sắp đến hạn </option>
+                                            <option value="waiting" {{ request('notification_type') == 'waiting' ? 'selected' : '' }}>Chờ khách đến </option>
+                                            <option value="overdue" {{ request('notification_type') == 'overdue' ? 'selected' : '' }}>Quá hạn</option>
                                         </select>
                                     </div>
 
@@ -143,28 +133,37 @@
                                                 <td>{{ $reservation->customer->name ?? 'Không rõ' }}</td>
                                                 <td>{{ $reservation->guest_count ?? 'N/A' }}</td>
                                                 <td>
+<<<<<<< HEAD
                                                {{ $reservation->reservation_date }}
                                                     <br> {{ $reservation->reservation_time }}
                                                 </td>
                                                 <td>
                                                     {{ $reservation->deposit_amount }}
+=======
+                                                    {{-- {{ \Carbon\Carbon::parse($reservation->reservation_time)->format('H:i:s') }} --}}
+                                                   {{ $reservation->reservation_date }} 
+                                                        <br> {{ $reservation->reservation_time }}
+                                                   
+>>>>>>> 5cc51a89bb95b5109df530d2307b9d681decb08e
                                                 </td>
+        
+                                                <td>@foreach ($reservation->tables as $table )
+                                                      {{$table->table_number ?? 'Chưa xếp bàn'}} 
+                                                @endforeach</td>
+                                                <td>{{ number_format($reservation->deposit_amount) }}đ
+                                                </td>                                                
                                                 <td>{{ $reservation->note ?? 'Không có' }}</td>
                                                 <td>
                                                     @if ($reservation->status === 'Confirmed')
-                                                        <span class="badge shade-green min-70">Đã xác nhận</span>
+                                                        <span class="badge bg-success">Đã xác nhận</span>
                                                     @elseif ($reservation->status === 'Pending')
-                                                        <span class="badge shade-yellow min-70">Chờ xử lý</span>
+                                                        <span class="badge bg-warning">Chờ xử lý</span>
                                                     @elseif ($reservation->status === 'Cancelled')
-                                                        <span class="badge shade-red min-70">Đã hủy</span>
-                                                        @elseif ($reservation->status === 'Refund')
-                                                        <span class="badge bg-info">Đã hoàn cọc</span>
-                                                   
+                                                        <span class="badge bg-danger">Đã hủy</span>
                                                     @else
-                                                        <span class="badge shade-gray min-70">Không rõ</span>
+                                                        <span class="badge bg-secondary">Không rõ</span>
                                                     @endif
                                                 </td>
-
 
                                             <td>
                                                 <div class="actions">
@@ -188,17 +187,6 @@
                                                             </button></a>
 
                                                     </form>
-                                                     {{-- Hoàn cọc --}}
-                                                      <form action="" method="POST"
-                                                      style="display:inline-block;">
-                                                      <div style="display: flex; gap: 10px; align-items: center;">
-                                                          <a href="{{ route('refunds.create', ['reservation_id' => $reservation->id]) }}"
-                                                              class="btn btn-link p-0 return-button"
-                                                              style="margin-top: 15px; border: 1px solid #e8e7e7; padding: 10px; width: 37px; height: 35px; display: inline-flex; justify-content: center; align-items: center;">
-                                                              <i class="bi bi-cash-coin"></i>
-                                                          </a>
-                                                      </div>
-                                                  </form>
                                                     <form action="{{ route('admin.reservation.destroy', $reservation->id) }}" method="POST" style="display:inline-block;">
                                                         @csrf
                                                         @method('DELETE')
@@ -211,14 +199,13 @@
                                             </td>
                                         </tr>
                                         @empty
-                                            <tr>
-                                                <td colspan="8">Không có đặt bàn nào được tìm thấy.</td>
-                                            </tr>
+                                        <tr>
+                                            <td colspan="8">Không có đặt bàn nào được tìm thấy.</td>
+                                        </tr>
                                         @endforelse
                                     </tbody>
                                 </table>
                             </div>
-
 
                             <!-- Pagination -->
                             <div class="pagination justify-content-center mt-3">
@@ -238,7 +225,7 @@
         <!-- Row end -->
     </div>
 
-    </div>
+</div>
 
 
     <!-- Content wrapper scroll end -->
@@ -246,8 +233,7 @@
 
 <style>
     .highlight-row {
-        border: 2px solid #28a745;
-        /* Màu xanh lá cây */
+        border: 2px solid #28a745; /* Màu xanh lá cây */
         transition: all 0.3s ease;
     }
 
@@ -258,10 +244,8 @@
 
     .form-control:focus,
     .form-select:focus {
-        border-color: #007bff;
-        /* Màu xanh dương khi focus */
-        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-        /* Hiệu ứng shadow */
+        border-color: #007bff; /* Màu xanh dương khi focus */
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Hiệu ứng shadow */
     }
 
     .btn {
@@ -274,10 +258,8 @@
     }
 
     .btn-primary:hover {
-        background-color: #0056b3;
-        /* Màu xanh đậm hơn khi hover */
-        transform: translateY(-2px);
-        /* Hiệu ứng nâng lên */
+        background-color: #0056b3; /* Màu xanh đậm hơn khi hover */
+        transform: translateY(-2px); /* Hiệu ứng nâng lên */
     }
 
     .badge {
@@ -289,6 +271,7 @@
 </style>
 
 <script>
+
     document.addEventListener('DOMContentLoaded', function() {
         const toastElList = [].slice.call(document.querySelectorAll('.toast'));
         const toastList = toastElList.map(function(toastEl) {

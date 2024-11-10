@@ -3,18 +3,6 @@
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-  {{-- import file --}}
-  <script>
-    document.getElementById('import-button').addEventListener('click', function() {
-        // Kích hoạt input file khi nhấn nút
-        document.getElementById('import-file').click();
-    });
-
-    // Khi file được chọn, tự động submit form
-    document.getElementById('import-file').addEventListener('change', function() {
-        this.closest('form').submit();
-    });
-</script>
 
   <!-- jQuery 3 -->
   <script src="../assets/js/jquery.min.js"></script>

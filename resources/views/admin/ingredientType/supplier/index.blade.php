@@ -10,13 +10,6 @@
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <div class="card-title">Danh Sách Nhà Cung Cấp</div>
-                            <a href="{{ route('admin.supplier.import') }}" >
-                                
-                                {{-- <input type="file" name="file" accept=".xlsx, .xls" class="form-control form-control-sm d-none" id="import-file"> --}}
-                                <button type="button" id="import-button" class="btn btn-sm btn-success d-flex align-items-center">
-                                    <i class="bi bi-file-earmark-arrow-up me-2"></i> Import Excel
-                                </button>
-                            </a>
                             <a href="{{ route('admin.supplier.create') }}"
                                 class="btn btn-sm btn-primary d-flex align-items-center">
                                 <i class="bi bi-plus-circle me-2"></i> Thêm Mới

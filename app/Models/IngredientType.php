@@ -4,14 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Supplier extends Model
+class IngredientType extends Model
 {
-    protected $table = 'suppliers';
+    protected $table = 'ingredient_types';
 
     protected $fillable = [
         'name',
-        'phone',
-        'email',
-        'address',
     ];
 }

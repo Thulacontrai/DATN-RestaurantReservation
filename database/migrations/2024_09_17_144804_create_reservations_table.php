@@ -12,7 +12,7 @@ class CreateReservationsTable extends Migration
             Schema::create('reservations', function (Blueprint $table) {
             $table->id(); // bigint, auto-increment
             $table->unsignedBigInteger('customer_id'); // bigint, không cho phép NULL
-            // $table->unsignedBigInteger('coupon_id')->nullable(); // bigint, cho phép NULL
+            $table->unsignedBigInteger('coupon_id')->nullable(); // bigint, cho phép NULL
             $table->integer('user_phone')->nullable(); // bigint, không
             $table->string('user_name', 255)->nullable(); // varchar(255), không cho phép NULL
             $table->time('reservation_time'); // datetime, không cho phép NULL
@@ -27,7 +27,7 @@ class CreateReservationsTable extends Migration
 
             // Khóa ngoại
             $table->foreign('customer_id')->references('id')->on('users')->onDelete('cascade'); // Tham chiếu tới bảng users
-            // $table->foreign('coupon_id')->references('id')->on('coupons')->onDelete('set null');
+            $table->foreign('coupon_id')->references('id')->on('coupons')->onDelete('set null');
         });
     }
 }

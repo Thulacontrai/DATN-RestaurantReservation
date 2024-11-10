@@ -1,5 +1,7 @@
-<footer class="iq-footer">
-        {{-- <div class="row">
+
+    <!-- Footer -->
+    <footer class="iq-footer">
+        <div class="row">
             <div class="col-lg-6 text-left text-lg-left">
                 <ul class="list-inline mb-0">
                     <li class="list-inline-item"><a href="privacy-policy.html">Privacy Policy</a></li>
@@ -13,6 +15,6 @@
                     </script>
                 </span> @<a href="#">ProX</a> All Rights Reserved.
             </div>
-        </div> --}}
+        </div>
     </footer>
 

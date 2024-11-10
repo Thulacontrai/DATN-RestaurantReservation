@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class OrderItem extends Model
 {
@@ -22,8 +21,11 @@ class OrderItem extends Model
         'price',
         'total_price',
         'status', // Trạng thái của món (preparing, served, etc.)
+<<<<<<< HEAD
         'cancel_reason',
         'deleted_at',
+=======
+>>>>>>> 5cc51a89bb95b5109df530d2307b9d681decb08e
     ];
     public $timestamps = true;
     /**

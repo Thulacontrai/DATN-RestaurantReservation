@@ -20,6 +20,7 @@ class Combo extends Model
     ];
 
     protected $dates = ['deleted_at'];
+<<<<<<< HEAD
 
     public function dishes()
     {
@@ -30,5 +31,7 @@ class Combo extends Model
     {
         return $this->hasMany(OrderItem::class, 'item_id');
     }
+=======
+>>>>>>> 5cc51a89bb95b5109df530d2307b9d681decb08e
 }
 

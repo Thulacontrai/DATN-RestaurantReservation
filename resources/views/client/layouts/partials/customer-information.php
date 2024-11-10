@@ -1,6 +1,5 @@
 <script>
-
-    document.getElementById('booking-form').addEventListener('submit', function (event) {
+    document.getElementById('reservationForm').addEventListener('submit', function (event) {
         const guestCount = parseInt(document.getElementById('guest_count').value);
         if (guestCount > 6) {
             event.preventDefault(); 
@@ -15,9 +14,7 @@
                 confirmButtonText: "Đồng ý"
             }).then((result) => {
                 if (result.isConfirmed) {
-
-                    document.getElementById('booking-form').submit(); 
-
+                    document.getElementById('reservationForm').submit(); 
                 }
             });
         }

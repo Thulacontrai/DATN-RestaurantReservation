@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -34,6 +33,7 @@ class Table extends Model
 
 
 
+<<<<<<< HEAD
     //Giải thích:
     // Carbon: Sử dụng thư viện Carbon để tính thời gian khách đã ngồi tại bàn.
     // Tính toán phần trăm chiếm dụng: Hàm getOccupancyPercentage() sẽ trả về giá trị phần trăm
@@ -48,4 +48,6 @@ class Table extends Model
     }
 
     //occupied_since: Thoi gian hien tai---- xem thử nhé nhóm trưởng có cần cho vào dtb ko ??????????
+=======
+>>>>>>> 5cc51a89bb95b5109df530d2307b9d681decb08e
 }

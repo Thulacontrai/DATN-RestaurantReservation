@@ -27,11 +27,6 @@ class Reservation extends Model
     ];
 
     protected $dates = ['deleted_at'];
-    
-    public function orders(){
-        return $this->hasMany(Order::class);
-    }
-
 
     public function customer()
     {

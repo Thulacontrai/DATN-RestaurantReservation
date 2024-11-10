@@ -2,62 +2,13 @@
     ================================================== -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-{{-- Modal POPUP xác nhận hủy --}}
 <script>
     $(document).ready(function() {
-        // Khi người dùng nhấn nút "Hủy" trên từng đặt chỗ
-        $('.cancel-btn').on('click', function() {
-            var reservationId = $(this).data('reservation-id'); // Lấy ID đặt chỗ từ data-reservation-id
-            $('#cancelModal').data('reservation-id', reservationId).modal('show');
-        });
+        var selectedTime = null;
+        var selectedDate = null;
 
-        // Đóng modal khi nhấn nút đóng
-        $('.closeCancalledModal').on('click', function() {
-            $('#cancelModal').modal('hide'); // Ẩn modal
-        });
-
-        $('#cancelForm').on('submit', function(event) {
-            event.preventDefault(); // Ngăn chặn gửi form
-
-            // Xóa thông báo lỗi cũ
-            $('.invalid-feedback').hide();
-            
-            let isValid = true; // Biến kiểm tra tính hợp lệ của form
-
-            // Kiểm tra từng trường
-            if (!$('#fullName').val()) {
-                $('#fullNameError').show();
-                isValid = false;
-            }
-            if (!$('#bankSelect').val()) {
-                $('#bankSelectError').show();
-                isValid = false;
-            }
-            if (!$('#accountNumber').val()) {
-                $('#accountNumberError').show();
-                isValid = false;
-            }
-            if (!$('#email').val()) {
-                $('#emailError').show();
-                isValid = false;
-            } else if (!validateEmail($('#email').val())) {
-                $('#emailError').text('Vui lòng nhập email hợp lệ.').show();
-                isValid = false;
-            }
-            if (!$('#reason').val()) {
-                $('#reasonError').show();
-                isValid = false;
-            }
-
-            // Nếu tất cả các trường hợp lệ, gửi form
-            if (isValid) {
-                this.submit(); // Gửi form
-            }
-        });
-
-         // Khi người dùng bấm vào ngày
-         $('.day-selector').click(function() {
+        // Khi người dùng bấm vào ngày
+        $('.day-selector').click(function() {
             var index = $(this).data('index'); // Lấy chỉ số của ngày được bấm
 
             // Ẩn tất cả các khung thời gian
@@ -122,17 +73,8 @@
             }
         });
 
-        // Hàm kiểm tra định dạng email
-        function validateEmail(email) {
-            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return re.test(String(email).toLowerCase());
-        }
-
-
     });
 </script>
-
-
 {{-- // Hiệp --}}
 
 

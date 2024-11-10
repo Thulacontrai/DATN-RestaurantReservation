@@ -105,7 +105,7 @@
 }
 
 .nav-link {
-    color: #ffffff; /* Màu mặc định */
+    color: #000; /* Màu mặc định */
     text-decoration: none; /* Bỏ gạch chân */
 }
 
@@ -256,7 +256,7 @@
     .side-menu {
         margin-bottom: 20px;
     }
-
+    
     .reservation-card {
         flex-direction: column;
         align-items: flex-start;
@@ -269,4 +269,3 @@
     }
 }
 </style>
-{{--  --}}
