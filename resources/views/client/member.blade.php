@@ -1,6 +1,11 @@
 @extends('client.layouts.master')
 @section('title', 'Member')
-
+@section('css')
+    <!-- Select2 CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+    <!-- Nhúng Summernote CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/summernote-lite.min.css" rel="stylesheet">
+@endsection
 @section('content')
 
     @include('client.layouts.component.subheader', [
@@ -17,9 +22,11 @@
             <div class="container-fluid w-100">
                 <div class="row mb-4">
                     <!-- Side Menu -->
-                    <div class="col-md-3 side-menu p-3" style="background-color: #2b2b2b; color: #d3d3d3;"> <!-- Màu nền tối và chữ xám nhạt -->
+                    <div class="col-md-3 side-menu p-3" style="background-color: #2b2b2b; color: #d3d3d3;">
+                        <!-- Màu nền tối và chữ xám nhạt -->
                         <div class="d-flex align-items-center mb-4">
-                            <div class="profile-circle" style="background-color: #8c6c3d; color: white;"> <!-- Màu nâu nhạt -->
+                            <div class="profile-circle" style="background-color: #8c6c3d; color: white;">
+                                <!-- Màu nâu nhạt -->
                                 {{-- {{ strtoupper(substr($memberData['name'], 0, 1)) }} --}}
                             </div>
                             <div class="ms-3">
@@ -30,10 +37,12 @@
                         </div>
                         <ul class="nav flex-column">
                             <li class="nav-item">
-                                <a class="nav-link text-light" href="#" onclick="showSection('reservationSection')" style="color: #f5cc00;">Đặt chỗ</a> <!-- Màu vàng -->
+                                <a class="nav-link text-light" href="#" onclick="showSection('reservationSection')"
+                                    style="color: #f5cc00;">Đặt chỗ</a> <!-- Màu vàng -->
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-light" href="#" onclick="showSection('accountDetailsSection')" style="color: #f5cc00;">Chi tiết tài khoản</a> <!-- Màu vàng -->
+                                <a class="nav-link text-light" href="#" onclick="showSection('accountDetailsSection')"
+                                    style="color: #f5cc00;">Chi tiết tài khoản</a> <!-- Màu vàng -->
                             </li>
                             {{-- <li class="nav-item">
                                 <a class="nav-link text-light" href="#" onclick="showSection('paymentSection')" style="color: #f5cc00;">Phương thức thanh toán</a> <!-- Màu vàng -->
@@ -47,45 +56,62 @@
                             <h3>Đặt chỗ sắp tới</h3>
                             <!-- Reservation Details -->
                             @foreach ($bookingData as $reservation)
-                                <div class="reservation-card mb-3" style="background-color: #2b2b2b; border-radius: 5px; color: #d3d3d3;">
+                                <div class="reservation-card mb-3"
+                                    style="background-color: #2b2b2b; border-radius: 5px; color: #d3d3d3;">
                                     <div>
-                                        <h3 style="color:white">Họ tên: {{ $reservation->user_name }} - {{ $reservation->user_phone }}</h3>
+                                        <h3 style="color:white">Họ tên: {{ $reservation->user_name }} -
+                                            {{ $reservation->user_phone }}</h3>
                                         <div class="d-flex">
                                             <div>
                                                 <p style="color:white;">Ngày: {{ $reservation->reservation_date }}</p>
-                                                <p style="display: inline; color:white;">Giờ: {{ $reservation->reservation_time }}</p>
+                                                <p style="display: inline; color:white;">Giờ:
+                                                    {{ $reservation->reservation_time }}</p>
                                             </div>
                                             <div>
-                                                <p style="color:white; margin-left: 10px;"><i class="bi bi-people"></i> {{ $reservation->guest_count }} người</p>
+                                                <p style="color:white; margin-left: 10px;"><i class="bi bi-people"></i>
+                                                    {{ $reservation->guest_count }} người</p>
                                                 <p style="color:white; margin-right: 10px;">
-                                                    Cọc: {{ number_format($reservation->deposit_amount ?? 0, 0, ',', '.') . ' VNĐ' }}
+                                                    Cọc:
+                                                    {{ number_format($reservation->deposit_amount ?? 0, 0, ',', '.') . ' VNĐ' }}
                                                 </p>
                                             </div>
                                         </div>
-                                        <strong class="{{ $reservation->status === 'Confirmed' ? 'status-confirmed' : ($reservation->status === 'Checked-in' ? 'status-checked-in' : ($reservation->status === 'Cancelled' ? 'status-cancelled' : 'status-pending')) }}">
+                                        <strong
+                                            class="{{ $reservation->status === 'Confirmed' ? 'status-confirmed' : ($reservation->status === 'Checked-in' ? 'status-checked-in' : ($reservation->status === 'Cancelled' ? 'status-cancelled' : 'status-pending')) }}">
                                             {{ $reservation->status === 'Confirmed' ? 'Đã xác nhận' : ($reservation->status === 'Checked-in' ? 'Đã nhận bàn' : ($reservation->status === 'Cancelled' ? 'Đã hủy' : 'Chờ xử lý')) }}
                                         </strong>
                                     </div>
+
                                     <div class="actions">
-                                        <button class="text-danger cancel-btn" style="background: transparent; border: none;" data-reservation-id="{{ $reservation->id }}">Hủy</button>
+                                        @if ($reservation->status !== 'Cancelled')
+                                            <button class="text-danger cancel-btn-new"
+                                                style="background: transparent; border: none;" data-bs-toggle="modal"
+                                                data-bs-target="#cancelModal" data-reservation-id="{{ $reservation->id }}"
+                                                data-deposit-amount="{{ $reservation->deposit_amount }}"
+                                                data-reservation-time="{{ $reservation->reservation_time }}"
+                                                data-reservation-date="{{ \Carbon\Carbon::parse($reservation->reservation_date)->toIso8601String() }}">
+                                                Hủy
+                                            </button>
+                                        @endif
                                     </div>
                                 </div>
                             @endforeach
 
-                                <div class="justify-content-center mt-3">
-                                    {{ $bookingData->links() }}
-                                </div>
+                            <div class="justify-content-center mt-3">
+                                {{ $bookingData->links() }}
+                            </div>
                         </div>
 
                         <!-- Modal -->
-                        <div id="cancelModal" class="modal fade" tabindex="-1" role="dialog">
-                            <div class="modal-dialog" role="document">
+                        <!-- Modal -->
+                        <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title">Xác Nhận Hủy Đơn</h5>
-                                        <button type="button" class="closeCancalledModal" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span> 
-                                        </button>
+                                        <h5 class="modal-title" id="cancelModalLabel">Xác nhận hủy đặt chỗ</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
                                         <div class="alert alert-info">
@@ -96,13 +122,32 @@
                                                 <li>Hủy sát giờ nhận bàn: không được hoàn cọc.</li>
                                             </ul>
                                         </div>
-                                        <form id="cancelForm">
+                                        <form action="{{ route('refunds.cancel') }}" method="POST">
+                                            @csrf
+                                            <input type="hidden" id="reservation_id" name="reservation_id">
+                                            <p id="refundAmountDisplay" style="color: #ff0000;"></p>
+                                            <input type="hidden" id="refund_amount" name="refund_amount">
+                                            <!-- Tài khoản và thông tin liên hệ -->
                                             <div class="form-group">
-                                                <label for="fullName">Họ Và Tên:</label>
-                                                <input type="text" id="fullName" name="fullName" class="form-control">
-                                                <div class="invalid-feedback" id="fullNameError" style="display: none;">Vui lòng nhập họ và tên.</div>
+                                                <label for="account_name" class="form-label">Tên tài khoản</label>
+                                                <input type="text"
+                                                    class="form-control @error('account_name') is-invalid @enderror"
+                                                    id="account_name" name="account_name" required>
+                                                @error('account_name')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
                                             </div>
-                                            
+                                            <div class="form-group">
+                                                <label for="account_number" class="form-label">Số tài khoản</label>
+                                                <input type="number"
+                                                    class="form-control @error('account_number') is-invalid @enderror"
+                                                    id="account_number" name="account_number" required>
+                                                @error('account_number')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+
+                                            <!-- Chọn ngân hàng -->
                                             <div class="form-group">
                                                 <label for="bankSelect">Chọn Ngân hàng:</label>
                                                 <select id="bankSelect" name="bankSelect" class="form-control">
@@ -111,28 +156,41 @@
                                                         <option value="{{ $bank['code'] }}">{{ $bank['name'] }}</option>
                                                     @endforeach
                                                 </select>
-                                                <div class="invalid-feedback" id="bankSelectError" style="display: none;">Vui lòng chọn ngân hàng.</div>
-                                            </div>
-                                            
-                                            <div class="form-group">
-                                                <label for="accountNumber">Số tài khoản:</label>
-                                                <input type="text" id="accountNumber" name="accountNumber" class="form-control">
-                                                <div class="invalid-feedback" id="accountNumberError" style="display: none;">Vui lòng nhập số tài khoản.</div>
+                                                <div class="invalid-feedback" id="bankSelectError" style="display: none;">
+                                                    Vui lòng chọn ngân hàng.</div>
                                             </div>
 
+                                            <!-- Thông tin liên hệ khác -->
                                             <div class="form-group">
-                                                <label for="email">Email:</label>
-                                                <input type="email" id="email" name="email" class="form-control">
-                                                <div class="invalid-feedback" id="emailError" style="display: none;">Vui lòng nhập email hợp lệ.</div>
+                                                <label for="user_phone" class="form-label">Số điện thoại</label>
+                                                <input type="text"
+                                                    class="form-control @error('user_phone') is-invalid @enderror"
+                                                    id="user_phone" name="user_phone" required>
+                                                @error('user_phone')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
                                             </div>
-                                            
                                             <div class="form-group">
-                                                <label for="reason">Lí do hủy:</label>
-                                                <textarea id="reason" name="reason" class="form-control"></textarea>
-                                                <div class="invalid-feedback" id="reasonError" style="display: none;">Vui lòng nhập lý do hủy.</div>
+                                                <label for="email" class="form-label">Email</label>
+                                                <input type="email"
+                                                    class="form-control @error('email') is-invalid @enderror"
+                                                    id="email" name="email" required>
+                                                @error('email')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
                                             </div>
+
+                                            <!-- Lý do hủy -->
+                                            <div class="form-group">
+                                                <label for="reason" class="form-label">Lý do hoàn tiền</label>
+                                                <textarea class="form-control @error('reason') is-invalid @enderror" id="reason" name="reason"></textarea>
+                                                @error('reason')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+
+                                            <!-- Nút Xác Nhận Hủy -->
                                             <br>
-
                                             <div class="form-group text-end">
                                                 <button type="submit" class="btn-danger">Xác Nhận Hủy</button>
                                             </div>
@@ -141,6 +199,7 @@
                                 </div>
                             </div>
                         </div>
+
 
 
                         <div id="accountDetailsSection" class="content-section" style="display:none;">
@@ -158,13 +217,15 @@
                                         <input type="text" class="form-control" id="phone" name="phone"
                                             value="{{ $member->phone }}">
                                     </div>
-                                   
+
                                 </div>
-                                    <button onclick="saveChanges()" style="display:none;" id="saveButton" class="btn-line">Lưu thay đổi</button>
-                                    <button onclick="toggleEdit()" id="editButton" class="btn-line">Chỉnh sửa thông tin</button>
-                                </div>
-                            </form>
+                                <button onclick="saveChanges()" style="display:none;" id="saveButton"
+                                    class="btn-line">Lưu thay đổi</button>
+                                <button onclick="toggleEdit()" id="editButton" class="btn-line">Chỉnh sửa thông
+                                    tin</button>
                         </div>
+                        </form>
+                    </div>
 
                     {{-- <div id="paymentSection" class="content-section" style="display:none;">
                         <h3>Phương thức thanh toán</h3>
@@ -174,7 +235,83 @@
         </div>
     </div>
 @endsection
-   
+@section('js')
+    {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
+    {{-- <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+    $(document).ready(function() {
+    // Xử lý khi nhấn vào nút "Hủy"
+ 
+
+    // Khởi tạo Select2 cho danh mục
+    $('#bankSelect').select2({
+        placeholder: "Chọn ngân hàng",
+        allowClear: true
+    });
+}); --}}
 
 
+    </script>
 
+
+    <script>
+        function calculateRefund(depositAmount, reservationDateStr, reservationTimeStr) {
+            const currentTime = new Date();
+            const vietnamTime = new Date(currentTime.toLocaleString("en-US", {
+                timeZone: "Asia/Ho_Chi_Minh"
+            }));
+
+            const reservationDate = new Date(reservationDateStr);
+            const reservationTime = reservationTimeStr.split(":");
+            reservationDate.setHours(reservationTime[0], reservationTime[1], 0, 0);
+
+
+            if (isNaN(reservationDate)) {
+                console.log("Lỗi: Thời gian đặt chỗ không hợp lệ.");
+                return 0;
+            }
+
+            const diffMs = reservationDate - vietnamTime;
+            const diffHours = diffMs / (1000 * 60 * 60);
+
+            let refundAmount = 0;
+
+            if (diffHours >= 24) {
+                refundAmount = depositAmount; // Hoan 100% 
+            } else if (diffHours >= 12) {
+                refundAmount = depositAmount * 0.5; // Hoan 50% 
+            } else {
+                refundAmount = 0;
+            }
+
+            return refundAmount;
+        }
+
+        // modal hủy
+        function openCancelModal(reservationId, depositAmount, reservationDateStr, reservationTimeStr) {
+            const refundAmount = calculateRefund(depositAmount, reservationDateStr, reservationTimeStr);
+
+            document.getElementById('reservation_id').value = reservationId;
+            document.getElementById('refund_amount').value = refundAmount;
+
+            document.getElementById('refundAmountDisplay').innerText =
+                `Số tiền hoàn lại: ${refundAmount.toLocaleString()} VNĐ`;
+        }
+
+        document.querySelectorAll('.cancel-btn-new').forEach(button => {
+            button.addEventListener('click', function() {
+                const reservationId = this.getAttribute('data-reservation-id');
+                const depositAmount = parseFloat(this.getAttribute('data-deposit-amount'));
+                const reservationTime = this.getAttribute('data-reservation-time');
+                const reservationDate = this.getAttribute('data-reservation-date');
+
+                // console.log("Reservation ID:", reservationId);
+                // console.log("Deposit Amount:", depositAmount);
+                // console.log("Reservation Time:", reservationTime);
+                // console.log("Reservation Date:", reservationDate);
+
+                openCancelModal(reservationId, depositAmount, reservationDate, reservationTime);
+            });
+        });
+    </script>
+@endsection

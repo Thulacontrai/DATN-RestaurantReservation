@@ -7,6 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>@yield('title')</title>
     @include('client.layouts.partials.css')
+    @yield('css')
 </head>
 
 <body class="dark-scheme">
@@ -27,5 +28,5 @@
     </div>
     @include('client.layouts.partials.js')
 </body>
-
+@yield('js')
 </html>
