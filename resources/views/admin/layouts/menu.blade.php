@@ -174,9 +174,6 @@
                             <li>
                                 <a href="{{ route('admin.ingredient.index') }}">Danh sách Nguyên Liệu</a>
                             </li>
-                            <li>
-                                <a href="{{ route('admin.ingredient.index') }}">Danh sách Nguyên Liệu</a>
-                            </li>
 
                             {{-- Phiếu nhập kho --}}
                             <li>
