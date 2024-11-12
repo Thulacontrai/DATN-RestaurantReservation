@@ -11,6 +11,10 @@ use App\Models\InventoryStock;
 use App\Models\Supplier;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
 class InventoryTransactionController extends Controller
 {
@@ -36,16 +40,116 @@ class InventoryTransactionController extends Controller
         return view('admin.inventoryTransaction.index', compact('transactions'));
     }
 
-
-
-    public function createTransaction()
+    public function showImportForm()
     {
-        $user = Auth::user(); // Lấy thông tin user đã đăng nhập
-        $suppliers = Supplier::all();
-        $ingredients = Ingredient::all();
-
-        return view('admin.inventoryTransaction.create', compact('user', 'suppliers', 'ingredients'));
+        return view('admin.inventoryTransaction.import');
     }
+
+
+    // Trong InventoryTransactionController.php
+    public function import(Request $request)
+    {
+        try {
+            // Validate file
+            $validator = Validator::make($request->all(), [
+                'file' => [
+                    'required',
+                    'file',
+                    'mimes:xlsx,xls',
+                    'max:5120', // 5MB max
+                ]
+            ], [
+                'file.required' => 'Vui lòng chọn file Excel',
+                'file.mimes' => 'File phải có định dạng .xlsx hoặc .xls',
+                'file.max' => 'Kích thước file không được vượt quá 5MB',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $validator->errors()->first()
+                ]);
+            }
+
+            // Đọc file Excel
+            $file = $request->file('file');
+            $spreadsheet = IOFactory::load($file);
+            $sheet = $spreadsheet->getActiveSheet();
+            $data = $sheet->toArray(null, true, true, true);
+
+            if (count($data) < 2) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'File Excel không có dữ liệu'
+                ]);
+            }
+
+            $ingredients = [];
+
+            // Bỏ qua dòng tiêu đề
+            array_shift($data);
+
+            foreach ($data as $row) {
+                if (!empty($row['A']) && !empty($row['B']) && !empty($row['C'])) {
+                    $ingredientName = trim($row['A']);
+                    $quantity = floatval($row['B']);
+                    $unitPrice = floatval($row['C']);
+
+                    // Validate dữ liệu
+                    if ($quantity <= 0) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => "Số lượng của nguyên liệu '{$ingredientName}' phải lớn hơn 0"
+                        ]);
+                    }
+
+                    if ($unitPrice < 0) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => "Đơn giá của nguyên liệu '{$ingredientName}' không được âm"
+                        ]);
+                    }
+
+                    $ingredient = Ingredient::where('name', 'LIKE', "%{$ingredientName}%")->first();
+
+                    if ($ingredient) {
+                        $ingredients[] = [
+                            'ingredient_id' => $ingredient->id,
+                            'name' => $ingredient->name,
+                            'quantity' => $quantity,
+                            'unit_price' => $unitPrice
+                        ];
+                    } else {
+                        return response()->json([
+                            'success' => false,
+                            'message' => "Nguyên liệu '{$ingredientName}' không tồn tại trong hệ thống"
+                        ]);
+                    }
+                }
+            }
+
+            if (empty($ingredients)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Không có dữ liệu hợp lệ trong file Excel'
+                ]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Import thành công!',
+                'ingredients' => $ingredients
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Import Error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra khi import: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+
 
 
     public function show($id)
@@ -59,13 +163,25 @@ class InventoryTransactionController extends Controller
         return view('admin.inventoryTransaction.show', compact('transaction', 'staff'));
     }
 
+    public function createTransaction()
+    {
+        $user = Auth::user(); // Lấy thông tin user đã đăng nhập
+        $suppliers = Supplier::all();
+
+        // Kiểm tra xem có dữ liệu nguyên liệu nào đã được import trong session không
+        $ingredients = session('imported_ingredients', Ingredient::all());
+
+        return view('admin.inventoryTransaction.create', compact('user', 'suppliers', 'ingredients'));
+    }
 
     public function storeTransaction(Request $request)
     {
+        // Kiểm tra và validate dữ liệu
         $validated = $request->validate([
-            'total_amount' => 'required|numeric',
-            'description' => 'nullable|string',
+            'total_amount' => 'required|numeric|min:0',
+            'description' => 'nullable|string|max:255',
             'supplier_id' => 'required|exists:suppliers,id',
+            'ingredients' => 'required|array',  // Kiểm tra mảng ingredients
             'ingredients.*.ingredient_id' => 'required|exists:ingredients,id',
             'ingredients.*.quantity' => 'required|numeric|min:1',
             'ingredients.*.unit_price' => 'required|numeric|min:0',
@@ -74,15 +190,17 @@ class InventoryTransactionController extends Controller
         // Lấy ID của user đang đăng nhập
         $userId = Auth::id();
 
+        // Tạo giao dịch nhập kho
         $transaction = InventoryTransaction::create([
             'transaction_type' => 'nhập',
             'total_amount' => $validated['total_amount'],
             'description' => $validated['description'],
             'supplier_id' => $validated['supplier_id'],
-            'staff_id' => $userId, // Đặt ID của user đang đăng nhập
+            'staff_id' => $userId,
             'status' => 'chờ xử lý',
         ]);
 
+        // Lặp qua các nguyên liệu đã chọn và tạo InventoryItem
         foreach ($validated['ingredients'] as $ingredientData) {
             InventoryItem::create([
                 'ingredient_id' => $ingredientData['ingredient_id'],
@@ -91,8 +209,12 @@ class InventoryTransactionController extends Controller
             ]);
         }
 
+        // Trở lại trang tạo giao dịch với thông báo thành công
         return redirect()->route('transactions.create')->with('success', 'Tạo phiếu nhập và thêm nguyên liệu thành công!');
     }
+
+
+
 
     public function addItemForm($id)
     {
@@ -118,21 +240,21 @@ class InventoryTransactionController extends Controller
     }
 
     public function edit($id)
-{
-    $transaction = InventoryTransaction::findOrFail($id);
+    {
+        $transaction = InventoryTransaction::findOrFail($id);
 
-    // Kiểm tra nếu trạng thái là "hoàn thành" thì ngăn chỉnh sửa
-    if ($transaction->status === 'hoàn thành') {
-        return redirect()->route('transactions.show', $transaction->id)
-            ->with('error', 'Phiếu đã hoàn thành và không thể chỉnh sửa.');
+        // Kiểm tra nếu trạng thái là "hoàn thành" thì ngăn chỉnh sửa
+        if ($transaction->status === 'hoàn thành') {
+            return redirect()->route('transactions.show', $transaction->id)
+                ->with('error', 'Phiếu đã hoàn thành và không thể chỉnh sửa.');
+        }
+
+        $user = auth()->user();
+        $suppliers = Supplier::all();
+        $ingredients = Ingredient::all();
+
+        return view('admin.inventoryTransaction.edit', compact('transaction', 'suppliers', 'ingredients', 'user'));
     }
-
-    $user = auth()->user();
-    $suppliers = Supplier::all();
-    $ingredients = Ingredient::all();
-
-    return view('admin.inventoryTransaction.edit', compact('transaction', 'suppliers', 'ingredients', 'user'));
-}
 
 
 
@@ -173,42 +295,42 @@ class InventoryTransactionController extends Controller
 
 
     public function updateStatus(Request $request, $id)
-{
-    // Tìm giao dịch theo ID
-    $transaction = InventoryTransaction::findOrFail($id);
+    {
+        // Tìm giao dịch theo ID
+        $transaction = InventoryTransaction::findOrFail($id);
 
-    // Xác thực dữ liệu đầu vào
-    $validated = $request->validate([
-        'status' => 'required|string',
-    ]);
+        // Xác thực dữ liệu đầu vào
+        $validated = $request->validate([
+            'status' => 'required|string',
+        ]);
 
-    // Kiểm tra nếu trạng thái hiện tại là "hoàn thành" thì không cho phép chuyển đổi ngược về trạng thái "chờ xử lý"
-    if ($transaction->status === 'hoàn thành' && $validated['status'] === 'chờ xử lý') {
-        return redirect()->route('transactions.show', $transaction->id)
-            ->with('error', 'Không thể chuyển trạng thái từ hoàn thành về chờ xử lý.');
-    }
-
-    // Cập nhật trạng thái mới
-    $transaction->status = $validated['status'];
-    $transaction->save();
-
-    // Kiểm tra nếu trạng thái được thay đổi thành "Hủy"
-    if ($transaction->status === 'Hủy') {
-        $transaction->inventoryItems()->delete();
-    }
-
-    // Nếu trạng thái được thay đổi thành "hoàn thành", cập nhật tồn kho
-    if ($transaction->status === 'hoàn thành') {
-        foreach ($transaction->inventoryItems as $item) {
-            $stock = InventoryStock::firstOrNew(['ingredient_id' => $item->ingredient_id]);
-            $stock->quantity_stock += $item->quantity;
-            $stock->last_update = now();
-            $stock->save();
+        // Kiểm tra nếu trạng thái hiện tại là "hoàn thành" thì không cho phép chuyển đổi ngược về trạng thái "chờ xử lý"
+        if ($transaction->status === 'hoàn thành' && $validated['status'] === 'chờ xử lý') {
+            return redirect()->route('transactions.show', $transaction->id)
+                ->with('error', 'Không thể chuyển trạng thái từ hoàn thành về chờ xử lý.');
         }
-    }
 
-    return redirect()->route('transactions.show', $transaction->id)->with('success', 'Cập nhật phiếu nhập thành công!');
-}
+        // Cập nhật trạng thái mới
+        $transaction->status = $validated['status'];
+        $transaction->save();
+
+        // Kiểm tra nếu trạng thái được thay đổi thành "Hủy"
+        if ($transaction->status === 'Hủy') {
+            $transaction->inventoryItems()->delete();
+        }
+
+        // Nếu trạng thái được thay đổi thành "hoàn thành", cập nhật tồn kho
+        if ($transaction->status === 'hoàn thành') {
+            foreach ($transaction->inventoryItems as $item) {
+                $stock = InventoryStock::firstOrNew(['ingredient_id' => $item->ingredient_id]);
+                $stock->quantity_stock += $item->quantity;
+                $stock->last_update = now();
+                $stock->save();
+            }
+        }
+
+        return redirect()->route('transactions.show', $transaction->id)->with('success', 'Cập nhật phiếu nhập thành công!');
+    }
 
 
 
