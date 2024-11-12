@@ -205,8 +205,8 @@ class IngredientController extends Controller
 
         // Kiểm tra trùng lặp trước khi thêm mới
         $existingIngredient = Ingredient::where('name', $row[0])
-            ->where('price', $row[1])
-            ->where('unit', $row[2])
+            // ->where('price', $row[1])
+            // ->where('unit', $row[2])
             ->first();
 
         if ($existingIngredient) {
