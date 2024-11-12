@@ -63,6 +63,11 @@ Route::patch('transactions/{id}/status', [InventoryTransactionController::class,
 Route::get('admin/transactions/create', [InventoryTransactionController::class, 'createTransaction'])->name('transactions.create');
 Route::delete('transactions/{id}', [InventoryTransactionController::class, 'destroy'])->name('transactions.destroy');
 
+Route::post('/transactions/import', [InventoryTransactionController::class, 'import'])->name('transactions.import');
+
+Route::post('/import-ingredients', [InventoryTransactionController::class, 'importIngredients'])->name('import.ingredients');
+
+
 
 
 
