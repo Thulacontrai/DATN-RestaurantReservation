@@ -325,7 +325,8 @@
                 </div>
                 <div class="total mt-4">Tổng tiền: <span id="totalAmount">0</span></div>
                 <div class="btn-group">
-                    <button class="btn btn-secondary" id="notification-button" aria-label="Thông báo" disabled>
+                    <button class="btn btn-outline-primary border border-primary" disabled id="notification-button"
+                        aria-label="Thông báo">
                         <i class="fas fa-bell"></i> Thông báo
                     </button>
                     <button class="btn btn-primary" id="payment-button" aria-label="Thanh toán">
@@ -338,8 +339,8 @@
 
 @endsection
 <script>
+    let selectedTableId = null;
     document.addEventListener('DOMContentLoaded', function() {
-        let selectedTableId = null;
         document.querySelector('#layoutTable').addEventListener('click', function(event) {
             const card = event.target.closest('.table-card');
             if (!card) return;
@@ -354,6 +355,28 @@
             const dishId = card.dataset.dishId;
             addDishToOrder(dishId, selectedTableId);
         });
+        document.querySelector('#notification-button').addEventListener('click', function(event) {
+            notificationButton(selectedTableId);
+        });
+
+        function notificationButton(selectedTableId) {
+            fetch('/notification-button/' + selectedTableId, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                            'content'),
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.json();
+                }).then(data => {
+                    if (data.success) {} else {
+                        showNotification('Thông báo bếp thành công')
+                    }
+                })
+        }
 
         function createOrder(tableId) {
             Swal.fire({
@@ -388,17 +411,63 @@
             const dishElement = event.target.closest(".item-list");
             if (dishElement) {
                 const dishId = dishElement.dataset.dishId;
+                const dishStatus = dishElement.dataset.dishStatus;
+                const dishOrder = dishElement.dataset.dishOrder;
                 if (event.target.classList.contains("plus-item")) {
                     increaseQuantity(dishId, selectedTableId);
                 }
                 if (event.target.classList.contains("minus-item")) {
-                    decreaseQuantity(dishId, selectedTableId);
+                    if (dishStatus == 'chờ xử lý') {
+                        decreaseQuantity(dishId, selectedTableId);
+                    } else {
+                        canelItem(dishId, selectedTableId, dishOrder)
+                    }
                 }
                 if (event.target.classList.contains("delete-item")) {
                     deleteItem(dishId, selectedTableId);
                 }
             }
         });
+
+        function canelItem(dishId, selectedTableId, dishOrder) {
+            Swal.fire({
+                title: 'Nhập lý do hủy',
+                input: 'text',
+                inputPlaceholder: 'Nhập lý do...',
+                showCancelButton: true,
+                confirmButtonText: 'Xác nhận',
+                cancelButtonText: 'Hủy'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const reason = result.value;
+                    fetch(`/canelItem`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                    .getAttribute('content'),
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                table_id: selectedTableId,
+                                dish_id: dishId,
+                                reason: reason,
+                                dishOrder: dishOrder
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                showNotification('Hủy món thành công!', 'success');
+                            } else {
+                                showNotification('Lỗi khi xóa', 'error');
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
+                } else {
+                    showNotification('Hủy món thất bại', 'info');
+                }
+            });
+        }
 
         function increaseQuantity(dishId, selectedTableId) {
             fetch(`/increaseQuantity`, {
@@ -550,7 +619,6 @@
                 <p>Vui lòng chọn món trong thực đơn bên trái màn hình</p>
             </div>
         `;
-
                     document.getElementById('totalAmount').innerHTML = totalAmount;
                     document.getElementById('order-details').innerHTML = htmlContent;
                 })
@@ -570,49 +638,6 @@
                     if (!response.ok) throw new Error('Network response was not ok');
                     return response.json();
                 })
-                .then(data => {
-                    const {
-                        order,
-                        table,
-                        tableId
-                    } = data;
-                    let totalAmount = new Intl.NumberFormat('vi-VN', {
-                        style: 'currency',
-                        currency: 'VND'
-                    }).format(order.final_amount);
-
-                    let htmlContent = `
-            <h3>Chi tiết đơn hàng</h3>
-            <p><strong>Mã đơn hàng:</strong> ${order.id}</p>
-            <p><strong>Bàn:</strong> ${tableId.table_number}</p>
-            <p><strong>Giờ vào:</strong> ${table.pivot.start_time.split(" ")[1]}</p>
-            <p><strong>Trạng thái:</strong> ${order.status}</p>
-            <h4>Danh sách món</h4>
-        `;
-
-                    table.order_items.forEach(item => {
-                        if (item.status == 'chờ xử lý') {
-                            htmlContent += `
-                <li class="item-list" data-dish-id="${item.item_id}"><span class="text-dark">${item.dish.name}</span> - Số lượng: <button class="plus-item"  title="Tăng số lượng món">+</button>${item.quantity}<button class="minus-item" tittle="Giảm số lượng món">-</button> - Giá: ${item.total_price} VND <button class="delete-item" tittle="Hủy món">Hủy</button></li>
-            `;
-                        } else if (item.status == 'đang chế biến') {
-                            htmlContent += `
-                <li class="item-list" data-dish-id="${item.item_id}"><span class="text-danger">${item.dish.name}</span> - Số lượng: <button class="plus-item"  title="Tăng số lượng món">+</button>${item.quantity}<button class="minus-item" tittle="Giảm số lượng món">-</button> - Giá: ${item.total_price} VND <button class="delete-item" tittle="Hủy món">Hủy</button></li>
-            `;
-                        } else if (item.status == 'chờ cung ứng') {
-                            htmlContent += `
-                <li class="item-list" data-dish-id="${item.item_id}"><span class="text-primary">${item.dish.name}</span> - Số lượng: <button class="plus-item"  title="Tăng số lượng món">+</button>${item.quantity}<button class="minus-item" tittle="Giảm số lượng món">-</button> - Giá: ${item.total_price} VND <button class="delete-item" tittle="Hủy món">Hủy</button></li>
-            `;
-                        } else if (item.status == 'hoàn thành') {
-                            htmlContent += `
-                <li class="item-list" data-dish-id="${item.item_id}"><span class="text-success">${item.dish.name}</span> - Số lượng: <button class="plus-item"  title="Tăng số lượng món">+</button>${item.quantity}<button class="minus-item" tittle="Giảm số lượng món">-</button> - Giá: ${item.total_price} VND <button class="delete-item" tittle="Hủy món">Hủy</button></li>
-            `;
-                        }
-                    });
-                    document.getElementById('totalAmount').innerHTML = totalAmount;
-                    document.getElementById('order-details').innerHTML = htmlContent;
-                })
-                .catch(() => showNotification('Không thể lấy chi tiết đơn hàng.', 'error'));
         }
 
         function showNotification(message, type = 'success') {

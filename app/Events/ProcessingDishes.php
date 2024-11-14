@@ -10,18 +10,22 @@ use Illuminate\Broadcasting\ShouldBroadcast;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 
-class KitchenUpdated implements ShouldBroadcastNow
+class ProcessingDishes implements ShouldBroadcastNow
 {
     use InteractsWithSockets, SerializesModels;
 
     public $items;
+    public $noti = null;
 
-    public function __construct($items)
+
+    public function __construct($items, $noti)
     {
         $this->items = $items->map(function ($item) {
             $item->formatted_updated_at = $item->updated_at->format('d-m-Y H:i');
+            $item->formatted_created_at = $item->created_at->format('d-m-Y H:i');
             return $item;
         });
+        $this->noti = $noti;
     }
 
 
@@ -29,6 +33,6 @@ class KitchenUpdated implements ShouldBroadcastNow
     {
         return new Channel('kitchen');
     }
-    
+
 }
 

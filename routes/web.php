@@ -157,6 +157,7 @@ Route::get('/customerInformation', [ReservationController::class, 'showInformati
 Route::get('/kitchen', [KitchenController::class, 'index'])->name('kitchen.index');
 Route::post('/kitchen/{id}/cook-all', [KitchenController::class, 'cookAll'])->name('order-item.cook-all');
 Route::post('/kitchen/{id}/done-all', [KitchenController::class, 'doneAll'])->name('order-item.cook-all');
+Route::post('/kitchen/{id}/delete', [KitchenController::class, 'delete'])->name('order-item.cook-all');
 
 
 
@@ -176,6 +177,10 @@ Route::post('/add-dish-to-order', [PosController::class, 'addDishToOrder']);
 Route::post('/deleteItem', [PosController::class, 'deleteItem']);
 Route::post('/increaseQuantity', [PosController::class, 'increaseQuantity']);
 Route::post('/decreaseQuantity', [PosController::class, 'decreaseQuantity']);
+Route::post('/notification-button/{tableId}', [PosController::class, 'notificatioButton']);
+Route::post('/canelItem', [PosController::class, 'canelItem']);
+
+
 Route::post('/load-more-dishes', [PosController::class, 'loadMoreDishes']);
 Route::get('/api/tables/{tableId}/order', [TableController::class, 'getOrderForReservedTable']);
 Route::get('/reservations', [ReservationController::class, 'showReservations'])
