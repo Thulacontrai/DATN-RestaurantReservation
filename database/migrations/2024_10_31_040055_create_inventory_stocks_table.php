@@ -13,12 +13,13 @@ return new class extends Migration
     {
         Schema::disableForeignKeyConstraints();
 
-        Schema::create('inventory_stock', function (Blueprint $table) {
+        Schema::create('inventory_stocks', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('ingredient_id'); // Thay đổi từ integer sang unsignedBigInteger
             $table->foreign('ingredient_id')->references('id')->on('ingredients')->onDelete('cascade');
             $table->integer('quantity_stock');
-            $table->bigInteger('last_update');
+            $table->timestamp('last_update'); // Đổi từ bigInteger sang timestamp
+            $table->timestamps();
         });
 
         Schema::enableForeignKeyConstraints();

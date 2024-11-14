@@ -40,7 +40,7 @@
                                     <label for="dish-name" class="form-label">Tên Món Ăn</label>
                                     <input type="text" id="dish-name" name="name" class="form-control" value="{{ $dish->name }}" required>
                                     <div class="invalid-feedback">Vui lòng nhập tên món ăn.</div>
-                                    <div class="valid-feedback">Looks good!</div>
+
                                 </div>
 
                                 <div class="mb-3">
@@ -53,22 +53,17 @@
                                         @endforeach
                                     </select>
                                     <div class="invalid-feedback">Vui lòng chọn loại món ăn.</div>
-                                    <div class="valid-feedback">Looks good!</div>
+
                                 </div>
 
                                 <div class="mb-3">
                                     <label for="dish-price" class="form-label">Giá</label>
                                     <input type="number" id="dish-price" name="price" class="form-control" value="{{ $dish->price }}" required>
                                     <div class="invalid-feedback">Vui lòng nhập giá món ăn.</div>
-                                    <div class="valid-feedback">Looks good!</div>
+
                                 </div>
 
-                                <div class="mb-3">
-                                    <label for="dish-quantity" class="form-label">Số Lượng</label>
-                                    <input type="number" id="dish-quantity" name="quantity" class="form-control" value="{{ $dish->quantity }}" required>
-                                    <div class="invalid-feedback">Vui lòng nhập số lượng món ăn.</div>
-                                    <div class="valid-feedback">Looks good!</div>
-                                </div>
+                
 
                                 <div class="mb-3">
                                     <label for="dish-status" class="form-label">Trạng Thái</label>
@@ -81,14 +76,14 @@
                                         <option value="cancelled" {{ $dish->status == 'cancelled' ? 'selected' : '' }}>Đã hủy</option>
                                     </select>
                                     <div class="invalid-feedback">Vui lòng chọn trạng thái món ăn.</div>
-                                    <div class="valid-feedback">Looks good!</div>
+
                                 </div>
 
                                 <div class="mb-3">
                                     <label for="dish-description" class="form-label">Mô tả</label>
                                     <textarea id="dish-description" name="description" class="form-control" required>{{ old('description', $dish->description) }}</textarea>
                                     <div class="invalid-feedback">Vui lòng nhập mô tả món ăn.</div>
-                                    <div class="valid-feedback">Looks good!</div>
+
                                 </div>
 
                                 <div class="mb-3">
@@ -98,7 +93,7 @@
                                         <img src="{{ asset('storage/' . $dish->image) }}" alt="Hình ảnh món ăn" width="150" class="mt-3">
                                     @endif
                                     <div class="invalid-feedback">Vui lòng chọn ảnh món ăn.</div>
-                                    <div class="valid-feedback">Looks good!</div>
+
                                 </div>
 
                                 <div class="mb-3 d-flex justify-content-end">

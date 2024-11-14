@@ -47,6 +47,10 @@ class Order extends Model
         return $this->belongsToMany(Table::class, 'orders_tables')
             ->withPivot('start_time', 'end_time', 'status');
     }
+    public function items()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
 
     // Quan hệ với bảng User (Khách hàng)
     public function customer()

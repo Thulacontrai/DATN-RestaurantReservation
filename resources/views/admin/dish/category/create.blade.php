@@ -1,6 +1,6 @@
 @extends('admin.master')
 
-@section('title', 'Thêm Mới Danh Mục Category')
+@section('title', 'Thêm Mới Danh Mục Thực Đơn')
 
 @section('content')
 
@@ -15,7 +15,7 @@
                 <div class="col-sm-12 col-12">
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
-                            <div class="card-title">Thêm Mới Danh Mục Category</div>
+                            <div class="card-title">Thêm Mới Danh Mục Thực Đơn</div>
                         </div>
                         <div class="card-body">
 
@@ -27,7 +27,7 @@
                                     <label for="category-name" class="form-label">Tên Danh Mục</label>
                                     <input type="text" id="category-name" name="name" class="form-control" placeholder="Nhập tên danh mục" required>
                                     <div class="invalid-feedback">Vui lòng nhập tên danh mục.</div>
-                                    <div class="valid-feedback">Looks good!</div>
+                                    
                                 </div>
 
                                 <!-- Mô Tả -->
@@ -35,7 +35,7 @@
                                     <label for="category-description" class="form-label">Mô Tả</label>
                                     <textarea id="category-description" name="description" class="form-control" placeholder="Nhập mô tả danh mục" rows="4"></textarea>
                                     <div class="invalid-feedback">Vui lòng nhập mô tả danh mục.</div>
-                                    <div class="valid-feedback">Looks good!</div>
+                                    
                                 </div>
 
                                 <!-- Nút Thêm Mới -->

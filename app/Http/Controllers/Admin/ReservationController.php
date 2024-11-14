@@ -610,21 +610,21 @@ class ReservationController extends Controller
         }
     }
 
-    public function submitMoveTable(Request $request)
-    {
-        $tableId = $request->input('dataId');
-        $reservationId = $request->input('reservationId');
-        $reservationData = ReservationTable::where('reservation_id', $reservationId)->first();
-        if ($reservationData) {
-            Table::where('id', $reservationData->table_id)->update(['status' => 'Available']);
-        }
-        ReservationTable::where('reservation_id', $reservationId)->update(['table_id' => $tableId]);
-        Table::where('id', $tableId)->update(['status' => 'Reserved']);
-        return response()->json([
-            'success' => true,
-            'message' => 'Chuyển bàn thành công'
-        ]);
-    }
+    // public function submitMoveTable(Request $request)
+    // {
+    //     $tableId = $request->input('dataId');
+    //     $reservationId = $request->input('reservationId');
+    //     $reservationData = ReservationTable::where('reservation_id', $reservationId)->first();
+    //     if ($reservationData) {
+    //         Table::where('id', $reservationData->table_id)->update(['status' => 'Available']);
+    //     }
+    //     ReservationTable::where('reservation_id', $reservationId)->update(['table_id' => $tableId]);
+    //     Table::where('id', $tableId)->update(['status' => 'Reserved']);
+    //     return response()->json([
+    //         'success' => true,
+    //         'message' => 'Chuyển bàn thành công'
+    //     ]);
+    // }
 
    
 

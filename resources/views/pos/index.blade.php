@@ -15,8 +15,10 @@
                     <i class="material-icons">restaurant</i> Thực đơn
                 </a>
                 <input class="form-control1 me-2" id="searchInput" type="search" placeholder="Tìm món (F3)"
+                <input class="form-control1 me-2" id="searchInput" type="search" placeholder="Tìm món (F3)"
                     aria-label="Tìm món">
             </div>
+
 
 
             <!-- Right Section: Icons -->
@@ -48,7 +50,6 @@
                     <button class="btn btn-link text-white" id="hamburgerMenu">
                         <i class="fas fa-bars"></i>
                     </button>
-
                 </li>
             </ul>
         </div>
@@ -101,43 +102,39 @@
                             <tbody>
                                 <!-- Dữ liệu bảng-->
                                 @forelse ($reservations as $reservation)
-                                    <tr id="reservation-{{ $reservation->id }}">
-                                        <td class="text-center"><button type="button" class="transparent-button"
-                                                data-toggle="modal"
-                                                data-target="#orderDetailModal">{{ $reservation->id }}</button></td>
-                                        <td class="text-center">
-                                            @foreach ($reservation->tables as $table)
-                                                {{ $table->table_number ?? 'Chưa xếp bàn' }}
-                                            @endforeach
-                                        </td>
-                                        <td class="text-center">{{ $reservation->reservation_date }} <br>
-                                            {{ $reservation->reservation_time }}</td>
-                                        <td class="text-center">{{ $reservation->user_name ?? 'Không rõ' }}</td>
-                                        <td class="text-center">{{ $reservation->user_phone ?? 'Không rõ' }}</td>
-                                        <td class="text-center">{{ $reservation->guest_count ?? 'N/A' }}</td>
-                                        <td class="text-center">
-                                            @if ($reservation->status === 'Confirmed')
-                                                <span class="badge bg-success">Đã xác nhận</span>
-                                            @elseif ($reservation->status === 'Pending')
-                                                <span class="badge bg-warning">Chờ xử lý</span>
-                                            @elseif ($reservation->status === 'Cancelled')
-                                                <span class="badge bg-danger">Đã hủy</span>
-                                            @elseif ($reservation->status === 'checked-in')
-                                                <span class="badge bg-primary">Đã nhận bàn</span>
-                                            @else
-                                                <span class="badge bg-secondary">Không rõ</span>
-                                            @endif
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="actions">
-                                                <button class="btn btn-primary convertToOrder"
-                                                    data-id="{{ $reservation->id }}">
-                                                    Chuyển Đơn
-                                                </button>
-                                                <!-- Các hành động khác như Xem, Sửa, Hủy đơn đặt bàn -->
-                                            </div>
-                                        </td>
-                                    </tr>
+                                <tr id="reservation-{{ $reservation->id }}">
+                                    <td class="text-center" ><button type="button" class="transparent-button" data-toggle="modal" data-target="#orderDetailModal">{{$reservation->id}}</button></td>
+                                    <td class="text-center">
+                                        @foreach ($reservation->tables as $table)
+                                            {{ $table->table_number ?? 'Chưa xếp bàn' }}
+                                        @endforeach
+                                    </td>
+                                    <td class="text-center">{{ $reservation->reservation_date }} <br> {{ $reservation->reservation_time }}</td>
+                                    <td class="text-center">{{ $reservation->user_name ?? 'Không rõ' }}</td>
+                                    <td class="text-center">{{ $reservation->user_phone ?? 'Không rõ' }}</td>
+                                    <td class="text-center">{{ $reservation->guest_count ?? 'N/A' }}</td>
+                                    <td class="text-center">
+                                        @if ($reservation->status === 'Confirmed')
+                                            <span class="badge bg-success">Đã xác nhận</span>
+                                        @elseif ($reservation->status === 'Pending')
+                                            <span class="badge bg-warning">Chờ xử lý</span>
+                                        @elseif ($reservation->status === 'Cancelled')
+                                            <span class="badge bg-danger">Đã hủy</span>
+                                        @elseif ($reservation->status === 'checked-in')
+                                            <span class="badge bg-primary">Đã nhận bàn</span>
+                                        @else
+                                            <span class="badge bg-secondary">Không rõ</span>
+                                        @endif
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="actions">
+                                            <button class="btn btn-primary convertToOrder" data-id="{{ $reservation->id }}">
+                                                Chuyển Đơn
+                                            </button>
+                                            <!-- Các hành động khác như Xem, Sửa, Hủy đơn đặt bàn -->
+                                        </div>
+                                    </td>
+                                </tr>
                                 @empty
                                     <tr>
                                         <td colspan="10">Không có đặt bàn nào được tìm thấy.</td>
@@ -664,8 +661,8 @@
         background-size: cover;
         background-position: center center;
         background-repeat: no-repeat;
-        /* min-height: 100vh;
-        max-height: 100vh; */
+        min-height: 100vh;
+
         /* Đặt chiều cao tối đa cho wrapper */
         overflow-y: hidden;
         /* Tránh việc hiển thị thanh cuộn không cần thiết */
@@ -697,6 +694,51 @@
         text-align: center;
         transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
     }
+
+    /* Responsive cho các màn hình nhỏ */
+    @media (max-width: 768px) {
+        .table-card {
+            width: 80px;
+            height: 100px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .table-card {
+            width: 60px;
+            height: 80px;
+        }
+
+        .navbar .form-control {
+            width: 100%;
+        }
+
+        .order-section {
+            padding: 5px;
+        }
+
+        .table-container {
+            max-height: calc(100vh - 200px);
+            /* Giảm chiều cao cho màn hình nhỏ hơn để đảm bảo không bị tràn */
+        }
+
+        .progress {
+            height: 6px;
+            /* Giảm chiều cao của thanh tiến trình */
+        }
+
+        .nav-link {
+            font-size: 14px;
+            /* Giảm kích thước font trên thiết bị nhỏ */
+        }
+
+        .btn {
+            padding: 8px 10px;
+            font-size: 12px;
+            /* Giảm kích thước nút trên thiết bị nhỏ */
+        }
+    }
+
 
     /* Responsive cho các màn hình nhỏ */
     @media (max-width: 768px) {
@@ -902,7 +944,7 @@
     });
 
     // Modal danh sách đặt bàn
-    document.getElementById('modalListReservation').addEventListener('click', function() {
-        $('#reservationListModal').modal('show');
-    });
+    // document.getElementById('modalListReservation').addEventListener('click', function() {
+    //     $('#reservationListModal').modal('show');
+    // });
 </script>

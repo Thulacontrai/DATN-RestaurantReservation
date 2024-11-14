@@ -349,7 +349,6 @@
     }
 
 
-
     #orderTabs {
         overflow-x: auto;
         display: flex;
@@ -1375,12 +1374,12 @@
     border: none;
 }
 
+/* Đảm bảo modal hiển thị ở trung tâm và có hiệu ứng mờ */
+
 #reservationListModal, #orderDetailModal {
     display: none;
 }
 
-
-/* Đảm bảo modal hiển thị ở trung tâm và có hiệu ứng mờ */
 .modal {
     display: none;
     position: fixed;
@@ -1484,6 +1483,7 @@
 }
 
     </style>
+
 
 
 

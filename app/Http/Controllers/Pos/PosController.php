@@ -233,7 +233,7 @@ class PosController extends Controller
                     ->orWhere('status', 'đang xử lý');
             })
             ->get();
-            $notiBtn = false;
+        $notiBtn = false;
 
         foreach ($orderItem as $item) {
             if ($item->quantity > $item->informed) {
@@ -277,36 +277,6 @@ class PosController extends Controller
     }
 
 
-    // Xóa món khỏi order_items
-    public function deleteDishFromOrder($orderId, $dishId)
-    {
-        try {
-            // Tìm đơn hàng và món ăn trong đơn hàng
-            $order = Order::findOrFail($order_id);
-            $orderItem = OrderItem::where('order_id', $order_id)->where('id', $item_id)->firstOrFail();
-
-            // Trừ số tiền của món ăn bị xóa khỏi tổng tiền đơn hàng
-            $order->total_amount -= $orderItem->total_price;
-            $order->final_amount = $order->total_amount; // Cập nhật lại tổng tiền đơn hàng
-            $order->save();
-
-            // Xóa món ăn vĩnh viễn (forceDelete) khỏi cơ sở dữ liệu
-            $orderItem->forceDelete();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Món ăn đã được xóa khỏi đơn hàng.',
-                'total_amount' => $order->total_amount, // Trả lại tổng tiền sau khi xóa
-            ]);
-        } catch (\Exception $e) {
-            // Ghi log lỗi và trả về phản hồi lỗi
-            Log::error('Lỗi khi xóa món ăn khỏi đơn hàng: ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Đã xảy ra lỗi khi xóa món ăn.',
-            ], 500);
-        }
-    }
 
 
 
@@ -520,6 +490,7 @@ class PosController extends Controller
             return response()->json(['success' => false, 'message' => 'Lỗi khi thêm đặt bàn.']);
         }
     }
+    
     public function orderDetails($id)
     {
         $table = Table::with(['orders', 'orders.orderItems', 'orders.orderItems.dish'])->find($id);
@@ -603,7 +574,7 @@ class PosController extends Controller
                         ->orWhere('status', 'đang xử lý');
                 })
                 ->get();
-                $notiBtn = false;
+            $notiBtn = false;
 
             foreach ($orderItem as $item) {
                 if ($item->quantity > $item->informed) {
@@ -653,7 +624,7 @@ class PosController extends Controller
                     ->orWhere('status', 'đang xử lý');
             })
             ->get();
-            $notiBtn = false;
+        $notiBtn = false;
 
         foreach ($orderItem as $item) {
             if ($item->quantity > $item->informed) {
@@ -735,7 +706,7 @@ class PosController extends Controller
                         ->orWhere('status', 'đang xử lý');
                 })
                 ->get();
-                $notiBtn = false;
+            $notiBtn = false;
 
             foreach ($orderItem as $item) {
                 if ($item->quantity > $item->informed) {
@@ -801,7 +772,7 @@ class PosController extends Controller
                         ->orWhere('status', 'đang xử lý');
                 })
                 ->get();
-                $notiBtn = false;
+            $notiBtn = false;
 
             foreach ($orderItem as $item) {
                 if ($item->quantity > $item->informed) {
@@ -868,7 +839,7 @@ class PosController extends Controller
                     ->orWhere('status', 'đang xử lý');
             })
             ->get();
-            $notiBtn = false;
+        $notiBtn = false;
 
         foreach ($orderItem as $item) {
             if ($item->quantity > $item->informed) {
@@ -886,5 +857,3 @@ class PosController extends Controller
         return response()->json(['status' => 'success']);
     }
 }
-
-

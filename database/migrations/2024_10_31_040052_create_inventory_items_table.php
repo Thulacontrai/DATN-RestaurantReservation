@@ -22,7 +22,12 @@ return new class extends Migration
             // Thay đổi thành unsignedBigInteger và bỏ unique
             $table->unsignedBigInteger('inventory_transaction_id'); 
             $table->foreign('inventory_transaction_id')->references('id')->on('inventory_transactions')->onDelete('cascade');
-            $table->decimal('quantity', 10, 2); 
+            
+            $table->decimal('quantity', 10, 2);
+
+            // Thêm created_at và updated_at
+            $table->timestamps();
+
         });
 
         Schema::enableForeignKeyConstraints();

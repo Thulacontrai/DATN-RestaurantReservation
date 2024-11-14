@@ -17,11 +17,12 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\CalendarController;
 use App\Http\Controllers\Admin\IngredientController;
 use App\Http\Controllers\Admin\IngredientTypeController;
+use App\Http\Controllers\Admin\InventoryTransactionController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\RefundController;
 use App\Http\Controllers\Admin\ReservationController;
 use App\Http\Controllers\Admin\ReservationHistoryController;
-use App\Http\Controllers\Admin\ReservationTableController;
+
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\TableController;
@@ -35,6 +36,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\InventoryController;
 
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -46,9 +48,37 @@ use App\Http\Controllers\Admin\InventoryController;
 |
 */
 
+
+//route tạo phiếu nhập kho
+Route::resource('transactions', InventoryTransactionController::class);
+Route::post('/transactions', [InventoryTransactionController::class, 'storeTransaction'])->name('transactions.store');
+Route::get('/transactions/{id}/add-items', [InventoryTransactionController::class, 'addItemForm'])->name('transactions.add_items');
+Route::post('/transactions/{id}/add-items', [InventoryTransactionController::class, 'storeItem'])->name('transactions.store_item');
+Route::post('/transactions/{id}/update-status', [InventoryTransactionController::class, 'updateStatus'])->name('transactions.update_status');
+Route::post('/transactions/{id}/finalize', [InventoryTransactionController::class, 'finalizeTransaction'])->name('transactions.finalize');
+Route::get('transactions/{id}', [InventoryTransactionController::class, 'show'])->name('transactions.show');
+Route::get('transactions/{id}/edit', [InventoryTransactionController::class, 'edit'])->name('transactions.edit');
+Route::put('transactions/{id}', [InventoryTransactionController::class, 'update'])->name('transactions.update');
+Route::patch('transactions/{id}/status', [InventoryTransactionController::class, 'updateStatus'])->name('transactions.update.status');
+Route::get('admin/transactions/create', [InventoryTransactionController::class, 'createTransaction'])->name('transactions.create');
+Route::delete('transactions/{id}', [InventoryTransactionController::class, 'destroy'])->name('transactions.destroy');
+
+Route::post('/transactions/import', [InventoryTransactionController::class, 'import'])->name('transactions.import');
+
+Route::post('/import-ingredients', [InventoryTransactionController::class, 'importIngredients'])->name('import.ingredients');
+
+
+
+
+
 // import
 Route::get('admin/supplier/import', [SupplierController::class, 'showImportForm'])->name('admin.supplier.import');
 Route::post('admin/supplier/import', [SupplierController::class, 'import'])->name('admin.supplier.import');
+
+Route::get('admin/supplier/download-template', [SupplierController::class, 'downloadTemplate'])->name('admin.supplier.download-template');
+Route::get('admin/ingredient/download-template', [IngredientController::class, 'downloadTemplate'])->name('admin.ingredient.download-template');
+
+
 
 Route::get('admin/ingredient/import', [IngredientController::class, 'showImportForm'])->name('admin.ingredient.import');
 Route::post('admin/ingredient/import', [IngredientController::class, 'import'])->name('admin.ingredient.import.post');
@@ -167,7 +197,11 @@ Route::post('/Ppayment/{table_number}', [PosController::class, 'Ppayment'])->nam
 // hoàn cọc
 Route::get('/refunds/create/{reservation_id}', [RefundController::class, 'create'])->name('refunds.create');
 Route::post('/refunds', [RefundController::class, 'store'])->name('refunds.store');
-Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');
+Route::get('/reservation', [ReservationController::class, 'index'])->name('reservation.index');
+Route::post('/refunds/cancel', [RefundController::class, 'storeCancellation'])->name('refunds.cancel');
+Route::patch('/refunds/{id}/updateStatus', [RefundController::class, 'updateStatus'])->name('refunds.updateStatus');
+
+Route::get('/admin/refunds', [RefundController::class, 'index'])->name('admin.refunds.index');
 
 Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
 Route::post('/create-order/{tableId}', [PosController::class, 'createOrder']);
@@ -189,10 +223,10 @@ Route::get('/reservations/late', [PosController::class, 'getLateReservations'])
     ->name('reservations.late');
 Route::post('/reservations', [PosController::class, 'store'])->name('reservations.store');
 Route::delete('/order/{order_id}/item/{item_id}', [PosController::class, 'deleteOrderItem']);
-;
+
+
 
 Route::post('/reservation/check-table', [PosController::class, 'checkTable'])->name('reservation.checkTable');
-Route::post('/reservations/convert-to-order', [PosController::class, 'convertToOrder'])->name('reservation.convertToOrder');
 
 
 
@@ -251,7 +285,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/', function () {
         return view('auth.login');
 
-
     })->name('home');
 
 
@@ -282,7 +315,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::resource('reservation', ReservationController::class);
     Route::post('reservation/cancel/{id}', [ReservationController::class, 'cancel'])->name('reservation.cancel');
-    Route::resource('reservationTable', ReservationTableController::class);
+
     Route::resource('reservationHistory', ReservationHistoryController::class);
 
 
@@ -299,6 +332,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('dishes-trash', [DishesController::class, 'trash'])->name('dishes.trash');
     Route::patch('dishes-restore/{id}', [DishesController::class, 'restore'])->name('dishes.restore');
     Route::delete('dishes-force-delete/{id}', [DishesController::class, 'forceDelete'])->name('dishes.forceDelete');
+    Route::get('dishes/{id}', [DishesController::class, 'show'])->name('dishes.detail');
+    Route::get('dishes/{id}/update-ingredients', [DishesController::class, 'editIngredients'])->name('dishes.updateIngredients');
+    Route::post('dishes/{id}/update-ingredients', [DishesController::class, 'updateIngredients'])->name('dishes.updateIngredients');
+    Route::delete('dishes/{recipeId}/deleteIngredient', [DishesController::class, 'deleteIngredient'])->name('dishes.deleteIngredient');
+    Route::post('dishes/{dish}/add-ingredient', [DishesController::class, 'addIngredient'])->name('dishes.addIngredient');
+    // Route::resource('recipes', RecipesController::class);
+
+
+
+
 
 
     Route::resource('combo', ComboController::class);
@@ -347,7 +390,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // Route::resource('permission', PermissionController::class);
     Route::resource('supplier', SupplierController::class);
-    Route::resource('ingredientType', IngredientTypeController::class);
+    // Route::resource('recipes', RecipesController::class);
+
     Route::resource('ingredient', IngredientController::class);
     Route::resource('dashboard', DashboardController::class);
     Route::resource('accountSetting', SettingController::class);
@@ -355,6 +399,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // Lịch
     Route::resource('calendar', CalendarController::class);
+
+    //inventoy
+
+
+
+
+
+
+
+
 
     //permission route
     Route::get('/admin/permission', [PermissionController::class, 'index'])->name('permissions.index');
@@ -403,10 +457,18 @@ Route::get('/login-client', [CustomerAuthController::class, 'showLoginForm'])->n
 Route::post('/login-client', [CustomerAuthController::class, 'login'])->name('client.login');
 Route::post('/logout-client', [CustomerAuthController::class, 'logout'])->name('client.logout');
 
-
 Route::post('/check-account', [CustomerAuthController::class, 'checkAccount']);
 Route::post('/login-success', [CustomerAuthController::class, 'loginSuccess'])->name('login.success');
 
+
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+
+});
 
 
 
@@ -441,7 +503,7 @@ Route::get('/test', function () {
 });
 
 
-//Route đăng nhập của khách hàng
+
 // Route đăng nhập của khách hàng
 Route::get('/register-client', [CustomerAuthController::class, 'showRegisterForm'])->name('register.form');
 Route::post('/register-client', [CustomerAuthController::class, 'register'])->name('client.register');
@@ -491,6 +553,3 @@ Route::get('/print/{orderId}', [ReservationController::class, 'print'])->name('p
 
 
 require __DIR__ . '/auth.php';
-
-
-
