@@ -187,6 +187,7 @@ Route::get('/customerInformation', [ReservationController::class, 'showInformati
 Route::get('/kitchen', [KitchenController::class, 'index'])->name('kitchen.index');
 Route::post('/kitchen/{id}/cook-all', [KitchenController::class, 'cookAll'])->name('order-item.cook-all');
 Route::post('/kitchen/{id}/done-all', [KitchenController::class, 'doneAll'])->name('order-item.cook-all');
+Route::post('/kitchen/{id}/delete', [KitchenController::class, 'delete'])->name('order-item.cook-all');
 
 
 
@@ -203,9 +204,17 @@ Route::patch('/refunds/{id}/updateStatus', [RefundController::class, 'updateStat
 Route::get('/admin/refunds', [RefundController::class, 'index'])->name('admin.refunds.index');
 
 Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
-Route::post('/create-order', [PosController::class, 'createOrder']);
+Route::post('/create-order/{tableId}', [PosController::class, 'createOrder']);
 Route::post('/order-details/{tableId}', [PosController::class, 'orderDetails'])->name('order-details');
+Route::post('/order-detail/{id}', [PosController::class, 'orderDetail']);
 Route::post('/add-dish-to-order', [PosController::class, 'addDishToOrder']);
+Route::post('/deleteItem', [PosController::class, 'deleteItem']);
+Route::post('/increaseQuantity', [PosController::class, 'increaseQuantity']);
+Route::post('/decreaseQuantity', [PosController::class, 'decreaseQuantity']);
+Route::post('/notification-button/{tableId}', [PosController::class, 'notificatioButton']);
+Route::post('/canelItem', [PosController::class, 'canelItem']);
+
+
 Route::post('/load-more-dishes', [PosController::class, 'loadMoreDishes']);
 Route::get('/api/tables/{tableId}/order', [TableController::class, 'getOrderForReservedTable']);
 Route::get('/reservations', [ReservationController::class, 'showReservations'])
@@ -419,6 +428,27 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 
 });
+
+
+Route::get('/register-client', [CustomerAuthController::class, 'showRegisterForm'])->name('register.form');
+Route::post('/register-client', [CustomerAuthController::class, 'register'])->name('client.register');
+Route::get('/login-client', [CustomerAuthController::class, 'showLoginForm'])->name('login.form');
+Route::post('/login-client', [CustomerAuthController::class, 'login'])->name('client.login');
+Route::post('/logout-client', [CustomerAuthController::class, 'logout'])->name('client.logout');
+
+Route::post('/check-account', [CustomerAuthController::class, 'checkAccount']);
+Route::post('/login-success', [CustomerAuthController::class, 'loginSuccess'])->name('login.success');
+
+
+
+Route::post('/verify-code', [CustomerAuthController::class, 'verifyCode'])->name('verify.code');
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/member/profile', [MemberController::class, 'showProfile'])->name('member.profile');
+    Route::post('/member/update-booking', [MemberController::class, 'updateBooking'])->name('member.updateBooking');
+    Route::post('/cancel-reservation', [ReservationController::class, 'cancelReservation'])->name('cancel.reservation');
+});
+
 
 
 Route::get('/register-client', [CustomerAuthController::class, 'showRegisterForm'])->name('register.form');

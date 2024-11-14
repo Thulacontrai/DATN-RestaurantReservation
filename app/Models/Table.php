@@ -26,17 +26,11 @@ class Table extends Model
     {
         return $this->belongsTo(Table::class, 'parent_id');
     }
-    public function reservations()
-    {
-        return $this->belongsToMany(Reservation::class, 'reservation_tables')
-            ->withPivot('start_date', 'start_time', 'end_time', 'status');
-    }
     public function orders()
     {
-        return $this->hasMany(Order::class);
+        return $this->belongsToMany(Order::class, 'orders_tables')
+            ->withPivot('start_time', 'end_time', 'status');
     }
-
-
 
 
 
@@ -54,7 +48,4 @@ class Table extends Model
     }
 
     //occupied_since: Thoi gian hien tai---- xem thử nhé nhóm trưởng có cần cho vào dtb ko ??????????
-
-
-
 }
