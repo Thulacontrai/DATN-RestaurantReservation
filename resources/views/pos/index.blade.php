@@ -4,7 +4,7 @@
 
 @section('content')
 
-<header class="navbar navbar-expand-lg p-2" style="background: linear-gradient(90deg, #004a89, #007bb5);">
+    <header class="navbar navbar-expand-lg p-2" style="background: linear-gradient(90deg, #004a89, #007bb5);">
         <div class="container-fluid">
             <!-- Left Section: Tabs for Phòng bàn and Thực đơn -->
             <div class="header-left d-flex align-items-center">
@@ -136,9 +136,9 @@
                                     </td>
                                 </tr>
                                 @empty
-                                <tr>
-                                    <td colspan="10">Không có đặt bàn nào được tìm thấy.</td>
-                                </tr>
+                                    <tr>
+                                        <td colspan="10">Không có đặt bàn nào được tìm thấy.</td>
+                                    </tr>
                                 @endforelse
                             </tbody>
                         </table>
@@ -244,8 +244,6 @@
         <div class="container-fluid d-flex flex-grow-1 px-0">
             <!-- Phần bên trái: Bàn và Thực đơn -->
             <div class="col-md-8 bg-light-gray p-4">
-
-
                 <!-- Phần hiển thị Bàn -->
                 <div class="table-section transition-section" id="table-section">
                     <!-- Lọc Bàn theo Trạng thái -->
@@ -256,36 +254,23 @@
                         <button class="btn btn-outline-success filter-btn me-2" data-status="available">
                             Trống ({{ $availableTablesCount }})
                         </button>
-                        <button class="btn btn-outline-warning filter-btn me-2" data-status="reserved">
-                            Đã đặt ({{ $reservedTablesCount }})
-                        </button>
                         <button class="btn btn-outline-danger filter-btn" data-status="occupied">
                             Đang sử dụng ({{ $occupiedTablesCount }})
                         </button>
                     </div>
-
                     <div class="table-container d-flex flex-wrap justify-content-start"
-                        style="max-height: 600px; overflow-y: auto;">
+                        style="max-height: 600px; overflow-y: auto;" id="layoutTable">
                         @foreach ($tables as $table)
                             <div class="table-card {{ strtolower(trim($table->status)) }}"
-                                data-table-id="{{ $table->id }}">
+                                data-table-id="{{ $table->id }}" data-status="{{ $table->status }}">
                                 <span class="table-number">Bàn {{ $table->table_number }}</span>
                                 @if (strtolower(trim($table->status)) == 'available')
                                     <i class="material-icons text-success"
                                         style="font-size: 35px;padding-top: 50%;">event_seat</i>
-                                    <!-- Thay icon ghế bằng biểu tượng bàn -->
-                                @elseif (strtolower(trim($table->status)) == 'reserved')
-                                    <i class="material-icons text-warning"
-                                        style="font-size: 35px; padding-top: 50%;">bookmark</i>
                                 @elseif (strtolower(trim($table->status)) == 'occupied')
                                     <i class="material-icons text-danger"
                                         style="font-size: 35px; padding-top: 50%;">local_dining</i>
-                                    <!-- Biểu tượng dĩa và ly -->
-                                @else
-                                    <i class="material-icons text-danger" style="font-size: 35px;">error</i>
-                                    <span>Lỗi: Trạng thái không xác định!</span>
                                 @endif
-
                             </div>
                         @endforeach
                     </div>
@@ -309,8 +294,6 @@
                                 data-dish-id="{{ $dish->id }}" data-dish-price="{{ $dish->price }}">
                                 <div class="card menu-item">
                                     <img class="btn btn-add-dish" data-dish-id="{{ $dish->id }}"
-                                        data-dish-price="{{ $dish->price }}" data-dish-name="{{ $dish->name }}"
-                                        onclick="addDishToOrder({{ $dish->id }}, '{{ $dish->name }}', {{ $dish->price }})"
                                         src="{{ asset($dish->image ? 'storage/' . $dish->image : 'images/placeholder.jpg') }}"
                                         alt="{{ $dish->name }}" class="img-fluid rounded"
                                         style="height: 200px; object-fit: cover;" />
@@ -325,110 +308,349 @@
                     </div>
                 </div>
             </div>
-
-
             <!-- Phần bên phải: Đơn hàng -->
             <div class="col-md-4 p-0 order-section">
                 <nav class="navbar">
-                    <div class="col-md-5 d-flex align-items-center">
-                        <div class="btn-group flex-wrap">
-                            <button class="btn btn-warning" id="addCustomerButton" title="Thêm khách hàng">
-                                <i class="fas fa-user-plus"></i>
-                            </button>
-
-                        </div>
-                        <div class="tabs" id="orderTabs"></div>
-                        <input clafss="form-control1 me-2" id="searchInput" type="search" placeholder="Tìm khách (F4)"
-                            aria-label="Tìm khách hàng">
-                    </div>
-                    <button class="btn btn-success ms-2" id="openReservationModal">
-                        <i class="fas fa-calendar-alt"></i>
-                    </button>
                 </nav>
-                <div id="order-details" class="order-content-container" style="padding-left: 20px;">
-                    @if (isset($order) && $order->items->count() > 0)
-                        {{-- <h5>Thông tin đơn hàng cho Bàn {{ $order->table->number }}</h5> <!-- Thêm thông tin bàn --> --}}
-                        @foreach ($order->items as $item)
-                            <div class="order-item d-flex justify-content-between align-items-center">
-                                <span>{{ $item->name }} x {{ $item->quantity }}</span>
-                                <span style="color: #28a745;">{{ number_format($item->total_price, 0, ',', '.') }}
-                                    VND</span>
-                                <button class="bin-button " data-item-id="{{ $item->id }}"
-                                    data-order-id="{{ $order->id }}">
-                                    <!-- SVG của nút xóa -->
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 39 7"
-                                        class="bin-top">
-                                        <line stroke-width="4" stroke="white" y2="5" x2="39"
-                                            y1="5"></line>
-                                        <line stroke-width="3" stroke="white" y2="1.5" x2="26.0357"
-                                            y1="1.5" x1="12"></line>
-                                    </svg>
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 33 39"
-                                        class="bin-bottom">
-                                        <mask fill="white" id="path-1-inside-1_8_19">
-                                            <path d="M0 0H33V35C33 37.2091 31.2091 39 29 39H4C1.79086 39 0 37.2091 0 35V0Z">
-                                            </path>
-                                        </mask>
-                                        <path mask="url(#path-1-inside-1_8_19)" fill="white"
-                                            d="M0 0H33H0ZM37 35C37 39.4183 33.4183 43 29 43H4C-0.418278 43 -4 39.4183 -4 35H4H29H37ZM4 43C-0.418278 43 -4 39.4183 -4 35V0H4V35V43ZM37 0V35C37 39.4183 33.4183 43 29 43V35V0H37Z">
-                                        </path>
-                                        <path stroke-width="4" stroke="white" d="M12 6L12 29"></path>
-                                        <path stroke-width="4" stroke="white" d="M21 6V29"></path>
-                                    </svg>
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 89 80"
-                                        class="garbage">
-                                        <path fill="white"
-                                            d="M20.5 10.5L37.5 15.5L42.5 11.5L51.5 12.5L68.75 0L72 11.5L79.5 12.5H88.5L87 22L68.75 31.5L75.5066 25L86 26L87 35.5L77.5 48L70.5 49.5L80 50L77.5 71.5L63.5 58.5L53.5 68.5L65.5 70.5L45.5 73L35.5 79.5L28 67L16 63L12 51.5L0 48L16 25L22.5 17L20.5 10.5Z">
-                                        </path>
-                                    </svg>
-                                </button>
-                            </div>
-                        @endforeach
-                    @else
-                        <!-- Hiển thị khi không có món trong đơn hàng -->
-                        <div id="order-details" class="order-content-container">
-                            <div class="empty-order">
-                                </svg>
-                                <p>Chưa có món trong đơn</p>
-                                <p>Vui lòng chọn món trong thực đơn bên trái màn hình</p>
-                            </div>
-
-                            <div class="order-items" style="display: none;">
-                                <!-- Đây sẽ là nơi hiển thị các món đã chọn -->
-                            </div>
+                <div class="order-content-container" style="padding-left: 20px;">
+                    <div id="order-details" class="order-content-container">
+                        <div class="empty-order">
+                            <p>Chưa có món trong đơn</p>
+                            <p>Vui lòng chọn món trong thực đơn bên trái màn hình</p>
                         </div>
-                    @endif
+                    </div>
                 </div>
-
-                <div class="total mt-4">Tổng tiền: <span
-                        id="totalAmount">{{ number_format($order->total_amount ?? 0, 0, ',', '.') }}</span>₫</div>
-
-
+                <div class="total mt-4">Tổng tiền: <span id="totalAmount">0</span></div>
                 <div class="btn-group">
-                    <button class="btn btn-secondary" id="notification-button" aria-label="Thông báo">
+                    <button class="btn btn-outline-primary border border-primary" disabled id="notification-button"
+                        aria-label="Thông báo">
                         <i class="fas fa-bell"></i> Thông báo
                     </button>
                     <button class="btn btn-primary" id="payment-button" aria-label="Thanh toán">
                         <i class="fas fa-dollar-sign"></i> Thanh toán
-                    </button>
-                    <div>
-                        <p id="table-number"></p> <!-- Thay đổi số bàn phù hợp -->
-                        <div id="order-details">
-                            <!-- Các món ăn sẽ được thêm vào đây -->
-                        </div>
-                        <div id="totalAmount"></div> <!-- Tổng tiền sẽ được cập nhật -->
-                    </div>
-                    <button class="btn btn-warning" id="note-button" aria-label="Thêm Ghi chú">
-                        <i class="fas fa-edit"></i> Ghi chú
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="{{ asset('js/pos.js') }}" defer></script>
 @endsection
+<script>
+    let selectedTableId = null;
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelector('#layoutTable').addEventListener('click', function(event) {
+            const card = event.target.closest('.table-card');
+            if (!card) return;
+            selectedTableId = card.dataset.tableId;
+            const tableId = card.dataset.tableId;
+            const tableStatus = card.dataset.status;
+            tableStatus === 'Occupied' ? showOrderDetails(tableId) : createOrder(tableId);
+        });
+        document.querySelector('#dish-list').addEventListener('click', function(event) {
+            const card = event.target.closest('.dish-item');
+            if (!card) return;
+            const dishId = card.dataset.dishId;
+            addDishToOrder(dishId, selectedTableId);
+        });
+        document.querySelector('#notification-button').addEventListener('click', function(event) {
+            notificationButton(selectedTableId);
+        });
 
+        function notificationButton(selectedTableId) {
+            fetch('/notification-button/' + selectedTableId, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                            'content'),
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.json();
+                }).then(data => {
+                    if (data.success) {} else {
+                        showNotification('Thông báo bếp thành công')
+                    }
+                })
+        }
+
+        function createOrder(tableId) {
+            Swal.fire({
+                title: "Nhận gọi món cho bàn này?",
+                showDenyButton: true,
+                confirmButtonText: "Đúng",
+                denyButtonText: `Hủy`
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    showNotification('Tạo đơn thành công');
+                    fetch('/create-order/' + tableId, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                    .getAttribute('content'),
+                                'Content-Type': 'application/json'
+                            }
+                        })
+                        .then(response => {
+                            if (!response.ok) throw new Error('Network response was not ok');
+                            return response.json();
+                        })
+                        .then(data => showOrderDetail(tableId))
+                        .catch(() => showNotification('Lỗi khi tạo đơn', 'error'));
+                } else if (result.isDenied) {
+                    showNotification('Tạo đơn thất bại', 'error');
+                }
+            });
+        }
+        const orderDetails = document.getElementById('order-details');
+        orderDetails.addEventListener("click", function(event) {
+            const dishElement = event.target.closest(".item-list");
+            if (dishElement) {
+                const dishId = dishElement.dataset.dishId;
+                const dishStatus = dishElement.dataset.dishStatus;
+                const dishOrder = dishElement.dataset.dishOrder;
+                if (event.target.classList.contains("plus-item")) {
+                    increaseQuantity(dishId, selectedTableId);
+                }
+                if (event.target.classList.contains("minus-item")) {
+                    if (dishStatus == 'chờ xử lý') {
+                        decreaseQuantity(dishId, selectedTableId);
+                    } else {
+                        canelItem(dishId, selectedTableId, dishOrder)
+                    }
+                }
+                if (event.target.classList.contains("delete-item")) {
+                    deleteItem(dishId, selectedTableId);
+                }
+            }
+        });
+
+        function canelItem(dishId, selectedTableId, dishOrder) {
+            Swal.fire({
+                title: 'Nhập lý do hủy',
+                input: 'text',
+                inputPlaceholder: 'Nhập lý do...',
+                showCancelButton: true,
+                confirmButtonText: 'Xác nhận',
+                cancelButtonText: 'Hủy'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const reason = result.value;
+                    fetch(`/canelItem`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                    .getAttribute('content'),
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                table_id: selectedTableId,
+                                dish_id: dishId,
+                                reason: reason,
+                                dishOrder: dishOrder
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                showNotification('Hủy món thành công!', 'success');
+                            } else {
+                                showNotification('Lỗi khi xóa', 'error');
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
+                } else {
+                    showNotification('Hủy món thất bại', 'info');
+                }
+            });
+        }
+
+        function increaseQuantity(dishId, selectedTableId) {
+            fetch(`/increaseQuantity`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                            .getAttribute('content'),
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        table_id: selectedTableId,
+                        dish_id: dishId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {} else {
+                        showNotification('è èèèè', 'error')
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function decreaseQuantity(dishId, selectedTableId) {
+            fetch(`/decreaseQuantity`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                            .getAttribute('content'),
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        table_id: selectedTableId,
+                        dish_id: dishId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {} else {
+                        showNotification('è èèèè', 'error')
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function deleteItem(dishId, selectedTableId) {
+            Swal.fire({
+                title: 'Nhập lý do hủy',
+                input: 'text',
+                inputPlaceholder: 'Nhập lý do...',
+                showCancelButton: true,
+                confirmButtonText: 'Xác nhận',
+                cancelButtonText: 'Hủy'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const reason = result.value;
+                    fetch(`/deleteItem`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                    .getAttribute('content'),
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                table_id: selectedTableId,
+                                dish_id: dishId,
+                                reason: reason
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                showNotification('Hủy món thành công!', 'success');
+                            } else {
+                                showNotification('Lỗi khi xóa', 'error');
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
+                } else {
+                    showNotification('Hủy món thất bại', 'info');
+                }
+            });
+        }
+
+
+
+
+        function addDishToOrder(dishId, selectedTableId) {
+            if (selectedTableId) {
+                fetch(`/add-dish-to-order`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                .getAttribute('content'),
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            table_id: selectedTableId,
+                            dish_id: dishId
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showNotification('Thêm món thành công')
+                        } else {
+                            showNotification('è èèèè', 'error')
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            } else {
+                showNotification('Hãy chọn bàn trước khi thêm món', 'error')
+            }
+        }
+
+        function showOrderDetail(tableId) {
+            fetch('/order-detail/' + tableId, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                            'content'),
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.json();
+                })
+                .then(data => {
+                    const {
+                        order,
+                        table,
+                        tableId
+                    } = data;
+                    let totalAmount = new Intl.NumberFormat('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND'
+                    }).format(order.final_amount);
+
+                    let htmlContent = `
+            <h3>Chi tiết đơn hàng</h3>
+            <p><strong>Mã đơn hàng:</strong> ${order.id}</p>
+            <p><strong>Bàn:</strong> ${tableId.table_number}</p>
+            <p><strong>Giờ vào:</strong> ${table.pivot.start_time.split(" ")[1]}</p>
+            <p><strong>Trạng thái:</strong> ${order.status}</p>
+            <h4>Danh sách món</h4>
+            <div class="empty-order">
+                <p>Chưa có món trong đơn</p>
+                <p>Vui lòng chọn món trong thực đơn bên trái màn hình</p>
+            </div>
+        `;
+                    document.getElementById('totalAmount').innerHTML = totalAmount;
+                    document.getElementById('order-details').innerHTML = htmlContent;
+                })
+                .catch(() => showNotification('Không thể lấy chi tiết đơn hàng.', 'error'));
+        }
+
+        function showOrderDetails(tableId) {
+            fetch('/order-details/' + tableId, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                            'content'),
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.json();
+                })
+        }
+
+        function showNotification(message, type = 'success') {
+            Swal.fire({
+                icon: type,
+                title: 'Thông báo',
+                text: message,
+                timer: 3000,
+                showConfirmButton: false,
+                toast: true,
+                position: 'top-end'
+            });
+        }
+    });
+</script>
+@vite(['resources\js\posTable.js', 'resources\js\orderItem.js'])
 <style>
     .wrapper {
         display: flex;
@@ -726,4 +948,3 @@
     //     $('#reservationListModal').modal('show');
     // });
 </script>
-

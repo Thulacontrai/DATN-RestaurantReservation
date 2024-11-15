@@ -1100,7 +1100,7 @@ footer img.logo {
 #search {
     border: solid 1px var(--secondary-color) !important;
     background: none;
-    color: #ffffff;
+    color: #000000;
     box-shadow: none;
     padding: 5px 20px;
     border-radius: 10px;

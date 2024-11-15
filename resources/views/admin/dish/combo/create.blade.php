@@ -67,14 +67,6 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="col-sm-12 col-12">
-                                        <div class="mb-3">
-                                            <label for="editor" class="form-label">Mô tả món ăn</label>
-                                            <textarea name="description" id="editor" class="form-control"></textarea>
-                                            <div class="invalid-feedback">Vui lòng nhập mô tả món ăn.</div>
-                                            <div class="valid-feedback">Looks good!</div>
-                                        </div>
-                                    </div>
                                     <div class="col-sm-6 col-12">
                                         <div class="mb-3">
                                             <label class="form-label">Ảnh Combo</label>
@@ -90,6 +82,14 @@
                                             <input type="number" name="quantity_dishes" id="quantity_dishes" class="form-control"
                                                 placeholder="Số lượng món ăn trong combo" required readonly>
                                             <div class="invalid-feedback">Vui lòng nhập số lượng món ăn.</div>
+                                            <div class="valid-feedback">Looks good!</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 col-12">
+                                        <div class="mb-3">
+                                            <label for="editor" class="form-label">Mô tả món ăn</label>
+                                            <textarea name="description" id="editor" class="form-control"></textarea>
+                                            <div class="invalid-feedback">Vui lòng nhập mô tả món ăn.</div>
                                             <div class="valid-feedback">Looks good!</div>
                                         </div>
                                     </div>
