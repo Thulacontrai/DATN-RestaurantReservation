@@ -107,13 +107,23 @@
                 <input type="text" class="otp-input" maxlength="1">
                 <input type="text" class="otp-input" maxlength="1">
             </div>
-            <button type="button" class="btn-success mt-2" onclick="verifyCode()">Xác thực OTP</button>
             <button id="closePopupButton" class="btn-danger mt-2">Đóng</button>
+            <button type="button" class="button btn-success mt-2" onclick="verifyCode()">Xác thực OTP</button>
         </div>
     </div>
 
     <style>
         /* Style cho popup OTP */
+        .button{
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            color: #fff;
+            font-weight: 600;
+            font-size: 16px;
+        }
         .overlay {
             position: fixed;
             top: 0;
