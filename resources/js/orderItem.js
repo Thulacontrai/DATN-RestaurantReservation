@@ -1,4 +1,5 @@
 import './bootstrap';
+import '../css/orderItem.css';
 
 window.Echo.channel('order')
     .listen('PosTableUpdated', (e) => {
@@ -20,33 +21,79 @@ window.Echo.channel('order')
         e.orderItems.order_items.forEach(item => {
             if (item.status == 'chờ xử lý') {
                 layoutTable.innerHTML += `
-                    <li class="item-list" data-dish-id="${item.item_id}" data-dish-order="${item.order_id}" data-dish-status="${item.status}">
-                        <span class="text-dark" title="${item.status}">${item.dish.name}</span> - 
-                        Số lượng: <button class="plus-item" title="Tăng số lượng món">+</button>${item.quantity}
-                        <button class="minus-item" title="Giảm số lượng món">-</button> - 
-                        Giá: ${item.total_price} VND 
-                        <button class="delete-item" title="Hủy món">Hủy</button>
-                    </li>
+                    <div class="item-list" data-dish-id="${item.item_id}" data-dish-order="${item.order_id}" data-dish-status="${item.status}">
+                        <div class="item-name">
+                            <span class="text-dark" title="${item.status}">${item.dish.name}</span>  
+                        </div>
+                        <div class="item-action">
+                            <div class="item-quantity">
+                                <span class="text-dark" >Số Lượng:</span>  
+                                <div class="quantity-control">
+                                    <button class="quantity-btn minus-item" title="Giảm số lượng món">-</button>
+                                    <span class="quantity">${item.quantity}</span>
+                                    <button class="quantity-btn plus-item" title="Tăng số lượng món">+</button>
+                                </div>
+                            </div>
+                            <div class="item-price">
+                                Giá: ${item.total_price} VND
+                            </div>
+                            <div class="item-cancel">
+                                <button class="delete-item" title="Hủy món">Hủy</button>
+                            </div>
+                        </div>
+                        
+                    </div>
+
                 `;
             } else if (item.status == 'đang xử lý') {
                 layoutTable.innerHTML += `
-                    <li class="item-list" data-dish-id="${item.item_id}" data-dish-order="${item.order_id}" data-dish-status="${item.status}">
-                        <span class="text-danger" title="${item.status}">${item.dish.name}</span> - 
-                        Số lượng: <button class="plus-item" title="Tăng số lượng món">+</button>${item.quantity}
-                        <button class="minus-item" title="Giảm số lượng món">-</button> - 
-                        Giá: ${item.total_price} VND 
-                        <button class="delete-item" title="Hủy món">Hủy</button>
-                    </li>
+                    <div class="item-list" data-dish-id="${item.item_id}" data-dish-order="${item.order_id}" data-dish-status="${item.status}">
+                        <div class="item-name">
+                            <span class="text-danger" title="${item.status}">${item.dish.name}</span>  
+                        </div>
+                        <div class="item-action">
+                            <div class="item-quantity">
+                                <span class="text-dark">Số Lượng:</span>  
+                                <div class="quantity-control">
+                                    <button class="quantity-btn minus-item" title="Giảm số lượng món">-</button>
+                                    <span class="quantity">${item.quantity}</span>
+                                    <button class="quantity-btn plus-item" title="Tăng số lượng món">+</button>
+                                </div>
+                            </div>
+                            <div class="item-price">
+                                Giá: ${item.total_price} VND
+                            </div>
+                            <div class="item-cancel">
+                                <button class="delete-item" title="Hủy món">Hủy</button>
+                            </div>
+                        </div>
+                        
+                    </div>
                 `;
             } else if (item.status == 'hoàn thành') {
                 layoutTable.innerHTML += `
-                    <li class="item-list" data-dish-id="${item.item_id}" data-dish-order="${item.order_id}" data-dish-status="${item.status}">
-                        <span class="text-success" title="${item.status}">${item.dish.name}</span> - 
-                        Số lượng: <button class="plus-item" title="Tăng số lượng món">+</button>${item.quantity}
-                        <button class="minus-item" title="Giảm số lượng món">-</button> - 
-                        Giá: ${item.total_price} VND 
-                        <button class="delete-item" title="Hủy món">Hủy</button>
-                    </li>
+                    <div class="item-list" data-dish-id="${item.item_id}" data-dish-order="${item.order_id}" data-dish-status="${item.status}">
+                        <div class="item-name">
+                            <span class="text-success" title="${item.status}">${item.dish.name}</span>  
+                        </div>
+                        <div class="item-action">
+                            <div class="item-quantity">
+                                <span class="text-dark">Số Lượng:</span>  
+                                <div class="quantity-control">
+                                    <button class="quantity-btn minus-item" title="Giảm số lượng món">-</button>
+                                    <span class="quantity">${item.quantity}</span>
+                                    <button class="quantity-btn plus-item" title="Tăng số lượng món">+</button>
+                                </div>
+                            </div>
+                            <div class="item-price">
+                                Giá: ${item.total_price} VND
+                            </div>
+                            <div class="item-cancel">
+                                <button class="delete-item" title="Hủy món">Hủy</button>
+                            </div>
+                        </div>
+                        
+                    </div>
                 `;
             }
         });
@@ -90,8 +137,9 @@ window.Echo.channel('orders')
                     layoutTable.innerHTML += `
                     <li class="item-list" data-dish-id="${item.item_id}" data-dish-order="${item.order_id}" data-dish-status="${item.status}">
                         <span class="text-dark" title="${item.status}">${item.dish.name}</span> - 
-                        Số lượng: <button class="plus-item" title="Tăng số lượng món">+</button>${item.quantity}
+                        Số lượng: 
                         <button class="minus-item" title="Giảm số lượng món">-</button> - 
+                        <button class="plus-item" title="Tăng số lượng món">+</button>${item.quantity}
                         Giá: ${item.total_price} VND 
                         <button class="delete-item" title="Hủy món">Hủy</button>
                     </li>
