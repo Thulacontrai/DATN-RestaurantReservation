@@ -41,6 +41,7 @@
                                 <table class="table v-middle m-0">
                                     <thead>
                                         <tr>
+                                            <th>ID</th>
                                             <th>Tên Nhà Cung Cấp</th>
                                             <th>Số Điện Thoại</th>
                                             <th>Email</th>
@@ -51,6 +52,7 @@
                                     <tbody>
                                         @forelse($suppliers as $supplier)
                                             <tr>
+                                                <td>{{ $supplier->id }}</td>
                                                 <td>{{ $supplier->name }}</td>
                                                 <td>{{ $supplier->phone }}</td>
                                                 <td>{{ $supplier->email }}</td>

@@ -26,6 +26,8 @@
                         </div>
                     @endif
 
+                    
+
                     <form action="{{ route('admin.supplier.import') }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
@@ -33,8 +35,9 @@
                             <label for="file">Chọn file Excel</label>
                             <input type="file" class="form-control" id="file" name="file" required>
                         </div>
-
                         <button type="submit" class="btn btn-primary">Import</button>
+                        <!-- Nút Download Excel Mẫu -->
+                    <a href="{{ route('admin.supplier.download-template') }}" class="btn btn-secondary mb-3">Download Excel Mẫu</a>
                     </form>
                 </div>
             </div>
@@ -42,4 +45,3 @@
     </div>
 </div>
 @endsection
-
