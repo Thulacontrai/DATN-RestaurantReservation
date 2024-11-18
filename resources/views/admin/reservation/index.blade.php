@@ -189,7 +189,7 @@
 
                                                     </form>
                                                      {{-- Hoàn cọc --}}
-                                                      <form action="" method="POST"
+                                                      {{-- <form action="" method="POST"
                                                       style="display:inline-block;">
                                                       <div style="display: flex; gap: 10px; align-items: center;">
                                                           <a href="{{ route('refunds.create', ['reservation_id' => $reservation->id]) }}"
@@ -198,7 +198,7 @@
                                                               <i class="bi bi-cash-coin"></i>
                                                           </a>
                                                       </div>
-                                                  </form>
+                                                  </form> --}}
                                                     <form action="{{ route('admin.reservation.destroy', $reservation->id) }}" method="POST" style="display:inline-block;">
                                                         @csrf
                                                         @method('DELETE')

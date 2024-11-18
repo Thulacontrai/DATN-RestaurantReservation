@@ -678,6 +678,28 @@ class ReservationController extends Controller
         }
     }
 
+    public function cancelReservationPopUp(Request $request){
+        try{
+            $id = $request->id;
+        $reservation = Reservation::findOrFail($id);
+        $reservation->status = 'Cancelled';
+            $reservation->save();
+            return response()->json([
+                'success' => true,
+                'message' => 'Đặt bàn đã được hủy thành công.'
+            ]);
+        }
+        catch (\Exception $e) {
+            Log::error('Error cancelling reservation', [
+                'reservation_id' => $id,
+                'error' => $e->getMessage()
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra khi hủy đặt bàn: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 
     public function getBanks()
     {
