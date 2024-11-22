@@ -317,8 +317,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::resource('reservation', ReservationController::class);
     Route::post('reservation/cancel/{id}', [ReservationController::class, 'cancel'])->name('reservation.cancel');
-
+    Route::post('/reservations', [ReservationController::class, 'store']);
+    Route::get('/admin/reservations', [ReservationController::class, 'adminIndex'])->name('reservations.admin');
+    Route::put('/api/reservations/{id}', [ReservationController::class, 'updateReservation']);
     Route::resource('reservationHistory', ReservationHistoryController::class);
+    Route::put('/reservations/calendar/{id}', [ReservationController::class, 'updateCalendar']);
+    Route::post('/reservations/cancel/{id}', [ReservationController::class, 'processReservationCancellation']);
+
 
 
 
