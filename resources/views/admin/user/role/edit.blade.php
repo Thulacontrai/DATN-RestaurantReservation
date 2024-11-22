@@ -143,6 +143,24 @@
                                     @endforeach
                                 </div>
                             </div>
+                            <div class="permission-group">
+                                <div class="permission-group-title">Pos</div>
+                                <div class="permissions">
+                                    @foreach ($permissions as $permission)
+                                        @if (Str::startsWith($permission->name, 'access'))
+                                            <div class="custom-checkbox">
+                                                <input 
+                                                    type="checkbox"
+                                                    name="permission[]"
+                                                    value="{{ $permission->name }}"
+                                                    id="permission-{{$permission->id}}"
+                                                    {{ $hasPermissions->contains($permission->name) ? 'checked' : '' }}>
+                                                <label for="permission-{{$permission->id}}">{{ $permission->name }}</label>
+                                            </div>
+                                        @endif
+                                    @endforeach
+                                </div>
+                            </div>
 
                             <button type="submit" class="btn btn-sm btn-primary">Cập Nhật</button>
                             <a href="{{ route('admin.role.index') }}" class="btn btn-sm btn-secondary">Hủy</a>

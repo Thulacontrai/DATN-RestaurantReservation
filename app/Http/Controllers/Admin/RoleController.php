@@ -19,7 +19,7 @@ class RoleController extends Controller
         // Gán middleware cho các phương thức
         $this->middleware('permission:Xem vai trò', ['only' => ['index']]);
         $this->middleware('permission:Tạo mới vai trò', ['only' => ['create']]);
-        $this->middleware('permission:sửa vai trò', ['only' => ['edit']]);
+        $this->middleware('permission:Sửa vai trò', ['only' => ['edit']]);
         $this->middleware('permission:Xóa vai trò', ['only' => ['destroy']]);
        
     }
