@@ -49,7 +49,10 @@ class KitchenController extends Controller
         DB::transaction(function () use ($id, $request) {
             $item = Kitchen::find($id);
             $item->status = 'hoàn thành';
-            $orderItem = $item->order->orderItems()->where('item_id', $item->item_id)->first();
+            $orderItem = $item->order->orderItems()
+                ->where('item_id', $item->item_id)
+                ->where('status', '!=', 'hủy')
+                ->first();
             if ($orderItem) {
                 $orderItem->completed += $item->quantity;
                 if ($orderItem->completed == $orderItem->quantity) {
@@ -63,7 +66,11 @@ class KitchenController extends Controller
             $orderItems = Order::with(['orderItems', 'orderItems.dish'])->findOrFail($item->order->id);
             $itemName = $item->dish->name;
             $tableId = Table::with('orders')->findOrFail($request->tableId);
-            $orderId = Table::findOrFail($request->tableId)->orders['0']->id;
+            $orderId = Table::findOrFail($request->tableId)
+                ->orders
+                ->where('status', 'pending')
+                ->firstOrFail()
+                ->id;
             $orderItem = OrderItem::where('order_id', $orderId)
                 ->where(function ($query) {
                     $query->where('status', 'chờ xử lý')

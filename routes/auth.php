@@ -9,7 +9,47 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\Client\CustomerAuthController;
+use App\Http\Controllers\Client\LoginController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+
+// Route::middleware(['prevent.back.history'])->group(function () {
+//     Route::get('login-client', [AuthenticatedSessionController::class, 'create'])
+//         ->name('login.form');
+// });
+Route::middleware('prevent.back.history')->group(function () {
+    Route::get('/login-client', [CustomerAuthController::class, 'showLoginForm'])->name('login.form');
+    Route::post('/verify-code', [CustomerAuthController::class, 'verifyCode'])->name('verify.code');
+});
+
+Route::get('/admin', function() {
+    // Kiểm tra xem người dùng đã đăng nhập chưa
+    if (!Auth::check()) {
+        return redirect()->route('login/admin');
+    }
+
+    // Kiểm tra xem người dùng có bất kỳ quyền nào không
+    // Nếu không có quyền, quay về trang chủ
+    if (!Auth::user()->hasAnyPermission()) {
+        return redirect('/');
+    }
+
+    // Nếu có quyền thì vào dashboard admin
+    return view('admin.dashboard');
+});
+Route::get('/pos', function() {
+    if (!Auth::check()) {
+        return redirect()->route('login/admin');
+    }
+
+    if (!Auth::user()->can('access pos')) {
+        return redirect('/');
+    }
+
+    return app(\App\Http\Controllers\Pos\PosController::class)->index();
+})->name('pos.index');
+
 
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])

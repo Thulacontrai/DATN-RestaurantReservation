@@ -6,8 +6,18 @@
             <i class="bi bi-house"></i>
             <a href="{{ url('admin') }}">Home</a>
         </li>
-        {{-- <li class="breadcrumb-item breadcrumb-active" aria-current="page">Sales</li> --}}
+        <div class="header-actions-container m-4">
+            @can('access pos')
+            <div class="header-pos-action">
+                <a href="{{ route('pos.index') }}" class="btn btn-primary" style="margin-right: 10px;">
+                    <i class="bi bi-cash-coin"></i> Chuyển đến POS
+                </a>
+            </div>
+            @endcan
     </ol>
+
+   
+
 
     <div class="header-actions-container">
         <div class="search-container">

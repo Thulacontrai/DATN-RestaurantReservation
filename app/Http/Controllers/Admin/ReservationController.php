@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Events\MessageSent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreReservationRquest;
 use App\Models\Coupon;
@@ -10,7 +11,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Reservation;
 use App\Models\Table;
-use App\Models\OrderTable;
+use App\Models\OrdersTable;
 use App\Models\User;
 use App\Traits\TraitCRUD;
 use Carbon\Carbon;
@@ -19,9 +20,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use GuzzleHttp\Client;
-
-
-
+use App\Models\Feedback;
+use Illuminate\Auth\Events\Validated;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Whoops\Exception\Formatter;
@@ -683,6 +683,10 @@ class ReservationController extends Controller
     }
     public function createReservationWithMomo(Request $request)
     {
+        $a = Reservation::where('id', $request->orderId)->first();
+        if ($a) {
+            return redirect()->route('booking.client')->with('err', 'Có vẻ như bạn đã gửi yêu cầu đặt bàn hai lần liên tiếp. Đơn đặt bàn này đã tồn tại!');
+        }
         if ($request->query('extraData')) {
             if ($request->query('message') == 'Successful.') {
                 $reservation = $request->query('extraData');
@@ -766,7 +770,6 @@ class ReservationController extends Controller
     public function checkout($orderId, Request $request)
     {
         DB::transaction(function () use ($request, $orderId) {
-            $itemsCount = DB::table('order_items')->where('order_id', $orderId)->count();
             $order = Order::find($orderId);
             $table = Table::find($order->table_id);
             $itemNames = $request->item_name;
@@ -789,7 +792,8 @@ class ReservationController extends Controller
                     ->update(['status' => 'Available']);
                 OrderTable::where('reservation_id', $order->reservation_id)
                     ->where('table_id', $order->table_id)
-                    ->update(['status' => 'available']);;
+                    ->update(['status' => 'available']);
+                ;
             }
         });
         return redirect(route('pos.index'));
@@ -995,19 +999,18 @@ class ReservationController extends Controller
 
     public function print($orderId, Request $request)
     {
-        $final = 0;
         $data = $request->end_time;
         $order = Order::find($orderId);
-        $table = Table::find($order->table_id);
-        $reservation_table = OrderTable::where('reservation_id', $order->reservation_id)
-            ->where('table_id', $order->table_id)
+        $table = $order->tables['0'];
+        $reservation_table = OrdersTable::where('order_id', $orderId)
+            ->where('table_id', $table->id)
             ->first();
         $items = OrderItem::where('order_id', $orderId)->get();
         $item = $items->all();
         $dishIds = $items->pluck('item_id')->toArray();
         $dishes = Dishes::whereIn('id', $dishIds)->get();
         $staff = User::find($order->staff_id);
-        return view('pos.printf', compact('dishes', 'final', 'data', 'order', 'table', 'staff', 'reservation_table', 'item'))->render();
+        return view('pos.printf', compact('dishes','final', 'data', 'order', 'table', 'staff', 'reservation_table', 'item'))->render();
     }
 
     // Hàm chuẩn hóa số điện thoại
@@ -1051,4 +1054,5 @@ class ReservationController extends Controller
             return response()->json(['success' => false, 'message' => 'Mã OTP không đúng. Vui lòng thử lại.']);
         }
     }
+
 }

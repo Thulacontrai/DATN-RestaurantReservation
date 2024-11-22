@@ -24,13 +24,23 @@ class PermissionController extends Controller
     }
 
 
-    public function index()
+    public function index(Request $request)
     {
-        $permissions = Permission::orderBy('created_at', 'DESC')->paginate(10);
+        $permissions = Permission::query();
+    
+        // Tìm kiếm theo tên quyền hạn
+        if ($search = $request->get('search')) {
+            $permissions->where('name', 'like', '%' . $search . '%');
+        }
+    
+        // Phân trang kết quả
+        $permissions = $permissions->orderBy('created_at', 'DESC')->paginate(10);
+    
         return view('admin.user.permissions.index', [
             'permissions' => $permissions
         ]);
     }
+    
     public function create()
     {
         return view('admin.user.permissions.create');

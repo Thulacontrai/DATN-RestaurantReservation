@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class InventoryItem extends Model
 {
     use HasFactory;
+    public $timestamps = false;
+
     protected $fillable = ['ingredient_id', 'inventory_transaction_id', 'quantity', 'unit_price'];
 
     public function ingredient()

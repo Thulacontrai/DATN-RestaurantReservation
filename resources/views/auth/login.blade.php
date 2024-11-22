@@ -22,25 +22,39 @@
         <div class="fxt-content">
             <div class="fxt-form">
                 <h2>Login</h2>
+
+                <!-- Hiển thị lỗi nếu có -->
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 <!-- Form đăng nhập -->
                 <form method="POST" action="{{ route('login/admin') }}">
                     @csrf
                     <div class="form-group">
                         <input id="email" type="email" class="form-control" name="email"
-                            placeholder="Email Address" required autofocus>
+                            placeholder="Email Address" value="{{ old('email') }}" required>
                     </div>
+
                     <div class="form-group">
                         <input id="password" type="password" class="form-control" name="password"
                             placeholder="Password" required>
                     </div>
+
                     <div class="form-group">
                         <button type="submit" class="fxt-btn-fill">Log in</button>
-                        <a href="{{ route('password.request') }}" class="switcher-text">Forgot Password</a>
                     </div>
                 </form>
             </div>
         </div>
     </section>
+
     <!-- Các file JS -->
     <script src="{{ asset('adminn/assets/js/js_login/jquery.min.js') }}"></script>
     <script src="{{ asset('adminn/assets/js/js_login/bootstrap.min.js') }}"></script>
