@@ -27,6 +27,12 @@ use Illuminate\Support\Facades\Log;
 
 class PosController extends Controller
 {
+
+    public function __construct()
+{
+    $this->middleware(['auth', 'permission:access pos']);
+}
+
     public function checkTable(Request $request)
     {
         $reservation = Reservation::findOrFail($request->reservation_id);
@@ -36,6 +42,8 @@ class PosController extends Controller
             'hasTable' => $hasTable
         ]);
     }
+
+    
 
     public function convertToOrder(Request $request)
     {

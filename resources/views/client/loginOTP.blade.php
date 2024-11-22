@@ -11,59 +11,56 @@
 
     <style>
         body {
-            font-family: 'Roboto', sans-serif;
+            font-family: 'Merriweather', serif;
             margin: 0;
             padding: 0;
-            background-image: url('{{ asset('images/background.jpg') }}');
+            background-image: url('/client/03_images/background/bg-side-11.jpg');
             background-size: cover;
             background-position: center;
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
+            color: #fff;
         }
 
         .login-container {
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 30px 40px;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 40px 60px;
             border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
             text-align: center;
             width: 400px;
         }
 
         .login-container img {
-            width: 80px;
+            width: 100px;
             margin-bottom: 20px;
         }
 
         h1 {
-            font-size: 26px;
-
-            margin-bottom: 10px; /* Giảm khoảng cách dưới tiêu đề */
-            font-weight: 600;
-            color: #333;
+            font-size: 28px;
+            margin-bottom: 20px;
+            font-weight: 700;
+            color: #FFD700;
+            text-transform: uppercase;
         }
 
         #timeout-message {
-            color: red;
-            margin-top: 15px;
-
-            display: none;
-            /* Ẩn thông báo ban đầu */
+            color: #FF6347;
+            margin-top: 20px;
             font-weight: bold;
-            /* Làm cho thông báo nổi bật hơn */
-
+            display: none;
         }
 
         input[type="text"],
         .otp-input {
             width: 100%;
-            padding: 12px;
-            margin: 12px 0;
-            border-radius: 6px;
+            padding: 14px;
+            margin: 15px 0;
+            border-radius: 8px;
             border: 1px solid #ccc;
-            font-size: 16px;
+            font-size: 18px;
             box-sizing: border-box;
         }
 
@@ -81,47 +78,47 @@
             font-size: 24px;
             border-radius: 8px;
             border: 1px solid #ccc;
+            background-color: #333;
+            color: #fff;
         }
 
         button {
             width: 100%;
-            padding: 12px;
-            background-color: #4CAF50;
+            padding: 14px;
+            background-color: #8B4513;
             color: white;
             border: none;
             cursor: pointer;
-            border-radius: 6px;
-            font-size: 16px;
-            margin-top: 15px;
-            transition: background-color 0.3s;
+            border-radius: 8px;
+            font-size: 18px;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
         }
 
         button:hover {
-            background-color: #45a049;
+            background-color: #A0522D;
+        }
+
+        #error,
+        #sentMessage {
+            margin-top: 15px;
+            font-size: 14px;
         }
 
         #error {
-            color: red;
-            margin-top: 15px;
-
-            display: none; /* Ẩn thông báo lỗi ban đầu */
-
+            color: #FF6347;
+            display: none;
         }
 
         #sentMessage {
-            color: green;
-            margin-top: 15px;
-
-            display: none; /* Ẩn thông báo đã gửi OTP ban đầu */
-
+            color: #32CD32;
+            display: none;
         }
 
         #countdown {
             font-size: 18px;
-            color: #333;
-
-            margin-top: 15px; /* Tạo khoảng cách với các ô nhập OTP */
-
+            color: #FFD700;
+            margin-top: 20px;
         }
     </style>
 </head>
