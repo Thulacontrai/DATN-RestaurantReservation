@@ -93,7 +93,7 @@
                         </div>
                     </div>
                     <div class="tab-pane fade" id="by-room" role="tabpanel" aria-labelledby="by-room-tab">
-                        <div class="bg-white m-2 p-2 rounded flex-grow-1 d-flex flex-column" id="DangCheBien">
+                        <div class="bg-white m-2 p-2 rounded flex-grow-1 d-flex flex-column">
                             @foreach ($items as $item)
                                 <div class="order-card row" data-item-id="{{ $item->id }}"
                                     data-table-id="{{ $item->order->tables['0']->id }}">
@@ -215,103 +215,81 @@
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('DangCheBien').addEventListener('click', function(event) {
-                const itemId = event.target.closest('.order-card').dataset.itemId;
+            document.addEventListener('click', function(event) {
+                const orderCard = event.target.closest('.order-card');
+                if (!orderCard) return;
+                const itemId = orderCard.dataset.itemId;
+                const tableId = orderCard.dataset.tableId;
                 if (event.target.classList.contains('cook-all')) {
-                    fetch(`/kitchen/${itemId}/cook-all`, {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                    .getAttribute('content'),
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({})
-                        })
-                        .then(response => {
-                            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                            return response.json();
-                        })
-                        .then(data => {
-                            console.log(data);
-                        })
-                        .catch(error => console.error('Error:', error));
-
+                    handleCookAll(itemId); // Gọi hàm xử lý cook-all
                 } else if (event.target.classList.contains('delete')) {
-                    fetch(`/kitchen/${itemId}/delete`, {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                    .getAttribute('content'),
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({})
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.status === 'success') {
-                                console.log('Trạng thái đã được cập nhật');
-                            } else {
-                                alert('Có lỗi xảy ra: ' + data.message);
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Lỗi:', error);
-                            alert('Có lỗi xảy ra khi gửi yêu cầu');
-                        });
-
+                    handleDelete(itemId); // Gọi hàm xử lý delete
+                } else if (event.target.classList.contains('done-all')) {
+                    handleDoneAll(itemId, tableId); // Gọi hàm xử lý done-all
                 }
             });
-            document.getElementById('ChoCungUng').addEventListener('click', function(event) {
-                const itemId = event.target.closest('.order-card').dataset.itemId;
-                const tableId = event.target.closest('.order-card').dataset.tableId;
-                if (event.target.classList.contains('done-all')) {
-                    fetch(`/kitchen/${itemId}/done-all`, {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                    .getAttribute('content'),
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                tableId: tableId
-                            })
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.status === 'success') {
-                                console.log('Trạng thái đã được cập nhật');
-                            } else {
-                                alert('Có lỗi xảy ra: ' + data.message);
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Lỗi:', error);
-                            alert('Có lỗi xảy ra khi gửi yêu cầu');
-                        });
-                } else if (event.target.classList.contains('delete')) {
-                    fetch(`/kitchen/${itemId}/delete`, {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                    .getAttribute('content'),
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({})
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.status === 'success') {
-                                console.log('Trạng thái đã được cập nhật');
-                            } else {
-                                alert('Có lỗi xảy ra: ' + data.message);
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Lỗi:', error);
-                            alert('Có lỗi xảy ra khi gửi yêu cầu');
-                        });
-                }
-            });
+
+            // Hàm xử lý cook-all
+            function handleCookAll(itemId) {
+                fetch(`/kitchen/${itemId}/cook-all`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                'content'),
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({}),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            console.log('Món đã được chế biến!');
+                        }
+                    })
+                    .catch(error => console.error('Lỗi:', error));
+            }
+
+            // Hàm xử lý delete
+            function handleDelete(itemId) {
+                fetch(`/kitchen/${itemId}/delete`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                'content'),
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({}),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            console.log('Mục đã được xóa!');
+                        }
+                    })
+                    .catch(error => console.error('Lỗi:', error));
+            }
+
+            // Hàm xử lý done-all
+            function handleDoneAll(itemId, tableId) {
+                fetch(`/kitchen/${itemId}/done-all`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                'content'),
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            tableId: tableId
+                        }),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            console.log('Món đã được cung ứng!');
+                        }
+                    })
+                    .catch(error => console.error('Lỗi:', error));
+            }
         });
     </script>
 
