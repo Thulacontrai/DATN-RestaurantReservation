@@ -297,7 +297,9 @@ class PosController extends Controller
         $order_table = OrdersTable::where('order_id', $order->id)
             ->where('table_id', $tableId)
             ->first();
-        $order_items = Order::find($order->id)->orderItems;
+        $order_items = Order::find($order->id)
+            ->orderItems
+            ->where('status', '!=', 'hủy');
         $final = 0;
         return view(
             'pos.payment',
