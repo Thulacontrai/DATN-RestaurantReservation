@@ -110,8 +110,41 @@
                                            
                                         @endif
                                     </div>
+                                    <strong
+                                        class="{{ $reservation->status === 'Confirmed' ? 'status-confirmed' : ($reservation->status === 'Checked-in' ? 'status-checked-in' : ($reservation->status === 'Cancelled' ? 'status-cancelled' : 'status-pending')) }}">
+                                        {{ $reservation->status === 'Confirmed' ? 'Đã xác nhận' : ($reservation->status === 'Checked-in' ? 'Đã nhận bàn' : ($reservation->status === 'Cancelled' ? 'Đã hủy' : 'Chờ xử lý')) }}
+                                    </strong>
                                 </div>
-                            @endforeach
+                        
+                                <!-- Nút đánh giá -->
+                                <div class="actions">
+                                    @if ($reservation->status !== 'Cancelled')
+                                        <button class="text-success review-btn"
+                                            style="background: transparent; border: none;"
+                                            onclick="toggleReviewInput({{ $reservation->id }}, {{ $reservation->customer_id }})">
+                                            Đánh giá
+                                        </button>
+                                    @endif
+                                </div>
+                        
+                                <!-- Khu vực nhập đánh giá -->
+                                <div id="review-input-{{ $reservation->id }}" class="review-input mt-2" style="display: none;">
+                                    <textarea id="review-text-{{ $reservation->id }}" class="form-control" placeholder="Nhập đánh giá của bạn..." rows="3"></textarea>
+                                    <button class="btn-primary mt-2" onclick="submitReview({{ $reservation->id }}, {{ $reservation->customer_id }})">Gửi đánh giá</button>
+                                </div>
+                        
+                                <!-- Khu vực hiển thị đánh giá -->
+                                <div id="review-container-{{ $reservation->id }}" class="mt-2">
+                                    @if ($reservation->review)
+                                        <p class="text-success">Đánh giá của bạn: {{ $reservation->review }}</p>
+                                    @endif
+                                </div>
+                            </div>
+                        @endforeach
+                        
+                        
+                        
+                        
 
                             <div class="justify-content-center mt-3">
                                 {{ $bookingData->links() }}

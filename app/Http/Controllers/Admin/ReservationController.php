@@ -19,9 +19,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use GuzzleHttp\Client;
-
-
-
+use App\Models\Feedback;
+use Illuminate\Auth\Events\Validated;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Whoops\Exception\Formatter;
@@ -447,8 +446,6 @@ class ReservationController extends Controller
             } else {
                 return redirect()->back()->with('err', 'Thanh toán không thành công!');
             }
-
-
         } else {
             $reservation = $request->all();
             DB::transaction(function () use ($request) {
@@ -719,7 +716,9 @@ class ReservationController extends Controller
         $reservation_table = OrdersTable::where('order_id', $orderId)
             ->where('table_id', $table->id)
             ->first();
+
         return view('pos.receipt', compact('data', 'order', 'table', 'reservation_table'))->render();
+
     }
 
     // Hàm chuẩn hóa số điện thoại
@@ -764,4 +763,33 @@ class ReservationController extends Controller
         }
     }
 
+
+    // review
+    public function submitFeedback(Request $request)
+{
+    // $validated = $request->validate([
+    //     'reservation_id' => 'required|exists:reservations,id',
+    //     'customer_id' => 'required|exists:customers,id',
+    //     'content' => 'required|string|max:500'
+    // ]);
+    // dd($validated);
+ 
+    Feedback::create([
+        'reservation_id' => $request->reservation_id,
+        'customer_id' => $request->customer_id,
+        'content' => $request->content
+    ]);
+    
+
+    return response()->json(['success' => true]);
+}
+
+public function showFeedback($reservationId)
+    {
+        // Lấy danh sách đánh giá theo reservation_id
+        $feedbacks = Feedback::where('reservation_id', $reservationId)->get();
+
+        // Trả về view kèm danh sách đánh giá
+        return view('reservation.feedback', compact('feedbacks'));
+    }
 }
