@@ -56,46 +56,54 @@
                             <h3>Đặt chỗ sắp tới</h3>
                             <!-- Reservation Details -->
                             @foreach ($bookingData as $reservation)
-                                <div class="reservation-card mb-3"
-                                    style="background-color: #2b2b2b; border-radius: 5px; color: #d3d3d3;">
-                                    <div>
-                                        <h3 style="color:white">Họ tên: {{ $reservation->user_name }} -
-                                            {{ $reservation->user_phone }}</h3>
-                                        <div class="d-flex">
-                                            <div>
-                                                <p style="color:white;">Ngày: {{ $reservation->reservation_date }}</p>
-                                                <p style="display: inline; color:white;">Giờ:
-                                                    {{ $reservation->reservation_time }}</p>
-                                            </div>
-                                            <div>
-                                                <p style="color:white; margin-left: 10px;"><i class="bi bi-people"></i>
-                                                    {{ $reservation->guest_count }} người</p>
-                                                <p style="color:white; margin-right: 10px;">
-                                                    Cọc:
-                                                    {{ number_format($reservation->deposit_amount ?? 0, 0, ',', '.') . ' VNĐ' }}
-                                                </p>
-                                            </div>
+                            <div class="reservation-card mb-3" style="background-color: #2b2b2b; border-radius: 5px; color: #d3d3d3;">
+                                <div>
+                                    <h3 style="color:white">Họ tên: {{ $reservation->user_name }} - {{ $reservation->user_phone }}</h3>
+                                    <div class="d-flex">
+                                        <div>
+                                            <p style="color:white;">Ngày: {{ $reservation->reservation_date }}</p>
+                                            <p style="display: inline; color:white;">Giờ: {{ $reservation->reservation_time }}</p>
                                         </div>
-                                        <strong
-                                            class="{{ $reservation->status === 'Confirmed' ? 'status-confirmed' : ($reservation->status === 'Checked-in' ? 'status-checked-in' : ($reservation->status === 'Cancelled' ? 'status-cancelled' : 'status-pending')) }}">
-                                            {{ $reservation->status === 'Confirmed' ? 'Đã xác nhận' : ($reservation->status === 'Checked-in' ? 'Đã nhận bàn' : ($reservation->status === 'Cancelled' ? 'Đã hủy' : 'Chờ xử lý')) }}
-                                        </strong>
+                                        <div>
+                                            <p style="color:white; margin-left: 10px;"><i class="bi bi-people"></i> {{ $reservation->guest_count }} người</p>
+                                            <p style="color:white; margin-right: 10px;">Cọc: {{ number_format($reservation->deposit_amount ?? 0, 0, ',', '.') . ' VNĐ' }}</p>
+                                        </div>
                                     </div>
-
-                                    <div class="actions">
-                                        @if ($reservation->status !== 'Cancelled')
-                                            <button class="text-danger cancel-btn-new"
-                                                style="background: transparent; border: none;" data-bs-toggle="modal"
-                                                data-bs-target="#cancelModal" data-reservation-id="{{ $reservation->id }}"
-                                                data-deposit-amount="{{ $reservation->deposit_amount }}"
-                                                data-reservation-time="{{ $reservation->reservation_time }}"
-                                                data-reservation-date="{{ \Carbon\Carbon::parse($reservation->reservation_date)->toIso8601String() }}">
-                                                Hủy
-                                            </button>
-                                        @endif
-                                    </div>
+                                    <strong
+                                        class="{{ $reservation->status === 'Confirmed' ? 'status-confirmed' : ($reservation->status === 'Checked-in' ? 'status-checked-in' : ($reservation->status === 'Cancelled' ? 'status-cancelled' : 'status-pending')) }}">
+                                        {{ $reservation->status === 'Confirmed' ? 'Đã xác nhận' : ($reservation->status === 'Checked-in' ? 'Đã nhận bàn' : ($reservation->status === 'Cancelled' ? 'Đã hủy' : 'Chờ xử lý')) }}
+                                    </strong>
                                 </div>
-                            @endforeach
+                        
+                                <!-- Nút đánh giá -->
+                                <div class="actions">
+                                    @if ($reservation->status !== 'Cancelled')
+                                        <button class="text-success review-btn"
+                                            style="background: transparent; border: none;"
+                                            onclick="toggleReviewInput({{ $reservation->id }}, {{ $reservation->customer_id }})">
+                                            Đánh giá
+                                        </button>
+                                    @endif
+                                </div>
+                        
+                                <!-- Khu vực nhập đánh giá -->
+                                <div id="review-input-{{ $reservation->id }}" class="review-input mt-2" style="display: none;">
+                                    <textarea id="review-text-{{ $reservation->id }}" class="form-control" placeholder="Nhập đánh giá của bạn..." rows="3"></textarea>
+                                    <button class="btn-primary mt-2" onclick="submitReview({{ $reservation->id }}, {{ $reservation->customer_id }})">Gửi đánh giá</button>
+                                </div>
+                        
+                                <!-- Khu vực hiển thị đánh giá -->
+                                <div id="review-container-{{ $reservation->id }}" class="mt-2">
+                                    @if ($reservation->review)
+                                        <p class="text-success">Đánh giá của bạn: {{ $reservation->review }}</p>
+                                    @endif
+                                </div>
+                            </div>
+                        @endforeach
+                        
+                        
+                        
+                        
 
                             <div class="justify-content-center mt-3">
                                 {{ $bookingData->links() }}

@@ -18,9 +18,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use GuzzleHttp\Client;
-
-
-
+use App\Models\Feedback;
+use Illuminate\Auth\Events\Validated;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Whoops\Exception\Formatter;
@@ -375,14 +374,14 @@ class ReservationController extends Controller
 
 
     public function storeOtpSession(Request $request)
-{
-    if ($request->otpVerified) {
-        session(['otpVerified' => true]); // Lưu trạng thái OTP đã xác thực
-        return response()->json(['success' => true]);
-    }
+    {
+        if ($request->otpVerified) {
+            session(['otpVerified' => true]); // Lưu trạng thái OTP đã xác thực
+            return response()->json(['success' => true]);
+        }
 
-    return response()->json(['success' => false]);
-}
+        return response()->json(['success' => false]);
+    }
 
 
     // Hàm kiểm tra điều kiện cần OTP
@@ -442,8 +441,6 @@ class ReservationController extends Controller
             } else {
                 return redirect()->back()->with('err', 'Thanh toán không thành công!');
             }
-
-
         } else {
             $reservation = $request->all();
             DB::transaction(function () use ($request) {
@@ -513,8 +510,7 @@ class ReservationController extends Controller
                     ->update(['status' => 'Available']);
                 OrderTable::where('reservation_id', $order->reservation_id)
                     ->where('table_id', $order->table_id)
-                    ->update(['status' => 'available']);
-                ;
+                    ->update(['status' => 'available']);;
             }
         });
         return redirect(route('pos.index'));
@@ -626,7 +622,7 @@ class ReservationController extends Controller
     //     ]);
     // }
 
-   
+
 
     public function cancelReservation(Request $request, $id)
     {
@@ -693,7 +689,7 @@ class ReservationController extends Controller
 
         return 'Lỗi khi lấy danh sách ngân hàng';
     }
-  
+
 
 
     public function print($orderId, Request $request)
@@ -710,7 +706,7 @@ class ReservationController extends Controller
         $dishIds = $items->pluck('item_id')->toArray();
         $dishes = Dishes::whereIn('id', $dishIds)->get();
         $staff = User::find($order->staff_id);
-        return view('pos.printf', compact('dishes','final', 'data', 'order', 'table', 'staff', 'reservation_table', 'item'))->render();
+        return view('pos.printf', compact('dishes', 'final', 'data', 'order', 'table', 'staff', 'reservation_table', 'item'))->render();
     }
 
     // Hàm chuẩn hóa số điện thoại
@@ -755,4 +751,33 @@ class ReservationController extends Controller
         }
     }
 
+
+    // review
+    public function submitFeedback(Request $request)
+{
+    // $validated = $request->validate([
+    //     'reservation_id' => 'required|exists:reservations,id',
+    //     'customer_id' => 'required|exists:customers,id',
+    //     'content' => 'required|string|max:500'
+    // ]);
+    // dd($validated);
+ 
+    Feedback::create([
+        'reservation_id' => $request->reservation_id,
+        'customer_id' => $request->customer_id,
+        'content' => $request->content
+    ]);
+    
+
+    return response()->json(['success' => true]);
+}
+
+public function showFeedback($reservationId)
+    {
+        // Lấy danh sách đánh giá theo reservation_id
+        $feedbacks = Feedback::where('reservation_id', $reservationId)->get();
+
+        // Trả về view kèm danh sách đánh giá
+        return view('reservation.feedback', compact('feedbacks'));
+    }
 }
