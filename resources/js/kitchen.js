@@ -66,8 +66,6 @@ function updateUI(containerId, items, updatedAtKey, buttonClass, buttonTitle, bu
 window.Echo.channel('kitchen')
     .listen('ProcessingDishes', (e) => {
         if (e.noti) {
-            let audio = new Audio('sounds/mixkit-doorbell-tone-2864.wav');
-            audio.play();
             Swal.fire({
                 icon: 'info',
                 title: 'Thông báo',

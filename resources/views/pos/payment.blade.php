@@ -63,9 +63,18 @@
                         </tbody>
                         <tfoot>
                             <tr>
+                                <td colspan="3" class="text-end"><strong>Khách đã cọc:</strong></td>
+                                <td class="text-end text-success">
+                                    <strong>{{ number_format($order->reservation->deposit_amount ?? 0) }}
+                                        VND</strong>
+                                </td>
+                            </tr>
+                            <tr>
                                 <td colspan="3" class="text-end"><strong>Tổng cộng:</strong></td>
-                                <td class="text-end text-success"><strong>{{ number_format($order->total_amount) }}
-                                        VND</strong></td>
+                                <td class="text-end text-success">
+                                    <strong>{{ number_format($order->total_amount - ($order->reservation->deposit_amount ?? 0)) >= 0 ? number_format($order->total_amount - ($order->reservation->deposit_amount ?? 0)) : 0 }}
+                                        VND</strong>
+                                </td>
                             </tr>
                         </tfoot>
                     </table>
@@ -133,11 +142,11 @@
                         html: `
                         <div class="text-muted mb-3">Tổng tiền: <strong id="deposit">${totalAmount.toLocaleString('vi-VN')}</strong> VND</div>
                         <div class="text-muted mb-3">Tiền cọc: <strong id="deposit">${depositAmount.toLocaleString('vi-VN')}</strong> VND</div>
-                        <p>Khách cần trả: <strong id="total-amount">${(totalAmount-depositAmount).toLocaleString('vi-VN')}</strong> VND</p>
+                        <p>Khách cần trả: <strong id="total-amount">${(totalAmount-depositAmount).toLocaleString('vi-VN')>=0?(totalAmount-depositAmount).toLocaleString('vi-VN'):0}</strong> VND</p>
                         <label>Số tiền khách trả: </label>
-                        <input type="text" class="form-control text-dark border border-secondary form-control-lg mb-3" id="cashGiven" placeholder="Nhập số tiền...">
+                        <input type="text" class="form-control text-dark border border-secondary form-control-lg mb-3" id="cashGiven" placeholder="Nhập số tiền..." maxlength="12">
                         <div id="denominationButtons" class="d-flex justify-content-center flex-wrap"></div>
-                        <div id="cashChange" class="text-muted mb-3">Tiền thừa trả khách: <strong id="changeAmount">${(depositAmount-totalAmount).toLocaleString('vi-VN')}</strong>VND</div>`,
+                        <div id="cashChange" class="text-muted mb-3">Tiền thừa trả khách: <strong id="changeAmount">${(depositAmount-totalAmount).toLocaleString('vi-VN')>=0?(depositAmount-totalAmount).toLocaleString('vi-VN'):0}</strong>VND</div>`,
                         showCancelButton: true,
                         confirmButtonText: 'Xác nhận thanh toán',
                         didOpen: () => {
@@ -148,7 +157,8 @@
 
                             // Nút đầu tiên bằng số tiền khách cần trả
                             let nextDenomination = Math.ceil((totalAmount - depositAmount) / 1000) *
-                                1000; // Làm tròn lên số chia hết cho 1,000
+                                1000 >= 0 ? Math.ceil((totalAmount - depositAmount) / 1000) *
+                                1000 : 0; // Làm tròn lên số chia hết cho 1,000
                             const firstButton = document.createElement('button');
                             firstButton.classList.add('btn', 'btn-outline-primary', 'm-1');
                             firstButton.textContent = nextDenomination.toLocaleString('vi-VN') +
@@ -287,19 +297,31 @@
                 }
                 // Logic cho phương thức chuyển khoản ngân hàng
                 $('#bankPaymentBtn').click(function() {
-                    Swal.fire({
-                        title: 'Đang chờ thanh toán',
-                        html: 'Vui lòng quét mã thanh toán...',
-                        imageUrl: 'https://img.vietqr.io/image/MB-0964236835-compact2.png?amount={{ $order->total_amount }}&addInfo=Thanh Toan Don Hang {{ $order->id }}',
-                        imageWidth: 400,
-                        imageHeight: 450,
-                        showConfirmButton: false,
-                        showCloseButton: true,
-                        didOpen: () => {
-                            Swal.showLoading();
-                            setTimeout()
-                        }
-                    });
+                    if ({{ $order->total_amount - ($order->reservation->deposit_amount ?? 0) }} > 0) {
+                        Swal.fire({
+                            title: 'Đang chờ thanh toán',
+                            html: 'Vui lòng quét mã thanh toán...',
+                            imageUrl: 'https://img.vietqr.io/image/MB-0964236835-compact2.png?amount={{ $order->total_amount - ($order->reservation->deposit_amount??0) }}&addInfo=Thanh Toan Don Hang {{ $order->id }}',
+                            imageWidth: 400,
+                            imageHeight: 450,
+                            showConfirmButton: false,
+                            showCloseButton: true,
+                            didOpen: () => {
+                                Swal.showLoading();
+                                setTimeout(() => {}, 3000);
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            title: "Phương thức thanh toán không khả dụng",
+                            text: "Tổng tiền cần lớn hơn 0.",
+                            icon: "warning",
+                            timer: 4000,
+                            timerProgressBar: true,
+                        });
+                    }
+
+
                     var checkInterval = 1000;
                     var delayBeforeStart = 5000;
                     var desiredAmount = totalAmount;

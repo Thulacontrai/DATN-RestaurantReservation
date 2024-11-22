@@ -87,13 +87,9 @@ class KitchenController extends Controller
                 }
             }
             broadcast(new PosTableUpdatedWithNoti($order, $orderItems, $tableId, $notiBtn, "Bàn $tableId->table_number đã được cung ứng món $itemName"))->toOthers();
-            $items = Kitchen::where('status', 'đang chế biến')
-                ->with(['dish', 'order.tables'])
-                ->get();
             $items1 = Kitchen::where('status', 'chờ cung ứng')
                 ->with(['dish', 'order.tables'])
                 ->get();
-            broadcast(new ProcessingDishes($items, null))->toOthers();
             broadcast(new ProvideDishes($items1))->toOthers();
         });
         return response()->json(['status' => 'success']);

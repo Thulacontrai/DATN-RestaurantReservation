@@ -17,14 +17,17 @@ class PosTableUpdated implements ShouldBroadcastNow
     public $orderItems;
     public $tableId;
     public $notiBtn;
+    public $checkoutBtn;
 
 
-    public function __construct($order, $orderItems, $tableId, $notiBtn)
+
+    public function __construct($order, $orderItems, $tableId, $notiBtn, $checkoutBtn)
     {
         $this->order = $order;
         $this->orderItems = $orderItems;
         $this->tableId = $tableId;
         $this->notiBtn = $notiBtn;
+        $this->checkoutBtn = $checkoutBtn;
     }
 
     public function broadcastOn()

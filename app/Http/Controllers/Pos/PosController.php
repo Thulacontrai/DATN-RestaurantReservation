@@ -29,9 +29,9 @@ class PosController extends Controller
 {
 
     public function __construct()
-{
-    $this->middleware(['auth', 'permission:access pos']);
-}
+    {
+        $this->middleware(['auth', 'permission:access pos']);
+    }
 
     public function checkTable(Request $request)
     {
@@ -43,7 +43,7 @@ class PosController extends Controller
         ]);
     }
 
-    
+
 
     public function convertToOrder(Request $request)
     {
@@ -266,8 +266,12 @@ class PosController extends Controller
                         ->orWhere('status', 'đang xử lý');
                 })
                 ->get();
+            $checkoutBtn = false;
+            $countItems = $orderItem->count();
+            if ($countItems > 0) {
+                $checkoutBtn = true;
+            }
             $notiBtn = false;
-
             foreach ($orderItem as $item) {
                 if ($item->quantity > $item->informed) {
                     $notiBtn = true;
@@ -276,7 +280,7 @@ class PosController extends Controller
                     $notiBtn = false;
                 }
             }
-            broadcast(new PosTableUpdated($order, $orderItems, $tableId, $notiBtn))->toOthers();
+            broadcast(new PosTableUpdated($order, $orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
             DB::commit();
             return response()->json([
                 'success' => true,
@@ -546,6 +550,11 @@ class PosController extends Controller
                     ->orWhere('status', 'đang xử lý');
             })
             ->get();
+        $checkoutBtn = false;
+        $countItems = $orderItem->count();
+        if ($countItems > 0) {
+            $checkoutBtn = true;
+        }
         $notiBtn = false;
         foreach ($orderItem as $item) {
             if ($item->quantity > $item->informed) {
@@ -555,7 +564,7 @@ class PosController extends Controller
                 $notiBtn = false;
             }
         }
-        broadcast(new PosTableUpdated($order, $orderItems, $tableId, $notiBtn))->toOthers();
+        broadcast(new PosTableUpdated($order, $orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
         return response()->json([
             'success' => true,
             'order' => $table,
@@ -616,6 +625,11 @@ class PosController extends Controller
                         ->orWhere('status', 'đang xử lý');
                 })
                 ->get();
+            $checkoutBtn = false;
+            $countItems = $orderItem->count();
+            if ($countItems > 0) {
+                $checkoutBtn = true;
+            }
             $notiBtn = false;
 
             foreach ($orderItem as $item) {
@@ -626,7 +640,7 @@ class PosController extends Controller
                     $notiBtn = false;
                 }
             }
-            broadcast(new PosTableUpdated($order, $orderItems, $tableId, $notiBtn))->toOthers();
+            broadcast(new PosTableUpdated($order, $orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
             DB::commit();
             return response()->json([
                 'success' => true,
@@ -685,6 +699,12 @@ class PosController extends Controller
                     ->orWhere('status', 'đang xử lý');
             })
             ->get();
+        $checkoutBtn = false;
+        $countItems = $orderItem->count();
+        if ($countItems > 0) {
+            $checkoutBtn = true;
+        }
+
         $notiBtn = false;
 
         foreach ($orderItem as $item) {
@@ -695,7 +715,7 @@ class PosController extends Controller
                 $notiBtn = false;
             }
         }
-        broadcast(new PosTableUpdated($order, $orderItems, $tableId, $notiBtn))->toOthers();
+        broadcast(new PosTableUpdated($order, $orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
         return response()->json([
             'success' => true,
         ]);
@@ -774,6 +794,12 @@ class PosController extends Controller
                         ->orWhere('status', 'đang xử lý');
                 })
                 ->get();
+            $checkoutBtn = false;
+            $countItems = $orderItem->count();
+            if ($countItems > 0) {
+                $checkoutBtn = true;
+            }
+
             $notiBtn = false;
 
             foreach ($orderItem as $item) {
@@ -784,7 +810,7 @@ class PosController extends Controller
                     $notiBtn = false;
                 }
             }
-            broadcast(new PosTableUpdated($order, $orderItems, $tableId, $notiBtn))->toOthers();
+            broadcast(new PosTableUpdated($order, $orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
             $items = Kitchen::where('status', 'đang chế biến')
                 ->with(['dish', 'order.tables'])
                 ->get();
@@ -852,8 +878,12 @@ class PosController extends Controller
                         ->orWhere('status', 'đang xử lý');
                 })
                 ->get();
+            $checkoutBtn = false;
+            $countItems = $orderItem->count();
+            if ($countItems > 0) {
+                $checkoutBtn = true;
+            }
             $notiBtn = false;
-
             foreach ($orderItem as $item) {
                 if ($item->quantity > $item->informed) {
                     $notiBtn = true;
@@ -862,7 +892,7 @@ class PosController extends Controller
                     $notiBtn = false;
                 }
             }
-            broadcast(new PosTableUpdated($order, $orderItems, $tableId, $notiBtn))->toOthers();
+            broadcast(new PosTableUpdated($order, $orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
             $items = Kitchen::where('status', 'đang chế biến')
                 ->with(['dish', 'order.tables'])
                 ->get();
@@ -960,8 +990,12 @@ class PosController extends Controller
                         ->orWhere('status', 'đang xử lý');
                 })
                 ->get();
+            $checkoutBtn = false;
+            $countItems = $orderItem->count();
+            if ($countItems > 0) {
+                $checkoutBtn = true;
+            }
             $notiBtn = false;
-
             foreach ($orderItem as $item) {
                 if ($item->quantity > $item->informed) {
                     $notiBtn = true;
@@ -970,7 +1004,7 @@ class PosController extends Controller
                     $notiBtn = false;
                 }
             }
-            broadcast(new PosTableUpdated($order, $orderItems, $tableId, $notiBtn))->toOthers();
+            broadcast(new PosTableUpdated($order, $orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
             $items = Kitchen::where('status', 'đang chế biến')
                 ->with(['dish', 'order.tables'])
                 ->get();
