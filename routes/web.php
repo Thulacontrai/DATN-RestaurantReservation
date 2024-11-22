@@ -64,6 +64,8 @@ Route::post('/transactions/import', [InventoryTransactionController::class, 'imp
 Route::post('/import-ingredients', [InventoryTransactionController::class, 'importIngredients'])->name('import.ingredients');
 
 
+// review
+Route::post('/submit-feedback', [ReservationController::class, 'submitFeedback']);
 
 
 
