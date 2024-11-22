@@ -13,7 +13,7 @@ use Illuminate\View\View;
 class AuthenticatedSessionController extends Controller
 {
     /**
-     * Display the login view.
+     * Hiển thị trang đăng nhập.
      */
     public function create(): View
     {
@@ -21,19 +21,45 @@ class AuthenticatedSessionController extends Controller
     }
 
     /**
-     * Handle an incoming authentication request.
+     * Xử lý yêu cầu đăng nhập.
      */
     public function store(LoginRequest $request): RedirectResponse
     {
+        // Xác thực người dùng
         $request->authenticate();
-
+    
+        // Tạo lại session cho người dùng
         $request->session()->regenerate();
-
+    
+        // Lấy thông tin người dùng vừa đăng nhập
+        $user = Auth::user();
+    
+        // Kiểm tra quyền và điều hướng
+        if ($user->can('access pos') && !$user->can('access admin')) {
+            // Nếu chỉ có quyền 'access pos', chuyển hướng đến trang POS
+            return redirect()->route('pos.index');
+        }
+    
+        // Nếu không có quyền admin và đang truy cập /admin
+        if (!$user->can('access admin', 'access pos') && request()->is('admin', 'pos')) {
+            return redirect('/');
+        }
+    
+        // Nếu có quyền admin hoặc cả hai quyền, chuyển hướng đến trang admin
         return redirect()->intended(RouteServiceProvider::HOME);
     }
+    public function adminDashboard()
+{
+    // Kiểm tra quyền truy cập admin
+    if (!auth()->user()->can('access admin')) {
+        return redirect('/');
+    }
+
+    return view('admin.dashboard');
+}
 
     /**
-     * Destroy an authenticated session.
+     * Xóa session khi người dùng đăng xuất.
      */
     public function destroy(Request $request): RedirectResponse
     {

@@ -10,16 +10,15 @@ class CreateFeedbacksTable extends Migration
     {
         Schema::create('feedbacks', function (Blueprint $table) {
             $table->id(); // bigint, auto-increment
-            $table->unsignedBigInteger('reservation_id'); // bigint, không cho phép NULL
+            $table->unsignedBigInteger('order_id'); // bigint, không cho phép NULL
             $table->unsignedBigInteger('customer_id'); // bigint, không cho phép NULL
             $table->text('content'); // text, không cho phép NULL
             $table->integer('rating')->default(1); // int, không cho phép NULL, mặc định là 1
             $table->timestamps(); // created_at và updated_at
 
             // Khóa ngoại
-            $table->foreign('reservation_id')->references('id')->on('reservations')->onDelete('cascade');
+            $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
             $table->foreign('customer_id')->references('id')->on('users')->onDelete('cascade');
-
         });
     }
 

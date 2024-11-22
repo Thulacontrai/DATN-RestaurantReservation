@@ -56,18 +56,59 @@
                             <h3>Đặt chỗ sắp tới</h3>
                             <!-- Reservation Details -->
                             @foreach ($bookingData as $reservation)
-                            <div class="reservation-card mb-3" style="background-color: #2b2b2b; border-radius: 5px; color: #d3d3d3;">
-                                <div>
-                                    <h3 style="color:white">Họ tên: {{ $reservation->user_name }} - {{ $reservation->user_phone }}</h3>
-                                    <div class="d-flex">
-                                        <div>
-                                            <p style="color:white;">Ngày: {{ $reservation->reservation_date }}</p>
-                                            <p style="display: inline; color:white;">Giờ: {{ $reservation->reservation_time }}</p>
+                                <div class="reservation-card mb-3"
+                                    style="background-color: #2b2b2b; border-radius: 5px; color: #d3d3d3;">
+                                    <div>
+                                        <h3 style="color:white">Họ tên: {{ $reservation->user_name }} -
+                                            {{ $reservation->user_phone }} {{$reservation->id}}</h3>
+                                        <div class="d-flex">
+                                            <div>
+                                                <p style="color:white;">Ngày: {{ $reservation->reservation_date }}</p>
+                                                <p style="display: inline; color:white;">Giờ:
+                                                    {{ $reservation->reservation_time }}</p>
+                                            </div>
+                                            <div>
+                                                <p style="color:white; margin-left: 10px;"><i class="bi bi-people"></i>
+                                                    {{ $reservation->guest_count }} người</p>
+                                                <p style="color:white; margin-right: 10px;">
+                                                    Cọc:
+                                                    {{ number_format($reservation->deposit_amount ?? 0, 0, ',', '.') . ' VNĐ' }}
+                                                </p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <p style="color:white; margin-left: 10px;"><i class="bi bi-people"></i> {{ $reservation->guest_count }} người</p>
-                                            <p style="color:white; margin-right: 10px;">Cọc: {{ number_format($reservation->deposit_amount ?? 0, 0, ',', '.') . ' VNĐ' }}</p>
-                                        </div>
+                                        <strong
+                                            class="{{ $reservation->status === 'Confirmed' ? 'status-confirmed' : ($reservation->status === 'Checked-in' ? 'status-checked-in' : ($reservation->status === 'Cancelled' ? 'status-cancelled' : 'status-pending')) }}">
+                                            {{ $reservation->status === 'Confirmed' ? 'Đã xác nhận' : ($reservation->status === 'Checked-in' ? 'Đã nhận bàn' : ($reservation->status === 'Cancelled' ? 'Đã hủy' : 'Chờ xử lý')) }}
+                                        </strong>
+                                    </div>
+
+                                    <div class="actions">
+                                        @if ($reservation->status != 'Cancelled')
+                                            @if($reservation->deposit_amount > 0) 
+                                                <button class="text-danger cancel-btn-new"
+                                                data-toggle="modal" data-target="#cancelModal"
+                                                style="background: transparent; border: none;" data-bs-toggle="modal"
+                                                data-bs-target="#cancelModal" data-reservation-id="{{ $reservation->id }}"
+                                                data-deposit-amount="{{ $reservation->deposit_amount }}"
+                                                data-reservation-time="{{ $reservation->reservation_time }}"
+                                                data-reservation-date="{{ \Carbon\Carbon::parse($reservation->reservation_date)->toIso8601String() }}">
+                                                Hủy
+                                                </button>
+                                                 
+                                                @else
+                                                    @if ($reservation->status == 'Cancelled')
+                                                        <strong>
+                                                            Đã hủy
+                                                        </strong>
+                                                    
+                                                    @else
+                                                    <button style="background: transparent; border: none;" class="text-danger cancel-btn-new" id="deleteButton" data-id ="{{$reservation->id}}">Hủy</button>
+                                                     @endif
+                                                
+                                            @endif
+                                            
+                                           
+                                        @endif
                                     </div>
                                     <strong
                                         class="{{ $reservation->status === 'Confirmed' ? 'status-confirmed' : ($reservation->status === 'Checked-in' ? 'status-checked-in' : ($reservation->status === 'Cancelled' ? 'status-cancelled' : 'status-pending')) }}">
@@ -125,9 +166,9 @@
                                         <div class="alert alert-info">
                                             <strong>Chính sách hủy bàn:</strong>
                                             <ul>
-                                                <li>Hủy trước 24 giờ: hoàn 100% số tiền cọc.</li>
-                                                <li>Hủy trước 12 giờ: hoàn 50% số tiền cọc.</li>
-                                                <li>Hủy sát giờ nhận bàn: không được hoàn cọc.</li>
+                                                {{-- <li>Hủy trước giờ nhận bàn 1 giờ: hoàn 100% tiền cọc.</li> --}}
+                                                <li> Hủy trong 1 tiếng trước giờ nhận bàn: hoàn 50% tiền cọc.</li>
+                                                <li>Khách hàng không yêu cầu hủy hoặc không đến: không được hoàn cọc.</li>
                                             </ul>
                                         </div>
                                         <form action="{{ route('refunds.cancel') }}" method="POST">
@@ -279,21 +320,53 @@
                 return 0;
             }
 
+
             const diffMs = reservationDate - vietnamTime;
             const diffHours = diffMs / (1000 * 60 * 60);
 
             let refundAmount = 0;
 
-            if (diffHours >= 24) {
-                refundAmount = depositAmount; // Hoan 100% 
-            } else if (diffHours >= 12) {
-                refundAmount = depositAmount * 0.5; // Hoan 50% 
+            if (diffHours >= 1) {
+                refundAmount = depositAmount; // Hoàn 100% nếu hủy trước 1 giờ
+            } else if (diffHours >= -1) {
+                refundAmount = depositAmount * 0.5; // Hoàn 50% nếu hủy trong vòng 1 giờ sau giờ ăn
             } else {
-                refundAmount = 0;
+                refundAmount = 0; // Không hoàn tiền nếu hủy quá 1 giờ sau giờ ăn
             }
 
             return refundAmount;
+
         }
+
+        $(document).ready(function() {
+            $('#deleteButton').click(function() {
+                if (confirm('Bạn có chắc chắn muốn HỦY đặt bàn không?')) {
+
+                    var id = this.getAttribute('data-id');
+                      // Gọi AJAX hoặc thực hiện hành động xóa
+                    $.ajax({
+                        url: '{{ route('client.cancel.reservationpopup') }}',
+                        type: 'POST',
+                        data: {
+                            id: id, 
+                            _token: '{{ csrf_token() }}' 
+                        },
+                        success: function(response) {
+                            alert('Hủy bàn thành công!');
+                            if(response.success){
+                                location.reload();
+                            }
+                        },
+                        error: function(xhr) {
+                            alert('Có lỗi xảy ra!');
+                        }
+                    });
+                } else {
+                    // Hành động hủy bỏ
+                    alert('Hành động đã bị hủy.');
+                }
+            });
+        })
 
         // modal hủy
         function openCancelModal(reservationId, depositAmount, reservationDateStr, reservationTimeStr) {

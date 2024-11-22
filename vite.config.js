@@ -7,8 +7,8 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/css/kitchen.css',
-                'resources/js/app.js',
-                'resources/js/kitchen.js',
+                'resources/js/posTable.js', 
+                'resources/js/orderItem.js'
             ],
             refresh: true,
         }),

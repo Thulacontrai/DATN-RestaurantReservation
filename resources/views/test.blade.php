@@ -1,4 +1,4 @@
-<form action="{{ route('Ppayment', '1') }}" method="POST">
+<form action="{{ route('Ppayment', '1') }}" method="GET">
     @csrf
     <input type="hidden" name="total_amount" value="3000">
     <input type="hidden" name="order_item[]" value="1">

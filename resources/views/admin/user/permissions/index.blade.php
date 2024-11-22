@@ -11,10 +11,17 @@
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <div class="card-title">Danh Sách Quyền Hạn</div>
+                            <form action="{{ route('admin.permissions.index') }}" method="GET" class="d-flex">
+                                <input type="text" name="search" class="form-control form-control-sm" placeholder="Tìm kiếm quyền hạn..." value="{{ request()->get('search') }}">
+                                <button type="submit" class="btn btn-sm btn-secondary ms-2">
+                                    <i class="bi bi-search"></i> Tìm kiếm
+                                </button>
+                            </form>
                             <a href="{{ route('admin.permissions.create') }}" class="btn btn-sm btn-primary">
                                 <i class="bi bi-plus-circle me-2"></i> Thêm Mới
                             </a>
                         </div>
+                        
                         <div class="card-body">
                             <table class="table v-middle m-0">
                                 <thead>
