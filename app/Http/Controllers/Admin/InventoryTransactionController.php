@@ -18,6 +18,16 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
 class InventoryTransactionController extends Controller
 {
+    public function __construct()
+    {
+        // Gán middleware cho các phương thức
+        $this->middleware('permission:Xem nhập kho', ['only' => ['index']]);
+        $this->middleware('permission:Tạo mới nhập kho', ['only' => ['create']]);
+        $this->middleware('permission:Sửa nhập kho', ['only' => ['edit']]);
+        $this->middleware('permission:Xóa nhập kho', ['only' => ['destroy']]);
+        
+    }
+
     public function index(Request $request)
     {
         $query = InventoryTransaction::query()

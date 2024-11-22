@@ -34,8 +34,7 @@ use App\Http\Controllers\Client\MenuController;
 use App\Http\Controllers\Pos\PosController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\InventoryController;
-
-
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,7 +46,6 @@ use App\Http\Controllers\Admin\InventoryController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
 
 //route tạo phiếu nhập kho
 Route::resource('transactions', InventoryTransactionController::class);
@@ -62,9 +60,7 @@ Route::put('transactions/{id}', [InventoryTransactionController::class, 'update'
 Route::patch('transactions/{id}/status', [InventoryTransactionController::class, 'updateStatus'])->name('transactions.update.status');
 Route::get('admin/transactions/create', [InventoryTransactionController::class, 'createTransaction'])->name('transactions.create');
 Route::delete('transactions/{id}', [InventoryTransactionController::class, 'destroy'])->name('transactions.destroy');
-
 Route::post('/transactions/import', [InventoryTransactionController::class, 'import'])->name('transactions.import');
-
 Route::post('/import-ingredients', [InventoryTransactionController::class, 'importIngredients'])->name('import.ingredients');
 
 
@@ -229,8 +225,6 @@ Route::delete('/order/{order_id}/item/{item_id}', [PosController::class, 'delete
 
 
 Route::post('/reservation/check-table', [PosController::class, 'checkTable'])->name('reservation.checkTable');
-
-
 
 
 

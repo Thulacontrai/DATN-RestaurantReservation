@@ -21,9 +21,9 @@ class SuperAdminSeeder extends Seeder
 
         // Tạo tài khoản supperadmin
         $superAdmin = User::firstOrCreate(
-            ['email' => 'supperadmin@example.com'], // Email supperadmin cố định
+            ['email' => 'supperadmin@gmail.com'], // Email supperadmin cố định
             [
-                'name' => 'Supper Admin 2',
+                'name' => 'Supper Admin',
                 'password' => Hash::make('password'), // Mật khẩu supperadmin mặc định là 'password'
                 'status' => 'active',
             ]

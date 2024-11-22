@@ -15,18 +15,33 @@
     {{ session('success') }}
 </div>
 @endif
+
 <style>
-    .grid {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr); /* 5 cột */
-        gap: 10px; /* Khoảng cách giữa các checkbox */
+    .permission-group {
+        margin-bottom: 30px;
     }
+
+    .permission-group-title {
+        font-weight: bold;
+        font-size: 18px;
+        margin-bottom: 15px;
+        text-decoration: underline;
+    }
+
+    .permissions {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Đặt cột tự động với chiều rộng tối thiểu */
+        gap: 15px; /* Khoảng cách giữa các checkbox */
+    }
+
     .custom-checkbox {
         display: flex;
         align-items: center;
     }
+
     .custom-checkbox input {
         margin-right: 10px;
+        transform: scale(1.2); /* Tăng kích thước checkbox */
     }
 </style>
 
@@ -43,30 +58,90 @@
                             @csrf
                             @method('PUT')
 
-                            <div class="mb-3">
+                            <div class="mb-4">
                                 <label for="name" class="form-label">Tên Vai Trò</label>
                                 <input value="{{ old('name', $role->name) }}" type="text" id="name" name="name" class="form-control" required>
                                 <div class="invalid-feedback">Vui lòng nhập tên vai trò.</div>
-                                <div class="valid-feedback">Looks good!</div>
                                 @error('name')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
 
-                            <div class="grid mb-3">
-                                @if ($permissions->isNotEmpty())
+                            <!-- Hiển thị nhóm quyền -->
+                            <div class="permission-group">
+                                <div class="permission-group-title">Xem</div>
+                                <div class="permissions">
                                     @foreach ($permissions as $permission)
-                                        <div class="custom-control custom-checkbox mt-3">
-                                            <input {{ ($hasPermissions->contains($permission->name)) ? 'checked' : '' }}
-                                                   type="checkbox"
-                                                   name="permission[]"
-                                                   value="{{ $permission->name }}"
-                                                   id="permission-{{$permission->id}}"
-                                                   class="custom-control-input">
-                                            <label class="custom-control-label" for="permission-{{$permission->id}}">{{ $permission->name }}</label>
-                                        </div>
+                                        @if (Str::startsWith($permission->name, 'Xem'))
+                                            <div class="custom-checkbox">
+                                                <input 
+                                                    type="checkbox"
+                                                    name="permission[]"
+                                                    value="{{ $permission->name }}"
+                                                    id="permission-{{$permission->id}}"
+                                                    {{ $hasPermissions->contains($permission->name) ? 'checked' : '' }}>
+                                                <label for="permission-{{$permission->id}}">{{ $permission->name }}</label>
+                                            </div>
+                                        @endif
                                     @endforeach
-                                @endif
+                                </div>
+                            </div>
+
+                            <div class="permission-group">
+                                <div class="permission-group-title">Tạo mới</div>
+                                <div class="permissions">
+                                    @foreach ($permissions as $permission)
+                                        @if (Str::startsWith($permission->name, 'Tạo mới'))
+                                            <div class="custom-checkbox">
+                                                <input 
+                                                    type="checkbox"
+                                                    name="permission[]"
+                                                    value="{{ $permission->name }}"
+                                                    id="permission-{{$permission->id}}"
+                                                    {{ $hasPermissions->contains($permission->name) ? 'checked' : '' }}>
+                                                <label for="permission-{{$permission->id}}">{{ $permission->name }}</label>
+                                            </div>
+                                        @endif
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            <div class="permission-group">
+                                <div class="permission-group-title">Sửa</div>
+                                <div class="permissions">
+                                    @foreach ($permissions as $permission)
+                                        @if (Str::startsWith($permission->name, 'Sửa'))
+                                            <div class="custom-checkbox">
+                                                <input 
+                                                    type="checkbox"
+                                                    name="permission[]"
+                                                    value="{{ $permission->name }}"
+                                                    id="permission-{{$permission->id}}"
+                                                    {{ $hasPermissions->contains($permission->name) ? 'checked' : '' }}>
+                                                <label for="permission-{{$permission->id}}">{{ $permission->name }}</label>
+                                            </div>
+                                        @endif
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            <div class="permission-group">
+                                <div class="permission-group-title">Xóa</div>
+                                <div class="permissions">
+                                    @foreach ($permissions as $permission)
+                                        @if (Str::startsWith($permission->name, 'Xóa'))
+                                            <div class="custom-checkbox">
+                                                <input 
+                                                    type="checkbox"
+                                                    name="permission[]"
+                                                    value="{{ $permission->name }}"
+                                                    id="permission-{{$permission->id}}"
+                                                    {{ $hasPermissions->contains($permission->name) ? 'checked' : '' }}>
+                                                <label for="permission-{{$permission->id}}">{{ $permission->name }}</label>
+                                            </div>
+                                        @endif
+                                    @endforeach
+                                </div>
                             </div>
 
                             <button type="submit" class="btn btn-sm btn-primary">Cập Nhật</button>
@@ -87,29 +162,19 @@
             const form = document.getElementById('editRoleForm');
             const inputs = form.querySelectorAll('input, select, textarea');
 
-            // Kiểm tra tính hợp lệ khi có sự kiện 'input' hoặc 'change'
             inputs.forEach(input => {
-                input.addEventListener('input', function() {
-                    validateInput(input);
-                });
-                input.addEventListener('change', function() {
-                    validateInput(input);
-                });
+                input.addEventListener('input', () => validateInput(input));
+                input.addEventListener('change', () => validateInput(input));
             });
 
-            // Kiểm tra tính hợp lệ của toàn bộ form khi submit
             form.addEventListener('submit', function(event) {
-                inputs.forEach(input => {
-                    validateInput(input);
-                });
-
+                inputs.forEach(input => validateInput(input));
                 if (!form.checkValidity()) {
-                    event.preventDefault(); // Ngăn chặn việc gửi form nếu có lỗi
+                    event.preventDefault();
                     event.stopPropagation();
                 }
             });
 
-            // Hàm kiểm tra tính hợp lệ của từng trường
             function validateInput(input) {
                 if (input.checkValidity()) {
                     input.classList.remove('is-invalid');

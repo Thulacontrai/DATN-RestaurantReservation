@@ -15,6 +15,16 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
 class SupplierController extends Controller
 {
+
+    public function __construct()
+    {
+        // Gán middleware cho các phương thức
+        $this->middleware('permission:Xem nhà cung cấp', ['only' => ['index']]);
+        $this->middleware('permission:Tạo mới nhà cung cấp', ['only' => ['create']]);
+        $this->middleware('permission:Sửa nhà cung cấp', ['only' => ['edit']]);
+        $this->middleware('permission:Xóa nhà cung cấp', ['only' => ['destroy']]);
+        
+    }
     use TraitCRUD;
 
     protected $model = Supplier::class;
