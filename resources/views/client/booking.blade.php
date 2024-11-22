@@ -39,7 +39,7 @@
                 @foreach ($days as $index => $day)
                     <div class="day-section time-slots" id="day-{{ $index }}"
                         style="{{ $index === 0 ? '' : 'display: none;' }}">
-                        <div class="row mt-2 d-flex justify-content-center align-items-center row-cols-1 row-cols-md-3">
+                        <div class="row mt-2 d-flex justify-content-center align-items-center row-cols-3 row-cols-md-3">
                             @foreach ($timeSlots as $timeSlot)
                                 @php
                                     $timeSlotWithDate = Carbon\Carbon::today('Asia/Ho_Chi_Minh')->setTimeFromTimeString($timeSlot);
@@ -47,13 +47,13 @@
 
                                 @if ($day->isToday() && $now->greaterThan($timeSlotWithDate))
                                     <div class="text-muted col p-2 rounded border d-flex justify-content-center mb-2">
-                                        <p class="py-2 m-0" style="font-size:30px">{{ $timeSlot }}</p>
+                                        <p class="py-2 m-0 timeText" >{{ $timeSlot }}</p>
                                     </div>
                                 @else
                                     <div class="col p-2 rounded border d-flex justify-content-center time-slot mb-2"
                                         style="cursor: pointer;" data-time="{{ $timeSlot }}"
                                         data-date="{{ $day->format('Y-m-d') }}">
-                                        <p class="text-warning py-2 m-0" style="font-size:30px;">{{ $timeSlot }}</p>
+                                        <p class="text-warning py-2 m-0 timeText" >{{ $timeSlot }}</p>
                                     </div>
                                 @endif
                             @endforeach
@@ -62,10 +62,40 @@
                 @endforeach
 
                 <div class="text-center my-4">
-                    <button id="confirm-button" class="btn btn-primary">Xác nhận</button>
+                    <button id="confirm-button" class="btn-line">Xác nhận</button>
                 </div>
             </div>
         </section>
     </div>
 
 @endsection
+
+<style>
+
+.timeText{
+    font-size:30px;
+}
+
+
+@media (max-width: 425px) {
+    html {
+        font-size: 15px;
+    }
+
+    .timeText{
+        font-size:15px;
+    }
+
+
+    .time-slot {
+        font-size: 1.8rem; 
+        padding: 0.8rem;
+    }
+
+    .time-slot {
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+}
+
+</style>
