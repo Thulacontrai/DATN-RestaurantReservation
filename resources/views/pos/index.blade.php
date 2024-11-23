@@ -341,7 +341,7 @@
                         aria-label="Thông báo">
                         <i class="fas fa-bell"></i> Thông báo
                     </button>
-                    <button class="btn btn-primary" id="payment-button" aria-label="Thanh toán">
+                    <button class="btn btn-primary" id="payment-button" aria-label="Thanh toán" disabled>
                         <i class="fas fa-dollar-sign"></i> Thanh toán
                     </button>
                 </div>

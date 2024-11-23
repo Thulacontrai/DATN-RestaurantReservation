@@ -5,6 +5,12 @@ window.Echo.channel('order')
     .listen('PosTableUpdated', (e) => {
         const layoutTable = document.getElementById('order-details');
         const notification = document.getElementById('notification-button');
+        const checkoutBtn = document.getElementById('payment-button');
+        if (e.checkoutBtn == false) {
+            checkoutBtn.disabled = true;
+        } else {
+            checkoutBtn.disabled = false;
+        };
         if (e.notiBtn == false) {
             notification.disabled = true;
         } else {
