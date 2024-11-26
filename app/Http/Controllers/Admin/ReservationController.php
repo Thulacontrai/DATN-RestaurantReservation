@@ -15,6 +15,7 @@ use App\Models\OrdersTable;
 use App\Models\User;
 use App\Traits\TraitCRUD;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -104,6 +105,11 @@ class ReservationController extends Controller
             'reservations' => $reservations,
         ]);
     }
+    public function apiIndex()
+    {
+        return response()->json(Reservation::all());
+    }
+
 
     // Cập nhật trạng thái đặt bàn quá hạn
 
@@ -203,23 +209,58 @@ class ReservationController extends Controller
         return view('admin.reservation.check', compact('upcomingReservations', 'waitingReservations', 'overdueReservations'));
     }
 
+
+
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'customer_id' => 'required|exists:users,id',
-            'coupon_id' => 'nullable|exists:coupons,id',
-            'reservation_time' => 'required|date',
-            'guest_count' => 'required|integer|min:1',
-            'deposit_amount' => 'nullable|numeric|min:0',
-            'note' => 'nullable|string',
-            'status' => 'in:Pending',
-            'cancelled_reason' => 'nullable|string|max:255'
-        ]);
+        try {
+            $validatedData = $request->validate([
+                'customer_id' => 'nullable|integer|exists:customers,id',
+                'customer_name' => 'required|string|max:255',
+                'user_phone' => 'required|string|max:20',
+                'reservation_time' => 'required|date_format:H:i',
+                'reservation_date' => 'required|date',
+                'guest_count' => 'required|integer|min:1',
+                'status' => 'nullable|in:Confirmed,Pending,checked-in,Cancelled',
+                'note' => 'nullable|string|max:255',
+            ]);
 
-        Reservation::create($validated);
+            $reservation = Reservation::create([
+                'customer_id' => $validatedData['customer_id'] ?? 1,
+                'user_name' => $validatedData['customer_name'],
+                'user_phone' => $validatedData['user_phone'],
+                'reservation_date' => $validatedData['reservation_date'],
+                'reservation_time' => $validatedData['reservation_time'],
+                'guest_count' => $validatedData['guest_count'],
+                'status' => $validatedData['status'] ?? 'Pending',
+                'note' => $validatedData['note'] ?? null,
+            ]);
 
-        return redirect()->route('admin.reservation.index')->with('success', 'Reservation đã được tạo thành công.');
+            return response()->json([
+                'success' => true,
+                'message' => 'Reservation created successfully',
+                'data' => $reservation,
+            ], 201);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation Error',
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'An unexpected error occurred',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
+
+
+
+
+
+
 
     public function edit($id)
     {
@@ -323,6 +364,243 @@ class ReservationController extends Controller
 
         return redirect()->route('admin.reservation.index')->with('success', 'Reservation deleted successfully');
     }
+
+
+
+
+
+
+
+    public function updateReservation(Request $request, $id)
+    {
+        try {
+            // Tìm sự kiện theo ID
+            $reservation = Reservation::findOrFail($id);
+
+            // Xác thực dữ liệu đầu vào
+            $validatedData = $request->validate([
+                'reservation_date' => 'required|date',
+                'reservation_time' => 'required|date_format:H:i:s',
+                'status' => 'nullable|in:Pending,Cancelled', // Trạng thái tùy chọn, chỉ nhận các giá trị hợp lệ
+            ]);
+
+            // Cập nhật thông tin sự kiện
+            $reservation->reservation_date = $validatedData['reservation_date'];
+            $reservation->reservation_time = \Carbon\Carbon::createFromFormat('H:i:s', $validatedData['reservation_time'])->format('H:i:s');
+            $reservation->status = $validatedData['status'] ?? $reservation->status; // Nếu không có trạng thái, giữ nguyên
+
+            // Lưu vào cơ sở dữ liệu
+            $reservation->save();
+
+            return response()->json([
+                'message' => 'Cập nhật thành công!',
+                'reservation' => $reservation,
+            ]);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            // Xử lý lỗi không tìm thấy sự kiện
+            return response()->json([
+                'message' => 'Không tìm thấy sự kiện với ID này!',
+                'error' => $e->getMessage(),
+            ], 404);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Xử lý lỗi xác thực
+            return response()->json([
+                'message' => 'Dữ liệu không hợp lệ!',
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (\Exception $e) {
+            // Xử lý lỗi khác
+            return response()->json([
+                'message' => 'Đã xảy ra lỗi khi cập nhật sự kiện!',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+
+
+
+
+
+    public function updateCalendar(Request $request, $id)
+    {
+        try {
+            // Xác thực dữ liệu
+            $validatedData = $request->validate([
+                'customer_name' => 'required|string|max:255', // ánh xạ tới user_name
+                'user_phone' => 'required|string|max:15',
+                'reservation_date' => 'required|date_format:Y-m-d',
+                'guest_count' => 'required|integer|min:1',
+                'notes' => 'nullable|string',
+            ]);
+
+            // Tìm đặt bàn theo ID
+            $reservation = Reservation::findOrFail($id);
+
+            // Cập nhật thông tin đặt bàn
+            $reservation->user_name = $validatedData['customer_name']; // ánh xạ customer_name tới user_name
+            $reservation->user_phone = $validatedData['user_phone'];
+            $reservation->reservation_date = $validatedData['reservation_date'];
+            $reservation->guest_count = $validatedData['guest_count'];
+            $reservation->note = $validatedData['notes']; // ánh xạ notes tới cột note
+
+            // Lưu vào cơ sở dữ liệu
+            $reservation->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Cập nhật thành công!',
+                'data' => $reservation,
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Dữ liệu không hợp lệ.',
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không tìm thấy lịch đặt bàn.',
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Đã xảy ra lỗi khi cập nhật.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+    public function processReservationCancellation(Request $request, $id)
+    {
+        try {
+            Log::info("Bắt đầu xử lý hủy đặt bàn với ID: $id");
+
+            // Validate dữ liệu đầu vào
+            $validatedData = $request->validate([
+                'note' => 'required|string|max:255',
+            ]);
+
+            // Tìm đặt bàn theo ID
+            $reservation = Reservation::findOrFail($id);
+            Log::info("Tìm thấy đặt bàn: ", ['reservation' => $reservation]);
+
+            // Kiểm tra trạng thái đặt bàn
+            if ($reservation->status === 'Completed') {
+                Log::warning("Không thể hủy đặt bàn đã hoàn thành", ['id' => $id]);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Không thể hủy đặt bàn đã hoàn thành.',
+                ], 400);
+            }
+
+            if ($reservation->status === 'Cancelled') {
+                Log::warning("Đặt bàn đã bị hủy trước đó", ['id' => $id]);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Đặt bàn đã bị hủy trước đó.',
+                ], 400);
+            }
+
+            // Kiểm tra thời gian đặt bàn nếu trạng thái là pending
+            if ($reservation->status === 'Pending') {
+                if (!$reservation->reservation_date) {
+                    Log::error("Thời gian đặt bàn không hợp lệ (null)", ['id' => $id]);
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Thời gian đặt bàn không hợp lệ.',
+                    ], 400);
+                }
+
+                $reservationDateTime = Carbon::parse($reservation->reservation_date);
+                Log::info("Thời gian đặt bàn: $reservationDateTime, Thời gian hiện tại: " . now());
+
+                if (now()->greaterThan($reservationDateTime)) {
+                    Log::warning("Đặt bàn đã quá hạn nhưng vẫn được hủy", [
+                        'id' => $id,
+                        'reservation_date' => $reservationDateTime,
+                    ]);
+                    // Thêm thông báo vào lý do hủy
+                    $validatedData['note'] .= ' (Hủy đặt bàn đã quá hạn)';
+                }
+            }
+
+            // Cập nhật trạng thái và lý do hủy
+            $reservation->note = $validatedData['note'];
+            $reservation->status = 'Cancelled'; // Đảm bảo khớp với ENUM
+            $reservation->updated_at = now(); // Cập nhật thời gian chỉnh sửa
+            $reservation->save();
+
+            Log::info("Hủy đặt bàn thành công với ID: $id");
+            return response()->json([
+                'success' => true,
+                'message' => 'Đặt bàn đã được hủy thành công.',
+                'data' => $reservation,
+            ]);
+        } catch (ModelNotFoundException $e) {
+            Log::error("Không tìm thấy đặt bàn với ID: $id");
+            return response()->json([
+                'success' => false,
+                'message' => 'Không tìm thấy đặt bàn.',
+            ], 404);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error("Dữ liệu không hợp lệ", ['errors' => $e->errors()]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Dữ liệu không hợp lệ.',
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (\Exception $e) {
+            Log::error("Lỗi khi hủy đặt bàn: " . $e->getMessage(), ['id' => $id]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Đã xảy ra lỗi khi hủy đặt bàn.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -493,6 +771,7 @@ class ReservationController extends Controller
     {
         DB::transaction(function () use ($request, $orderId) {
             $order = Order::find($orderId);
+
             $order->status = 'completed';
             $order->save();
             $table = Table::find($order->tables['0']->id);
@@ -708,18 +987,18 @@ class ReservationController extends Controller
         }
     }
 
-    public function cancelReservationPopUp(Request $request){
-        try{
+    public function cancelReservationPopUp(Request $request)
+    {
+        try {
             $id = $request->id;
-        $reservation = Reservation::findOrFail($id);
-        $reservation->status = 'Cancelled';
+            $reservation = Reservation::findOrFail($id);
+            $reservation->status = 'Cancelled';
             $reservation->save();
             return response()->json([
                 'success' => true,
                 'message' => 'Đặt bàn đã được hủy thành công.'
             ]);
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             Log::error('Error cancelling reservation', [
                 'reservation_id' => $id,
                 'error' => $e->getMessage()
@@ -757,8 +1036,8 @@ class ReservationController extends Controller
             ->where('table_id', $table->id)
             ->first();
 
-        return view('pos.receipt', compact('data', 'order', 'table', 'reservation_table'))->render();
 
+        return view('pos.receipt', compact('data', 'order', 'table', 'reservation_table'))->render();
     }
 
     // Hàm chuẩn hóa số điện thoại
@@ -804,6 +1083,7 @@ class ReservationController extends Controller
     }
 
 
+
     // review
     public function submitFeedback(Request $request)
 {
@@ -832,4 +1112,5 @@ public function showFeedback($reservationId)
         // Trả về view kèm danh sách đánh giá
         return view('reservation.feedback', compact('feedbacks'));
     }
+
 }
