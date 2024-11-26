@@ -43,7 +43,7 @@
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
 
-                               
+
                             </div>
 
                             <div class="col">
@@ -70,13 +70,13 @@
                             <div class="alert alert-danger">Không có ngày hoặc giờ đặt bàn! Vui lòng quay lại bước trước.
                             </div>
                         @endif
-                             <!-- Căn chỉnh reCAPTCHA ra giữa -->
-                             <div id="recaptcha-container" class="mt-3"></div>
+                        <!-- Căn chỉnh reCAPTCHA ra giữa -->
+                        <div id="recaptcha-container" class="mt-3"></div>
 
 
                         <div class="row m-4 d-flex justify-content-center">
-                             <!-- Căn chỉnh reCAPTCHA ra giữa -->
-                                <div id="recaptcha-container" class="mt-3"></div>
+                            <!-- Căn chỉnh reCAPTCHA ra giữa -->
+                            <div id="recaptcha-container" class="mt-3"></div>
                             <div class="col-2">
                                 <a href="{{ route('booking.client') }}" class="text-secondary">Quay lại</a>
                             </div>
@@ -95,10 +95,11 @@
     @include('client.layouts.partials.customer-information')
 
     <!-- Popup OTP -->
+    <!-- Popup OTP -->
     <div id="otp-popup" class="overlay" style="display:none;">
         <div class="popup1">
             <h4 style="color: rgb(0, 154, 250)">Nhập mã OTP</h4>
-            <div id="otp-timer" class="text-danger"></div> <!-- Thêm phần hiển thị bộ đếm thời gian -->
+            <div id="otp-timer" class="text-danger"></div> <!-- Hiển thị bộ đếm thời gian -->
             <div class="otp-container">
                 <input type="text" class="otp-input" maxlength="1">
                 <input type="text" class="otp-input" maxlength="1">
@@ -107,59 +108,151 @@
                 <input type="text" class="otp-input" maxlength="1">
                 <input type="text" class="otp-input" maxlength="1">
             </div>
-            <button id="closePopupButton" class="btn-danger mt-2">Đóng</button>
-            <button type="button" class="button btn-success mt-2" onclick="verifyCode()">Xác thực OTP</button>
+            <div id="otp-error-message" class="text-danger" style="margin-top: 10px; display: none;"></div>
+            <!-- Thông báo lỗi -->
+            <div class="button-container">
+                <button id="closePopupButton" class="btn-dark">Đóng</button>
+                <button type="button" class="btn-success" onclick="verifyCode()">Xác thực OTP</button>
+                <button id="resendOtpButton" class="btn-primary" onclick="resendOTP()" style="display: none;">Gửi lại mã
+                    OTP</button>
+            </div>
         </div>
     </div>
 
+
     <style>
-        /* Style cho popup OTP */
-        .button{
-            display: inline-block;
-            margin-top: 15px;
-            padding: 10px 20px;
-            border-radius: 5px;
-            border: none;
-            color: #fff;
-            font-weight: 600;
-            font-size: 16px;
-        }
         .overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-
+            background: rgba(0, 0, 0, 0.7);
             z-index: 1000;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
-        .popup1 {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
+        .button-container {
+            display: flex;
+            justify-content: space-around;
+            /* Đảm bảo các nút được căn đều */
+            gap: 15px;
+            /* Khoảng cách giữa các nút */
+            margin-top: 20px;
         }
 
-        .otp-input1 {
-            width: 40px;
-            height: 40px;
-            font-size: 24px;
-            text-align: center;
-            margin: 5px;
+        .button-container button {
+            padding: 10px 25px;
+            /* Đồng nhất kích thước nút */
+            border-radius: 5px;
+            font-size: 16px;
+            /* Đảm bảo kích thước chữ đồng đều */
+            cursor: pointer;
+            border: none;
+            /* Loại bỏ viền mặc định */
+            color: white;
+            transition: background-color 0.3s ease;
         }
 
-        /* Căn chỉnh lại reCAPTCHA cho đúng vị trí trung tâm */
+        .button-container .btn-primary {
+            background-color: #007bff;
+        }
+
+        .button-container .btn-primary:hover {
+            background-color: #0056b3;
+            /* Màu khi hover */
+        }
+
+        .button-container .btn-success {
+            background-color: #28a745;
+        }
+
+        .button-container .btn-success:hover {
+            background-color: #1e7e34;
+            /* Màu khi hover */
+        }
+
+        .button-container .btn-danger {
+            background-color: #dc3545;
+        }
+
+        .button-container .btn-danger:hover {
+            background-color: #b21f2d;
+            /* Màu khi hover */
+        }
+
         #recaptcha-container {
             display: flex;
             justify-content: center;
             align-items: center;
             margin-top: 20px;
         }
+
+        .popup1 {
+            background: white;
+            padding: 30px;
+            /* Tăng khoảng padding */
+            border-radius: 15px;
+            /* Tăng độ bo góc */
+            text-align: center;
+            max-width: 500px;
+            /* Tăng chiều rộng tối đa */
+            width: 90%;
+            /* Điều chỉnh phù hợp với kích thước màn hình */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            /* Tạo hiệu ứng nổi */
+        }
+
+        .popup1 h4 {
+            color: rgb(0, 154, 250);
+            font-size: 1.5rem;
+            /* Tăng kích thước chữ */
+            margin-bottom: 20px;
+        }
+
+        .otp-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            /* Tăng khoảng cách giữa các ô nhập */
+            margin-bottom: 20px;
+        }
+
+        .otp-input {
+            width: 50px;
+            /* Tăng chiều rộng */
+            height: 50px;
+            /* Tăng chiều cao */
+            font-size: 24px;
+            text-align: center;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            /* Căn giữa các nút */
+            gap: 15px;
+            /* Khoảng cách giữa các nút */
+            margin-top: 20px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
     </style>
+
 @endsection
 
-@include('client.layouts.partials.js')
+@include('client.layouts.partials.js');
