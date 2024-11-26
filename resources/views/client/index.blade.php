@@ -400,10 +400,10 @@
             <div class="container">
                 <div class="row g-4 align-items-center">
                     <div class="col-lg-9 text-lg-start text-sm-center wow fadeIn">
-                        <h3><i class="id-color fa fa-phone mr10"></i>Gọi ngay và nhận ưu đãi đặc biệt!</h3>
+                        <h3><i class="id-color fa fa-phone mr10"></i>Đặt bàn ngay để nhận ưu đãi đặc biệt!</h3>
                     </div>
                     <div class="col-lg-3 text-lg-end text-sm-center wow fadeIn" data-wow-delay=".2s">
-                        <a href="{{ route('booking.client') }}" class="btn-line">Gọi ngay</a>
+                        <a href="{{ route('booking.client') }}" class="btn-line">Đặt bàn ngay</a>
                     </div>
                 </div>
             </div>
