@@ -64,16 +64,16 @@
                                                 <td>{{ $order->id }}</td>
                                                 <td>{{ $order->reservation_id }}</td>
                                                 <td>{{ $order->staff->name ?? 'Không rõ' }}</td>
-                                                <td>{{ $order->table_id ?? 'Không rõ' }}</td>
+                                                <td>{{ $order->tables['0']->id ?? 'Không rõ' }}</td>
                                                 <td>{{ number_format($order->total_amount, 0, ',', '.') }} VND</td>
                                                 <td>{{ number_format($order->final_amount, 0, ',', '.') }} VND</td>
 
                                                 <td>
-                                                    @if ($order->status === 'Completed')
+                                                    @if ($order->status === 'completed')
                                                         <span class="badge bg-success">Hoàn thành</span>
-                                                    @elseif ($order->status === 'Pending')
+                                                    @elseif ($order->status === 'pending')
                                                         <span class="badge bg-warning text-dark">Đang xử lý</span>
-                                                    @elseif ($order->status === 'Cancelled')
+                                                    @elseif ($order->status === 'cancelled')
                                                         <span class="badge bg-danger">Đã hủy</span>
                                                     @else
                                                         <span class="badge bg-secondary">Không rõ</span>

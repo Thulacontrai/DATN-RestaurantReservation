@@ -117,11 +117,7 @@
                                         <td class="text-center"><button type="button" class="transparent-button"
                                                 data-toggle="modal"
                                                 data-target="#orderDetailModal">{{ $reservation->id }}</button></td>
-                                        <td class="text-center">
-                                            @foreach ($reservation->tables as $table)
-                                                {{ $table->table_number ?? 'Chưa xếp bàn' }}
-                                            @endforeach
-                                        </td>
+                                    
                                         <td class="text-center">{{ $reservation->reservation_date }} <br>
                                             {{ $reservation->reservation_time }}</td>
                                         <td class="text-center">{{ $reservation->user_name ?? 'Không rõ' }}</td>
@@ -142,10 +138,7 @@
                                         </td>
                                         <td class="text-center">
                                             <div class="actions">
-                                                <button class="btn btn-primary convertToOrder"
-                                                    data-id="{{ $reservation->id }}">
-                                                    Chuyển Đơn
-                                                </button>
+                                                <a href="{{route('ReToOr',$reservation->id)}}">Chuyển đơn</a>
                                                 <!-- Các hành động khác như Xem, Sửa, Hủy đơn đặt bàn -->
                                             </div>
                                         </td>

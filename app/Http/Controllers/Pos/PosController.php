@@ -534,6 +534,28 @@ class PosController extends Controller
         }
     }
 
+
+    public function reserToOrder($reservationId){
+        // dd($reservationId);
+
+        // $reservation = Reservation::with('orders')->findOrFail($reservationId);
+        // $orders = $reservation->orders;
+        $orders = Order::where('reservation_id', $reservationId)->get();
+        // dd($orders);
+        $tableIds = $orders->flatMap(function ($order) {
+            return $order->tables->pluck('id');
+        })->unique()->values();
+        Table::whereIn('id', $tableIds)->update(['status' =>"Occupied"]);
+            $tables = Table::with(['orders', 'orders.orderItems', 'orders.orderItems.dish'])
+                   ->whereIn('id', $tableIds)
+                   ->get();
+            $order = $tables->first()->orders->first();
+    
+        // dd($orders,$tableIds,$tables,$order);
+        
+       return redirect()->route('pos.index');
+        
+    }
     public function orderDetails($id)
     {
         $table = Table::with(['orders', 'orders.orderItems', 'orders.orderItems.dish'])->find($id);
