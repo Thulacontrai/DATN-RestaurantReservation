@@ -43,18 +43,18 @@
             transition: background-color 0.3s, border-color 0.3s;
         }
 
-        .table.selected {
+    .selected {
             background-color: #28a745;
             border-color: #28a745;
         }
 
-        .table.Reserved {
+    .Reserved {
             background-color: #fff9c4;
             border-color: #fdd835;
             cursor: not-allowed;
         }
 
-        .table.occupied {
+    .Occupied {
             background-color: #ffcccb;
             border-color: #e53935;
             cursor: not-allowed;
@@ -122,13 +122,14 @@
                     </div>
                     <div class="modal-body">
                         <div class="table-layout" id="table-layout">
-                            @foreach ($tables as $table)
+                            {{-- @foreach ($tables as $table)
                                 <div id="data-table"
                                      class="table {{ $table->status === 'Reserved' ? 'Reserved' : '' }} {{ $table->status === 'Occupied' ? 'Occupied' : '' }}"
                                      data-id="{{ $table->id }}" data-status="{{ $table->status }}">
                                     <span id="table-number" class="table-number">{{ $table->table_number }}</span>
                                 </div>
-                            @endforeach
+                            @endforeach --}}
+                            
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -141,11 +142,13 @@
 
         <div class="table-layout" id="table-layout">
             @foreach ($tables as $table)
-                <div class="table {{ $table->status === 'Reserved' ? 'Reserved' : '' }} {{ $table->status === 'Occupied' ? 'Occupied' : '' }}"
-                     data-id="{{ $table->id }}" data-status="{{ $table->status }}">
-                    <span class="table-number">{{ $table->table_number }}</span>
-                </div>
-            @endforeach
+            {{-- {{dd($table)}} --}}
+            <div class="table {{ $table['status'] === 'Reserved' ? 'Reserved' : '' }} {{ $table['status'] === 'Occupied' ? 'Occupied' : 'Available' }}"
+                 data-id="{{ $table['table_id'] }}" data-status="{{ $table['status'] }}">
+                <span class="table-name">{{ $table['name'] }}</span>
+            </div>
+        @endforeach
+        
         </div>
 
         <button type="submit" id="confirmSelection">Xác nhận</button>
@@ -155,9 +158,10 @@
         document.querySelectorAll('.table').forEach(table => {
             table.addEventListener('click', () => {
                 const status = table.getAttribute('data-status');
-                if (status === 'Reserved' || status === 'occupied') {
-                    alert('Bàn này đã được đặt hoặc đang có khách.');
-                } else {
+                if (status === 'Reserved' || status === 'Occupied') {
+    alert('Bàn này đã được đặt hoặc đang có khách.');
+}
+ else {
                     table.classList.toggle('selected');
                 }
             });

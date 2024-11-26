@@ -26,6 +26,15 @@ use App\Models\Ingredient;
 
 class InventoryController extends Controller
 {
+    public function __construct()
+    {
+        // Gán middleware cho các phương thức
+        $this->middleware('permission:Xem tồn kho', ['only' => ['index']]);
+        $this->middleware('permission:Tạo mới tồn kho', ['only' => ['create']]);
+        $this->middleware('permission:Sửa tồn kho', ['only' => ['edit']]);
+        $this->middleware('permission:Xóa tồn kho', ['only' => ['destroy']]);
+        
+    }
     public function index(Request $request)
     {
         $query = InventoryStock::with('ingredient');
@@ -47,10 +56,10 @@ class InventoryController extends Controller
                     $query->where('quantity_stock', 0);
                     break;
                 case 'low_stock':
-                    $query->whereBetween('quantity_stock', [1, 10]);
+                    $query->whereBetween('quantity_stock', [1, 5]);
                     break;
                 case 'high_stock':
-                    $query->whereBetween('quantity_stock', [50, 100]);
+                    $query->whereBetween('quantity_stock', [100, 200]);
                     break;
             }
         }

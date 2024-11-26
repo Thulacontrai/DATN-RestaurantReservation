@@ -12,6 +12,15 @@ use Illuminate\Support\Facades\DB;
 
 class RefundController extends Controller
 {
+    public function __construct()
+    {
+        // Gán middleware cho các phương thức
+        $this->middleware('permission:Xem hoàn tiền', ['only' => ['index']]);
+        $this->middleware('permission:Tạo mới hoàn tiền', ['only' => ['create']]);
+        $this->middleware('permission:Sửa hoàn tiền', ['only' => ['edit']]);
+        $this->middleware('permission:Xóa hoàn tiền', ['only' => ['destroy']]);
+        
+    }
 
     public function index()
     {

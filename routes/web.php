@@ -34,8 +34,7 @@ use App\Http\Controllers\Client\MenuController;
 use App\Http\Controllers\Pos\PosController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\InventoryController;
-
-
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,7 +46,6 @@ use App\Http\Controllers\Admin\InventoryController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
 
 //route tạo phiếu nhập kho
 Route::resource('transactions', InventoryTransactionController::class);
@@ -62,12 +60,12 @@ Route::put('transactions/{id}', [InventoryTransactionController::class, 'update'
 Route::patch('transactions/{id}/status', [InventoryTransactionController::class, 'updateStatus'])->name('transactions.update.status');
 Route::get('admin/transactions/create', [InventoryTransactionController::class, 'createTransaction'])->name('transactions.create');
 Route::delete('transactions/{id}', [InventoryTransactionController::class, 'destroy'])->name('transactions.destroy');
-
 Route::post('/transactions/import', [InventoryTransactionController::class, 'import'])->name('transactions.import');
-
 Route::post('/import-ingredients', [InventoryTransactionController::class, 'importIngredients'])->name('import.ingredients');
 
 
+// review
+Route::post('/submit-feedback', [ReservationController::class, 'submitFeedback']);
 
 
 
@@ -193,7 +191,6 @@ Route::post('/kitchen/{id}/delete', [KitchenController::class, 'delete'])->name(
 
 
 
-Route::post('/Ppayment/{table_number}', [PosController::class, 'Ppayment'])->name('Ppayment');
 // hoàn cọc
 Route::get('/refunds/create/{reservation_id}', [RefundController::class, 'create'])->name('refunds.create');
 Route::post('/refunds', [RefundController::class, 'store'])->name('refunds.store');
@@ -208,13 +205,16 @@ Route::post('client/cancel-reservationpopup', [ReservationController::class, 'ca
 Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
 Route::post('/create-order/{tableId}', [PosController::class, 'createOrder']);
 Route::post('/order-details/{tableId}', [PosController::class, 'orderDetails'])->name('order-details');
-Route::post('/order-detail/{id}', [PosController::class, 'orderDetail']);
 Route::post('/add-dish-to-order', [PosController::class, 'addDishToOrder']);
 Route::post('/deleteItem', [PosController::class, 'deleteItem']);
 Route::post('/increaseQuantity', [PosController::class, 'increaseQuantity']);
 Route::post('/decreaseQuantity', [PosController::class, 'decreaseQuantity']);
 Route::post('/notification-button/{tableId}', [PosController::class, 'notificatioButton']);
 Route::post('/canelItem', [PosController::class, 'canelItem']);
+Route::get('/Ppayment/{table_number}', [PosController::class, 'Ppayment'])->name('Ppayment');
+
+///
+Route::get('reserToOrder/{reservationId}',[PosController::class, 'reserToOrder'])->name('ReToOr');
 
 
 Route::post('/load-more-dishes', [PosController::class, 'loadMoreDishes']);
@@ -229,8 +229,6 @@ Route::delete('/order/{order_id}/item/{item_id}', [PosController::class, 'delete
 
 
 Route::post('/reservation/check-table', [PosController::class, 'checkTable'])->name('reservation.checkTable');
-
-
 
 
 

@@ -24,6 +24,7 @@ class Reservation extends Model
         'status',
         'cancelled_reason',
         'note',
+        'review',
     ];
 
     protected $dates = ['deleted_at'];

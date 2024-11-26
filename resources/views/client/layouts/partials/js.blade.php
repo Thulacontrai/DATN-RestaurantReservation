@@ -22,7 +22,7 @@
 
             // Xóa thông báo lỗi cũ
             $('.invalid-feedback').hide();
-            
+
             let isValid = true; // Biến kiểm tra tính hợp lệ của form
 
             // Kiểm tra từng trường
@@ -56,8 +56,8 @@
             }
         });
 
-         // Khi người dùng bấm vào ngày
-         $('.day-selector').click(function() {
+        // Khi người dùng bấm vào ngày
+        $('.day-selector').click(function() {
             var index = $(this).data('index'); // Lấy chỉ số của ngày được bấm
 
             // Ẩn tất cả các khung thời gian
@@ -135,6 +135,90 @@
 
 {{-- // Hiệp --}}
 
+<script>
+    function toggleReviewInput(reservationId, customerId) {
+        const reviewInput = document.getElementById(`review-input-${reservationId}`);
+        reviewInput.style.display = reviewInput.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function submitReview(reservationId, customerId) {
+        // Lấy giá trị từ textarea
+        const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
+
+        if (!csrfTokenElement) {
+            console.error('CSRF token meta tag is missing!');
+            alert('CSRF token không tồn tại trong trang. Vui lòng kiểm tra.');
+            return;
+        }
+        const csrfToken = csrfTokenElement.content;
+
+        const textarea = document.getElementById(`review-text-${reservationId}`);
+        console.log(textarea.value)
+        if (!textarea) {
+            console.error(`Textarea with ID review-text-${reservationId} not found.`);
+            alert('Có lỗi xảy ra, không tìm thấy ô nhập đánh giá.');
+            return;
+        }
+
+        const reviewText = textarea.value.trim(); // Lấy giá trị, đồng thời xóa khoảng trắng
+        console.log(reviewText)
+        // Kiểm tra xem người dùng đã nhập đánh giá chưa
+        if (!reviewText) {
+            alert('Vui lòng nhập nội dung đánh giá trước khi gửi.');
+            return;
+        }
+
+        // Gửi request đến server
+        fetch('/submit-feedback', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                        .content // CSRF token cho Laravel
+                },
+                body: JSON.stringify({
+                    reservation_id: reservationId,
+                    customer_id: customerId,
+                    content: reviewText
+                })
+            })
+            .then(response => {
+                // Kiểm tra nếu không phải JSON hợp lệ
+                if (!response.ok) {
+                    throw new Error(`HTTP status ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);
+
+                // Kiểm tra nếu đánh giá được gửi thành công
+                if (data.success) {
+                    alert('Gửi đánh giá thành công!');
+
+                    // Hiển thị đánh giá trong phần container (nếu có)
+                    const reviewContainer = document.getElementById(`review-container-${reservationId}`);
+                    if (reviewContainer) {
+                        reviewContainer.innerHTML = `<p class="text-success">Đánh giá của bạn: ${reviewText}</p>`;
+                    } else {
+                        console.warn(`Review container with ID review-container-${reservationId} not found.`);
+                    }
+
+                    // Ẩn ô nhập đánh giá
+                    toggleReviewInput(reservationId, customerId);
+
+                    // Reset textarea
+                    textarea.value = '';
+                } else {
+                    alert(data.message || 'Không thể gửi đánh giá. Vui lòng thử lại.');
+                }
+            })
+            .catch(error => {
+                console.error('Error occurred while submitting review:', error);
+                alert('Có lỗi xảy ra khi gửi đánh giá. Vui lòng thử lại.');
+            });
+    }
+</script>
 
 <script>
     function showSection(sectionId) {
@@ -477,7 +561,7 @@
                 })
             }).then(() => {
                 document.getElementById("booking-form")
-            .submit(); // Sau khi xác thực thành công, submit form
+                    .submit(); // Sau khi xác thực thành công, submit form
             });
 
         }).catch((error) => {
