@@ -16,10 +16,10 @@ class TableController extends Controller
     public function __construct()
     {
         // Gán middleware cho các phương thức
-        $this->middleware('permission:Xem đặt bàn', ['only' => ['index']]);
-        $this->middleware('permission:Tạo mới đặt bàn', ['only' => ['create']]);
-        $this->middleware('permission:Sửa đặt bàn', ['only' => ['edit']]);
-        $this->middleware('permission:Xóa đặt bàn', ['only' => ['destroy']]);
+        $this->middleware('permission:Xem bàn', ['only' => ['index']]);
+        $this->middleware('permission:Tạo mới bàn', ['only' => ['create']]);
+        $this->middleware('permission:Sửa bàn', ['only' => ['edit']]);
+        $this->middleware('permission:Xóa bàn', ['only' => ['destroy']]);
     }
 
     use TraitCRUD;

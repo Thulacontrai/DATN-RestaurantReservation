@@ -16,8 +16,8 @@ return new class extends Migration {
             $table->foreignId('order_id')->constrained('orders')->onDelete('cascade');
             $table->foreignId('table_id')->constrained('tables')->onDelete('cascade');
             $table->dateTime('start_time');
-            $table->dateTime('end_time')->nullable();
-            $table->enum('status', ['trống','Đặt trước', 'Đang sử dụng', 'Đang chờ khách'])->default('Đang sử dụng');
+            $table->time('end_time')->nullable();
+            $table->enum('status', ['trống','Đặt trước', 'Đang sử dụng', 'Đang chờ khách','Hoàn thành'])->default('Đang sử dụng');
         });
 
         Schema::enableForeignKeyConstraints();

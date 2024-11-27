@@ -8,6 +8,18 @@
         'title' => 'Reservation',
         'currentPage' => 'Booking',
     ])
+    @if (session('err'))
+        <script>
+            Swal.fire({
+                title: "Yêu cầu bị trùng lặp",
+                text: "{{ session('err') }}",
+                icon: "warning",
+                showConfirmButton: false,
+                timer: 5000,
+                timerProgressBar: true,
+            });
+        </script>
+    @endif
 
     <div id="content" class="no-bottom no-top">
         <section id="section-book-form">

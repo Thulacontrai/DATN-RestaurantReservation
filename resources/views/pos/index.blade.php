@@ -3,7 +3,19 @@
 @section('title', 'POS | Trang chủ')
 
 @section('content')
-
+    @if (session('error'))
+        <script>
+            Swal.fire({
+                icon: 'warning',
+                title: 'Thông báo',
+                text: session('error'),
+                timer: 3000,
+                showConfirmButton: false,
+                toast: true,
+                position: 'top-end'
+            });
+        </script>
+    @endif
     <header class="navbar navbar-expand-lg p-2" style="background: linear-gradient(90deg, #004a89, #007bb5);">
         <div class="container-fluid">
             <!-- Left Section: Tabs for Phòng bàn and Thực đơn -->
@@ -14,7 +26,6 @@
                 <a class="nav-link" href="#" id="menu-view-button" aria-label="Xem Thực đơn">
                     <i class="material-icons">restaurant</i> Thực đơn
                 </a>
-                <input class="form-control1 me-2" id="searchInput" type="search" placeholder="Tìm món (F3)"
                 <input class="form-control1 me-2" id="searchInput" type="search" placeholder="Tìm món (F3)"
                     aria-label="Tìm món">
             </div>
@@ -102,39 +113,36 @@
                             <tbody>
                                 <!-- Dữ liệu bảng-->
                                 @forelse ($reservations as $reservation)
-                                <tr id="reservation-{{ $reservation->id }}">
-                                    <td class="text-center" ><button type="button" class="transparent-button" data-toggle="modal" data-target="#orderDetailModal">{{$reservation->id}}</button></td>
-                                    <td class="text-center">
-                                        @foreach ($reservation->tables as $table)
-                                            {{ $table->table_number ?? 'Chưa xếp bàn' }}
-                                        @endforeach
-                                    </td>
-                                    <td class="text-center">{{ $reservation->reservation_date }} <br> {{ $reservation->reservation_time }}</td>
-                                    <td class="text-center">{{ $reservation->user_name ?? 'Không rõ' }}</td>
-                                    <td class="text-center">{{ $reservation->user_phone ?? 'Không rõ' }}</td>
-                                    <td class="text-center">{{ $reservation->guest_count ?? 'N/A' }}</td>
-                                    <td class="text-center">
-                                        @if ($reservation->status === 'Confirmed')
-                                            <span class="badge bg-success">Đã xác nhận</span>
-                                        @elseif ($reservation->status === 'Pending')
-                                            <span class="badge bg-warning">Chờ xử lý</span>
-                                        @elseif ($reservation->status === 'Cancelled')
-                                            <span class="badge bg-danger">Đã hủy</span>
-                                        @elseif ($reservation->status === 'checked-in')
-                                            <span class="badge bg-primary">Đã nhận bàn</span>
-                                        @else
-                                            <span class="badge bg-secondary">Không rõ</span>
-                                        @endif
-                                    </td>
-                                    <td class="text-center">
-                                        <div class="actions">
-                                            <button class="btn btn-primary convertToOrder" data-id="{{ $reservation->id }}">
-                                                Chuyển Đơn
-                                            </button>
-                                            <!-- Các hành động khác như Xem, Sửa, Hủy đơn đặt bàn -->
-                                        </div>
-                                    </td>
-                                </tr>
+                                    <tr id="reservation-{{ $reservation->id }}">
+                                        <td class="text-center"><button type="button" class="transparent-button"
+                                                data-toggle="modal"
+                                                data-target="#orderDetailModal">{{ $reservation->id }}</button></td>
+                                    
+                                        <td class="text-center">{{ $reservation->reservation_date }} <br>
+                                            {{ $reservation->reservation_time }}</td>
+                                        <td class="text-center">{{ $reservation->user_name ?? 'Không rõ' }}</td>
+                                        <td class="text-center">{{ $reservation->user_phone ?? 'Không rõ' }}</td>
+                                        <td class="text-center">{{ $reservation->guest_count ?? 'N/A' }}</td>
+                                        <td class="text-center">
+                                            @if ($reservation->status === 'Confirmed')
+                                                <span class="badge bg-success">Đã xác nhận</span>
+                                            @elseif ($reservation->status === 'Pending')
+                                                <span class="badge bg-warning">Chờ xử lý</span>
+                                            @elseif ($reservation->status === 'Cancelled')
+                                                <span class="badge bg-danger">Đã hủy</span>
+                                            @elseif ($reservation->status === 'checked-in')
+                                                <span class="badge bg-primary">Đã nhận bàn</span>
+                                            @else
+                                                <span class="badge bg-secondary">Không rõ</span>
+                                            @endif
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="actions">
+                                                <a href="{{route('ReToOr',$reservation->id)}}">Chuyển đơn</a>
+                                                <!-- Các hành động khác như Xem, Sửa, Hủy đơn đặt bàn -->
+                                            </div>
+                                        </td>
+                                    </tr>
                                 @empty
                                     <tr>
                                         <td colspan="10">Không có đặt bàn nào được tìm thấy.</td>
@@ -326,7 +334,7 @@
                         aria-label="Thông báo">
                         <i class="fas fa-bell"></i> Thông báo
                     </button>
-                    <button class="btn btn-primary" id="payment-button" aria-label="Thanh toán">
+                    <button class="btn btn-primary" id="payment-button" aria-label="Thanh toán" disabled>
                         <i class="fas fa-dollar-sign"></i> Thanh toán
                     </button>
                 </div>
@@ -354,6 +362,15 @@
         });
         document.querySelector('#notification-button').addEventListener('click', function(event) {
             notificationButton(selectedTableId);
+        });
+        document.querySelector('#payment-button').addEventListener('click', function(event) {
+            const orderDetails = document.getElementById('order-details');
+            if (selectedTableId != null) {
+                const url = `/Ppayment/${selectedTableId}`;
+                window.location.href = url;
+            } else {
+                showNotification('Vui lòng chọn bàn trước khi thanh toán', 'warning')
+            }
         });
 
         function notificationButton(selectedTableId) {
@@ -396,7 +413,7 @@
                             if (!response.ok) throw new Error('Network response was not ok');
                             return response.json();
                         })
-                        .then(data => showOrderDetail(tableId))
+                        .then(data => showOrderDetails(tableId))
                         .catch(() => showNotification('Lỗi khi tạo đơn', 'error'));
                 } else if (result.isDenied) {
                     showNotification('Tạo đơn thất bại', 'error');
@@ -482,7 +499,7 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {} else {
-                        showNotification('è èèèè', 'error')
+                        showNotification('Món đã hết nguyên liệu', 'error')
                     }
                 })
                 .catch(error => console.error('Error:', error));
@@ -504,7 +521,7 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {} else {
-                        showNotification('è èèèè', 'error')
+                        showNotification('Món đã hết nguyên liệu', 'error')
                     }
                 })
                 .catch(error => console.error('Error:', error));
@@ -571,55 +588,13 @@
                         if (data.success) {
                             showNotification('Thêm món thành công')
                         } else {
-                            showNotification('è èèèè', 'error')
+                            showNotification('Món đã hết nguyên liệu', 'error')
                         }
                     })
-                    .catch(error => console.error('Error:', error));
+                    .catch(error => console.log('Error:', error));
             } else {
                 showNotification('Hãy chọn bàn trước khi thêm món', 'error')
             }
-        }
-
-        function showOrderDetail(tableId) {
-            fetch('/order-detail/' + tableId, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-                            'content'),
-                        'Content-Type': 'application/json'
-                    }
-                })
-                .then(response => {
-                    if (!response.ok) throw new Error('Network response was not ok');
-                    return response.json();
-                })
-                .then(data => {
-                    const {
-                        order,
-                        table,
-                        tableId
-                    } = data;
-                    let totalAmount = new Intl.NumberFormat('vi-VN', {
-                        style: 'currency',
-                        currency: 'VND'
-                    }).format(order.final_amount);
-
-                    let htmlContent = `
-            <h3>Chi tiết đơn hàng</h3>
-            <p><strong>Mã đơn hàng:</strong> ${order.id}</p>
-            <p><strong>Bàn:</strong> ${tableId.table_number}</p>
-            <p><strong>Giờ vào:</strong> ${table.pivot.start_time.split(" ")[1]}</p>
-            <p><strong>Trạng thái:</strong> ${order.status}</p>
-            <h4>Danh sách món</h4>
-            <div class="empty-order">
-                <p>Chưa có món trong đơn</p>
-                <p>Vui lòng chọn món trong thực đơn bên trái màn hình</p>
-            </div>
-        `;
-                    document.getElementById('totalAmount').innerHTML = totalAmount;
-                    document.getElementById('order-details').innerHTML = htmlContent;
-                })
-                .catch(() => showNotification('Không thể lấy chi tiết đơn hàng.', 'error'));
         }
 
         function showOrderDetails(tableId) {
