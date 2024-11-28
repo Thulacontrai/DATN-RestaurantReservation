@@ -35,28 +35,6 @@
             <!-- Right Section: Icons -->
             <ul class="navbar-nav ms-auto d-flex align-items-center">
                 <li class="nav-item">
-                    <button class="btn btn-link text-white">
-                        <i class="fas fa-volume-mute"></i>
-                    </button>
-                </li>
-                <li class="nav-item">
-                    <!-- Notification Button -->
-                    <button class="btn btn-link text-white" id="notificationButton">
-                        <i class="fas fa-bell"></i>
-                    </button>
-                </li>
-                <li class="nav-item">
-                    <button class="btn btn-link text-white">
-                        <i class="fas fa-sync"></i>
-                    </button>
-                </li>
-                <li class="nav-item">
-                    <!-- Print Button -->
-                    <button class="btn btn-link text-white" id="printButton">
-                        <i class="fas fa-print"></i>
-                    </button>
-                </li>
-                <li class="nav-item">
                     <!-- Hamburger Menu -->
                     <button class="btn btn-link text-white" id="hamburgerMenu">
                         <i class="fas fa-bars"></i>
@@ -279,13 +257,9 @@
                             <div class="table-card {{ strtolower(trim($table->status)) }}"
                                 data-table-id="{{ $table->id }}" data-status="{{ $table->status }}">
                                 <span class="table-number">Bàn {{ $table->table_number }}</span>
-                                @if (strtolower(trim($table->status)) == 'available')
-                                    <i class="material-icons text-success"
-                                        style="font-size: 35px;padding-top: 50%;">event_seat</i>
-                                @elseif (strtolower(trim($table->status)) == 'occupied')
-                                    <i class="material-icons text-danger"
-                                        style="font-size: 35px; padding-top: 50%;">local_dining</i>
-                                @endif
+                                @foreach ($table->orders as $column)
+                                    <span><i class="fa-solid fa-id-card"></i> {{ $column->id ?? null }}</span>
+                                @endforeach
                             </div>
                         @endforeach
                     </div>
@@ -441,11 +415,21 @@
                     if (dishStatus == 'chờ xử lý') {
                         decreaseQuantity(dishId, selectedTableId);
                     } else {
-                        canelItem(dishId, selectedTableId, dishOrder)
+                        const dishInformed = dishElement.dataset.dishInformed;
+                        const dishProcessing = dishElement.dataset.dishProcessing;
+                        const dishQuantity = dishElement.dataset.dishQuantity;
+                        if (dishInformed > dishProcessing || dishQuantity > dishProcessing) {
+                            decreaseQuantity(dishId, selectedTableId);
+                        } else {
+                            canelItem(dishId, selectedTableId, dishOrder)
+                        }
                     }
                 }
                 if (event.target.classList.contains("delete-item")) {
                     deleteItem(dishId, selectedTableId);
+                }
+                if (event.target.classList.contains("delette-item")) {
+                    deletteItem(dishId, selectedTableId);
                 }
             }
         });
@@ -573,6 +557,30 @@
             });
         }
 
+        function deletteItem(dishId, selectedTableId) {
+            fetch(`/deleteItem`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                            .getAttribute('content'),
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        table_id: selectedTableId,
+                        dish_id: dishId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showNotification('Hủy món thành công!', 'success');
+                    } else {
+                        showNotification('Lỗi khi xóa', 'error');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
 
 
 
@@ -617,6 +625,35 @@
                     if (!response.ok) throw new Error('Network response was not ok');
                     return response.json();
                 })
+                .then(data => {
+                    highlightTables(data);
+                })
+                .catch(error => {
+                    console.error('There has been a problem with your fetch operation:', error);
+                });
+        }
+
+        function highlightTables(data) {
+            const tableCards = document.querySelectorAll('.table-card');
+            const selectedTableIds = data.table.tables.map(table => String(table.table_number));
+            tableCards.forEach(card => {
+                const isSelected = selectedTableIds.includes(card.getAttribute('data-table-id'));
+                if (isSelected) {
+                    card.style.backgroundColor = '#007bff';
+                    card.style.color = '#ffffff';
+                    const childElements = card.querySelectorAll('*');
+                    childElements.forEach(child => {
+                        child.style.color = '#ffffff';
+                    });
+                } else {
+                    card.style.backgroundColor = '';
+                    card.style.color = '';
+                    const childElements = card.querySelectorAll('*');
+                    childElements.forEach(child => {
+                        child.style.color = '';
+                    });
+                }
+            });
         }
 
         function showNotification(message, type = 'success') {

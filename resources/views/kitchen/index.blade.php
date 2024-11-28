@@ -141,7 +141,7 @@
                 <div class="header">
                     <div class="m-2 p-2 d-flex justify-content-between align-items-center header-right"
                         style="min-height: 60px;">
-                        <h3 class="title">Chờ chế biến</h3>
+                        <h3 class="title">Đang chế biến</h3>
 
                         <ul class="d-flex align-items-center">
                             <li title="Thu ngân">
@@ -221,7 +221,7 @@
                 const itemId = orderCard.dataset.itemId;
                 const tableId = orderCard.dataset.tableId;
                 if (event.target.classList.contains('cook-all')) {
-                    handleCookAll(itemId); // Gọi hàm xử lý cook-all
+                    handleCookAll(itemId, tableId); // Gọi hàm xử lý cook-all
                 } else if (event.target.classList.contains('delete')) {
                     handleDelete(itemId); // Gọi hàm xử lý delete
                 } else if (event.target.classList.contains('done-all')) {
@@ -230,7 +230,7 @@
             });
 
             // Hàm xử lý cook-all
-            function handleCookAll(itemId) {
+            function handleCookAll(itemId, tableId) {
                 fetch(`/kitchen/${itemId}/cook-all`, {
                         method: 'POST',
                         headers: {
@@ -238,7 +238,9 @@
                                 'content'),
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify({}),
+                        body: JSON.stringify({
+                            tableId: tableId
+                        }),
                     })
                     .then(response => response.json())
                     .then(data => {
