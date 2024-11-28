@@ -783,7 +783,7 @@ class ReservationController extends Controller
             $orderTable->status = 'Hoàn thành';
             $orderTable->end_time = $request->end_time;
             $orderTable->save();
-            $tables = Table::all();
+            $tables = Table::with('orders')->get();
             broadcast(new MessageSent($tables))->toOthers();
         });
         return redirect(route('pos.index'));
@@ -1086,25 +1086,25 @@ class ReservationController extends Controller
 
     // review
     public function submitFeedback(Request $request)
-{
-    // $validated = $request->validate([
-    //     'reservation_id' => 'required|exists:reservations,id',
-    //     'customer_id' => 'required|exists:customers,id',
-    //     'content' => 'required|string|max:500'
-    // ]);
-    // dd($validated);
- 
-    Feedback::create([
-        'reservation_id' => $request->reservation_id,
-        'customer_id' => $request->customer_id,
-        'content' => $request->content
-    ]);
-    
+    {
+        // $validated = $request->validate([
+        //     'reservation_id' => 'required|exists:reservations,id',
+        //     'customer_id' => 'required|exists:customers,id',
+        //     'content' => 'required|string|max:500'
+        // ]);
+        // dd($validated);
 
-    return response()->json(['success' => true]);
-}
+        Feedback::create([
+            'reservation_id' => $request->reservation_id,
+            'customer_id' => $request->customer_id,
+            'content' => $request->content
+        ]);
 
-public function showFeedback($reservationId)
+
+        return response()->json(['success' => true]);
+    }
+
+    public function showFeedback($reservationId)
     {
         // Lấy danh sách đánh giá theo reservation_id
         $feedbacks = Feedback::where('reservation_id', $reservationId)->get();

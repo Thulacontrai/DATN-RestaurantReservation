@@ -25,7 +25,8 @@
                             <tr>
                                 <td>SĐT: <b>{{ $reservation['user_phone'] }}</b></td>
                                 <td>Thời gian đặt bàn: <b>{{ $reservation['reservation_time'] }} ngày
-                                        {{ $reservation['reservation_date'] }}</b></td>
+                                        {{ date('d-m-Y', strtotime($reservation['reservation_date'])) }}</b>
+                                </td>
                             </tr>
                             <tr>
                                 <td colspan="2">Ghi chú thêm: {{ $reservation['note'] ?? null }}</td>
