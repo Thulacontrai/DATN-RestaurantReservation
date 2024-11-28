@@ -275,9 +275,13 @@
                                 @if (strtolower(trim($table->status)) == 'available')
                                     <i class="material-icons text-success"
                                         style="font-size: 35px;padding-top: 50%;">event_seat</i>
-                                @elseif (strtolower(trim($table->status)) == 'occupied')
-                                    <i class="material-icons text-danger"
-                                        style="font-size: 35px; padding-top: 50%;">local_dining</i>
+                                        @elseif (strtolower(trim($table->status)) == 'occupied')
+                                    <i class="material-icons text-danger" style="font-size: 35px; padding-top: 50%;">local_dining</i>
+                                    <div class="order-code text-muted mt-2" style="font-size: 14px;">
+                                        Mã đơn: <span class="fw-bold">
+                                            {{ optional($table->orders->last())->id ?? 'Chưa có' }}
+                                        </span>
+                                    </div>
                                 @endif
                             </div>
                         @endforeach
