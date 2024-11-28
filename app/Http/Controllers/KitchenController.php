@@ -88,6 +88,7 @@ class KitchenController extends Controller
                     $notiBtn = false;
                 }
             }
+            $order = Order::with(['reservation', 'tables','customer'])->findOrFail($orderId);
             broadcast(new PosTableUpdatedWithNoti($order, $orderItems, $tableId, $notiBtn, "Bàn $tableId->table_number đang được chế biến món $itemName"))->toOthers();
             $items1 = Kitchen::where('status', 'chờ cung ứng')
                 ->with(['dish', 'order.tables'])
@@ -145,6 +146,7 @@ class KitchenController extends Controller
                     $notiBtn = false;
                 }
             }
+            $order = Order::with(['reservation', 'tables','customer'])->findOrFail($orderId);
             broadcast(new PosTableUpdatedWithNoti($order, $orderItems, $tableId, $notiBtn, "Bàn $tableId->table_number đã được cung ứng món $itemName"))->toOthers();
             $items1 = Kitchen::where('status', 'chờ cung ứng')
                 ->with(['dish', 'order.tables'])

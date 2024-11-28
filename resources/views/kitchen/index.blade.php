@@ -155,7 +155,12 @@
                                 </a>
                             </li>
                             <li title="Đăng xuất">
-                                <a href="#">
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                    style="display: none;">
+                                    @csrf
+                                </form>
+                                <a href="{{ url('/') }}"
+                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                     <i class="fas fa-sign-out-alt text-white"></i>
                                 </a>
                             </li>

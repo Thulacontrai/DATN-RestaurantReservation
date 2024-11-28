@@ -18,12 +18,33 @@ window.Echo.channel('order')
         };
         if (selectedTableId == e.tableId.id) {
             layoutTable.innerHTML = `
-                <h3>Chi tiết đơn hàng</h3>
-                <p><strong>Mã đơn hàng:</strong> ${e.order.id}</p>
-                <p><strong>Bàn:</strong> ${e.order.tables.map(table => table.table_number).join(", ")}</p>
-                <p><strong>Giờ vào:</strong> ${e.tableId.orders[0].pivot.start_time.split(" ")[1]}</p>
-                <h4>Danh sách món</h4>
-            `;
+            <div style='display: flex; flex-direction: column'>
+                <div style='display: flex; justify-content: center'>
+                    <h3>Chi tiết đơn hàng</h3>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <p><strong>Bàn:</strong> ${e.tableId.table_number}</p>
+                    </div>
+                    <div class="col">
+                        <p><strong>Mã đơn hàng:</strong> ${e.order.id}</p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <p><strong>Khách Hàng:</strong> ${e.order?.reservation?.user_name ?? e.order?.customer?.name ?? 'Khách lẻ'
+                }</p >
+                    </div >
+            <div class="col">
+                <p><strong>Giờ vào:</strong> ${e.tableId.orders['0'].pivot.start_time.split(" ")[1]}</p>
+            </div>
+                </div >
+            </div >
+
+            <h4>Danh sách món</h4>
+        `;
             e.orderItems.order_items.forEach(item => {
                 if (item.status == 'chờ xử lý') {
                     layoutTable.innerHTML += `
@@ -52,9 +73,9 @@ window.Echo.channel('order')
                             </div>
                         </div>
                         
-                    </div>
+                    </div >
 
-                `;
+            `;
                 } else if (item.status == 'đang xử lý') {
                     layoutTable.innerHTML += `
                     <div class="item-list" data-dish-id="${item.item_id}" data-dish-order="${item.order_id}" data-dish-status="${item.status}" data-dish-informed="${item.informed}" data-dish-processing="${item.processing}" data-dish-quantity="${item.quantity}">
@@ -84,8 +105,8 @@ window.Echo.channel('order')
                             </div>
                         </div>
                         
-                    </div>
-                `;
+                    </div >
+            `;
                 } else if (item.status == 'hoàn thành') {
                     layoutTable.innerHTML += `
                     <div class="item-list" data-dish-id="${item.item_id}" data-dish-order="${item.order_id}" data-dish-status="${item.status}">
@@ -115,8 +136,8 @@ window.Echo.channel('order')
                             </div>
                         </div>
                         
-                    </div>
-                `;
+                    </div >
+            `;
                 }
             });
 
@@ -148,12 +169,33 @@ window.Echo.channel('orders')
         };
         if (selectedTableId == e.tableId.id) {
             layoutTable.innerHTML = `
-                <h3>Chi tiết đơn hàng</h3>
-                <p><strong>Mã đơn hàng:</strong> ${e.order.id}</p>
-                <p><strong>Bàn:</strong> ${e.order.tables.map(table => table.table_number).join(", ")}</p>
-                <p><strong>Giờ vào:</strong> ${e.tableId.orders[0].pivot.start_time.split(" ")[1]}</p>
-                <h4>Danh sách món</h4>
-            `;
+            <div style='display: flex; flex-direction: column'>
+                <div style='display: flex; justify-content: center'>
+                    <h3>Chi tiết đơn hàng</h3>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <p><strong>Bàn:</strong> ${e.tableId.table_number}</p>
+                    </div>
+                    <div class="col">
+                        <p><strong>Mã đơn hàng:</strong> ${e.order.id}</p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <p><strong>Khách Hàng:</strong> ${e.order?.reservation?.user_name ?? e.order?.customer?.name ?? 'Khách lẻ'
+                }</p >
+                    </div >
+            <div class="col">
+                <p><strong>Giờ vào:</strong> ${e.tableId.orders['0'].pivot.start_time.split(" ")[1]}</p>
+            </div>
+                </div >
+            </div >
+
+            <h4>Danh sách món</h4>
+        `;
             e.orderItems.order_items.forEach(item => {
                 if (item.status == 'chờ xử lý') {
                     layoutTable.innerHTML += `
@@ -182,9 +224,9 @@ window.Echo.channel('orders')
                             </div>
                         </div>
                         
-                    </div>
+                    </div >
 
-                `;
+            `;
                 } else if (item.status == 'đang xử lý') {
                     layoutTable.innerHTML += `
                     <div class="item-list" data-dish-id="${item.item_id}" data-dish-order="${item.order_id}" data-dish-status="${item.status}" data-dish-informed="${item.informed}" data-dish-processing="${item.processing}" data-dish-quantity="${item.quantity}">
@@ -214,8 +256,8 @@ window.Echo.channel('orders')
                             </div>
                         </div>
                         
-                    </div>
-                `;
+                    </div >
+            `;
                 } else if (item.status == 'hoàn thành') {
                     layoutTable.innerHTML += `
                     <div class="item-list" data-dish-id="${item.item_id}" data-dish-order="${item.order_id}" data-dish-status="${item.status}">
@@ -245,8 +287,8 @@ window.Echo.channel('orders')
                             </div>
                         </div>
                         
-                    </div>
-                `;
+                    </div >
+            `;
                 }
             });
 

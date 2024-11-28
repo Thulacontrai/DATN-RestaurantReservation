@@ -44,9 +44,12 @@
                                 <a class="nav-link text-light" href="#" onclick="showSection('accountDetailsSection')"
                                     style="color: #f5cc00;">Chi tiết tài khoản</a> <!-- Màu vàng -->
                             </li>
-                            {{-- <li class="nav-item">
-                                <a class="nav-link text-light" href="#" onclick="showSection('paymentSection')" style="color: #f5cc00;">Phương thức thanh toán</a> <!-- Màu vàng -->
-                            </li> --}}
+                            <li class="nav-item">
+                                <form  class="nav-link text-light" id="logout-form" action="{{ route('logout') }}"  style="color: #f5cc00;" method="POST" style="display: none;">
+                                    @csrf
+                                    <button type="submit" style="color: #f5cc00;" >Đăng xuất</button>
+                                </form>
+                            </li>
                         </ul>
                     </div>
 
@@ -109,14 +112,7 @@
                                             
                                            
                                         @endif
-                                    </div>
-                                    <strong
-                                        class="{{ $reservation->status === 'Confirmed' ? 'status-confirmed' : ($reservation->status === 'Checked-in' ? 'status-checked-in' : ($reservation->status === 'Cancelled' ? 'status-cancelled' : 'status-pending')) }}">
-                                        {{ $reservation->status === 'Confirmed' ? 'Đã xác nhận' : ($reservation->status === 'Checked-in' ? 'Đã nhận bàn' : ($reservation->status === 'Cancelled' ? 'Đã hủy' : 'Chờ xử lý')) }}
-                                    </strong>
-                                </div>
-                        
-                                <!-- Nút đánh giá -->
+                                    </div><!-- Nút đánh giá -->
                                 <div class="actions">
                                     @if ($reservation->status !== 'Cancelled')
                                         <button class="text-success review-btn"
@@ -139,6 +135,9 @@
                                         <p class="text-success">Đánh giá của bạn: {{ $reservation->review }}</p>
                                     @endif
                                 </div>
+                                </div>
+                        
+                                
                             </div>
                         @endforeach
                         

@@ -95,11 +95,7 @@
                                         <td class="text-center"><button type="button" class="transparent-button"
                                                 data-toggle="modal"
                                                 data-target="#orderDetailModal">{{ $reservation->id }}</button></td>
-                                        <td class="text-center">
-                                            @foreach ($reservation->tables as $table)
-                                                {{ $table->table_number ?? 'Chưa xếp bàn' }}
-                                            @endforeach
-                                        </td>
+
                                         <td class="text-center">{{ $reservation->reservation_date }} <br>
                                             {{ $reservation->reservation_time }}</td>
                                         <td class="text-center">{{ $reservation->user_name ?? 'Không rõ' }}</td>
@@ -120,10 +116,7 @@
                                         </td>
                                         <td class="text-center">
                                             <div class="actions">
-                                                <button class="btn btn-primary convertToOrder"
-                                                    data-id="{{ $reservation->id }}">
-                                                    Chuyển Đơn
-                                                </button>
+                                                <a href="{{ route('ReToOr', $reservation->id) }}">Chuyển đơn</a>
                                                 <!-- Các hành động khác như Xem, Sửa, Hủy đơn đặt bàn -->
                                             </div>
                                         </td>
@@ -525,10 +518,18 @@
                 inputPlaceholder: 'Nhập lý do...',
                 showCancelButton: true,
                 confirmButtonText: 'Xác nhận',
-                cancelButtonText: 'Hủy'
+                cancelButtonText: 'Hủy',
+                preConfirm: () => {
+                    const reason = Swal.getInput().value.trim();
+                    if (!reason) {
+                        Swal.showValidationMessage(
+                        'Vui lòng nhập lý do hủy');
+                        return false;
+                    }
+                    return reason;
+                }
             }).then((result) => {
                 if (result.isConfirmed) {
-                    const reason = result.value;
                     fetch(`/deleteItem`, {
                             method: 'POST',
                             headers: {
@@ -556,6 +557,7 @@
                 }
             });
         }
+
 
         function deletteItem(dishId, selectedTableId) {
             fetch(`/deleteItem`, {
