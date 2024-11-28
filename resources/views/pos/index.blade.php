@@ -26,8 +26,10 @@
                 <a class="nav-link" href="#" id="menu-view-button" aria-label="Xem Thực đơn">
                     <i class="material-icons">restaurant</i> Thực đơn
                 </a>
-                <input class="form-control1 me-2" id="searchInput" type="search" placeholder="Tìm món (F3)"
-                    aria-label="Tìm món">
+                <input class="form-control1 me-2" id="searchTable" type="search" placeholder="Tìm theo bàn, mã đơn"
+                    aria-label="Tìm bàn">
+                <input class="form-control1 me-2" id="searchInput" type="search" placeholder="Tìm theo món, giá"
+                    aria-label="Tìm món" style="display: none;">
             </div>
 
 
@@ -523,7 +525,7 @@
                     const reason = Swal.getInput().value.trim();
                     if (!reason) {
                         Swal.showValidationMessage(
-                        'Vui lòng nhập lý do hủy');
+                            'Vui lòng nhập lý do hủy');
                         return false;
                     }
                     return reason;
