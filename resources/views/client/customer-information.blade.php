@@ -24,8 +24,8 @@
                     <h6 class="text-center mt-4 mb-2">Mời bạn nhập thông tin để đặt bàn</h6>
                     <form id="booking-form" action="{{ route('createReservation.client') }}" method="POST">
                         @csrf
-                        <div class="row m-4 d-flex justify-content-center">
-                            <div class="col">
+                        <div class="row m-4">
+                            <div class="col-12 col-md-4 mb-3">
                                 <label for="user_name">Tên khách hàng*</label>
                                 <input class="form-control" type="text" name="user_name" id="user_name"
                                     placeholder="Nhập tên khách hàng"
@@ -34,7 +34,7 @@
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
-                            <div class="col">
+                            <div class="col-12 col-md-4 mb-3">
                                 <label for="user_phone">Số điện thoại*</label>
                                 <input class="form-control" type="text" name="user_phone" id="user_phone"
                                     placeholder="Nhập số điện thoại"
@@ -42,11 +42,10 @@
                                 @error('user_phone')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
-
-
                             </div>
 
-                            <div class="col position-relative">
+                            <div class="col-12 col-md-4 mb-3">
+
                                 <label for="guest_count">Số người đặt bàn*</label>
                                 <input type="number" class="form-control" id="guest_count" name="guest_count"
                                     value="{{ old('guest_count') ?? ($data['guest_count'] ?? 1) }}" min="1" max="50" required>
@@ -57,8 +56,8 @@
                             </div>
                             
                         </div>
-                        <div class="row m-4 d-flex justify-content-center">
-                            <div>
+                        <div class="row m-4">
+                            <div class="col-12">
                                 <label for="note">Ghi chú thêm</label>
                                 <input class="form-control" type="text" name="note" id="note"
                                     placeholder="Nhập ghi chú" value="{{ old('note') ?? ($data['note'] ?? null) }}">
@@ -68,27 +67,18 @@
                             <input type="hidden" name="reservation_date" value="{{ $date }}">
                             <input type="hidden" name="reservation_time" value="{{ $time }}">
                         @else
-                            <div class="alert alert-danger">Không có ngày hoặc giờ đặt bàn! Vui lòng quay lại bước trước.
-                            </div>
+                            <div class="alert alert-danger">Không có ngày hoặc giờ đặt bàn! Vui lòng quay lại bước trước.</div>
                         @endif
-                        <!-- Căn chỉnh reCAPTCHA ra giữa -->
-                        <div id="recaptcha-container" class="mt-3"></div>
-
-
-                        <div class="row m-4 d-flex justify-content-center">
-                            <!-- Căn chỉnh reCAPTCHA ra giữa -->
-                            <div id="recaptcha-container" class="mt-3"></div>
-                            <div class="col-2">
+                        <div class="row m-4">
+                            <div class="col-6 text-center">
                                 <a href="{{ route('booking.client') }}" class="text-secondary">Quay lại</a>
                             </div>
-                            <div class="col-2">
-
-
+                            <div class="col-6 text-center">
                                 <button type="button" class="btn-line" onclick="sendOTP()">Xác nhận</button>
                             </div>
-
                         </div>
                     </form>
+
                 </div>
             </div>
         </section>
@@ -252,6 +242,18 @@
             padding: 10px 20px;
             border-radius: 5px;
         }
+
+        @media (max-width: 426px) {
+            .row.m-4 > .col-md-4 {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+
+            .row.m-4 > .col-md-4.mb-3 {
+                margin-bottom: 1rem;
+            }
+        }
+
     </style>
 
 @endsection

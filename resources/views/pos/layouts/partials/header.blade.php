@@ -58,6 +58,20 @@
     document.addEventListener("DOMContentLoaded", function() {
         const notificationButton = document.getElementById('notificationButton');
         const printButton = document.getElementById('printButton');
+        const hamburgerMenu = document.getElementById("hamburgerMenu");
+        const dropdownMenu = document.getElementById("dropdownMenu");
+
+        hamburgerMenu.addEventListener("click", function () {
+            const isVisible = dropdownMenu.style.display === "block";
+            dropdownMenu.style.display = isVisible ? "none" : "block";
+        });
+
+        // Hide Dropdown Menu when clicking outside
+        document.addEventListener("click", function (event) {
+            if (!dropdownMenu.contains(event.target) && event.target !== hamburgerMenu) {
+                dropdownMenu.style.display = "none";
+            }
+  });
 
         // Notification Badge Animation
         notificationButton.addEventListener('click', function() {
@@ -87,7 +101,7 @@
             });
         });
     });
-
+    
     // Modal danh sách đặt bàn
     document.getElementById('modalListReservation').addEventListener('click', function() {
         $('#reservationListModal').modal('show');
