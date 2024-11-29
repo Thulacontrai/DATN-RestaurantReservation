@@ -783,7 +783,11 @@ class ReservationController extends Controller
             $orderTable->status = 'Hoàn thành';
             $orderTable->end_time = $request->end_time;
             $orderTable->save();
-            $tables = Table::with('orders')->get();
+            $tables = Table::with(['orders' => function($query) {
+                $query->where('orders.status', '!=', 'completed');
+            }])->get();
+            
+            
             broadcast(new MessageSent($tables))->toOthers();
         });
         return redirect(route('pos.index'));

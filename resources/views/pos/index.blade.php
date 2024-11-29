@@ -342,8 +342,40 @@
         document.querySelector('#payment-button').addEventListener('click', function(event) {
             const orderDetails = document.getElementById('order-details');
             if (selectedTableId != null) {
-                const url = `/Ppayment/${selectedTableId}`;
-                window.location.href = url;
+                fetch('/check-payment-condition', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                .getAttribute('content'),
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            table_id: selectedTableId
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            const url = `/Ppayment/${selectedTableId}`;
+                            window.location.href = url;
+                        } else {
+                            Swal.fire({
+                                title: 'Các món sẽ bị hủy do chưa hoàn thành!',
+                                html: data.message,
+                                icon: 'question',
+                                showCancelButton: true,
+                                confirmButtonText: 'Tiếp tục',
+                                cancelButtonText: 'Hủy',
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    const url = `/Ppayment/${selectedTableId}`;
+                                    window.location.href = url;
+                                }
+                            });
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+
             } else {
                 showNotification('Vui lòng chọn bàn trước khi thanh toán', 'warning')
             }
@@ -532,6 +564,7 @@
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
+                    const reason = result.value;
                     fetch(`/deleteItem`, {
                             method: 'POST',
                             headers: {
@@ -642,6 +675,8 @@
             const selectedTableIds = data.table.tables.map(table => String(table.table_number));
             tableCards.forEach(card => {
                 const isSelected = selectedTableIds.includes(card.getAttribute('data-table-id'));
+                console.log();
+
                 if (isSelected) {
                     card.style.backgroundColor = '#007bff';
                     card.style.color = '#ffffff';
@@ -650,12 +685,21 @@
                         child.style.color = '#ffffff';
                     });
                 } else {
-                    card.style.backgroundColor = '';
-                    card.style.color = '';
-                    const childElements = card.querySelectorAll('*');
-                    childElements.forEach(child => {
-                        child.style.color = '';
-                    });
+                    if (card.getAttribute('data-status') == 'Occupied') {
+                        card.style.backgroundColor = '#f8c1a5';
+                        card.style.color = '#333';
+                        const childElements = card.querySelectorAll('*');
+                        childElements.forEach(child => {
+                            child.style.color = '#535f6b';
+                        });
+                    } else {
+                        card.style.backgroundColor = '';
+                        card.style.color = '';
+                        const childElements = card.querySelectorAll('*');
+                        childElements.forEach(child => {
+                            child.style.color = '';
+                        });
+                    }
                 }
             });
         }

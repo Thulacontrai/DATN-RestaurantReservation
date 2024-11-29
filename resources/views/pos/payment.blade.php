@@ -295,7 +295,6 @@
                         submitButton.disabled = true; // Vô hiệu hóa nút submit
                     }
                 }
-                // Logic cho phương thức chuyển khoản ngân hàng
                 $('#bankPaymentBtn').click(function() {
                     if ({{ $order->total_amount - ($order->reservation->deposit_amount ?? 0) }} > 0) {
                         Swal.fire({

@@ -35,16 +35,6 @@
         const bellButton = document.querySelector('.fa-bell');
         const notificationDropdown = document.createElement('div');
 
-        // Thêm nội dung dropdown cho chuông thông báo
-        notificationDropdown.classList.add('notification-dropdown');
-        notificationDropdown.style.display = 'none'; // Bắt đầu ẩn
-        notificationDropdown.innerHTML = `
-        <h4 class="notification-header">Chưa thanh toán</h4>
-        <div class="notification-body">
-            <i class="fas fa-file-alt notification-icon"></i>
-            <p>Không có đơn đặt hàng chờ thanh toán</p>
-        </div>
-    `;
         document.body.appendChild(notificationDropdown);
 
         // Điều khiển hiển thị dropdown của chuông thông báo
