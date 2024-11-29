@@ -186,16 +186,36 @@ class InventoryTransactionController extends Controller
 
     public function storeTransaction(Request $request)
     {
-        // Kiểm tra và validate dữ liệu
+        $request->merge([
+            'total_amount' => preg_replace('/[^\d]/', '', $request->input('total_amount'))
+        ]);
         $validated = $request->validate([
-            'total_amount' => 'required|numeric|min:0',
+            'total_amount' => 'required|numeric|min:1|max:2147483647',
             'description' => 'nullable|string|max:255',
             'supplier_id' => 'required|exists:suppliers,id',
-            'ingredients' => 'required|array',  // Kiểm tra mảng ingredients
+            'ingredients' => 'required|array',
             'ingredients.*.ingredient_id' => 'required|exists:ingredients,id',
             'ingredients.*.quantity' => 'required|numeric|min:1',
             'ingredients.*.unit_price' => 'required|numeric|min:0',
-        ]);
+         ], [
+             'total_amount.required' => 'Tổng số tiền là bắt buộc.',
+             'total_amount.numeric' => 'Tổng số tiền phải là một số.',
+             'total_amount.max' => 'Tổng số tiền không được vượt quá 2,147,483,647.',
+             'total_amount.min' => 'Tổng số tiền không được âm.',
+             'supplier_id.required' => 'Vui lòng chọn nhà cung cấp.',
+             'supplier_id.exists' => 'Nhà cung cấp không tồn tại.',
+             'ingredients.required' => 'Vui lòng thêm ít nhất một nguyên liệu.',
+             'ingredients.*.ingredient_id.required' => 'Mã nguyên liệu là bắt buộc.',
+             'ingredients.*.ingredient_id.exists' => 'Nguyên liệu không tồn tại.',
+             'ingredients.*.quantity.required' => 'Số lượng là bắt buộc.',
+             'ingredients.*.quantity.numeric' => 'Số lượng phải là số.',
+             'ingredients.*.quantity.min' => 'Số lượng phải lớn hơn 0.',
+             'ingredients.*.unit_price.required' => 'Đơn giá là bắt buộc.',
+             'ingredients.*.unit_price.numeric' => 'Đơn giá phải là số.',
+             'ingredients.*.unit_price.min' => 'Đơn giá không được âm.',
+         ]);
+         
+        
 
         // Lấy ID của user đang đăng nhập
         $userId = Auth::id();

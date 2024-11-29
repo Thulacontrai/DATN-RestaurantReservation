@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->enum('transaction_type', ["nhập"]); // Kiểu dữ liệu cho transaction_type
             $table->decimal('total_amount', 10, 2); // Thêm số chữ số cho decimal
-            $table->text('description');
+            $table->text('description')->nullable();
             $table->unsignedBigInteger('supplier_id'); // Thay đổi thành unsignedBigInteger
             $table->foreign('supplier_id')->references('id')->on('suppliers')->onDelete('cascade');
             $table->unsignedBigInteger('staff_id'); // Thay đổi thành unsignedBigInteger

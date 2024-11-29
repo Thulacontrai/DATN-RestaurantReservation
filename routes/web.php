@@ -93,7 +93,8 @@ Route::post('/change-password', [MemberController::class, 'changePassword'])->na
 Route::post('/member/update-booking', [MemberController::class, 'updateBooking'])->name('member.updateBooking');
 
 
-
+Route::get('/admin/users', [UserController::class, 'index'])->name('admin.user.index');
+Route::get('/admin/employees', [UserController::class, 'employeeList'])->name('admin.user.employees');
 
 
 // login
