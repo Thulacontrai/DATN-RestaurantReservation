@@ -41,8 +41,6 @@ window.Echo.channel('order')
         </div>
     </div>
 </div>
-
-
             <h4>Danh sách món</h4>
         `;
             e.orderItems.order_items.forEach(item => {

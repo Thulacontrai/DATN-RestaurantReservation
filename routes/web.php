@@ -214,9 +214,11 @@ Route::post('/decreaseQuantity', [PosController::class, 'decreaseQuantity']);
 Route::post('/notification-button/{tableId}', [PosController::class, 'notificatioButton']);
 Route::post('/canelItem', [PosController::class, 'canelItem']);
 Route::get('/Ppayment/{table_number}', [PosController::class, 'Ppayment'])->name('Ppayment');
+Route::get('/viewCheckOut/{table_number}', [PosController::class, 'viewCheckOut'])->name('viewCheckOut');
+Route::post('/check-payment-condition', [PosController::class, 'checkPaymentPondition'])->name('checkPaymentPondition');
 
 ///
-Route::get('reserToOrder/{reservationId}',[PosController::class, 'reserToOrder'])->name('ReToOr');
+Route::get('reserToOrder/{reservationId}', [PosController::class, 'reserToOrder'])->name('ReToOr');
 
 
 Route::post('/load-more-dishes', [PosController::class, 'loadMoreDishes']);
@@ -238,7 +240,6 @@ Route::post('/reservation/check-table', [PosController::class, 'checkTable'])->n
 
 
 
-Route::post('/Ppayment/{table_number}', [PosController::class, 'Ppayment'])->name('Ppayment');
 route::post(
     "checkout/{orderID}",
     action: [ReservationController::class, "checkout"]

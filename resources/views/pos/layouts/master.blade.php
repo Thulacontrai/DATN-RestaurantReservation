@@ -8,8 +8,8 @@
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <title>@yield('title', 'Default Title')</title>
     <meta charset="utf-8">
+    <link rel="icon" href="{{asset('client/03_images/logo.png')}}" type="image/x-icon">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>ProX | Responsive Bootstrap 4 Admin Dashboard Template
     </title>
     <!-- Main Backend CSS -->
     @include('pos.layouts.partials.css')

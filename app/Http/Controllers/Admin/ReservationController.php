@@ -748,7 +748,7 @@ class ReservationController extends Controller
                     'user_name' => $request->user_name,
                     'user_phone' => $request->user_phone,
                     'guest_count' => $request->guest_count,
-                    'deposit_amount' => $request->deposit_amount,
+                    'deposit_amount' => $request->deposit,
                     'note' => $request->note,
                     'reservation_date' => $request->reservation_date,
                     'reservation_time' => $request->reservation_time,
@@ -771,29 +771,23 @@ class ReservationController extends Controller
     {
         DB::transaction(function () use ($request, $orderId) {
             $order = Order::find($orderId);
-            $table = Table::find($order->table_id);
-            $itemNames = $request->item_name;
-            $quantities = $request->quantity;
-            foreach ($itemNames as $index => $itemName) {
-                DB::table('order_items')
-                    ->where('order_id', $orderId)
-                    ->where('item_id', $itemName)
-                    ->update(['quantity' => DB::raw('quantity - ' . $quantities[$index])]);
-                DB::table('order_items')
-                    ->where('order_id', $orderId)
-                    ->where('item_id', $itemName)
-                    ->where('quantity', '<=', '0')
-                    ->delete();
-            }
-            if ($itemsCount == 0) {
-                Order::where('id', '=', $orderId)
-                    ->update(['status' => 'completed']);
-                Table::where('id', '=', $table->id)
-                    ->update(['status' => 'Available']);
-                OrdersTable::where('reservation_id', $order->reservation_id)
-                    ->where('table_id', $order->table_id)
-                    ->update(['status' => 'available']);;
-            }
+            $order->status = 'completed';
+            $order->save();
+            $table = Table::find($order->tables['0']->id);
+            $table->status = 'Available';
+            $table->save();
+            $orderTable = OrdersTable::where('order_id', $orderId)
+                ->where('table_id', $table->id)
+                ->first();
+            $orderTable->status = 'Hoàn thành';
+            $orderTable->end_time = $request->end_time;
+            $orderTable->save();
+            $tables = Table::with([
+                'orders' => function ($query) {
+                    $query->where('orders.status', '!=', 'completed');
+                }
+            ])->get();
+            broadcast(new MessageSent($tables))->toOthers();
         });
         return redirect(route('pos.index'));
     }
