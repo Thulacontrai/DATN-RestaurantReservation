@@ -86,7 +86,6 @@
                                                             {{ $user->roles ? $user->roles->pluck('name')->implode(', ') : 'Không có vai trò' }}
                                                         </td>
                                                     @endif
-
                                                     <td>
                                                         @if ($user->status == 'active')
                                                             <span class="badge shade-green">Hoạt Động</span>
@@ -96,11 +95,12 @@
                                                     </td>
                                                     <td>{{ $user->created_at }}</td>
                                                     <td>
-                                                       <a href="{{ route('admin.user.edit', $user->id) }}" data-bs-toggle="tooltip"
-                                                            data-bs-placement="top" title="Sửa">
-
-                                                            <i class="bi bi-pencil-square text-warning"></i>
-                                                        </a>
+                                                        <div class="action text-center">
+                                                            <a href="{{ route('admin.user.edit', $user->id) }}" data-bs-toggle="tooltip"
+                                                                 data-bs-placement="top" title="Sửa">
+     
+                                                                 <i class="bi bi-pencil-square text-warning"></i>
+                                                             </a></div>
                                                     </td>
                                                 </tr>
                                             @endforeach

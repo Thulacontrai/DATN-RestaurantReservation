@@ -150,7 +150,7 @@
                             <ul>
                                 @can('Xem vai trò')
                                     <li>
-                                        <a href="{{ route('admin.role.index') }}">Danh sáchVai trò</a>
+                                        <a href="{{ route('admin.role.index') }}">Danh sách vai trò</a>
                                     </li>
                                 @endcan
                                 @can('Xem quyền hạn')
