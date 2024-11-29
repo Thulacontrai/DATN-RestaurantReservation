@@ -46,6 +46,15 @@ class DishesController extends Controller
             $query->where('status', $request->status);
         }
 
+         // Kiểm tra và áp dụng trạng thái active/inactive nếu có
+         if ($request->filled('is_active')) {
+            $isActive = $request->is_active;
+            $query->where('is_active', $isActive); // Lọc theo trạng thái
+        } else {
+            // Nếu không có tham số, lấy cả active và inactive dish
+            // Mặc định sẽ lấy cả hai
+        }
+
         $dishes = $query->paginate(10);
 
         if ($request->ajax()) {
@@ -293,90 +302,6 @@ class DishesController extends Controller
 
 
 
-    // public function updateIngredients(Request $request, $id)
-    // {
-    //     // Log entry to check method call and dish ID
-    //     Log::info('Calling updateIngredients with ID: ' . $id);
-
-    //     // Validate request data
-    //     $validatedData = $request->validate([
-    //         'ingredients' => 'required|array',
-    //         'ingredients.*.id' => 'required|exists:recipes,id',
-    //         'ingredients.*.quantity' => 'nullable|numeric|min:0.1',
-    //         'ingredients.*.delete' => 'nullable|boolean'
-    //     ]);
-
-    //     // Check if the dish exists
-    //     $dish = Dishes::find($id);
-    //     if (!$dish) {
-    //         Log::error('Dish not found with ID: ' . $id);
-    //         return response()->json(['message' => 'Dish not found'], 404);
-    //     }
-
-    //     $ingredients = $validatedData['ingredients'];
-    //     Log::info('Ingredients received: ' . json_encode($ingredients));
-
-    //     $deletedIds = [];
-    //     $updatedIds = [];
-
-    //     DB::beginTransaction();
-    //     try {
-    //         foreach ($ingredients as $ingredient) {
-    //             $recipe = Recipe::find($ingredient['id']);
-
-    //             if (!$recipe) {
-    //                 Log::warning("Ingredient not found with ID: {$ingredient['id']}");
-    //                 continue;
-    //             }
-
-    //             if (isset($ingredient['delete']) && $ingredient['delete'] === true) {
-    //                 $recipe->delete();
-    //                 $deletedIds[] = $ingredient['id'];
-    //                 Log::info("Successfully deleted ingredient with ID: {$ingredient['id']}");
-    //             } elseif (isset($ingredient['quantity'])) {
-    //                 $recipe->quantity_need = $ingredient['quantity'];
-    //                 $recipe->save();
-    //                 $updatedIds[] = $ingredient['id'];
-    //                 Log::info("Successfully updated ingredient ID: {$ingredient['id']} with quantity: {$ingredient['quantity']}");
-    //             } else {
-    //                 Log::warning('Quantity missing for ingredient ID: ' . $ingredient['id']);
-    //             }
-    //         }
-
-    //         DB::commit();
-
-    //         return response()->json([
-    //             'message' => 'Ingredients updated successfully',
-    //             'updated_ids' => $updatedIds,
-    //             'deleted_ids' => $deletedIds
-    //         ]);
-
-    //     } catch (\Exception $e) {
-    //         DB::rollBack();
-    //         Log::error("Failed to update ingredients: " . $e->getMessage());
-    //         return response()->json(['message' => 'Failed to update ingredients'], 500);
-    //     }
-    // }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -430,5 +355,20 @@ class DishesController extends Controller
         $dish->forceDelete(); // Xóa vĩnh viễn
 
         return redirect()->route('admin.dishes.trash')->with('success', 'Món ăn đã được xóa vĩnh viễn!');
+    }
+
+
+    public function toggleStatus(Request $request, $id)
+    {
+        try {
+            $dish = Dishes::findOrFail($id); // Lấy dish theo ID
+            $dish->is_active = $request->input('is_active'); // Cập nhật trạng thái
+            $dish->save();
+
+            return response()->json(['success' => true, 'message' => 'Trạng thái đã được cập nhật thành công.']);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Có lỗi xảy ra trong quá trình cập nhật trạng thái.']);
+        }
     }
 }

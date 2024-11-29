@@ -17,6 +17,7 @@ class CreateDishesTable extends Migration
                 $table->string('image', 255)->nullable(); // varchar(255), cho phép NULL
                 $table->enum('status', ['available', 'out_of_stock', 'reserved', 'inactive'])->default('available');
                 $table->text('description')->nullable(); // text, cho phép NULL
+                $table->tinyInteger('is_active')->default(1);
                 $table->timestamps(); // created_at và updated_at
                 $table->softDeletes(); // deleted_at cho soft delete
 

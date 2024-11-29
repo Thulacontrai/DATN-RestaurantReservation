@@ -50,11 +50,15 @@
 
                                 <div class="mb-3">
                                     <label for="max_uses" class="form-label">Số Lượt Sử Dụng Tối Đa</label>
-                                    <input type="number" class="form-control" id="max_uses" name="max_uses">
+                                    <input type="number" class="form-control" id="max_uses" name="max_uses" min="1"
+                                        max="100" value="1" required>
+                                    <div class="invalid-feedback">Số lượt sử dụng phải nằm trong khoảng từ 1 đến 100 và
+                                        không được âm.</div>
                                     @error('max_uses')
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
+
 
                                 <div class="mb-3">
                                     <label for="start_time" class="form-label">Thời Gian Bắt Đầu</label>
@@ -118,5 +122,30 @@
 
     </div>
     <!-- Content wrapper scroll end -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const maxUsesInput = document.getElementById('max_uses');
 
+            // Đảm bảo giá trị bắt đầu từ 1
+            if (maxUsesInput.value < 1) {
+                maxUsesInput.value = 1;
+            }
+
+            maxUsesInput.addEventListener('input', function() {
+                let value = parseInt(maxUsesInput.value, 10);
+
+                // Nếu giá trị âm, giá trị nhỏ hơn 1 hoặc lớn hơn 100 thì sửa lại giá trị
+                if (value < 1) {
+                    maxUsesInput.value = 1;
+                    maxUsesInput.setCustomValidity('Số lượt sử dụng không được nhỏ hơn 1.');
+                } else if (value > 100) {
+                    maxUsesInput.value = 100;
+                    maxUsesInput.setCustomValidity('Số lượt sử dụng không được lớn hơn 100.');
+                } else {
+                    maxUsesInput.setCustomValidity('');
+                }
+                maxUsesInput.classList.toggle('is-invalid', !maxUsesInput.checkValidity());
+            });
+        });
+    </script>
 @endsection

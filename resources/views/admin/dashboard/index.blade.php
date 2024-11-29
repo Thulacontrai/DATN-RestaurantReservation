@@ -16,8 +16,8 @@
                             <i class="bi bi-pie-chart"></i>
                         </div>
                         <div class="sale-details">
-                            <h3 class="text-red">{{$tableCount}}</h3>
-                            <p><a href="{{route('admin.table.index')}}">Bàn</a></p>
+                            <h3 class="text-red">{{ $tableCount }}</h3>
+                            <p><a href="{{ route('admin.table.index') }}">Bàn</a></p>
                         </div>
                     </div>
                 </div>
@@ -27,8 +27,8 @@
                             <i class="bi bi-emoji-smile"></i>
                         </div>
                         <div class="sale-details">
-                            <h3 class="text-blue">{{$userCount}}</h3>
-                            <p><a href="{{route('admin.user.index')}}">Tài Khoản</a></p>
+                            <h3 class="text-blue">{{ $userCount }}</h3>
+                            <p><a href="{{ route('admin.user.index') }}">Tài Khoản</a></p>
                         </div>
                     </div>
                 </div>
@@ -38,8 +38,8 @@
                             <i class="bi bi-box-seam"></i>
                         </div>
                         <div class="sale-details">
-                            <h3 class="text-yellow">{{$categoryCount}}</h3>
-                            <p><a href="{{route('admin.category.index')}}">Thực Đơn</a></p>
+                            <h3 class="text-yellow">{{ $categoryCount }}</h3>
+                            <p><a href="{{ route('admin.category.index') }}">Thực Đơn</a></p>
                         </div>
                     </div>
                 </div>
@@ -49,8 +49,8 @@
                             <i class="bi bi-handbag"></i>
                         </div>
                         <div class="sale-details">
-                            <h3 class="text-green">{{$orderCount}}</h3>
-                            <p><a href="{{route('admin.order.index')}}">Đơn Hàng</a></p>
+                            <h3 class="text-green">{{ $orderCount }}</h3>
+                            <p><a href="{{ route('admin.order.index') }}">Đơn Hàng</a></p>
                         </div>
                     </div>
                 </div>
@@ -59,69 +59,90 @@
 
             <!-- Row start -->
             <div class="row">
-                <div class="col-xxl-9  col-sm-12 col-12">
-
+                <div class="col-xxl-9 col-sm-12 col-12">
                     <div class="card">
                         <div class="card-body">
-
-                            <!-- Row start -->
+                            <!-- Bắt đầu dòng -->
                             <div class="row">
+                                <!-- Tóm tắt báo cáo -->
                                 <div class="col-xxl-3 col-sm-4 col-12">
                                     <div class="reports-summary">
+                                        <!-- Doanh số bán hàng tổng quan -->
                                         <div class="reports-summary-block">
                                             <i class="bi bi-circle-fill text-primary me-2"></i>
                                             <div class="d-flex flex-column">
-                                                <h6>Overall Sales</h6>
-                                                <h5>12 Millions</h5>
+                                                <h6>Tổng Doanh Số</h6>
+                                                <h5>
+                                                    {{ number_format($totalRevenue ?? 0, 0, '.', ',') }} Triệu
+                                                </h5>
+
+                                                <!-- Hiển thị doanh thu -->
                                             </div>
                                         </div>
+                                        <!-- Thu nhập tổng quan -->
                                         <div class="reports-summary-block">
                                             <i class="bi bi-circle-fill text-success me-2"></i>
                                             <div class="d-flex flex-column">
-                                                <h6>Overall Earnings</h6>
-                                                <h5>78 Millions</h5>
+                                                <h6>Thu Nhập</h6>
+                                                <h5> {{ number_format($totalEarnings ?? 0, 0, '.', ',') }} Triệu</h5>
                                             </div>
                                         </div>
+                                        <!-- Doanh thu tổng quan -->
                                         <div class="reports-summary-block">
                                             <i class="bi bi-circle-fill text-danger me-2"></i>
                                             <div class="d-flex flex-column">
-                                                <h6>Overall Revenue</h6>
-                                                <h5>60 Millions</h5>
+                                                <h6>Doanh Thu</h6>
+                                                <h5>{{ number_format($netRevenue ?? 0, 0, '.', ',') }} Triệu</h5>
+                                                <!-- Doanh thu đã sửa -->
                                             </div>
                                         </div>
+                                        <!-- Khách hàng mới -->
                                         <div class="reports-summary-block">
                                             <i class="bi bi-circle-fill text-warning me-2"></i>
                                             <div class="d-flex flex-column">
-                                                <h6>New Customers</h6>
-                                                <h5>23k</h5>
+                                                <h6>Khách Hàng Mới</h6>
+                                                <h5>{{ number_format($newCustomers ?? 0) }} Khách</h5>
                                             </div>
                                         </div>
-                                        <button class="btn btn-info download-reports">View Reports</button>
+                                        <!-- Nút xem báo cáo -->
+                                        <button class="btn btn-info download-reports" onclick="downloadReport()">Xem Báo
+                                            Cáo</button>
                                     </div>
                                 </div>
+
+
+
+
+                                <!-- Khu vực biểu đồ -->
                                 <div class="col-xxl-9 col-sm-8 col-12">
                                     <div class="row">
+                                        <!-- Chọn khoảng thời gian -->
                                         <div class="col-12">
                                             <div class="graph-day-selection mt-2" role="group">
-                                                <button type="button" class="btn active">Today</button>
-                                                <button type="button" class="btn">Yesterday</button>
-                                                <button type="button" class="btn">7 days</button>
-                                                <button type="button" class="btn">15 days</button>
-                                                <button type="button" class="btn">30 days</button>
+                                                <button type="button" class="btn active" data-period="today">Hôm
+                                                    Nay</button>
+                                                <button type="button" class="btn" data-period="yesterday">Hôm
+                                                    Qua</button>
+                                                <button type="button" class="btn" data-period="7days">7 Ngày</button>
+                                                <button type="button" class="btn" data-period="15days">15 Ngày</button>
+                                                <button type="button" class="btn" data-period="30days">30 Ngày</button>
                                             </div>
                                         </div>
+                                        <!-- Biểu đồ doanh thu -->
                                         <div class="col-12">
-                                            <div id="revenueGraph"></div>
+                                            <div id="revenueGraph" class="graph-container"></div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <!-- Row end -->
-
+                            <!-- Kết thúc dòng -->
                         </div>
                     </div>
 
                 </div>
+
+
+
                 <div class="col-xxl-3  col-sm-12 col-12">
 
                     <div class="card">
@@ -514,3 +535,7 @@
             <!-- Row end -->
 
         @endsection
+
+
+
+      

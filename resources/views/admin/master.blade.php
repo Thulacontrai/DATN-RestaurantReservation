@@ -76,6 +76,7 @@
         <script src="{{ asset('adminn/assets/vendor/apex/custom/sales/salesGraph.js') }}"></script>
         <script src="{{ asset('adminn/assets/vendor/apex/custom/sales/revenueGraph.js') }}"></script>
         <script src="{{ asset('adminn/assets/vendor/apex/custom/sales/taskGraph.js') }}"></script>
+        
 
         <!-- Main Js Required -->
         <script src="{{ asset('adminn/assets/js/main.js') }}"></script>

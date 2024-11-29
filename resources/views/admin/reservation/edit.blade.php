@@ -51,7 +51,8 @@
                                 <div class="mb-3">
                                     <label for="guest_count" class="form-label">Số lượng khách</label>
                                     <input type="number" class="form-control" id="guest_count" name="guest_count"
-                                        value="{{ $reservation->guest_count }}" required>
+                                        value="{{ $reservation->guest_count }}" min="1" max="50" required>
+                                    <div class="invalid-feedback">Số lượng khách phải nằm trong khoảng từ 1 đến 50.</div>
                                 </div>
 
                                 <div class="mb-3" id="deposit_section">
@@ -116,6 +117,26 @@
 
             // Call the function on page load to calculate deposit based on initial value
             calculateDeposit();
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const guestCountInput = document.getElementById('guest_count');
+
+            guestCountInput.addEventListener('input', function() {
+                let value = parseInt(guestCountInput.value, 10);
+
+                // Kiểm tra nếu giá trị lớn hơn 50, thì giới hạn lại ở 50
+                if (value > 50) {
+                    guestCountInput.value = 50;
+                    guestCountInput.setCustomValidity('Số lượng khách không được lớn hơn 50.');
+                } else {
+                    guestCountInput.setCustomValidity('');
+                }
+
+                // Thêm lớp lỗi nếu không hợp lệ
+                guestCountInput.classList.toggle('is-invalid', !guestCountInput.checkValidity());
+            });
         });
     </script>
 

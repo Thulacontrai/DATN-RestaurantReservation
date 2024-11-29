@@ -16,7 +16,6 @@ class OrderController extends Controller
         $this->middleware('permission:Tạo mới order', ['only' => ['create']]);
         $this->middleware('permission:Sửa order', ['only' => ['edit']]);
         $this->middleware('permission:Xóa order', ['only' => ['destroy']]);
-        
     }
 
     use TraitCRUD;
@@ -54,30 +53,62 @@ class OrderController extends Controller
 
     public function show($id)
     {
-        $order = Order::with(['staff', 'reservation', 'table', 'customer'])->findOrFail($id);
+        $order = Order::with(['staff', 'reservation', 'customer'])->findOrFail($id);
         return view('admin.order.show', compact('order'));
     }
 
     public function edit(Order $order)
     {
+        // Trả về view chỉnh sửa với dữ liệu đơn hàng
         return view('admin.order.edit', compact('order'));
     }
 
     public function update(Request $request, Order $order)
     {
+        // Xác thực dữ liệu người dùng nhập vào
         $validated = $request->validate([
-            'reservation_id' => 'required|integer|exists:reservations,id',
-            'staff_id' => 'required|integer|exists:users,id',
-            'table_id' => 'nullable|integer|exists:tables,id',
-            'total_amount' => 'required|numeric|min:0',
-            'final_amount' => 'required|numeric|min:0',
-            'status' => 'required|in:Completed,Pending,Cancelled',
+            'reservation_id' => 'required|integer|exists:reservations,id', // Kiểm tra mã đặt chỗ hợp lệ
+            'staff_id' => 'required|integer|exists:users,id', // Kiểm tra nhân viên hợp lệ
+            'total_amount' => 'required|numeric|min:0', // Tổng tiền phải là số hợp lệ và >= 0
+            'order_type' => 'required|in:dine_in,take_away,delivery', // Loại đơn hàng phải hợp lệ
+            'status' => 'required|in:pending,completed,cancelled', // Trạng thái phải là một trong ba giá trị
+            'discount_amount' => 'nullable|numeric|min:0', // Số tiền giảm giá có thể là null nhưng nếu có phải là số hợp lệ
+            'final_amount' => 'required|numeric|min:0', // Số tiền cuối cùng phải là số hợp lệ và >= 0
         ]);
 
-        $order->update($validated);
+        // Kiểm tra nếu số tiền cuối cùng có hợp lệ hơn tổng tiền (nếu có giảm giá)
+        if (isset($validated['discount_amount']) && $validated['final_amount'] < $validated['total_amount'] - $validated['discount_amount']) {
+            return redirect()->back()->with('error', 'Số tiền cuối cùng không hợp lệ. Nó phải lớn hơn hoặc bằng tổng tiền trừ số tiền giảm giá.');
+        }
 
+        // Đảm bảo rằng giá trị của discount_amount nếu không có sẽ được gán là 0
+        $discountAmount = $validated['discount_amount'] ?? 0;
+
+        // Kiểm tra xem final_amount có hợp lệ và không nhỏ hơn discount_amount
+        if ($validated['final_amount'] < $validated['total_amount'] - $discountAmount) {
+            return redirect()->back()->with('error', 'Số tiền cuối cùng không hợp lệ. Nó phải lớn hơn hoặc bằng tổng tiền trừ số tiền giảm giá.');
+        }
+
+        // Cập nhật thông tin đơn hàng với dữ liệu đã xác thực
+        $order->update([
+            'reservation_id' => $validated['reservation_id'],
+            'staff_id' => $validated['staff_id'],
+            'total_amount' => $validated['total_amount'],
+            'order_type' => $validated['order_type'],
+            'status' => $validated['status'],
+            'discount_amount' => $discountAmount, // Gán giá trị giảm giá nếu có, hoặc 0
+            'final_amount' => $validated['final_amount'],
+        ]);
+
+        // Trả về trang danh sách đơn hàng với thông báo thành công
         return redirect()->route('admin.order.index')->with('success', 'Đơn hàng đã được cập nhật thành công.');
     }
+
+
+
+
+
+
 
     public function destroy($id)
     {
