@@ -14,7 +14,7 @@
                             <form action="{{ route('admin.permissions.index') }}" method="GET" class="d-flex">
                                 <input type="text" name="search" class="form-control form-control-sm" placeholder="Tìm kiếm quyền hạn..." value="{{ request()->get('search') }}">
                                 <button type="submit" class="btn btn-sm btn-secondary ms-2">
-                                    <i class="bi bi-search"></i> Tìm kiếm
+                                    <i class=" mb-2"></i> Tìm kiếm
                                 </button>
                             </form>
                             <a href="{{ route('admin.permissions.create') }}" class="btn btn-sm btn-primary">

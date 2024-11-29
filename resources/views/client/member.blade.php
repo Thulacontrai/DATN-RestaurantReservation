@@ -345,34 +345,58 @@
         }
 
         $(document).ready(function() {
-            $('#deleteButton').click(function() {
-                if (confirm('Bạn có chắc chắn muốn HỦY đặt bàn không?')) {
+    $('#deleteButton').click(function() {
+        var id = this.getAttribute('data-id'); // Lấy ID từ thuộc tính 'data-id'
 
-                    var id = this.getAttribute('data-id');
-                      // Gọi AJAX hoặc thực hiện hành động xóa
-                    $.ajax({
-                        url: '{{ route('client.cancel.reservationpopup') }}',
-                        type: 'POST',
-                        data: {
-                            id: id,
-                            _token: '{{ csrf_token() }}'
-                        },
-                        success: function(response) {
-                            alert('Hủy bàn thành công!');
-                            if(response.success){
-                                location.reload();
+        Swal.fire({
+            icon: "question",
+            title: "Xác nhận hủy",
+            text: "Bạn có chắc chắn muốn hủy đặt bàn không?",
+            showCancelButton: true,
+            confirmButtonText: "Xác nhận",
+            cancelButtonText: "Hủy"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Gọi AJAX hoặc thực hiện hành động xóa
+                $.ajax({
+                    url: '{{ route('client.cancel.reservationpopup') }}',
+                    type: 'POST',
+                    data: {
+                        id: id, 
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        Swal.fire({
+                            icon: "success",
+                            title: "Thành công",
+                            text: "Hủy bàn thành công!"
+                        }).then(() => {
+                            if (response.success) {
+                                location.reload(); // Tải lại trang
+
                             }
-                        },
-                        error: function(xhr) {
-                            alert('Có lỗi xảy ra!');
-                        }
-                    });
-                } else {
-                    // Hành động hủy bỏ
-                    alert('Hành động đã bị hủy.');
-                }
-            });
-        })
+                        });
+                    },
+                    error: function(xhr) {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Lỗi",
+                            text: "Có lỗi xảy ra!"
+                        });
+                    }
+                });
+            } else {
+                // Người dùng hủy bỏ hành động
+                Swal.fire({
+                    icon: "info",
+                    title: "Thông báo",
+                    text: "Hành động đã bị hủy."
+                });
+            }
+        });
+    });
+});
+
 
         // modal hủy
         function openCancelModal(reservationId, depositAmount, reservationDateStr, reservationTimeStr) {

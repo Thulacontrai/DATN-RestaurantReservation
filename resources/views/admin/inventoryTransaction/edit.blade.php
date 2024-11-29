@@ -30,9 +30,10 @@
                 <h3 class="mb-4">Chỉnh sửa phiếu nhập kho</h3>
                 <div class="form-group">
                     <label for="total_amount">Tổng số tiền</label>
-                    <input type="number" id="total_amount" name="total_amount" class="form-control" value="{{ old('total_amount', $transaction->total_amount) }}" readonly required>
+                    <input type="hidden" id="total_amount" name="total_amount" value="{{ old('total_amount', $transaction->total_amount) }}" required>
+                    <input type="text" id="total_amount_display" class="form-control" value="{{ number_format($transaction->total_amount, 0, ',', '.') }} đ" readonly>
                 </div>
-
+                
                 <div class="form-group">
                     <label for="description">Ghi chú</label>
                     <textarea name="description" class="form-control">{{ old('description', $transaction->description) }}</textarea>
@@ -81,25 +82,30 @@
 document.addEventListener('DOMContentLoaded', function () {
     const quantityInputs = document.querySelectorAll('.quantity-input');
     const totalAmountInput = document.getElementById('total_amount');
+    const totalAmountDisplay = document.getElementById('total_amount_display');
 
     function updateTotalAmount() {
         let totalAmount = 0;
         quantityInputs.forEach(input => {
-            const price = parseFloat(input.closest('.ingredient-item').querySelector('select').dataset.price);
-            const quantity = parseFloat(input.value);
+            const price = parseFloat(input.closest('.ingredient-item').querySelector('select').dataset.price || 0);
+            const quantity = parseFloat(input.value || 0);
             if (!isNaN(price) && !isNaN(quantity)) {
                 totalAmount += price * quantity;
             }
         });
-        totalAmountInput.value = totalAmount.toFixed(2);
+        // Gán giá trị thực vào input ẩn
+        totalAmountInput.value = totalAmount;
+        // Định dạng số tiền cho người dùng thấy
+        totalAmountDisplay.value = totalAmount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
     }
 
     quantityInputs.forEach(input => {
         input.addEventListener('input', updateTotalAmount);
     });
 
-    // Tính tổng số tiền ban đầu
+    // Tính tổng tiền ban đầu
     updateTotalAmount();
 });
+
 </script>
 @endsection

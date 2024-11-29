@@ -26,7 +26,7 @@
         <div class="card-body">
             <h5 class="card-title">Thông tin giao dịch</h5>
             <p><strong>Loại giao dịch:</strong> {{ $transaction->transaction_type }}</p>
-            <p><strong>Tổng số tiền:</strong> {{ number_format($transaction->total_amount, 2) }}</p>
+            <p><strong>Tổng số tiền:</strong> {{ number_format($transaction->total_amount, 0, ',', '.') }} đ</p>
             <p><strong>Mô tả:</strong> {{ $transaction->description ?? 'N/A' }}</p>
             <p><strong>Nhà cung cấp:</strong> {{ $transaction->supplier->name ?? 'N/A' }}</p>
             <p><strong>Nhân viên:</strong> {{ $staff->name ?? 'N/A' }}</p>
@@ -45,7 +45,7 @@
                         <th>ID Nguyên Liệu</th>
                         <th>Tên Nguyên Liệu</th>
                         <th>Số lượng</th>
-                        {{-- <th>Giá mỗi đơn vị</th> --}}
+                       
                     </tr>
                 </thead>
                 <tbody>
