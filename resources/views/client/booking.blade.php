@@ -4,9 +4,9 @@
 @section('content')
     @include('client.layouts.component.subheader', [
         'backgroundImage' => 'client/03_images/background/bg-2.jpg',
-        'subtitle' => 'Make a',
-        'title' => 'Reservation',
-        'currentPage' => 'Booking',
+        // 'subtitle' => 'Make a',
+        'title' => 'Đặt bàn',
+        'currentPage' => 'Đặt bàn',
     ])
     @if (session('err'))
         <script>

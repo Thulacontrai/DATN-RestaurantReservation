@@ -28,7 +28,10 @@
                 </button>
             </div>
         </div>
-
+        <a href="{{ route('admin.inventory.index')}}" class="leads d-none d-xl-flex">
+            <div class="lead-details">Bạn có <span class="count"> 21 </span> hàng tồn kho </div>
+            <span class="lead-icon"><i class="bi bi-bell-fill animate__animated animate__swing animate__infinite infinite"></i><b class="dot animate__animated animate__heartBeat animate__infinite"></b></span>
+        </a>
         <ul class="header-actions">
             <li class="dropdown">
 
