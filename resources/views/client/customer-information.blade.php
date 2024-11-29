@@ -24,8 +24,8 @@
                     <h6 class="text-center mt-4 mb-2">Mời bạn nhập thông tin để đặt bàn</h6>
                     <form id="booking-form" action="{{ route('createReservation.client') }}" method="POST">
                         @csrf
-                        <div class="row m-4">
-                            <div class="col-12 col-md-4 mb-3">
+                        <div class="row m-4 d-flex justify-content-center">
+                            <div class="col">
                                 <label for="user_name">Tên khách hàng*</label>
                                 <input class="form-control" type="text" name="user_name" id="user_name"
                                     placeholder="Nhập tên khách hàng"
@@ -34,7 +34,7 @@
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
-                            <div class="col-12 col-md-4 mb-3">
+                            <div class="col">
                                 <label for="user_phone">Số điện thoại*</label>
                                 <input class="form-control" type="text" name="user_phone" id="user_phone"
                                     placeholder="Nhập số điện thoại"
@@ -42,10 +42,11 @@
                                 @error('user_phone')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
+
+
                             </div>
 
-                            <div class="col-12 col-md-4 mb-3">
-
+                            <div class="col position-relative">
                                 <label for="guest_count">Số người đặt bàn*</label>
                                 <input type="number" class="form-control" id="guest_count" name="guest_count"
                                     value="{{ old('guest_count') ?? ($data['guest_count'] ?? 1) }}" min="1" max="50" required>
@@ -56,8 +57,8 @@
                             </div>
                             
                         </div>
-                        <div class="row m-4">
-                            <div class="col-12">
+                        <div class="row m-4 d-flex justify-content-center">
+                            <div>
                                 <label for="note">Ghi chú thêm</label>
                                 <input class="form-control" type="text" name="note" id="note"
                                     placeholder="Nhập ghi chú" value="{{ old('note') ?? ($data['note'] ?? null) }}">
@@ -67,18 +68,27 @@
                             <input type="hidden" name="reservation_date" value="{{ $date }}">
                             <input type="hidden" name="reservation_time" value="{{ $time }}">
                         @else
-                            <div class="alert alert-danger">Không có ngày hoặc giờ đặt bàn! Vui lòng quay lại bước trước.</div>
+                            <div class="alert alert-danger">Không có ngày hoặc giờ đặt bàn! Vui lòng quay lại bước trước.
+                            </div>
                         @endif
-                        <div class="row m-4">
-                            <div class="col-6 text-center">
+                        <!-- Căn chỉnh reCAPTCHA ra giữa -->
+                        <div id="recaptcha-container" class="mt-3"></div>
+
+
+                        <div class="row m-4 d-flex justify-content-center">
+                            <!-- Căn chỉnh reCAPTCHA ra giữa -->
+                            <div id="recaptcha-container" class="mt-3"></div>
+                            <div class="col-2">
                                 <a href="{{ route('booking.client') }}" class="text-secondary">Quay lại</a>
                             </div>
-                            <div class="col-6 text-center">
+                            <div class="col-2">
+
+
                                 <button type="button" class="btn-line" onclick="sendOTP()">Xác nhận</button>
                             </div>
+
                         </div>
                     </form>
-
                 </div>
             </div>
         </section>
@@ -242,20 +252,320 @@
             padding: 10px 20px;
             border-radius: 5px;
         }
-
-        @media (max-width: 426px) {
-            .row.m-4 > .col-md-4 {
-                flex: 0 0 100%;
-                max-width: 100%;
-            }
-
-            .row.m-4 > .col-md-4.mb-3 {
-                margin-bottom: 1rem;
-            }
-        }
-
     </style>
 
 @endsection
 
+<script type="module">
+    import {
+        initializeApp
+    } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import {
+        getAuth,
+        RecaptchaVerifier,
+        signInWithPhoneNumber
+    } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
+    const firebaseConfig = {
+        apiKey: "AIzaSyDRiOTYCQgDDemeF7QCunNMvlhPwmhh9Tc",
+        authDomain: "datn-5b062.firebaseapp.com",
+        projectId: "datn-5b062",
+        storageBucket: "datn-5b062.appspot.com",
+        messagingSenderId: "630325973482",
+        appId: "1:630325973482:web:18498f0416b4123f05e293",
+        measurementId: "G-HRQ5XG4ELN"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    let otpTimer; // Bộ đếm thời gian OTP
+
+    window.onload = function() {
+        renderRecaptcha();
+        document.getElementById('closePopupButton').onclick = closePopup;
+    }
+
+    // Render reCAPTCHA
+    function renderRecaptcha() {
+        window.recaptchaVerifier = new RecaptchaVerifier('recaptcha-container', {
+            'size': 'normal',
+            'callback': function(response) {},
+            'expired-callback': function() {}
+        }, auth);
+
+        recaptchaVerifier.render().then(() => {
+            console.log('Recaptcha rendered');
+        }).catch(error => console.error("Error rendering recaptcha:", error));
+    }
+    // Hiển thị thông báo lỗi dưới các ô nhập OTP
+    function showOTPError(message) {
+        const errorDiv = document.getElementById('otp-error-message');
+        errorDiv.innerText = message;
+        errorDiv.style.display = 'block';
+
+        // Tự động ẩn thông báo sau 5 giây
+        setTimeout(() => {
+            errorDiv.style.display = 'none';
+        }, 3000);
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+    const userNameInput = document.getElementById('user_name');
+    const userPhoneInput = document.getElementById('user_phone');
+    const guestCountInput = document.getElementById('guest_count');
+    const confirmButton = document.querySelector('button[type="button"][onclick="sendOTP()"]');
+
+    // Validation cho tên
+    function validateName() {
+        const nameValue = userNameInput.value.trim();
+        let errorMessage = '';
+
+        if (nameValue === '') {
+            errorMessage = 'Tên khách hàng không được để trống.';
+        } else if (nameValue.length < 2) {
+            errorMessage = 'Tên khách hàng phải có ít nhất 2 ký tự.';
+        } else if (nameValue.length > 50) {
+            errorMessage = 'Tên khách hàng không được vượt quá 50 ký tự.';
+        } else if (!/^[a-zA-ZÀ-ỹ\s]+$/.test(nameValue)) {
+            errorMessage = 'Tên khách hàng chỉ được chứa chữ cái và khoảng trắng.';
+        }
+
+        // Tạo hoặc cập nhật thông báo lỗi
+        let errorElement = userNameInput.nextElementSibling;
+        if (!errorElement || !errorElement.classList.contains('invalid-feedback')) {
+            errorElement = document.createElement('div');
+            errorElement.classList.add('invalid-feedback', 'position-absolute');
+            userNameInput.parentNode.insertBefore(errorElement, userNameInput.nextSibling);
+        }
+
+        if (errorMessage) {
+            userNameInput.classList.add('is-invalid', 'shake-input');
+            errorElement.textContent = errorMessage;
+            errorElement.style.display = 'block';
+            return false;
+        } else {
+            userNameInput.classList.remove('is-invalid', 'shake-input');
+            errorElement.style.display = 'none';
+            return true;
+        }
+    }
+
+    // Validation cho số điện thoại
+    function validatePhone() {
+        const phoneValue = userPhoneInput.value.trim();
+        let errorMessage = '';
+
+        if (phoneValue === '') {
+            errorMessage = 'Số điện thoại không được để trống.';
+        } else if (!/^(0[1-9][0-9]{8})$/.test(phoneValue)) {
+            errorMessage = 'Số điện thoại không hợp lệ. Phải là 10 chữ số và bắt đầu bằng 0.';
+        }
+
+        // Tạo hoặc cập nhật thông báo lỗi
+        let errorElement = userPhoneInput.nextElementSibling;
+        if (!errorElement || !errorElement.classList.contains('invalid-feedback')) {
+            errorElement = document.createElement('div');
+            errorElement.classList.add('invalid-feedback', 'position-absolute');
+            userPhoneInput.parentNode.insertBefore(errorElement, userPhoneInput.nextSibling);
+        }
+
+        if (errorMessage) {
+            userPhoneInput.classList.add('is-invalid', 'shake-input');
+            errorElement.textContent = errorMessage;
+            errorElement.style.display = 'block';
+            return false;
+        } else {
+            userPhoneInput.classList.remove('is-invalid', 'shake-input');
+            errorElement.style.display = 'none';
+            return true;
+        }
+    }
+
+    // Validation số lượng khách
+    function validateGuestCount() {
+        const guestCount = parseInt(guestCountInput.value, 10);
+        
+        if (guestCount < 1 || guestCount > 50) {
+            guestCountInput.classList.add('is-invalid', 'shake-input');
+            return false;
+        } else {
+            guestCountInput.classList.remove('is-invalid', 'shake-input');
+            return true;
+        }
+    }
+
+    // Validation khi nhấn nút Xác nhận
+    window.sendOTP = function() {
+        const isNameValid = validateName();
+        const isPhoneValid = validatePhone();
+        const isGuestCountValid = validateGuestCount();
+
+        // Nếu có bất kỳ trường nào không hợp lệ
+        if (!isNameValid) {
+            userNameInput.focus();
+            return;
+        }
+
+        if (!isPhoneValid) {
+            userPhoneInput.focus();
+            return;
+        }
+
+        if (!isGuestCountValid) {
+            guestCountInput.focus();
+            return;
+        }
+
+        // Tiếp tục logic gửi OTP
+        let phoneNumber = userPhoneInput.value.trim();
+        phoneNumber = phoneNumber.startsWith('0') ? '+84' + phoneNumber.slice(1) : phoneNumber;
+        
+        const appVerifier = window.recaptchaVerifier;
+
+        signInWithPhoneNumber(auth, phoneNumber, appVerifier)
+            .then((confirmationResult) => {
+                window.confirmationResult = confirmationResult;
+                document.getElementById("otp-popup").style.display = "flex";
+                startOTPTimer();
+            }).catch(error => {
+                console.error("Error sending OTP:", error);
+                showOTPError("Có lỗi xảy ra khi gửi OTP! Vui lòng thử lại.");
+            });
+    };
+
+    // Thêm sự kiện input để validation liên tục
+    userNameInput.addEventListener('input', validateName);
+    userPhoneInput.addEventListener('input', validatePhone);
+    guestCountInput.addEventListener('input', validateGuestCount);
+});
+
+    window.sendOTP = function() {
+        let phoneNumber = document.getElementById("user_phone").value.trim();
+
+        if (phoneNumber.startsWith("0")) {
+            phoneNumber = '+84' + phoneNumber.slice(1); // Chuyển đổi '0' thành '+84'
+        }
+
+        if (!phoneNumber.match(/^\+\d{1,15}$/)) {
+            showOTPError("Số điện thoại không hợp lệ. Vui lòng nhập số điện thoại đúng định dạng.");
+            return;
+        }
+
+        const appVerifier = window.recaptchaVerifier;
+
+        signInWithPhoneNumber(auth, phoneNumber, appVerifier)
+            .then((confirmationResult) => {
+                window.confirmationResult = confirmationResult;
+                document.getElementById("otp-popup").style.display = "flex"; // Hiển thị popup OTP
+                startOTPTimer(); // Bắt đầu bộ đếm thời gian
+            }).catch(error => {
+                console.error("Error sending OTP:", error);
+                showOTPError("Có lỗi xảy ra khi gửi OTP! Vui lòng thử lại.");
+            });
+    };
+
+    // Khởi động bộ đếm thời gian OTP
+    function startOTPTimer() {
+        let timeLeft = 60;
+        document.getElementById("otp-timer").innerText = `Thời gian còn lại: ${timeLeft} giây`;
+
+        otpTimer = setInterval(() => {
+            timeLeft--;
+            document.getElementById("otp-timer").innerText = `Thời gian còn lại: ${timeLeft} giây`;
+
+            if (timeLeft <= 0) {
+                clearInterval(otpTimer);
+                document.getElementById("otp-timer").innerText = "Hết thời gian! Vui lòng gửi lại mã OTP.";
+                document.getElementById("resendOtpButton").style.display =
+                "block"; // Hiển thị nút "Gửi lại mã OTP"
+                document.querySelector(".btn-success").style.display = "none"; // Ẩn nút "Xác thực OTP"
+                disableOTPInputs(true); // Vô hiệu hóa các ô nhập OTP
+            }
+        }, 1000);
+    }
+
+    // Vô hiệu hóa hoặc kích hoạt lại các ô nhập OTP
+    function disableOTPInputs(disable) {
+        document.querySelectorAll('.otp-input').forEach(input => {
+            input.disabled = disable;
+        });
+    }
+
+    // Gửi lại mã OTP và làm mới popup
+    window.resendOTP = function() {
+        // Làm mới trạng thái popup
+        document.getElementById("resendOtpButton").style.display = "none"; // Ẩn nút "Gửi lại mã OTP"
+
+        // Reset các ô nhập mã OTP
+        document.querySelectorAll('.otp-input').forEach(input => {
+            input.value = ''; // Làm mới các ô nhập OTP
+            input.disabled = false; // Bật lại các ô nhập liệu
+        });
+
+        // Đảm bảo nút "Xác thực OTP" luôn có thể nhấn
+        document.querySelector(".btn-success").disabled = false;
+        document.querySelector(".btn-success").style.display = "inline-block"; // Hiển thị lại nút xác thực
+
+        // Xóa thời gian cũ
+        document.getElementById("otp-timer").innerText = "";
+
+        // Gửi lại mã OTP
+        sendOTP();
+
+        // Khởi động lại bộ đếm thời gian
+        startOTPTimer();
+
+        // Hiển thị lại popup ban đầu (bao gồm 6 ô nhập mã trống và nút gửi lại mã)
+        document.getElementById("otpPopup").style.display = "block"; // Hiển thị lại popup
+    }
+
+    // Xác thực mã OTP
+    window.verifyCode = function() {
+        let otpCode = '';
+        document.querySelectorAll('.otp-input').forEach(input => otpCode += input.value);
+
+        if (!otpCode || otpCode.length !== 6) {
+            showOTPError("Mã OTP không hợp lệ. Vui lòng nhập đủ 6 ký tự.");
+            return;
+        }
+
+        window.confirmationResult.confirm(otpCode).then((result) => {
+            fetch('{{ route('storeOtpSession') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    otpVerified: true
+                })
+            }).then(() => {
+                document.getElementById("booking-form").submit();
+            });
+        }).catch(() => {
+            showOTPError("Mã OTP không đúng! Vui lòng thử lại.");
+        });
+    };
+
+    // Đóng popup OTP
+    function closePopup() {
+        clearInterval(otpTimer); // Dừng bộ đếm thời gian nếu popup bị đóng
+        document.getElementById("otp-popup").style.display = "none";
+    }
+
+    // Tự động chuyển ô khi nhập OTP
+    document.querySelectorAll('.otp-input').forEach((input, index, inputs) => {
+        input.addEventListener('input', () => {
+            if (input.value.length === 1 && index < inputs.length - 1) {
+                inputs[index + 1].focus();
+            }
+        });
+
+        input.addEventListener('keydown', (event) => {
+            if (event.key === 'Backspace' && index > 0 && input.value === '') {
+                inputs[index - 1].focus();
+            }
+        });
+    });
+</script>
