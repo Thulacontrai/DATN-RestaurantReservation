@@ -702,7 +702,7 @@ section {
 footer {
     background: var(--tertiary-color);
     color: #ffffff;
-    padding: 60px 0 60px 0;
+    padding: 7px 0 25px 0;
 }
 
 footer h3,
@@ -723,7 +723,7 @@ footer a:hover {
 }
 
 footer img.logo {
-    height: 125px;
+    height: 246px;
 }
 
 .subfooter {

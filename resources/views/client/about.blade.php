@@ -14,25 +14,16 @@
             <div class="container">
                 <div class="row gx-5 align-items-center">
                     <div class="col-lg-6">
-                        <h2>How It Begins</h2>
+                        <h2>Steak House</h2>
                         <div class="spacer-half"></div>
-                        <p class="lead">At "Baresto," we believe in the power of good coffee and warm hospitality. Our
-                            journey began with a simple vision: to create a welcoming space where friends, families, and
-                            strangers alike could come together to enjoy delicious beverages, homemade treats, and
-                            meaningful connections.</p>
+                        <p class="lead">Chào mừng bạn đến với nhà hàng Steak House, nơi mang đến cho bạn những trải nghiệm ẩm độc đáo nhất. Tại đây, chúng tôi không chỉ làm món ăn; chúng tôi tạo ra những kỷ niệm âm thực đặc biệt dành riêng cho bạn.</p>
 
-                        <p>Nestled in the heart of our community, "Baresto" is more than just a café; it's a gathering
-                            place, a refuge from the chaos of everyday life, and a beacon of positivity and warmth. From the
-                            moment you walk through our doors, you're greeted with the inviting aroma of freshly brewed
-                            coffee and the friendly smiles of our dedicated team. Our menu is a reflection of our commitment
-                            to quality and creativity. We source the finest beans from around the world and carefully craft
-                            each cup with precision and care. Whether you're craving a classic espresso, a creamy latte, or
-                            a refreshing iced tea, we have something to delight every palate.</p>
+                        <p>Steak House tự hào mang đến những phân cắt thịt bò chất lượng nhất, được chọn lọc và chế biến bởi đội ngũ đầu bếp tài hoa. Từ món bò bít tết đá nóng cho đến bò nướng sốt vang đỏ, chúng tôi cam kết mang đến hương vị tự nhiên và đậm đà lên từng miếng thịt.
 
-                        <p>As a proud member of the community, we're committed to giving back and making a positive impact
-                            wherever we can. From supporting local artisans and farmers to hosting events that celebrate
-                            diversity and inclusion, we believe in using our platform to spread joy and goodwill in our
-                            neighborhood and beyond.</p>
+                            Ngoài ra, nhà hàng còn phục vụ các món khai vị tươi ngon, salad thanh đạm, và tráng miệng ngọt ngào để hoàn thiện bữa ăn của bạn.</p>
+
+                        <p>Nhà hàng Steak House ra đời với sứ mệnh mang đến một không gian âm thực đổi mới, nơi bạn có thể tận hưởng những món ăn cao cấp nhưng vẫn đậm chất ấm áp thoải mái. Lấy cảm hứng từ tình yêu âm thực và mong muốn mang đến những bữa ăn đáng nhớ, chúng tôi đã xây dựng Beefsteak trở thành một biểu tượng của sự tinh tế trong đánh giá về chất lượng và dịch vụ.</p>
+                        <p>Chúng tôi mong muốn không chỉ là một địa điểm ăn uống, mà còn là nơi bạn tạo nên những kỷ niệm đẹp bên bạn bè và gia đình. Hãy để Beefsteak đồng hành cùng những khoảnh khắc đáng nhớ của bạn!</p>
                     </div>
 
                     <div class="col-lg-6">
@@ -50,7 +41,7 @@
                                     <h4>Turnover increased</h4>
                                 </div>
                                 <div class="spacer-10"></div>
-                                <img src="client/03_images/misc/5.jpg" class="img-fluid mt-4 wow zoomIn" alt="">
+                                <img src="client/03_images/misc/7.jpg" class="img-fluid mt-4 wow zoomIn" alt="">
                             </div>
                         </div>
                     </div>
