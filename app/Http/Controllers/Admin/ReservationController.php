@@ -748,7 +748,7 @@ class ReservationController extends Controller
                     'user_name' => $request->user_name,
                     'user_phone' => $request->user_phone,
                     'guest_count' => $request->guest_count,
-                    'deposit_amount' => $request->deposit_amount,
+                    'deposit_amount' => $request->deposit,
                     'note' => $request->note,
                     'reservation_date' => $request->reservation_date,
                     'reservation_time' => $request->reservation_time,
