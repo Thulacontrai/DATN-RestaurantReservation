@@ -21,6 +21,7 @@ class Dishes extends Model
         'description',
         'status',
         'image',
+        'is_active',
     ];
 
     // Quan hệ một-nhiều với Category

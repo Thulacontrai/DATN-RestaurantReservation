@@ -22,8 +22,8 @@
                                     <h5 class="text-primary">Thông Tin Nguyên Liệu</h5>
                                     <ul class="list-group list-group-flush">
                                         <li class="list-group-item"><strong>Tên Nguyên Liệu:</strong> {{ $ingredient->name }}</li>
-                                        <li class="list-group-item"><strong>Nhà Cung Cấp:</strong> {{ $ingredient->supplier_id }}</li>
-                                        <li class="list-group-item"><strong>Loại Nguyên Liệu:</strong> {{ $ingredient->ingredient_type_id }}</li>
+                                        {{-- <li class="list-group-item"><strong>Nhà Cung Cấp:</strong> {{ $ingredient->supplier_id }}</li>
+                                        <li class="list-group-item"><strong>Loại Nguyên Liệu:</strong> {{ $ingredient->ingredient_type_id }}</li> --}}
                                     </ul>
                                 </div>
 

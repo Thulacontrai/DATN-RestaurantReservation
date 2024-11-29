@@ -36,7 +36,7 @@
                 <!-- Số điện thoại -->
                 <div style="grid-column: span 2;">
                     <label for="userPhone" style="font-size: 14px; font-weight: bold; color: #555;">Số Điện Thoại:</label>
-                    <input type="tel" id="userPhone" placeholder="Nhập số điện thoại"
+                    <input type="number" id="userPhone" placeholder="Nhập số điện thoại"
                         style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;"
                         required>
                 </div>
@@ -76,48 +76,59 @@
         </form>
     </div>
 
+    <!-- Thêm Font Awesome để sử dụng icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
     <!-- Popup Chi Tiết -->
     <div id="eventDetailPopup" class="popup-form"
-        style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 25px; border-radius: 12px; border: 1px solid #ddd; box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3); z-index: 1000; width: 600px; max-width: 100%; animation: fadeIn 0.3s;">
+        style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 25px; border-radius: 12px; border: 1px solid #ddd; box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.2); z-index: 1000; width: 600px; max-width: 100%; animation: fadeIn 0.3s;">
+
         <!-- Nút đóng -->
         <button type="button" onclick="document.getElementById('eventDetailPopup').style.display='none';" class="close-btn"
-            style="position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 24px; color: #888; cursor: pointer;">
+            style="position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 28px; color: #007bff; cursor: pointer; transition: all 0.3s;">
             &times;
         </button>
 
         <!-- Tiêu đề -->
         <h3 id="popupCustomerName"
-            style="margin-bottom: 20px; font-size: 20px; font-weight: bold; text-align: center; color: #007bff;">
+            style="margin-bottom: 20px; font-size: 24px; font-weight: 600; text-align: center; color: #007bff; text-transform: uppercase;">
             Chi Tiết Đặt Bàn
         </h3>
 
-        <!-- Nội dung chi tiết -->
-        <div style="font-size: 14px; color: #555;">
-            <p><strong>Số điện thoại:</strong> <span id="popupPhone">Chưa có</span></p>
-            <p><strong>Mã đặt bàn:</strong> <span id="popupReservationCode">Chưa có</span></p>
-            <p><strong>Thời gian:</strong> <span id="popupTime">Chưa có</span></p>
-            <p><strong>Số lượng khách:</strong> <span id="popupGuestCount">Chưa có</span></p>
-            <p><strong>Ghi chú:</strong> <span id="popupNotes">Không có ghi chú</span></p>
+        <!-- Nội dung chi tiết với icon -->
+        <div style="font-size: 16px; color: #555; line-height: 1.6;">
+            <p><i class="fas fa-phone-alt" style="color: #007bff; margin-right: 8px;"></i><strong>Số điện thoại:</strong>
+                <span id="popupPhone">Chưa có</span>
+            </p>
+            <p><i class="fas fa-ticket-alt" style="color: #007bff; margin-right: 8px;"></i><strong>Mã đặt bàn:</strong>
+                <span id="popupReservationCode">Chưa có</span>
+            </p>
+            <p><i class="fas fa-clock" style="color: #007bff; margin-right: 8px;"></i><strong>Thời gian:</strong> <span
+                    id="popupTime">Chưa có</span></p>
+            <p><i class="fas fa-users" style="color: #007bff; margin-right: 8px;"></i><strong>Số lượng khách:</strong> <span
+                    id="popupGuestCount">Chưa có</span></p>
+            <p><i class="fas fa-comment-alt" style="color: #007bff; margin-right: 8px;"></i><strong>Ghi chú:</strong> <span
+                    id="popupNotes">Không có ghi chú</span></p>
         </div>
 
         <!-- Nút chức năng -->
-        <div style="margin-top: 20px; display: flex; justify-content: space-between;">
-            <button class="btn btn-danger cancel-btn"
-                style="padding: 10px 15px; background-color: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer;">
-                Hủy đặt
+        <div style="margin-top: 25px; display: flex; justify-content: space-between; gap: 20px;">
+            <!-- Nút Hủy đặt với Icon -->
+            <button class="btn cancel-btn"
+                style="background-color: #e74c3c; padding: 12px 20px; border-radius: 30px; border: none; color: white; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">
+                <i class="fas fa-times-circle"></i> Hủy đặt
             </button>
 
-            <button class="btn btn-warning edit-btn"
-                style="padding: 10px 15px; background-color: #ffc107; color: white; border: none; border-radius: 6px; cursor: pointer;">
-                Sửa
+            <!-- Nút Sửa với Icon -->
+            <button class="btn edit-btn"
+                style="background-color: #f39c12; padding: 12px 20px; border-radius: 30px; border: none; color: white; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">
+                <i class="fas fa-edit"></i> Sửa
             </button>
-            <button class="btn btn-primary order-btn"
-                style="padding: 10px 15px; background-color: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer;">
-                Nhận gọi món
-            </button>
-            <button class="btn btn-success accept-btn"
-                style="padding: 10px 15px; background-color: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer;">
-                Nhận bàn
+
+            <!-- Nút Nhận bàn với Icon -->
+            <button class="btn accept-btn"
+                style="background-color: #2ecc71; padding: 12px 20px; border-radius: 30px; border: none; color: white; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">
+                <i class="fas fa-check-circle"></i> Nhận bàn
             </button>
         </div>
     </div>
@@ -736,8 +747,6 @@
 
 
 
-
-
 @endsection
 
 <style>
@@ -806,5 +815,57 @@
         border-color: #007bff;
         outline: none;
         box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    }
+
+    .popup-form {
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+    }
+
+    /* Hiệu ứng nút khi hover */
+    .btn {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .btn:hover {
+        transform: translateY(-4px);
+        box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn:active {
+        transform: translateY(2px);
+    }
+
+    .btn i {
+        font-size: 18px;
+        transition: transform 0.3s ease;
+    }
+
+    .btn:hover i {
+        transform: translateX(5px);
+    }
+
+    /* Nút đóng */
+    .close-btn:hover {
+        color: #f44336;
+        font-size: 32px;
+    }
+
+    /* Hiệu ứng fadeIn */
+    @keyframes fadeIn {
+        0% {
+            opacity: 0;
+            transform: translate(-50%, -40%);
+        }
+
+        100% {
+            opacity: 1;
+            transform: translate(-50%, -50%);
+        }
     }
 </style>

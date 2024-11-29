@@ -16,6 +16,7 @@ class Combo extends Model
         'description',
         'price',
         'image',
+        'is_active',
         'quantity_dishes',
     ];
 

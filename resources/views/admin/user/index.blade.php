@@ -89,7 +89,8 @@
                                                 <td>{{ $user->created_at }}</td>
                                                 <td>
                                                     <div class="actions">
-                                                        <a href="{{ route('admin.user.edit', $user->id) }}">
+                                                        <a href="{{ route('admin.user.edit', $user->id) }}" data-bs-toggle="tooltip"
+                                                            data-bs-placement="top" title="Sửa">
                                                             <i class="bi bi-pencil-square text-warning"></i>
                                                         </a>
                                                         {{-- <a href="#">

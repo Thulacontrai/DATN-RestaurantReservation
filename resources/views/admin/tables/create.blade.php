@@ -25,42 +25,50 @@
                                 <div class="mb-3">
                                     <label for="area" class="form-label">Khu Vực</label>
                                     <select class="form-control" id="area" name="area" required>
-                                        <option value="Tầng 1" {{ old('area') == 'Tầng 1' ? 'selected' : '' }}>Tầng 1</option>
-                                        <option value="Tầng 2" {{ old('area') == 'Tầng 2' ? 'selected' : '' }}>Tầng 2</option>
+                                        <option value="Tầng 1" {{ old('area') == 'Tầng 1' ? 'selected' : '' }}>Tầng 1
+                                        </option>
+                                        <option value="Tầng 2" {{ old('area') == 'Tầng 2' ? 'selected' : '' }}>Tầng 2
+                                        </option>
                                     </select>
                                     <div class="invalid-feedback">Vui lòng chọn khu vực.</div>
-                                    
+
                                 </div>
 
                                 <!-- Số Bàn -->
                                 <div class="mb-3">
                                     <label for="table_number" class="form-label">Số Bàn</label>
-                                    <input type="number" class="form-control" id="table_number" name="table_number" value="{{ old('table_number') }}" required>
-                                    <div class="invalid-feedback">Vui lòng nhập số bàn.</div>
-                                    
+                                    <input type="number" class="form-control" id="table_number" name="table_number"
+                                        value="{{ old('table_number') }}" required min="1" max="100">
+                                    <div class="invalid-feedback">Vui lòng nhập số bàn từ 1 đến 100.</div>
                                 </div>
+
 
                                 <!-- Loại Bàn -->
                                 <div class="mb-3">
                                     <label for="table_type" class="form-label">Loại Bàn</label>
                                     <select class="form-control" id="table_type" name="table_type" required>
-                                        <option value="Thường" {{ old('table_type') == 'Thường' ? 'selected' : '' }}>Thường</option>
-                                        <option value="VIP" {{ old('table_type') == 'VIP' ? 'selected' : '' }}>VIP</option>
+                                        <option value="Thường" {{ old('table_type') == 'Thường' ? 'selected' : '' }}>Thường
+                                        </option>
+                                        <option value="VIP" {{ old('table_type') == 'VIP' ? 'selected' : '' }}>VIP
+                                        </option>
                                     </select>
                                     <div class="invalid-feedback">Vui lòng chọn loại bàn.</div>
-                                    
+
                                 </div>
 
                                 <!-- Trạng Thái -->
                                 <div class="mb-3">
                                     <label for="status" class="form-label">Trạng Thái</label>
                                     <select class="form-control" id="status" name="status" required>
-                                        <option value="Available" {{ old('status') == 'Available' ? 'selected' : '' }}>Có sẵn</option>
-                                        <option value="Reserved" {{ old('status') == 'Reserved' ? 'selected' : '' }}>Đã đặt trước</option>
-                                        <option value="Occupied" {{ old('status') == 'Occupied' ? 'selected' : '' }}>Đang sử dụng</option>
+                                        <option value="Available" {{ old('status') == 'Available' ? 'selected' : '' }}>Có
+                                            sẵn</option>
+                                        <option value="Reserved" {{ old('status') == 'Reserved' ? 'selected' : '' }}>Đã đặt
+                                            trước</option>
+                                        <option value="Occupied" {{ old('status') == 'Occupied' ? 'selected' : '' }}>Đang sử
+                                            dụng</option>
                                     </select>
                                     <div class="invalid-feedback">Vui lòng chọn trạng thái bàn.</div>
-                                    
+
                                 </div>
 
                                 <button type="submit" class="btn btn-primary">Thêm Bàn</button>
@@ -81,35 +89,49 @@
 @endsection
 
 @section('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const form = document.getElementById('tableForm');
-        const inputs = form.querySelectorAll('input, select');
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('tableForm');
+            const inputs = form.querySelectorAll('input, select');
+            const tableNumberInput = document.getElementById('table_number');
 
-        inputs.forEach(input => {
-            input.addEventListener('input', function() {
-                if (input.checkValidity()) {
-                    input.classList.remove('is-invalid');
-                    input.classList.add('is-valid');
-                } else {
-                    input.classList.remove('is-valid');
-                    input.classList.add('is-invalid');
-                }
-            });
-        });
-
-        form.addEventListener('submit', function(event) {
+            // Thêm sự kiện kiểm tra cho từng input
             inputs.forEach(input => {
-                if (!input.checkValidity()) {
-                    input.classList.add('is-invalid');
-                }
+                input.addEventListener('input', function() {
+                    // Kiểm tra riêng cho trường "Số Bàn"
+                    if (input.id === 'table_number') {
+                        const value = parseInt(input.value);
+                        if (value < 1 || value > 100 || isNaN(value)) {
+                            input.setCustomValidity("Số bàn phải nằm trong khoảng từ 1 đến 100.");
+                        } else {
+                            input.setCustomValidity(""); // Xóa lỗi nếu hợp lệ
+                        }
+                    }
+
+                    // Kiểm tra tính hợp lệ chung
+                    if (input.checkValidity()) {
+                        input.classList.remove('is-invalid');
+                        input.classList.add('is-valid');
+                    } else {
+                        input.classList.remove('is-valid');
+                        input.classList.add('is-invalid');
+                    }
+                });
             });
 
-            if (!form.checkValidity()) {
-                event.preventDefault(); // Ngăn biểu mẫu gửi nếu không hợp lệ
-                event.stopPropagation();
-            }
+            // Kiểm tra khi submit form
+            form.addEventListener('submit', function(event) {
+                inputs.forEach(input => {
+                    if (!input.checkValidity()) {
+                        input.classList.add('is-invalid');
+                    }
+                });
+
+                if (!form.checkValidity()) {
+                    event.preventDefault(); // Ngăn biểu mẫu gửi nếu không hợp lệ
+                    event.stopPropagation();
+                }
+            });
         });
-    });
-</script>
+    </script>
 @endsection
