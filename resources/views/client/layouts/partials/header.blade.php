@@ -20,12 +20,7 @@
                     <li><a href="{{ route('client.index') }}">TRANG CHỦ</a></li>
                     <li><a href="{{ route('menu') }}">THỰC ĐƠN</a></li>
                     <li><a href="{{ route('booking.client') }}">ĐẶT BÀN</a></li>
-                    <li><a href="{{ route('about.client') }}">VỀ CHÚNG TÔI</a>
-                        <ul>
-                            <li><a href="{{ route('about.client') }}">About</a></li>
-                            <li><a href="{{ route('gallery.client') }}">Gallery</a></li>
-                        </ul>
-                    </li>
+                    <li><a href="{{ route('about.client') }}">VỀ CHÚNG TÔI</a></li>
 
                     @auth
                     <li><a href="{{ route('client.member') }}">Profile</a></li>
@@ -36,10 +31,10 @@
                         </form>
                     </li> --}}
                 @else
-                    <li><a href="#">Đăng nhập</a>
-                        <ul>
-                            <li><a href="{{ route('login.form') }}">Đăng nhập</a></li>
-                        </ul>
+                    <li><a href="{{ route('login.form') }}"">Đăng nhập</a>
+                        {{-- <ul>
+                            <li><a href=""">Đăng nhập</a></li>
+                        </ul> --}}
                     </li>
                 @endauth
 

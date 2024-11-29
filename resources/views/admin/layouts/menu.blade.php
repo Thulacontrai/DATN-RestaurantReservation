@@ -31,8 +31,6 @@
                 </li>
 
 
-
-
                 @can('Xem bàn')
                     <li class="sidebar-dropdown">
                         <a href="#">
@@ -48,7 +46,6 @@
                         </div>
                     </li>
                 @endcan
-
                 @can('Xem đặt bàn')
                     <li class="sidebar-dropdown">
                         <a href="#">
@@ -63,7 +60,10 @@
                                     </li>
                                 @endcan
                                 <li>
-                                    <a href="{{ route('admin.calendar.index') }}">Lịch đặt bàn</a>
+
+                                <a href="{{ route('admin.calendar.index') }}">Lịch đặt bàn</a>
+
+                                    {{-- <a href="{{ route('admin.reservationTable.index') }}">Bàn đặt trước</a> --}}
                                 </li>
                                 {{-- @can('Xem lịch sử đặt bàn')
                                     <li>

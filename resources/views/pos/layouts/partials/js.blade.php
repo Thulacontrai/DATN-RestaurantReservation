@@ -126,6 +126,8 @@
         const loadingElement = $('#loading');
         const orderDetails = $('#order-details');
         const totalPriceElement = $('#totalAmount');
+        const searchTable = $('#searchTable');
+        const searchInput = $('#searchInput');
 
         let orderId = null;
         let currentOrder = {};
@@ -148,19 +150,54 @@
         }
 
         tableViewButton.click(function() {
-            menuSection.fadeOut();
-            tableSection.fadeIn();
+            menuSection.hide();
+            tableSection.show();
             tableViewButton.addClass('active');
             menuViewButton.removeClass('active');
+            searchInput.hide();
+            searchTable.show();
         });
 
         menuViewButton.click(function() {
-            tableSection.fadeOut();
-            menuSection.fadeIn();
+            tableSection.hide();
+            menuSection.show();
             menuViewButton.addClass('active');
             tableViewButton.removeClass('active');
+            searchInput.show();
+            searchTable.hide();
         });
-
+        $(document).ready(function() {
+            $('#searchInput').on('keyup', function() {
+                var searchValue = $(this).val().toLowerCase()
+                    .trim();
+                $('#dish-list .dish-item').filter(function() {
+                    var dishName = $(this).find('.card-title').text()
+                        .toLowerCase();
+                    var dishPrice = $(this).data('dish-price')
+                        .toString();
+                    $(this).toggle(
+                        dishName.indexOf(searchValue) > -1 || dishPrice.indexOf(
+                            searchValue) > -1
+                    );
+                });
+            });
+        });
+        $(document).ready(function() {
+            $('#searchTable').on('keyup', function() {
+                var searchValue = $(this).val()
+                    .toLowerCase();
+                $('.table-container .table-card').filter(function() {
+                    var tableNumber = $(this).find('.table-number').text()
+                        .toLowerCase();
+                    var orders = $(this).find('span:not(.table-number)').text()
+                        .toLowerCase();
+                    $(this).toggle(
+                        tableNumber.indexOf(searchValue) > -1 || orders.indexOf(
+                            searchValue) > -1
+                    );
+                });
+            });
+        });
         $('.filter-btn').click(function() {
             const status = $(this).data('status');
             $('.table-card').each(function() {

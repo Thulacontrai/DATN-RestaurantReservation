@@ -26,36 +26,16 @@
                 <a class="nav-link" href="#" id="menu-view-button" aria-label="Xem Thực đơn">
                     <i class="material-icons">restaurant</i> Thực đơn
                 </a>
-                <input class="form-control1 me-2" id="searchInput" type="search" placeholder="Tìm món (F3)"
-                    aria-label="Tìm món">
+                <input class="form-control1 me-2" id="searchTable" type="search" placeholder="Tìm theo bàn, mã đơn"
+                    aria-label="Tìm bàn">
+                <input class="form-control1 me-2" id="searchInput" type="search" placeholder="Tìm theo món, giá"
+                    aria-label="Tìm món" style="display: none;">
             </div>
 
 
 
             <!-- Right Section: Icons -->
             <ul class="navbar-nav ms-auto d-flex align-items-center">
-                <li class="nav-item">
-                    <button class="btn btn-link text-white">
-                        <i class="fas fa-volume-mute"></i>
-                    </button>
-                </li>
-                <li class="nav-item">
-                    <!-- Notification Button -->
-                    <button class="btn btn-link text-white" id="notificationButton">
-                        <i class="fas fa-bell"></i>
-                    </button>
-                </li>
-                <li class="nav-item">
-                    <button class="btn btn-link text-white">
-                        <i class="fas fa-sync"></i>
-                    </button>
-                </li>
-                <li class="nav-item">
-                    <!-- Print Button -->
-                    <button class="btn btn-link text-white" id="printButton">
-                        <i class="fas fa-print"></i>
-                    </button>
-                </li>
                 <li class="nav-item">
                     <!-- Hamburger Menu -->
                     <button class="btn btn-link text-white" id="hamburgerMenu">
@@ -117,11 +97,7 @@
                                         <td class="text-center"><button type="button" class="transparent-button"
                                                 data-toggle="modal"
                                                 data-target="#orderDetailModal">{{ $reservation->id }}</button></td>
-                                        <td class="text-center">
-                                            @foreach ($reservation->tables as $table)
-                                                {{ $table->table_number ?? 'Chưa xếp bàn' }}
-                                            @endforeach
-                                        </td>
+
                                         <td class="text-center">{{ $reservation->reservation_date }} <br>
                                             {{ $reservation->reservation_time }}</td>
                                         <td class="text-center">{{ $reservation->user_name ?? 'Không rõ' }}</td>
@@ -142,10 +118,7 @@
                                         </td>
                                         <td class="text-center">
                                             <div class="actions">
-                                                <button class="btn btn-primary convertToOrder"
-                                                    data-id="{{ $reservation->id }}">
-                                                    Chuyển Đơn
-                                                </button>
+                                                <a href="{{ route('ReToOr', $reservation->id) }}">Chuyển đơn</a>
                                                 <!-- Các hành động khác như Xem, Sửa, Hủy đơn đặt bàn -->
                                             </div>
                                         </td>
@@ -279,13 +252,9 @@
                             <div class="table-card {{ strtolower(trim($table->status)) }}"
                                 data-table-id="{{ $table->id }}" data-status="{{ $table->status }}">
                                 <span class="table-number">Bàn {{ $table->table_number }}</span>
-                                @if (strtolower(trim($table->status)) == 'available')
-                                    <i class="material-icons text-success"
-                                        style="font-size: 35px;padding-top: 50%;">event_seat</i>
-                                @elseif (strtolower(trim($table->status)) == 'occupied')
-                                    <i class="material-icons text-danger"
-                                        style="font-size: 35px; padding-top: 50%;">local_dining</i>
-                                @endif
+                                @foreach ($table->orders as $column)
+                                    <span><i class="fa-solid fa-id-card"></i> {{ $column->id ?? null }}</span>
+                                @endforeach
                             </div>
                         @endforeach
                     </div>
@@ -341,7 +310,7 @@
                         aria-label="Thông báo">
                         <i class="fas fa-bell"></i> Thông báo
                     </button>
-                    <button class="btn btn-primary" id="payment-button" aria-label="Thanh toán">
+                    <button class="btn btn-primary" id="payment-button" aria-label="Thanh toán" disabled>
                         <i class="fas fa-dollar-sign"></i> Thanh toán
                     </button>
                 </div>
@@ -441,11 +410,21 @@
                     if (dishStatus == 'chờ xử lý') {
                         decreaseQuantity(dishId, selectedTableId);
                     } else {
-                        canelItem(dishId, selectedTableId, dishOrder)
+                        const dishInformed = dishElement.dataset.dishInformed;
+                        const dishProcessing = dishElement.dataset.dishProcessing;
+                        const dishQuantity = dishElement.dataset.dishQuantity;
+                        if (dishInformed > dishProcessing || dishQuantity > dishProcessing) {
+                            decreaseQuantity(dishId, selectedTableId);
+                        } else {
+                            canelItem(dishId, selectedTableId, dishOrder)
+                        }
                     }
                 }
                 if (event.target.classList.contains("delete-item")) {
                     deleteItem(dishId, selectedTableId);
+                }
+                if (event.target.classList.contains("delette-item")) {
+                    deletteItem(dishId, selectedTableId);
                 }
             }
         });
@@ -541,10 +520,18 @@
                 inputPlaceholder: 'Nhập lý do...',
                 showCancelButton: true,
                 confirmButtonText: 'Xác nhận',
-                cancelButtonText: 'Hủy'
+                cancelButtonText: 'Hủy',
+                preConfirm: () => {
+                    const reason = Swal.getInput().value.trim();
+                    if (!reason) {
+                        Swal.showValidationMessage(
+                            'Vui lòng nhập lý do hủy');
+                        return false;
+                    }
+                    return reason;
+                }
             }).then((result) => {
                 if (result.isConfirmed) {
-                    const reason = result.value;
                     fetch(`/deleteItem`, {
                             method: 'POST',
                             headers: {
@@ -571,6 +558,31 @@
                     showNotification('Hủy món thất bại', 'info');
                 }
             });
+        }
+
+
+        function deletteItem(dishId, selectedTableId) {
+            fetch(`/deleteItem`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                            .getAttribute('content'),
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        table_id: selectedTableId,
+                        dish_id: dishId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showNotification('Hủy món thành công!', 'success');
+                    } else {
+                        showNotification('Lỗi khi xóa', 'error');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
         }
 
 
@@ -617,6 +629,35 @@
                     if (!response.ok) throw new Error('Network response was not ok');
                     return response.json();
                 })
+                .then(data => {
+                    highlightTables(data);
+                })
+                .catch(error => {
+                    console.error('There has been a problem with your fetch operation:', error);
+                });
+        }
+
+        function highlightTables(data) {
+            const tableCards = document.querySelectorAll('.table-card');
+            const selectedTableIds = data.table.tables.map(table => String(table.table_number));
+            tableCards.forEach(card => {
+                const isSelected = selectedTableIds.includes(card.getAttribute('data-table-id'));
+                if (isSelected) {
+                    card.style.backgroundColor = '#007bff';
+                    card.style.color = '#ffffff';
+                    const childElements = card.querySelectorAll('*');
+                    childElements.forEach(child => {
+                        child.style.color = '#ffffff';
+                    });
+                } else {
+                    card.style.backgroundColor = '';
+                    card.style.color = '';
+                    const childElements = card.querySelectorAll('*');
+                    childElements.forEach(child => {
+                        child.style.color = '';
+                    });
+                }
+            });
         }
 
         function showNotification(message, type = 'success') {

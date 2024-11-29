@@ -41,7 +41,8 @@
                                                 <p id="info-people">{{ $showDeposit['guest_count'] }} người</p>
                                                 <input type="hidden" name="guest_count"
                                                     value="{{ $showDeposit['guest_count'] }}">
-                                                <p id="info-datetime">{{ $showDeposit['reservation_date'] }}
+                                                <p id="info-datetime">
+                                                    {{ date('d-m-Y', strtotime($showDeposit['reservation_date'])) }}
                                                     {{ $showDeposit['reservation_time'] }}</p>
                                                 <input type="hidden" name="reservation_date"
                                                     value="{{ $showDeposit['reservation_date'] }}">
@@ -70,7 +71,7 @@
                                                 <p>Tổng tiền cọc</p>
                                             </div>
                                             <div class="col-7">
-                                                <p>100.000 đ</p>
+                                                <p>100,000 đ</p>
                                                 <p>{{ $showDeposit['guest_count'] }}</p>
                                                 <p>{{ number_format($deposit) }} đ</p>
                                                 <input type="hidden" name="deposit" value="{{ $deposit }}">
@@ -101,7 +102,6 @@
                         <div class="col-3">
 
                             <a href="{{ route('customer.information', ['date' => $showDeposit['reservation_date'], 'time' => $showDeposit['reservation_time'], 'note' => $showDeposit['note'] ?? null, 'guest_count' => $showDeposit['guest_count'], 'user_phone' => $showDeposit['user_phone'], 'user_name' => $showDeposit['user_name']]) }}"
-
                                 class="text-secondary">Quay lại trang đặt bàn</a>
                         </div>
                         <div class="col-2">

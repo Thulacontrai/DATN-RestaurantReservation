@@ -44,9 +44,12 @@
                                 <a class="nav-link text-light" href="#" onclick="showSection('accountDetailsSection')"
                                     style="color: #f5cc00;">Chi tiết tài khoản</a> <!-- Màu vàng -->
                             </li>
-                            {{-- <li class="nav-item">
-                                <a class="nav-link text-light" href="#" onclick="showSection('paymentSection')" style="color: #f5cc00;">Phương thức thanh toán</a> <!-- Màu vàng -->
-                            </li> --}}
+                            <li class="nav-item">
+                                <form  class="nav-link text-light" id="logout-form" action="{{ route('logout') }}"  style="color: #f5cc00;" method="POST" style="display: none;">
+                                    @csrf
+                                    <button type="submit" style="color: #f5cc00;" >Đăng xuất</button>
+                                </form>
+                            </li>
                         </ul>
                     </div>
 
@@ -139,6 +142,9 @@
                                         <p class="text-success">Đánh giá của bạn: {{ $reservation->review }}</p>
                                     @endif
                                 </div>
+                                </div>
+
+
                             </div>
                         @endforeach
 

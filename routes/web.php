@@ -214,6 +214,9 @@ Route::post('/notification-button/{tableId}', [PosController::class, 'notificati
 Route::post('/canelItem', [PosController::class, 'canelItem']);
 Route::get('/Ppayment/{table_number}', [PosController::class, 'Ppayment'])->name('Ppayment');
 
+///
+Route::get('reserToOrder/{reservationId}',[PosController::class, 'reserToOrder'])->name('ReToOr');
+
 
 Route::post('/load-more-dishes', [PosController::class, 'loadMoreDishes']);
 Route::get('/api/tables/{tableId}/order', [TableController::class, 'getOrderForReservedTable']);

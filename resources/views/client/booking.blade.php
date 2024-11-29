@@ -89,7 +89,7 @@
 }
 
 
-@media (max-width: 425px) {
+@media (max-width: 426px) {
     html {
         font-size: 15px;
     }

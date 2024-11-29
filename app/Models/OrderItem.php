@@ -23,6 +23,9 @@ class OrderItem extends Model
         'total_price',
         'status', // Trạng thái của món (preparing, served, etc.)
         'cancel_reason',
+        'informed',
+        'processing',
+        'completed',
         'deleted_at',
     ];
     public $timestamps = true;

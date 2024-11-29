@@ -801,6 +801,7 @@ class ReservationController extends Controller
 
 
 
+    //Layout bàn
     public function assignTables($reservationId)
     {
         $tables = Table::all();

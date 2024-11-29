@@ -26,7 +26,7 @@
     margin-bottom: 5px;
 }
 
-.item-quantity{
+.item-quantity {
     display: flex;
     align-items: center;
     font-size: 16px;
@@ -70,6 +70,18 @@
 }
 
 .delete-item {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+    width: 100%;
+    text-align: center;
+}
+
+.delette-item {
     background-color: #dc3545;
     color: white;
     border: none;
