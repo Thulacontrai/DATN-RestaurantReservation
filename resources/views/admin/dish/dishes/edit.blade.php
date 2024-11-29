@@ -32,13 +32,15 @@
                         </div>
                         <div class="card-body">
 
-                            <form id="editDishForm" method="POST" action="{{ route('admin.dishes.update', $dish->id) }}" enctype="multipart/form-data" novalidate>
+                            <form id="editDishForm" method="POST" action="{{ route('admin.dishes.update', $dish->id) }}"
+                                enctype="multipart/form-data" novalidate>
                                 @csrf
                                 @method('PUT')
 
                                 <div class="mb-3">
                                     <label for="dish-name" class="form-label">Tên Món Ăn</label>
-                                    <input type="text" id="dish-name" name="name" class="form-control" value="{{ $dish->name }}" required>
+                                    <input type="text" id="dish-name" name="name" class="form-control"
+                                        value="{{ $dish->name }}" required>
                                     <div class="invalid-feedback">Vui lòng nhập tên món ăn.</div>
 
                                 </div>
@@ -47,7 +49,8 @@
                                     <label for="dish-category" class="form-label">Loại Món Ăn</label>
                                     <select id="dish-category" name="category_id" class="form-select" required>
                                         @foreach ($categories as $category)
-                                            <option value="{{ $category->id }}" {{ $dish->category_id == $category->id ? 'selected' : '' }}>
+                                            <option value="{{ $category->id }}"
+                                                {{ $dish->category_id == $category->id ? 'selected' : '' }}>
                                                 {{ $category->name }}
                                             </option>
                                         @endforeach
@@ -58,22 +61,29 @@
 
                                 <div class="mb-3">
                                     <label for="dish-price" class="form-label">Giá</label>
-                                    <input type="number" id="dish-price" name="price" class="form-control" value="{{ $dish->price }}" required>
-                                    <div class="invalid-feedback">Vui lòng nhập giá món ăn.</div>
-
+                                    <input type="number" id="dish-price" name="price" class="form-control"
+                                        value="{{ $dish->price }}" required min="0" step="0.01"
+                                        placeholder="Nhập giá món ăn">
+                                    <div class="invalid-feedback">Vui lòng nhập giá món ăn hợp lệ (1 - 5.000.000).</div>
                                 </div>
 
-                
+
 
                                 <div class="mb-3">
                                     <label for="dish-status" class="form-label">Trạng Thái</label>
                                     <select id="dish-status" name="status" class="form-select" required>
-                                        <option value="available" {{ $dish->status == 'available' ? 'selected' : '' }}>Có sẵn</option>
-                                        <option value="out_of_stock" {{ $dish->status == 'out_of_stock' ? 'selected' : '' }}>Hết hàng</option>
-                                        <option value="reserved" {{ $dish->status == 'reserved' ? 'selected' : '' }}>Đã đặt trước</option>
-                                        <option value="in_use" {{ $dish->status == 'in_use' ? 'selected' : '' }}>Đang sử dụng</option>
-                                        <option value="completed" {{ $dish->status == 'completed' ? 'selected' : '' }}>Hoàn thành</option>
-                                        <option value="cancelled" {{ $dish->status == 'cancelled' ? 'selected' : '' }}>Đã hủy</option>
+                                        <option value="available" {{ $dish->status == 'available' ? 'selected' : '' }}>Có
+                                            sẵn</option>
+                                        <option value="out_of_stock"
+                                            {{ $dish->status == 'out_of_stock' ? 'selected' : '' }}>Hết hàng</option>
+                                        <option value="reserved" {{ $dish->status == 'reserved' ? 'selected' : '' }}>Đã đặt
+                                            trước</option>
+                                        <option value="in_use" {{ $dish->status == 'in_use' ? 'selected' : '' }}>Đang sử
+                                            dụng</option>
+                                        <option value="completed" {{ $dish->status == 'completed' ? 'selected' : '' }}>Hoàn
+                                            thành</option>
+                                        <option value="cancelled" {{ $dish->status == 'cancelled' ? 'selected' : '' }}>Đã
+                                            hủy</option>
                                     </select>
                                     <div class="invalid-feedback">Vui lòng chọn trạng thái món ăn.</div>
 
@@ -88,9 +98,11 @@
 
                                 <div class="mb-3">
                                     <label for="dish-image" class="form-label">Hình Ảnh Món Ăn</label>
-                                    <input type="file" id="dish-image" name="image" class="form-control" accept="image/*">
+                                    <input type="file" id="dish-image" name="image" class="form-control"
+                                        accept="image/*">
                                     @if ($dish->image)
-                                        <img src="{{ asset('storage/' . $dish->image) }}" alt="Hình ảnh món ăn" width="150" class="mt-3">
+                                        <img src="{{ asset('storage/' . $dish->image) }}" alt="Hình ảnh món ăn"
+                                            width="150" class="mt-3">
                                     @endif
                                     <div class="invalid-feedback">Vui lòng chọn ảnh món ăn.</div>
 
@@ -152,6 +164,44 @@
                     input.classList.add('is-invalid');
                 }
             }
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const priceInput = document.getElementById('dish-price');
+
+            // Giới hạn giá trị khi người dùng nhập
+            priceInput.addEventListener('input', function () {
+                const value = parseFloat(priceInput.value);
+
+                // Nếu giá trị nhỏ hơn 0
+                if (value < 1) {
+                    priceInput.value = ''; // Reset giá trị
+                    priceInput.classList.add('is-invalid');
+                }
+                // Nếu giá trị vượt quá 5.000.000
+                else if (value > 5000000) {
+                    priceInput.value = 5000000; // Giới hạn giá trị tối đa
+                    priceInput.classList.add('is-invalid');
+                }
+                // Nếu giá trị hợp lệ
+                else {
+                    priceInput.classList.remove('is-invalid');
+                }
+            });
+
+            // Đảm bảo kiểm tra khi form được submit
+            priceInput.closest('form').addEventListener('submit', function (event) {
+                const value = parseFloat(priceInput.value);
+
+                // Kiểm tra lại giá trị khi submit
+                if (isNaN(value) || value < 1 || value > 5000000) {
+                    priceInput.classList.add('is-invalid');
+                    event.preventDefault(); // Ngăn form submit nếu không hợp lệ
+                } else {
+                    priceInput.classList.remove('is-invalid');
+                }
+            });
         });
     </script>
 @endsection

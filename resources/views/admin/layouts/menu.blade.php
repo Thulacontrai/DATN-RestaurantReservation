@@ -9,44 +9,51 @@
     <!-- Sidebar brand ends -->
 
     <!-- Sidebar menu starts -->
-    <div class="sidebar-menu">
-        <div class="sidebarMenuScroll">
-            <ul>
-                <li class="sidebar-dropdown active">
-                    <a href="{{ route('admin.dashboard.index') }}">
-                        <i class="bi bi-house"></i>
-                        @can('Xem thống kê')
-                            <span class="menu-text">Thống kê</span>
-                        @endcan
-                    </a>
-                </li>
+              <div class="sidebar-menu">
+                <div class="sidebarMenuScroll">
+                    <ul>
+                        <li class="sidebar-dropdown">
+                            <a href="#">
+                                <i class="bi bi-house"></i>
+                                <span class="menu-text">Thống kê</span>
+                            </a>
+                            <div class="sidebar-submenu">
+                                <ul>
+                                    <li>
+                                        <a href="{{ route('admin.dashboard.index') }}">Phân tích</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('admin.report.index') }}">Báo Cáo thống kê</a>
+                                    </li>
 
-                {{-- Quản lý đặt bàn --}}
-                <li class="sidebar-dropdown">
-                    <a href="#">
-                        <i class="bi bi-layers-half"></i>
-                        <span class="menu-text">Quản lý đặt bàn</span>
-                    </a>
-                    <div class="sidebar-submenu">
-                        <ul>
-                            <li>
-                                <a href="{{ route('admin.reservation.index') }}">Danh sách đặt bàn</a>
-                            </li>
-                            <li>
-                                <a href="{{ route('admin.calendar.index') }}">Lịch đặt bàn</a>
-                            </li>
-                            <li>
-                                <a href="{{ route('admin.reservationHistory.index') }}">Lịch sử đặt bàn</a>
-                            </li>
-                            <li>
-                                <a href="{{ route('admin.refunds.index') }}">Quản lý hoàn tiền</a>
-                            </li>
+                                </ul>
+                            </div>
+                        </li>
+
+
+
+
+                @can('Xem bàn')
+                    <li class="sidebar-dropdown">
+                        <a href="#">
+                            <i class="bi bi-window-split"></i>
+                            <span class="menu-text">Quản Lý Bàn</span>
+                        </a>
+                        <div class="sidebar-submenu">
+                            <ul>
+                                <li>
+                                    <a href="{{ route('admin.table.index') }}">Danh sách bàn</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                @endcan
 
                 @can('Xem đặt bàn')
                     <li class="sidebar-dropdown">
                         <a href="#">
                             <i class="bi bi-layers-half"></i>
-                            <span class="menu-text">Quản lý đặt bàn</span>
+                            <span class="menu-text">Quản Lý Đặt Bàn</span>
                         </a>
                         <div class="sidebar-submenu">
                             <ul>
@@ -56,7 +63,7 @@
                                     </li>
                                 @endcan
                                 <li>
-                                    {{-- <a href="{{ route('admin.reservationTable.index') }}">Bàn đặt trước</a> --}}
+                                    <a href="{{ route('admin.calendar.index') }}">Lịch đặt bàn</a>
                                 </li>
                                 @can('Xem lịch sử đặt bàn')
                                     <li>
@@ -79,12 +86,12 @@
                     <li class="sidebar-dropdown">
                         <a href="#">
                             <i class="bi bi-folder"></i>
-                            <span class="menu-text">Quản lý Danh Mục</span>
+                            <span class="menu-text">Quản lý Thực Đơn</span>
                         </a>
                         <div class="sidebar-submenu">
                             <ul>
                                 <li>
-                                    <a href="{{ route('admin.category.index') }}">Danh Mục</a>
+                                    <a href="{{ route('admin.category.index') }}">Danh mục thực đơn</a>
                                 </li>
                                 @can('Xem món ăn')
                                     <li>
@@ -114,17 +121,17 @@
                         <div class="sidebar-submenu">
                             <ul>
                                 <li>
-                                    <a href="{{ route('admin.order.index') }}">Danh sách Order</a>
+                                    <a href="{{ route('admin.order.index') }}">Danh sách Hoá Đơn</a>
                                 </li>
 
                                 @can('Xem mã giảm giá')
                                     <li>
-                                        <a href="{{ route('admin.coupon.index') }}">Danh sách coupon</a>
+                                        <a href="{{ route('admin.coupon.index') }}">Phiếu giảm giá</a>
                                     </li>
                                 @endcan
                                 @can('Xem thanh toán')
                                     <li>
-                                        <a href="{{ route('admin.payment.index') }}">Danh sách Payment</a>
+                                        <a href="{{ route('admin.payment.index') }}">Phương thức thanh toán</a>
                                     </li>
                                 @endcan
                             </ul>
@@ -158,7 +165,7 @@
                                 @endcan
                                 @can('Xem feedback')
                                     <li>
-                                        <a href="{{ route('admin.feedback.index') }}">Danh sách Feedback</a>
+                                        <a href="{{ route('admin.feedback.index') }}">Danh sách phản hồi</a>
                                     </li>
                                 @endcan
 
@@ -182,12 +189,10 @@
                                         <a href="{{ route('admin.supplier.index') }}">Nhà cung cấp</a>
                                     <li>
                                     @endcan
-                                <li>
-                                    {{-- <a href="{{ route('admin.ingredientType.index') }}">Loại Nguyên Liệu</a> --}}
-                                </li>
+
                                 @can('Xem nguyên liệu')
                                     <li>
-                                        <a href="{{ route('admin.ingredient.index') }}">Danh sách Nguyên Liệu</a>
+                                        <a href="{{ route('admin.ingredient.index') }}"> Nguyên Liệu</a>
                                     </li>
                                 @endcan
                                 @can('Xem nhập kho')

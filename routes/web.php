@@ -34,6 +34,7 @@ use App\Http\Controllers\Client\MenuController;
 use App\Http\Controllers\Pos\PosController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\InventoryController;
+use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
 /*
@@ -281,7 +282,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::get('/', function () {
         return view('auth.login');
-
     })->name('home');
 
 
@@ -339,6 +339,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('dishes/{id}/update-ingredients', [DishesController::class, 'updateIngredients'])->name('dishes.updateIngredients');
     Route::delete('dishes/{recipeId}/deleteIngredient', [DishesController::class, 'deleteIngredient'])->name('dishes.deleteIngredient');
     Route::post('dishes/{dish}/add-ingredient', [DishesController::class, 'addIngredient'])->name('dishes.addIngredient');
+    Route::post('dishes/{id}/toggle-status', [DishesController::class, 'toggleStatus'])->name('dishes.toggleStatus');
+
     // Route::resource('recipes', RecipesController::class);
 
 
@@ -351,7 +353,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('combo-trash', [ComboController::class, 'trash'])->name('combo.trash');
     Route::patch('combo-restore/{id}', [ComboController::class, 'restore'])->name('combo.restore');
     Route::delete('combo-force-delete/{id}', [ComboController::class, 'forceDelete'])->name('combo.forceDelete');
-
+    Route::post('/combo/{combo}/toggle-status', [ComboController::class, 'toggleStatus'])->name('combo.toggleStatus');
 
     Route::resource('payment', PaymentController::class);
     // Trash - Xoá mềm - Khôi Phuc
@@ -396,6 +398,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::resource('ingredient', IngredientController::class);
     Route::resource('dashboard', DashboardController::class);
+    Route::resource('report', ReportController::class);
+
     Route::resource('accountSetting', SettingController::class);
     Route::resource('inventory', InventoryController::class);
 
@@ -468,8 +472,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-
 });
 
 

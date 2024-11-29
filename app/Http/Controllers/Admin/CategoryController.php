@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 
-class CategoryController extends Controller 
+class CategoryController extends Controller
 {
 
     public function __construct()
@@ -19,7 +19,7 @@ class CategoryController extends Controller
         $this->middleware('permission:Tạo mới danh mục', ['only' => ['create']]);
         $this->middleware('permission:Sửa danh mục', ['only' => ['edit']]);
         $this->middleware('permission:Xóa danh mục', ['only' => ['destroy']]);
-        
+
     }
 
 
@@ -54,7 +54,7 @@ class CategoryController extends Controller
             'description' => $request->description
         ]);
 
-        return redirect()->route('admin.category.index')->with('success', 'Category đã được thêm thành công!');
+        return redirect()->route('admin.category.index')->with('success', 'Danh mục đã được thêm thành công!');
     }
 
     public function edit($id)
@@ -69,7 +69,7 @@ class CategoryController extends Controller
         $category = Category::findOrFail($id);
         $category->update($request->all());
 
-        return redirect()->route('admin.category.index')->with('success', 'Category đã được cập nhật thành công!');
+        return redirect()->route('admin.category.index')->with('success', 'Danh mục đã được cập nhật thành công!');
     }
 
     public function destroy($id)
@@ -85,7 +85,7 @@ class CategoryController extends Controller
         // Nếu không có món ăn, tiến hành xóa mềm
         $category->delete();
 
-        return redirect()->route('admin.category.index')->with('success', 'Category đã được xóa mềm thành công!');
+        return redirect()->route('admin.category.index')->with('success', 'Danh mục đã được xóa mềm thành công!');
     }
 
     // Hiển thị thùng rác
@@ -102,7 +102,7 @@ class CategoryController extends Controller
         $category = Category::withTrashed()->findOrFail($id); // Lấy danh mục từ thùng rác
         $category->restore(); // Khôi phục danh mục
 
-        return redirect()->route('admin.category.trash')->with('success', 'Category đã được khôi phục thành công!');
+        return redirect()->route('admin.category.trash')->with('success', 'Danh mục đã được khôi phục thành công!');
     }
 
     // Xóa vĩnh viễn
@@ -111,6 +111,6 @@ class CategoryController extends Controller
         $category = Category::withTrashed()->findOrFail($id); // Lấy danh mục từ thùng rác
         $category->forceDelete(); // Xóa vĩnh viễn
 
-        return redirect()->route('admin.category.trash')->with('success', 'Category đã được xóa vĩnh viễn!');
+        return redirect()->route('admin.category.trash')->with('success', 'Danh mụcđã được xóa vĩnh viễn!');
     }
 }

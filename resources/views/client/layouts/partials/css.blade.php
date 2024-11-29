@@ -376,3 +376,284 @@
         margin-bottom: 30px;
     }
 </style>
+
+{{-- menu --}}
+<style>
+    /* Card món ăn */
+    .dish-item {
+        display: flex;
+        align-items: stretch;
+        background: #2e2c2b;
+        border-radius: 10px;
+        overflow: hidden;
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        height: 200px;
+        /* Tăng chiều cao để cân đối */
+    }
+
+    .dish-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Hình ảnh món ăn */
+    .dish-image img {
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+        border: none;
+        /* Loại bỏ viền */
+    }
+
+    /* Thông tin món ăn */
+    .dish-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 15px;
+        background: #473529;
+        color: #fff;
+
+    }
+
+    .dish-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin: 0;
+        color: #ffc107;
+        /* Màu vàng nổi bật */
+    }
+
+    .dish-price {
+        font-size: 16px;
+        font-weight: 600;
+        color: #fff;
+    }
+
+    /* Wrapper cho nút */
+    .order-btn-wrapper {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 10px;
+    }
+
+    /* Nút fancy */
+    .fancy-btn {
+        display: inline-block;
+        padding: 8px 15px;
+        font-size: 14px;
+        font-weight: bold;
+        text-transform: uppercase;
+        background: #ff5722;
+        color: #fff;
+        border-radius: 5px;
+        transition: all 0.3s;
+    }
+
+    .fancy-btn:hover {
+        background: #e64a19;
+        color: #fff;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+
+    /* Nút Fancy */
+    .fancy-btn {
+        position: relative;
+        display: inline-block;
+        padding: 5px 15px;
+        color: #fff;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #ff7e5f, #feb47b);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+        overflow: hidden;
+        z-index: 0;
+    }
+
+    .fancy-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.3);
+        transform: skewX(-45deg);
+        transition: all 0.5s ease;
+        z-index: 1;
+    }
+
+    .fancy-btn:hover::before {
+        left: 100%;
+    }
+
+    .fancy-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .fancy-btn:active {
+        transform: translateY(1px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Văn bản trong nút */
+    .fancy-btn .btn-text {
+        position: relative;
+        z-index: 2;
+    }
+
+
+    /* Combo Card */
+    .combo-card {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        background-color: #292929;
+        border-radius: 0;
+        /* Đảm bảo không có góc bo */
+    }
+
+    /* Combo Image */
+    .combo-image {
+        width: 100%;
+        height: 300px;
+        /* Chiều cao cố định cho ảnh */
+        overflow: hidden;
+        position: relative;
+    }
+
+    .combo-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        /* Đảm bảo ảnh phủ kín mà không bị méo */
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .combo-image:hover img {
+        transform: scale(1.1);
+        /* Hiệu ứng zoom nhẹ khi hover */
+    }
+
+    /* Badge Giá */
+    .combo-image .badge {
+        font-weight: bold;
+        font-size: 14px;
+        border-radius: 0;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Card Body */
+    .card-body {
+        padding: 20px;
+        background: #292929;
+        color: #fff;
+        flex-grow: 1;
+    }
+
+    /* Title và Description */
+    .card-title {
+        font-size: 20px;
+        font-weight: bold;
+        color: #ffc107;
+        text-transform: uppercase;
+    }
+
+    .card-text {
+        color: #ccc;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    /* Nút Đặt Ngay */
+    .btn-warning {
+        background-color: #ffc107;
+        border: none;
+        font-weight: bold;
+        text-transform: uppercase;
+        transition: all 0.3s ease;
+    }
+
+    .btn-warning:hover {
+        background-color: #e0a800;
+        transform: scale(1.05);
+    }
+
+    .menu-section {
+        padding: 60px 0;
+    }
+
+    .menu-title {
+        font-size: 16px;
+        letter-spacing: 2px;
+        margin-bottom: 10px;
+    }
+
+    .menu-subtitle {
+        font-size: 30px;
+        font-weight: 700;
+        margin-bottom: 40px;
+        color: #FFC300;
+    }
+
+    .menu-tabs {
+        display: flex;
+        gap: 30px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .tab-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        cursor: pointer;
+        transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
+        /* padding: 15px;
+        border-radius: 15px;
+        border: 2px solid transparent;
+        max-width: 150px;
+        min-width: 120px; */
+    }
+
+
+
+    .tab-icon-wrapper {
+        width: 100px;
+        height: 100px;
+        background: #1e1e1e;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 10px;
+        transition: all 0.3s ease-in-out;
+        border: 3px solid #FFC300;
+    }
+
+    .tab-icon-wrapper:hover {
+        transform: scale(1.1);
+        border-color: #fff;
+    }
+
+    .tab-icon {
+        object-fit: cover;
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+    }
+
+    .tab-label {
+        font-size: 16px;
+        color: #FFF;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-top: 5px;
+    }
+</style>
+
+

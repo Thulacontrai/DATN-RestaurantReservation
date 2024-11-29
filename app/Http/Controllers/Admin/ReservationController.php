@@ -297,13 +297,13 @@ class ReservationController extends Controller
             $reservation->update($validated);
 
             DB::commit();
-            return redirect()->route('admin.reservation.index')->with('success', 'Reservation updated successfully');
+            return redirect()->route('admin.reservation.index')->with('success', 'Đặt bàn được cập nhật thành công !');
         } catch (\Illuminate\Validation\ValidationException $e) {
             DB::rollBack();
             return back()->withErrors($e->errors());
         } catch (\Throwable $e) {
             DB::rollBack();
-            return back()->withErrors(['error' => "An error occurred while updating the reservation: " . $e->getMessage()]);
+            return back()->withErrors(['error' => "Đã xảy ra lỗi khi cập nhật đặt bàn: " . $e->getMessage()]);
         }
     }
 
@@ -362,7 +362,7 @@ class ReservationController extends Controller
         $reservation = Reservation::findOrFail($id);
         $reservation->delete();
 
-        return redirect()->route('admin.reservation.index')->with('success', 'Reservation deleted successfully');
+        return redirect()->route('admin.reservation.index')->with('success', 'Đã xóa đặt bàn thành công');
     }
 
 
@@ -790,10 +790,9 @@ class ReservationController extends Controller
                     ->update(['status' => 'completed']);
                 Table::where('id', '=', $table->id)
                     ->update(['status' => 'Available']);
-                OrderTable::where('reservation_id', $order->reservation_id)
+                OrdersTable::where('reservation_id', $order->reservation_id)
                     ->where('table_id', $order->table_id)
-                    ->update(['status' => 'available']);
-                ;
+                    ->update(['status' => 'available']);;
             }
         });
         return redirect(route('pos.index'));
@@ -1010,7 +1009,7 @@ class ReservationController extends Controller
         $dishIds = $items->pluck('item_id')->toArray();
         $dishes = Dishes::whereIn('id', $dishIds)->get();
         $staff = User::find($order->staff_id);
-        return view('pos.printf', compact('dishes','final', 'data', 'order', 'table', 'staff', 'reservation_table', 'item'))->render();
+        return view('pos.printf', compact('dishes', 'final', 'data', 'order', 'table', 'staff', 'reservation_table', 'item'))->render();
     }
 
     // Hàm chuẩn hóa số điện thoại
@@ -1054,5 +1053,4 @@ class ReservationController extends Controller
             return response()->json(['success' => false, 'message' => 'Mã OTP không đúng. Vui lòng thử lại.']);
         }
     }
-
 }

@@ -84,7 +84,7 @@
 
                                     <div class="actions">
                                         @if ($reservation->status != 'Cancelled')
-                                            @if($reservation->deposit_amount > 0) 
+                                            @if($reservation->deposit_amount > 0)
                                                 <button class="text-danger cancel-btn-new"
                                                 data-toggle="modal" data-target="#cancelModal"
                                                 style="background: transparent; border: none;" data-bs-toggle="modal"
@@ -94,20 +94,20 @@
                                                 data-reservation-date="{{ \Carbon\Carbon::parse($reservation->reservation_date)->toIso8601String() }}">
                                                 Hủy
                                                 </button>
-                                                 
+
                                                 @else
                                                     @if ($reservation->status == 'Cancelled')
                                                         <strong>
                                                             Đã hủy
                                                         </strong>
-                                                    
+
                                                     @else
                                                     <button style="background: transparent; border: none;" class="text-danger cancel-btn-new" id="deleteButton" data-id ="{{$reservation->id}}">Hủy</button>
                                                      @endif
-                                                
+
                                             @endif
-                                            
-                                           
+
+
                                         @endif
                                     </div>
                                     <strong
@@ -115,7 +115,7 @@
                                         {{ $reservation->status === 'Confirmed' ? 'Đã xác nhận' : ($reservation->status === 'Checked-in' ? 'Đã nhận bàn' : ($reservation->status === 'Cancelled' ? 'Đã hủy' : 'Chờ xử lý')) }}
                                     </strong>
                                 </div>
-                        
+
                                 <!-- Nút đánh giá -->
                                 <div class="actions">
                                     @if ($reservation->status !== 'Cancelled')
@@ -126,13 +126,13 @@
                                         </button>
                                     @endif
                                 </div>
-                        
+
                                 <!-- Khu vực nhập đánh giá -->
                                 <div id="review-input-{{ $reservation->id }}" class="review-input mt-2" style="display: none;">
                                     <textarea id="review-text-{{ $reservation->id }}" class="form-control" placeholder="Nhập đánh giá của bạn..." rows="3"></textarea>
                                     <button class="btn-primary mt-2" onclick="submitReview({{ $reservation->id }}, {{ $reservation->customer_id }})">Gửi đánh giá</button>
                                 </div>
-                        
+
                                 <!-- Khu vực hiển thị đánh giá -->
                                 <div id="review-container-{{ $reservation->id }}" class="mt-2">
                                     @if ($reservation->review)
@@ -141,10 +141,10 @@
                                 </div>
                             </div>
                         @endforeach
-                        
-                        
-                        
-                        
+
+
+
+
 
                             <div class="justify-content-center mt-3">
                                 {{ $bookingData->links() }}
@@ -290,7 +290,7 @@
 <script>
     $(document).ready(function() {
     // Xử lý khi nhấn vào nút "Hủy"
- 
+
 
     // Khởi tạo Select2 cho danh mục
     $('#bankSelect').select2({
@@ -348,8 +348,8 @@
                         url: '{{ route('client.cancel.reservationpopup') }}',
                         type: 'POST',
                         data: {
-                            id: id, 
-                            _token: '{{ csrf_token() }}' 
+                            id: id,
+                            _token: '{{ csrf_token() }}'
                         },
                         success: function(response) {
                             alert('Hủy bàn thành công!');

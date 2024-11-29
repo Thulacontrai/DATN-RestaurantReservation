@@ -11,7 +11,7 @@
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <div class="card-title">Danh Sách Nhà Cung Cấp</div>
                             <a href="{{ route('admin.supplier.import') }}" >
-                                
+
                                 {{-- <input type="file" name="file" accept=".xlsx, .xls" class="form-control form-control-sm d-none" id="import-file"> --}}
                                 <button type="button" id="import-button" class="btn btn-sm btn-success d-flex align-items-center">
                                     <i class="bi bi-file-earmark-arrow-up me-2"></i> Import Excel
@@ -60,10 +60,12 @@
                                                 <td>
                                                     <div class="actions d-flex">
                                                         <a href="{{ route('admin.supplier.edit', $supplier->id) }}"
-                                                            class="viewRow">
+                                                            class="viewRow" data-bs-toggle="tooltip"
+                                                            data-bs-placement="top" title="Sửa">
                                                             <i class="bi bi-pencil-square text-warning"></i>
                                                         </a>
-                                                        <a href="" class="viewRow">
+                                                        <a href="" class="viewRow" data-bs-toggle="tooltip"
+                                                        data-bs-placement="top" title="Xoá">
                                                             <form
                                                                 action="{{ route('admin.supplier.destroy', $supplier->id) }}"
                                                                 method="POST" style="display:inline-block;"

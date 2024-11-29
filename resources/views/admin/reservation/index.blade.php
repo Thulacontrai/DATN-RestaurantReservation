@@ -21,7 +21,8 @@
                             <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
                         </div>
                         <div class="toast-body">
-                            Có {{ $upcomingReservations->count() }} đơn đặt bàn sắp đến giờ nhận bàn trong vòng 30 phút tới                       </div>
+                            Có {{ $upcomingReservations->count() }} đơn đặt bàn sắp đến giờ nhận bàn trong vòng 30 phút tới
+                        </div>
                     </div>
                 @endif
 
@@ -59,16 +60,7 @@
                             <div class="card-title">Danh Sách Đặt Bàn</div>
                         </div>
                         <div class="card-body">
-                            @if (session('error'))
-                                <div class="alert alert-danger">
-                                    {{ session('error') }}
-                                </div>
-                            @endif
-                            @if (session('success'))
-                                <div class="alert alert-success">
-                                    {{ session('success') }}
-                                </div>
-                            @endif
+
                             <!-- Search form -->
                             <form method="GET" action="{{ route('admin.reservation.index') }}" class="mb-3">
                                 <div class="row g-3 align-items-center">
@@ -142,13 +134,16 @@
                                                 <td>{{ $reservation->id }}</td>
                                                 <td>{{ $reservation->customer->name ?? 'Không rõ' }}</td>
                                                 <td>{{ $reservation->guest_count ?? 'N/A' }}</td>
-                                                <td>
-                                               {{ $reservation->reservation_date }}
-                                                    <br> {{ $reservation->reservation_time }}
+                                                <td style="text-align: center">
+                                                   <span> {{ \Carbon\Carbon::parse($reservation->reservation_date . ' ' . $reservation->reservation_time)->format('H:i:s') }}<br>
+                                                    {{ \Carbon\Carbon::parse($reservation->reservation_date)->format('d/m/Y') }}
                                                 </td>
+
+
                                                 <td>
-                                                    {{ $reservation->deposit_amount }}
+                                                    {{ number_format($reservation->deposit_amount, 0, ',', '.') }}
                                                 </td>
+
                                                 <td>{{ $reservation->note ?? 'Không có' }}</td>
                                                 <td>
                                                     @if ($reservation->status === 'Confirmed')
@@ -157,39 +152,50 @@
                                                         <span class="badge shade-yellow min-70">Chờ xử lý</span>
                                                     @elseif ($reservation->status === 'Cancelled')
                                                         <span class="badge shade-red min-70">Đã hủy</span>
-                                                        @elseif ($reservation->status === 'Refund')
+                                                    @elseif ($reservation->status === 'Refund')
                                                         <span class="badge bg-info">Đã hoàn cọc</span>
-                                                   
                                                     @else
                                                         <span class="badge shade-gray min-70">Không rõ</span>
                                                     @endif
                                                 </td>
 
 
-                                            <td>
-                                                <div class="actions">
-                                                    <a href="{{ route('admin.reservation.show', $reservation->id) }}" class="editRow" data-id="{{ $reservation->id }}">
-                                                        <i class="bi bi-list text-green"></i>
-                                                    </a>
-                                                    <a href="{{ route('admin.reservation.edit', $reservation->id) }}" class="editRow" data-id="{{ $reservation->id }}">
-                                                        <i class="bi bi-pencil-square text-warning"></i>
+                                                <td>
+                                                    <div class="actions">
+                                                        <a href="{{ route('admin.reservation.show', $reservation->id) }}"
+                                                            class="editRow" data-id="{{ $reservation->id }}" data-bs-toggle="tooltip"
+                                                            data-bs-placement="top" title="Chi Tiết">
+                                                            <i class="bi bi-list text-green"></i>
+                                                        </a>
+                                                        <a href="{{ route('admin.reservation.edit', $reservation->id) }}"
+                                                            class="editRow" data-id="{{ $reservation->id }}"
+                                                            data-bs-toggle="tooltip"
+                                                            data-bs-placement="top" title="Sửa">
+                                                            <i class="bi bi-pencil-square text-warning"></i>
 
-                                                    </a>
-                                                    <a href="{{ route('admin.reservation.assignTables', $reservation->id) }}" class="editRow" data-id="{{ $reservation->id }}">
-                                                        <i class="bi bi-box-arrow-in-right"></i>
-                                                    </a>
-                                                    {{-- Nút hủy đặt bàn --> --}}
-                                                         <form action="{{ route('admin.reservation.cancel', $reservation->id) }}" method="POST" style="display:inline-block;">
+                                                        </a>
+                                                        <a href="{{ route('admin.reservation.assignTables', $reservation->id) }}"
+                                                            class="editRow" data-id="{{ $reservation->id }}"
+                                                            data-bs-toggle="tooltip"
+                                                            data-bs-placement="top" title="Chuyển Bàn">
+                                                            <i class="bi bi-box-arrow-in-right"></i>
+                                                        </a>
+                                                        {{-- Nút hủy đặt bàn --> --}}
+                                                        <form
+                                                            action="{{ route('admin.reservation.cancel', $reservation->id) }}"
+                                                            method="POST" style="display:inline-block;">
                                                             @csrf
                                                             @method('POST')
-                                                            <a href="#" style="margin-top: 15px">
-                                                            <button type="submit" class="btn btn-link p-0" onclick="return confirm('Bạn có chắc chắn muốn hủy đơn này?');">
-                                                                <i class="bi bi-x-circle text-danger"></i>
-                                                            </button></a>
+                                                            <a href="#" style="margin-top: 15px" data-bs-toggle="tooltip"
+                                                            data-bs-placement="top" title="Huỷ">
+                                                                <button type="submit" class="btn btn-link p-0"
+                                                                    onclick="return confirm('Bạn có chắc chắn muốn hủy đơn này?');">
+                                                                    <i class="bi bi-x-circle text-danger"></i>
+                                                                </button></a>
 
-                                                    </form>
-                                                     {{-- Hoàn cọc --}}
-                                                      {{-- <form action="" method="POST"
+                                                        </form>
+                                                        {{-- Hoàn cọc --}}
+                                                        {{-- <form action="" method="POST"
                                                       style="display:inline-block;">
                                                       <div style="display: flex; gap: 10px; align-items: center;">
                                                           <a href="{{ route('refunds.create', ['reservation_id' => $reservation->id]) }}"
@@ -199,17 +205,21 @@
                                                           </a>
                                                       </div>
                                                   </form> --}}
-                                                    <form action="{{ route('admin.reservation.destroy', $reservation->id) }}" method="POST" style="display:inline-block;">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <a href="#" style="margin-top: 18px;" >
-                                                        <button type="submit" class="btn btn-link p-0" onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
-                                                            <i class="bi bi-trash text-red"></i>
-                                                        </button></a>
-                                                    </form>
-                                                </div>
-                                            </td>
-                                        </tr>
+                                                        <form
+                                                            action="{{ route('admin.reservation.destroy', $reservation->id) }}"
+                                                            method="POST" style="display:inline-block;">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <a href="#" style="margin-top: 18px;" data-bs-toggle="tooltip"
+                                                            data-bs-placement="top" title="Xoá">
+                                                                <button type="submit" class="btn btn-link p-0"
+                                                                    onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
+                                                                    <i class="bi bi-trash text-red"></i>
+                                                                </button></a>
+                                                        </form>
+                                                    </div>
+                                                </td>
+                                            </tr>
                                         @empty
                                             <tr>
                                                 <td colspan="8">Không có đặt bàn nào được tìm thấy.</td>
@@ -240,8 +250,109 @@
 
     </div>
 
+    <div id="notification" class="notification d-none">
+        <div class="notification-icon">
+            <i class="bi"></i>
+        </div>
+        <div class="notification-content">
+            <strong id="notification-title"></strong>
+            <p id="notification-message"></p>
+        </div>
+    </div>
 
     <!-- Content wrapper scroll end -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Hàm hiển thị thông báo
+            function showNotification(message, type = "success") {
+                const notification = document.getElementById("notification");
+                const notificationIcon = notification.querySelector(".notification-icon i");
+                const notificationTitle = document.getElementById("notification-title");
+                const notificationMessage = document.getElementById("notification-message");
+
+                // Cập nhật nội dung thông báo
+                notificationMessage.textContent = message;
+
+                // Đặt kiểu thông báo
+                if (type === "success") {
+                    notification.style.background = "linear-gradient(90deg, #58ade8, #48d1cc)";
+                    notification.style.color = "#ffffff";
+                    notificationIcon.className = "bi bi-check-circle-fill icon-animate";
+                    notificationTitle.textContent = "Thành công!";
+                } else if (type === "error") {
+                    notification.style.background = "linear-gradient(90deg, #f44336, #ff6347)";
+                    notification.style.color = "#ffffff";
+                    notificationIcon.className = "bi bi-x-circle-fill icon-animate";
+                    notificationTitle.textContent = "Lỗi!";
+                }
+
+                // Hiển thị thông báo
+                notification.classList.remove("d-none");
+                notification.classList.add("show");
+
+                // Ẩn thông báo sau 3 giây
+                setTimeout(() => {
+                    notification.classList.remove("show");
+                    notification.classList.add("hide");
+
+                    // Reset sau khi ẩn
+                    setTimeout(() => {
+                        notification.classList.add("d-none");
+                        notification.classList.remove("hide");
+                        notificationIcon.classList.remove("icon-animate");
+                    }, 300);
+                }, 3000);
+            }
+
+            // Hiển thị thông báo từ session
+            @if (session('success'))
+                showNotification("{{ session('success') }}", "success");
+            @endif
+
+            @if (session('error'))
+                showNotification("{{ session('error') }}", "error");
+            @endif
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toastElList = [].slice.call(document.querySelectorAll('.toast'));
+            const toastList = toastElList.map(function(toastEl) {
+                return new bootstrap.Toast(toastEl);
+            });
+
+            toastList.forEach(toast => toast.show());
+
+            const alerts = document.querySelectorAll('.reservation-alert');
+            alerts.forEach(alert => {
+                alert.addEventListener('click', function() {
+                    const ids = this.getAttribute('data-ids').split(',');
+                    ids.forEach(id => {
+                        const row = document.getElementById('reservation-' + id);
+                        if (row) {
+                            row.classList.add('highlight-row');
+                            row.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'center'
+                            });
+                        }
+                    });
+                });
+            });
+
+            const statusFilter = document.getElementById('statusFilter');
+            const dateFilter = document.getElementById('dateFilter');
+
+            statusFilter.addEventListener('change', function() {
+                console.log("Trạng thái đã được thay đổi: ", this.value);
+            });
+
+            dateFilter.addEventListener('change', function() {
+                console.log("Ngày đã được thay đổi: ", this.value);
+
+            });
+        });
+    </script>
 @endsection
 
 <style>
@@ -286,44 +397,42 @@
         border-radius: 0.25rem;
 
     }
+
+    .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        max-width: 300px;
+        background: #ffffff;
+        color: #333;
+        border-radius: 8px;
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 14px;
+        font-weight: 500;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(-10px);
+        transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .notification.show {
+        opacity: 1;
+        pointer-events: all;
+        transform: translateY(0);
+    }
+
+    .notification.hide {
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(-10px);
+    }
+
+    .notification i {
+        font-size: 20px;
+        color: inherit;
+    }
 </style>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const toastElList = [].slice.call(document.querySelectorAll('.toast'));
-        const toastList = toastElList.map(function(toastEl) {
-            return new bootstrap.Toast(toastEl);
-        });
-
-        toastList.forEach(toast => toast.show());
-
-        const alerts = document.querySelectorAll('.reservation-alert');
-        alerts.forEach(alert => {
-            alert.addEventListener('click', function() {
-                const ids = this.getAttribute('data-ids').split(',');
-                ids.forEach(id => {
-                    const row = document.getElementById('reservation-' + id);
-                    if (row) {
-                        row.classList.add('highlight-row');
-                        row.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'center'
-                        });
-                    }
-                });
-            });
-        });
-
-        const statusFilter = document.getElementById('statusFilter');
-        const dateFilter = document.getElementById('dateFilter');
-
-        statusFilter.addEventListener('change', function() {
-            console.log("Trạng thái đã được thay đổi: ", this.value);
-        });
-
-        dateFilter.addEventListener('change', function() {
-            console.log("Ngày đã được thay đổi: ", this.value);
-
-        });
-    });
-</script>
