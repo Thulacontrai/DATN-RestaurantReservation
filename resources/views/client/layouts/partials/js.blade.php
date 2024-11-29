@@ -506,6 +506,27 @@
             errorDiv.style.display = 'none';
         }, 3000);
     }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        const guestCountInput = document.getElementById('guest_count');
+
+        guestCountInput.addEventListener('input', function() {
+            let value = parseInt(guestCountInput.value, 10);
+
+            // Nếu giá trị âm, nhỏ hơn 1 hoặc lớn hơn 50, sửa lại giá trị
+            if (value < 1) {
+                guestCountInput.value = 1;
+                guestCountInput.setCustomValidity('Số người đặt bàn không được nhỏ hơn 1.');
+            } else if (value > 50) {
+                guestCountInput.value = 50;
+                guestCountInput.setCustomValidity('Số người đặt bàn không được lớn hơn 50.');
+            } else {
+                guestCountInput.setCustomValidity('');
+            }
+
+            guestCountInput.classList.toggle('is-invalid', !guestCountInput.checkValidity());
+        });
+    });
 
     window.sendOTP = function() {
         let phoneNumber = document.getElementById("user_phone").value.trim();
