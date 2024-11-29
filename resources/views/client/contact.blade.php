@@ -1,5 +1,5 @@
 @extends('client.layouts.master')
-@section('title', 'Contact')
+@section('title', 'Liên Hệ')
 
 @section('content')
     @include('client.layouts.component.subheader', [
@@ -9,8 +9,6 @@
         'currentPage' => 'Contact',
     ])
     <div id="content" class="no-bottom no-top">
-
-
         <section>
             <div class="container">
                 <div class="row g-4">
@@ -20,7 +18,6 @@
                         T. (208) 333 9296<br>
                         E. contact@baresto.com<br>
                     </div>
-
                     <div class="col-lg-8">
                         <form name="contactForm" id="contact_form" class="position-relative z1000" method="post"
                             action="#">
@@ -49,25 +46,21 @@
                                 </div>
                             </div>
 
-
-                            <div class="g-recaptcha" data-sitekey="6LdW03QgAAAAAJko8aINFd1eJUdHlpvT4vNKakj6"></div>
                             <div id='submit' class="mt20">
                                 <input type='submit' id='send_message' value='Send Message' class="btn-custom">
                             </div>
 
                             <div id="success_message" class='success'>
-                                Your message has been sent successfully. Refresh this page if you want to send more
-                                messages.
+                                Tin nhắn của bạn đã được gửi thành công. Tải lại trang nếu bạn muốn gửi thêm tin nhắn.
                             </div>
                             <div id="error_message" class='error'>
-                                Sorry there was an error sending your form.
+                                Xin lỗi, đã xảy ra lỗi khi gửi biểu mẫu của bạn.
                             </div>
                         </form>
-
                     </div>
                 </div>
             </div>
         </section>
-
     </div>
 @endsection
+

@@ -26,13 +26,15 @@
                             <a href="{{ route('admin.dishes.index') }}" class="btn btn-sm btn-secondary">Quay lại</a>
                         </div>
                         <div class="card-body">
-                            <form id="addDishForm" method="POST" action="{{ route('admin.dishes.store') }}" enctype="multipart/form-data" novalidate>
+                            <form id="addDishForm" method="POST" action="{{ route('admin.dishes.store') }}"
+                                enctype="multipart/form-data" novalidate>
                                 @csrf
 
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label for="dish-name" class="form-label">Tên Món Ăn</label>
-                                        <input type="text" id="dish-name" name="name" class="form-control" placeholder="Nhập tên món ăn" required>
+                                        <input type="text" id="dish-name" name="name" class="form-control"
+                                            placeholder="Nhập tên món ăn" required>
                                         <div class="invalid-feedback">Vui lòng nhập tên món ăn.</div>
                                     </div>
                                     <div class="col-md-6 mb-3">
@@ -49,8 +51,10 @@
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label for="dish-price" class="form-label">Giá</label>
-                                        <input type="number" id="dish-price" name="price" class="form-control" placeholder="Nhập giá món ăn" required min="0" step="0.01">
-                                        <div class="invalid-feedback">Vui lòng nhập giá món ăn.</div>
+                                        <input type="number" id="dish-price" name="price" class="form-control"
+                                            placeholder="Nhập giá món ăn" required min="0" step="0.01">
+                                        <div class="invalid-feedback">Vui lòng nhập giá món ăn trong khoảng từ 1 đến
+                                            5.000.000.</div>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="dish-description" class="form-label">Mô tả Món Ăn</label>
@@ -74,7 +78,8 @@
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="dish-image" class="form-label">Hình Ảnh</label>
-                                        <input type="file" id="dish-image" name="image" class="form-control" accept="image/*" required>
+                                        <input type="file" id="dish-image" name="image" class="form-control"
+                                            accept="image/*" required>
                                         <div class="invalid-feedback">Vui lòng chọn ảnh món ăn.</div>
                                     </div>
                                 </div>
@@ -87,7 +92,8 @@
                                         <!-- Chọn Nguyên Liệu (multiple) -->
                                         <div class="mb-4">
                                             <label for="ingredients" class="form-label fw-bold">Nguyên Liệu</label>
-                                            <select id="ingredients" name="ingredient_id[]" class="form-select" multiple required>
+                                            <select id="ingredients" name="ingredient_id[]" class="form-select" multiple
+                                                required>
                                                 @foreach ($ingredients as $ingredient)
                                                     <option value="{{ $ingredient->id }}">{{ $ingredient->name }}</option>
                                                 @endforeach
@@ -111,97 +117,121 @@
 @endsection
 
 @section('scripts')
-<script>
-   document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('addDishForm');
-    const dishTypeSelect = document.getElementById('dish-category');
-    const ingredientsSection = document.getElementById('ingredientsSection');
-    const ingredientSelect = document.getElementById('ingredients');
-    const ingredientQuantitiesDiv = document.getElementById('ingredient-quantities');
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('addDishForm');
+            const dishTypeSelect = document.getElementById('dish-category');
+            const ingredientsSection = document.getElementById('ingredientsSection');
+            const ingredientSelect = document.getElementById('ingredients');
+            const ingredientQuantitiesDiv = document.getElementById('ingredient-quantities');
 
-    // Ẩn phần nguyên liệu ban đầu
-    ingredientsSection.style.display = 'none';
-
-    dishTypeSelect.addEventListener('change', function() {
-        const selectedValue = this.value;
-        // Hiển thị phần nguyên liệu nếu là loại món ăn có id là 1, 2, hoặc 3
-        if (selectedValue === "1" || selectedValue === "2" || selectedValue === "3") {
-            ingredientsSection.style.display = 'block';
-
-            // Thêm thuộc tính required cho các trường bên trong ingredientsSection
-            ingredientSelect.setAttribute('required', 'true');
-            Array.from(ingredientQuantitiesDiv.querySelectorAll('input')).forEach(input => {
-                input.setAttribute('required', 'true');
-            });
-        } else {
-            // Ẩn phần nguyên liệu nếu không phải loại đã chỉ định
+            // Ẩn phần nguyên liệu ban đầu
             ingredientsSection.style.display = 'none';
 
-            // Xóa thuộc tính required cho các trường bên trong ingredientsSection
-            ingredientSelect.removeAttribute('required');
-            Array.from(ingredientQuantitiesDiv.querySelectorAll('input')).forEach(input => {
-                input.removeAttribute('required');
-            });
-        }
-    });
+            dishTypeSelect.addEventListener('change', function() {
+                const selectedValue = this.value;
+                // Hiển thị phần nguyên liệu nếu là loại món ăn có id là 1, 2, hoặc 3
+                if (selectedValue === "1" || selectedValue === "2" || selectedValue === "3") {
+                    ingredientsSection.style.display = 'block';
 
-    ingredientSelect.addEventListener('change', () => {
-        ingredientQuantitiesDiv.innerHTML = '';
-
-        Array.from(ingredientSelect.selectedOptions).forEach(option => {
-            const ingredientId = option.value;
-            const ingredientName = option.text;
-
-            const quantityDiv = document.createElement('div');
-            quantityDiv.classList.add('mb-3');
-
-            const label = document.createElement('label');
-            label.classList.add('form-label', 'fw-bold');
-            label.textContent = `Định lượng cho ${ingredientName}`;
-
-            const input = document.createElement('input');
-            input.type = 'number';
-            input.name = `ingredient_quantity[${ingredientId}]`;
-            input.classList.add('form-control');
-            input.placeholder = `Nhập định lượng cho ${ingredientName}`;
-            input.required = true;
-            input.min = 0.01;
-            input.step = 0.01;
-
-            input.addEventListener('input', () => {
-                if (input.checkValidity()) {
-                    input.classList.remove('is-invalid');
-                    input.classList.add('is-valid');
+                    // Thêm thuộc tính required cho các trường bên trong ingredientsSection
+                    ingredientSelect.setAttribute('required', 'true');
+                    Array.from(ingredientQuantitiesDiv.querySelectorAll('input')).forEach(input => {
+                        input.setAttribute('required', 'true');
+                    });
                 } else {
-                    input.classList.remove('is-valid');
-                    input.classList.add('is-invalid');
+                    // Ẩn phần nguyên liệu nếu không phải loại đã chỉ định
+                    ingredientsSection.style.display = 'none';
+
+                    // Xóa thuộc tính required cho các trường bên trong ingredientsSection
+                    ingredientSelect.removeAttribute('required');
+                    Array.from(ingredientQuantitiesDiv.querySelectorAll('input')).forEach(input => {
+                        input.removeAttribute('required');
+                    });
                 }
             });
 
-            quantityDiv.append(label, input);
-            ingredientQuantitiesDiv.appendChild(quantityDiv);
+            ingredientSelect.addEventListener('change', () => {
+                ingredientQuantitiesDiv.innerHTML = '';
+
+                Array.from(ingredientSelect.selectedOptions).forEach(option => {
+                    const ingredientId = option.value;
+                    const ingredientName = option.text;
+
+                    const quantityDiv = document.createElement('div');
+                    quantityDiv.classList.add('mb-3');
+
+                    const label = document.createElement('label');
+                    label.classList.add('form-label', 'fw-bold');
+                    label.textContent = `Định lượng cho ${ingredientName}`;
+
+                    const input = document.createElement('input');
+                    input.type = 'number';
+                    input.name = `ingredient_quantity[${ingredientId}]`;
+                    input.classList.add('form-control');
+                    input.placeholder = `Nhập định lượng cho ${ingredientName}`;
+                    input.required = true;
+                    input.min = 0.01;
+                    input.step = 0.01;
+
+                    input.addEventListener('input', () => {
+                        if (input.checkValidity()) {
+                            input.classList.remove('is-invalid');
+                            input.classList.add('is-valid');
+                        } else {
+                            input.classList.remove('is-valid');
+                            input.classList.add('is-invalid');
+                        }
+                    });
+
+                    quantityDiv.append(label, input);
+                    ingredientQuantitiesDiv.appendChild(quantityDiv);
+                });
+            });
+
+            form.addEventListener('submit', function(event) {
+                let isValid = true;
+
+                // Kiểm tra tất cả các trường bắt buộc
+                Array.from(form.querySelectorAll('input, select, textarea')).forEach(input => {
+                    if (!input.checkValidity()) {
+                        input.classList.add('is-invalid');
+                        isValid = false;
+                    } else {
+                        input.classList.remove('is-invalid');
+                        input.classList.add('is-valid');
+                    }
+                });
+
+                if (!isValid) {
+                    event.preventDefault(); // Ngăn biểu mẫu gửi nếu không hợp lệ
+                }
+            });
         });
-    });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const priceInput = document.getElementById('dish-price');
 
-    form.addEventListener('submit', function (event) {
-        let isValid = true;
+            // Giới hạn giá trị khi người dùng nhập
+            priceInput.addEventListener('input', function () {
+                const value = parseFloat(priceInput.value);
 
-        // Kiểm tra tất cả các trường bắt buộc
-        Array.from(form.querySelectorAll('input, select, textarea')).forEach(input => {
-            if (!input.checkValidity()) {
-                input.classList.add('is-invalid');
-                isValid = false;
-            } else {
-                input.classList.remove('is-invalid');
-                input.classList.add('is-valid');
-            }
+                // Nếu giá trị nhỏ hơn 0 hoặc không hợp lệ
+                if (value < 1) {
+                    priceInput.value = ''; // Reset giá trị
+                    priceInput.classList.add('is-invalid');
+                }
+                // Nếu giá trị vượt quá 5.000.000
+                else if (value > 5000000) {
+                    priceInput.value = 5000000; // Giới hạn giá trị tối đa
+                    priceInput.classList.add('is-invalid');
+                }
+                // Nếu giá trị hợp lệ
+                else {
+                    priceInput.classList.remove('is-invalid');
+                }
+            });
         });
-
-        if (!isValid) {
-            event.preventDefault(); // Ngăn biểu mẫu gửi nếu không hợp lệ
-        }
-    });
-});
-</script>
+    </script>
 @endsection
-

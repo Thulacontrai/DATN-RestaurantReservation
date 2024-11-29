@@ -9,6 +9,7 @@ use App\Models\Dishes;
 use App\Traits\TraitCRUD;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class ComboController extends Controller
@@ -31,7 +32,6 @@ class ComboController extends Controller
         $this->middleware('permission:Tạo mới combo', ['only' => ['create']]);
         $this->middleware('permission:Sửa combo', ['only' => ['edit']]);
         $this->middleware('permission:Xóa combo', ['only' => ['destroy']]);
-
     }
     use TraitCRUD;
 
@@ -42,23 +42,44 @@ class ComboController extends Controller
 
     public function index(Request $request)
     {
-        $query = $this->model::query();
+        try {
+            // Khởi tạo truy vấn
+            $query = $this->model::query();
 
-        if ($request->filled('name')) {
-            $query->where('name', 'like', '%' . $request->name . '%');
+            // Tìm kiếm theo tên nếu có
+            if ($request->filled('name')) {
+                $query->where('name', 'like', '%' . $request->name . '%');
+            }
+
+            // Kiểm tra và áp dụng trạng thái active/inactive nếu có
+            if ($request->filled('is_active')) {
+                $isActive = $request->is_active;
+                $query->where('is_active', $isActive); // Lọc theo trạng thái
+            } else {
+                // Nếu không có tham số, lấy cả active và inactive combo
+                // Mặc định sẽ lấy cả hai
+            }
+
+            // Phân trang kết quả
+            $combos = $query->paginate(10);
+
+            // Trả về view
+            return view($this->viewPath . '.index', compact('combos'));
+        } catch (\Exception $e) {
+            // Ghi log và trả về lỗi
+            Log::error($e->getMessage());
+            return redirect()->back()->with('error', 'Đã xảy ra lỗi. Vui lòng thử lại!');
         }
-
-        $combos = $query->paginate(10);
-
-        return view($this->viewPath . '.index', compact('combos'));
     }
+
+
 
 
     public function create()
     {
         $categories = Category::all();
         $dishes = Dishes::all();
-        return view($this->viewPath . '.create', compact('categories','dishes'));
+        return view($this->viewPath . '.create', compact('categories', 'dishes'));
     }
 
 
@@ -95,7 +116,7 @@ class ComboController extends Controller
 
             foreach ($request->dishes as $dishId) {
                 // Tạo bản ghi trong bảng combo_dish
-                $combo->dishes()->attach($dishId, ['quantity' => 1]); 
+                $combo->dishes()->attach($dishId, ['quantity' => 1]);
             }
         });
 
@@ -109,7 +130,7 @@ class ComboController extends Controller
         $categories = Category::all();
         $dishes = Dishes::all();
 
-        return view($this->viewPath . '.edit', compact('combo', 'categories','dishes'));
+        return view($this->viewPath . '.edit', compact('combo', 'categories', 'dishes'));
     }
 
 
@@ -152,7 +173,7 @@ class ComboController extends Controller
         $combo = $this->model::findOrFail($id);
         $dishes = $combo->dishes;
 
-        return view($this->viewPath . '.detail', compact('combo','dishes'));
+        return view($this->viewPath . '.detail', compact('combo', 'dishes'));
     }
 
 
@@ -181,5 +202,21 @@ class ComboController extends Controller
         $combo->forceDelete();
 
         return redirect()->route($this->routePath . '.trash')->with('success', 'Combo đã được xóa!!');
+    }
+
+
+   
+    public function toggleStatus(Request $request, $id)
+    {
+        try {
+            $combo = Combo::findOrFail($id); // Lấy combo theo ID
+            $combo->is_active = $request->input('is_active'); // Cập nhật trạng thái
+            $combo->save();
+
+            return response()->json(['success' => true, 'message' => 'Trạng thái đã được cập nhật thành công.']);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Có lỗi xảy ra trong quá trình cập nhật trạng thái.']);
+        }
     }
 }

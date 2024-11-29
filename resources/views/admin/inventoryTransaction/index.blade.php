@@ -11,7 +11,7 @@
         <div class="content-wrapper">
 
             <div id="toastContainer" class="toast-container position-fixed top-0 end-0 p-3">
-              
+
             </div>
 
             <div class="row">
@@ -51,7 +51,7 @@
                                     </div>
                                 </div>
                             </form>
-                            
+
 
                             <!-- Table list of transactions -->
                             <div class="table-responsive">
@@ -65,7 +65,7 @@
                                             <th>Mô tả</th>
                                             <th>Nhà cung cấp</th>
                                             <th>Trạng thái</th>
-                                            <th>Ngày tạo</th> 
+                                            <th>Ngày tạo</th>
                                             <th>Thao tác</th>
                                         </tr>
                                     </thead>
@@ -79,23 +79,27 @@
                                                 <td>{{ $transaction->description ?? 'N/A' }}</td>
                                                 <td>{{ $transaction->supplier->name ?? 'N/A' }}</td>
                                                 <td>{{ $transaction->status }}</td>
-                                                <td>{{ $transaction->created_at->format('d/m/Y') }}</td> 
+                                                <td style="text-align: center">
+
+                                                    {{ \Carbon\Carbon::parse($transaction->change_date . ' ' . $transaction->change_time)->format('H:i:s') }}<br>
+                                                    {{ \Carbon\Carbon::parse($transaction->change_date)->format('d/m/Y') }}
+                                                </td>
                                                 <td>
                                                     <a href="{{ route('transactions.show', $transaction->id) }}" class="btn btn-info">
-                                                        <i class="bi bi-list"></i> 
+                                                        <i class="bi bi-list"></i>
                                                     </a>
                                                     <a href="{{ route('transactions.edit', $transaction->id) }}" class="btn btn-warning">
-                                                        <i class="bi bi-pencil-square"></i> 
+                                                        <i class="bi bi-pencil-square"></i>
                                                     </a>
                                                     <form action="{{ route('transactions.destroy', $transaction->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa?');">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit" class="btn btn-danger">
-                                                            <i class="bi bi-trash"></i> 
+                                                            <i class="bi bi-trash"></i>
                                                         </button>
                                                     </form>
                                                 </td>
-                                                
+
                                             </tr>
                                         @empty
                                             <tr>
@@ -104,7 +108,7 @@
                                         @endforelse
                                     </tbody>
                                 </table>
-                                
+
                             </div>
 
                             <!-- Pagination -->
@@ -124,6 +128,6 @@
             return confirm("Bạn có chắc chắn muốn xóa phiếu nhập này không?");
         }
     </script>
-    
+
 
 @endsection

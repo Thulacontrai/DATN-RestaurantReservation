@@ -86,7 +86,7 @@
                                         <button type="submit" class="btn btn-sm btn-primary">Tìm kiếm</button>
                                     </div>
                                 </div>
-                            </form>                            
+                            </form>
 
                             <!-- Table list of inventory stocks -->
                             <div class="table-responsive">
@@ -109,13 +109,15 @@
                                                 <td>{{ $stock->quantity_stock }}</td>
                                                 <td>
                                                     <div class="actions">
-                                                        <a href="{{ route('admin.inventory.edit', $stock->id) }}" class="editRow" data-id="{{ $stock->id }}">
+                                                        <a href="{{ route('admin.inventory.edit', $stock->id) }}" class="editRow" data-id="{{ $stock->id }}" data-bs-toggle="tooltip"
+                                                            data-bs-placement="top" title="Sửa">
                                                             <i class="bi bi-pencil-square text-warning"></i>
                                                         </a>
                                                         <form action="{{ route('admin.inventory.destroy', $stock->id) }}" method="POST" style="display:inline-block;">
                                                             @csrf
                                                             @method('DELETE')
-                                                            <a href="#" style="margin-top: 15px;">
+                                                            <a href="#" style="margin-top: 15px;" data-bs-toggle="tooltip"
+                                                            data-bs-placement="top" title="Xoá">
                                                                 <button type="submit" class="btn btn-link p-0" onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
                                                                     <i class="bi bi-trash text-red"></i>
                                                                 </button>
