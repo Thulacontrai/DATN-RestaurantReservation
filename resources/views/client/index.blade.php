@@ -158,10 +158,11 @@
                     <div class="col-lg-6">
                         <h5 class="uptitle wow fadeInUp">Khám phá</h5>
                         <h2 class="wow fadeInUp">Câu chuyện của chúng tôi</h2>
-                        <p class="lead wow fadeInUp">Tại "Baresto", chúng tôi tin tưởng vào sức mạnh của cà phê ngon và sự
-                            hiếu khách ấm áp. Hành trình của chúng tôi bắt đầu với một tầm nhìn đơn giản: tạo ra một không
-                            gian chào đón, nơi bạn bè, gia đình và những người lạ có thể đến và tận hưởng những món đồ uống
-                            ngon lành, bánh ngọt tự làm và những kết nối ý nghĩa.</p>
+<<<<<<< HEAD
+                        <p class="lead wow fadeInUp">Tại "Steak House", chúng tôi tự hào mang đến trải nghiệm ẩm thực đỉnh
+                            cao với món bò beefsteak tuyệt hảo. Hành trình của chúng tôi bắt đầu với mong muốn tạo nên một
+                            không gian ấm cúng và sang trọng, nơi thực khách có thể thưởng thức những món ăn tinh tế, đậm đà
+                            hương vị từ những nguyên liệu tươi ngon nhất.</p>
 
                         <p class="wow fadeInUp">
                             Được truyền cảm hứng từ công thức nấu ăn truyền thống kết hợp phong cách hiện đại, chúng tôi
@@ -171,6 +172,9 @@
                             thành điểm đến lý tưởng cho những ai yêu thích hương vị bò beefsteak tuyệt hảo.
                         </p>
 
+=======
+
+>>>>>>> 5b9649d8707f7e30ce48e31610a5e8e9fe8fe632
 
                     </div>
 
@@ -362,44 +366,6 @@
         <section id="cta" aria-label="cta" class="call-to-action">
             <div class="container">
                 <div class="row g-4 align-items-center">
-                    <div class="col-lg-9 text-lg-start text-sm-center wow fadeIn">
-                        <h3><i class="id-color fa fa-phone mr10"></i>Gọi ngay và nhận ưu đãi đặc biệt!</h3>
-                    </div>
-                    <div class="col-lg-3 text-lg-end text-sm-center wow fadeIn" data-wow-delay=".2s">
-                        <a href="{{ route('booking.client') }}" class="btn-line">Gọi ngay</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Phần câu chuyện -->
-        <section data-bgcolor="rgba(255, 255, 255, .05)">
-            <div class="container">
-                <div class="row gx-5 align-items-center">
-                    <div class="col-lg-6">
-                        <h5 class="uptitle wow fadeInUp">Khám phá</h5>
-                        <h2 class="wow fadeInUp">Câu chuyện của chúng tôi</h2>
-                        <p class="lead wow fadeInUp">Tại "Baresto", chúng tôi tin tưởng vào sức mạnh của cà phê ngon và sự
-                            hiếu khách ấm áp. Hành trình của chúng tôi bắt đầu với một tầm nhìn đơn giản: tạo ra một không
-                            gian chào đón, nơi bạn bè, gia đình và những người lạ có thể đến và tận hưởng những món đồ uống
-                            ngon lành, bánh ngọt tự làm và những kết nối ý nghĩa.</p>
-
-                        <p class="wow fadeInUp">Là một thành viên tự hào của cộng đồng, chúng tôi cam kết đóng góp và tạo
-                            ra tác động tích cực mọi nơi chúng tôi có thể. Từ việc hỗ trợ các nghệ nhân và nông dân địa
-                            phương đến việc tổ chức các sự kiện tôn vinh sự đa dạng và hòa nhập, chúng tôi tin tưởng vào
-                            việc sử dụng nền tảng của mình để lan tỏa niềm vui và thiện chí trong khu phố và xa hơn nữa.</p>
-                    </div>
-
-                    <div class="col-lg-6">
-                        <div class="row">
-                            <div class="col-6">
-                                <img src="client/03_images/background/bg-side-4.jpg" class="card-img-top" alt="">
-                            </div>
-                            <div class="col-6">
-                                <img src="client/03_images/background/bg-side-5.jpg" class="card-img-top" alt="">
-                            </div>
-                        </div>
-                    </div>
                 </div>
                 <div class="container">
                     <div class="row">
@@ -486,12 +452,12 @@
         </section>
 
 
-        <div class="bner-booking-bottom wow animate__animated animate__fadeInUp" data-wow-delay=".15s"
+        {{-- <div class="bner-booking-bottom wow animate__animated animate__fadeInUp" data-wow-delay=".15s"
             data-wow-duration=".7s">
 
             <video src="https://storage.quannhautudo.com/Data/images/home/Bia-Web.mp4" class="video-bg td-video"
                 autoplay="" playsinline="" loop="" muted="" preload=""></video>
-        </div>
+        </div> --}}
 
 
 

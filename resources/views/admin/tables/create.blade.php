@@ -34,11 +34,10 @@
 
                                 </div>
 
-                                <!-- Số Bàn -->
                                 <div class="mb-3">
                                     <label for="table_number" class="form-label">Số Bàn</label>
                                     <input type="number" class="form-control" id="table_number" name="table_number"
-                                        value="{{ old('table_number') }}" required min="1" max="100">
+                                        value="{{ old('table_number') }}" required min="1" max="100" placeholder="Nhập số bàn">
                                     <div class="invalid-feedback">Vui lòng nhập số bàn từ 1 đến 100.</div>
                                 </div>
 
@@ -134,4 +133,30 @@
             });
         });
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tableNumberInput = document.getElementById('table_number');
+
+            // Giới hạn giá trị khi người dùng nhập
+            tableNumberInput.addEventListener('input', function () {
+                const value = parseInt(tableNumberInput.value);
+
+                // Nếu giá trị nhỏ hơn 1 hoặc không hợp lệ
+                if (isNaN(value) || value < 1) {
+                    tableNumberInput.value = ''; // Reset giá trị
+                    tableNumberInput.classList.add('is-invalid');
+                }
+                // Nếu giá trị vượt quá 100
+                else if (value > 100) {
+                    tableNumberInput.value = 100; // Giới hạn giá trị tối đa
+                    tableNumberInput.classList.add('is-invalid');
+                }
+                // Nếu giá trị hợp lệ
+                else {
+                    tableNumberInput.classList.remove('is-invalid');
+                }
+            });
+        });
+    </script>
+
 @endsection

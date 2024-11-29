@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateTableRequest;
 use App\Traits\TraitCRUD;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class TableController extends Controller
 {
@@ -116,8 +117,9 @@ class TableController extends Controller
 
     private function hasRelatedRecords($id)
     {
-        // Kiểm tra xem có đặt trước hoặc đơn hàng nào liên quan đến bàn
-        return DB::table('reservation_tables')->where('table_id', $id)->exists() ||
+        $reservationHistoryExists = Schema::hasTable('reservation_history') &&
+            Schema::hasTable('reservations') &&
+            Schema::hasTable('reservation_tables') &&
             DB::table('reservation_history')->whereExists(function ($query) use ($id) {
                 $query->select(DB::raw(1))
                     ->from('reservations')
@@ -128,18 +130,9 @@ class TableController extends Controller
                             ->whereColumn('reservations.id', 'reservation_tables.reservation_id')
                             ->where('reservation_tables.table_id', $id);
                     });
-            })->exists() ||
-            DB::table('orders')->where('table_id', $id)->exists() ||
-            DB::table('payments')->whereExists(function ($query) use ($id) {
-                $query->select(DB::raw(1))
-                    ->from('reservations')
-                    ->whereColumn('payments.reservation_id', 'reservations.id')
-                    ->whereExists(function ($query) use ($id) {
-                        $query->select(DB::raw(1))
-                            ->from('reservation_tables')
-                            ->whereColumn('reservations.id', 'reservation_tables.reservation_id')
-                            ->where('reservation_tables.table_id', $id);
-                    });
             })->exists();
+
+        return $reservationHistoryExists;
     }
+
 }
