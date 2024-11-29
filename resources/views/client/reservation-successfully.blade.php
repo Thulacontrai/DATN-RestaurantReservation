@@ -31,9 +31,9 @@
                             <tr>
                                 <td colspan="2">Ghi chú thêm: {{ $reservation['note'] ?? null }}</td>
                             </tr>
-                            @if (isset($reservation['deposit_amount']))
+                            @if (isset($reservation['deposit']))
                                 <tr>
-                                    <td colspan="2">Tiền cọc: {{ number_format($reservation['deposit_amount']) }} đ</td>
+                                    <td colspan="2">Tiền cọc: {{ number_format($reservation['deposit']) }} đ</td>
                                 </tr>
                             @endif
                         </table>
