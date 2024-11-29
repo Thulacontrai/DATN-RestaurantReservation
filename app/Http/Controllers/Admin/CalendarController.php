@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Reservation;
+use App\Models\Table;
 use App\Traits\TraitCRUD;
 
 class CalendarController extends Controller
@@ -15,6 +17,10 @@ class CalendarController extends Controller
   protected $routePath = 'admin.calendar';
 
   public function index(){
+         // Lấy các bàn có trạng thái 'Available'
+         $tables = Table::where('status', 'Available')->get();
+         $reservations = Reservation::all(); // Lấy các đơn đặt bàn reservations
+
      return view('admin.calendar.index');
   }
 }

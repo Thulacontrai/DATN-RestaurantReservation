@@ -56,10 +56,10 @@ class InventoryController extends Controller
                     $query->where('quantity_stock', 0);
                     break;
                 case 'low_stock':
-                    $query->whereBetween('quantity_stock', [1, 10]);
+                    $query->whereBetween('quantity_stock', [1, 5]);
                     break;
                 case 'high_stock':
-                    $query->whereBetween('quantity_stock', [50, 100]);
+                    $query->whereBetween('quantity_stock', [100, 200]);
                     break;
             }
         }

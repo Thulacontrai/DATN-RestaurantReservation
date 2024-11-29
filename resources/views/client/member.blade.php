@@ -44,9 +44,12 @@
                                 <a class="nav-link text-light" href="#" onclick="showSection('accountDetailsSection')"
                                     style="color: #f5cc00;">Chi tiết tài khoản</a> <!-- Màu vàng -->
                             </li>
-                            {{-- <li class="nav-item">
-                                <a class="nav-link text-light" href="#" onclick="showSection('paymentSection')" style="color: #f5cc00;">Phương thức thanh toán</a> <!-- Màu vàng -->
-                            </li> --}}
+                            <li class="nav-item">
+                                <form  class="nav-link text-light" id="logout-form" action="{{ route('logout') }}"  style="color: #f5cc00;" method="POST" style="display: none;">
+                                    @csrf
+                                    <button type="submit" style="color: #f5cc00;" >Đăng xuất</button>
+                                </form>
+                            </li>
                         </ul>
                     </div>
 
@@ -109,9 +112,38 @@
                                             
                                            
                                         @endif
-                                    </div>
+                                    </div><!-- Nút đánh giá -->
+                                <div class="actions">
+                                    @if ($reservation->status !== 'Cancelled')
+                                        <button class="text-success review-btn"
+                                            style="background: transparent; border: none;"
+                                            onclick="toggleReviewInput({{ $reservation->id }}, {{ $reservation->customer_id }})">
+                                            Đánh giá
+                                        </button>
+                                    @endif
                                 </div>
-                            @endforeach
+                        
+                                <!-- Khu vực nhập đánh giá -->
+                                <div id="review-input-{{ $reservation->id }}" class="review-input mt-2" style="display: none;">
+                                    <textarea id="review-text-{{ $reservation->id }}" class="form-control" placeholder="Nhập đánh giá của bạn..." rows="3"></textarea>
+                                    <button class="btn-primary mt-2" onclick="submitReview({{ $reservation->id }}, {{ $reservation->customer_id }})">Gửi đánh giá</button>
+                                </div>
+                        
+                                <!-- Khu vực hiển thị đánh giá -->
+                                <div id="review-container-{{ $reservation->id }}" class="mt-2">
+                                    @if ($reservation->review)
+                                        <p class="text-success">Đánh giá của bạn: {{ $reservation->review }}</p>
+                                    @endif
+                                </div>
+                                </div>
+                        
+                                
+                            </div>
+                        @endforeach
+                        
+                        
+                        
+                        
 
                             <div class="justify-content-center mt-3">
                                 {{ $bookingData->links() }}
