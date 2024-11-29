@@ -150,12 +150,12 @@
                             <ul>
                                 @can('Xem vai trò')
                                     <li>
-                                        <a href="{{ route('admin.role.index') }}">Vai trò</a>
+                                        <a href="{{ route('admin.role.index') }}">Danh sách vai trò</a>
                                     </li>
                                 @endcan
                                 @can('Xem quyền hạn')
                                     <li>
-                                        <a href="{{ route('admin.permissions.index') }}">Quyền hạn</a>
+                                        <a href="{{ route('admin.permissions.index') }}">Danh sách quyền hạn</a>
                                     </li>
                                 @endcan
                                 @can('Xem người dùng')

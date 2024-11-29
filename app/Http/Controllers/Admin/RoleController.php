@@ -100,7 +100,7 @@ class RoleController extends Controller
                 $role->syncPermissions([]);
             }
 
-            return redirect()->route('admin.role.index')->with('success', 'Sửa vai trò thành công');
+            return redirect()->route('admin.role.index')->with('success', 'Cập nhật vai trò thành công');
         } else {
             return redirect()->route('admin.role.edit', $id)->withInput()->withErrors($validator);
         }
