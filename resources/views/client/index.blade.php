@@ -10,7 +10,7 @@
                 <ul>
                     <li data-transition="fade" data-slotamount="10" data-masterspeed="default" data-thumb="">
                         <!--  ẢNH NỀN -->
-                        <img src="client/03_images/slider/slide-1.jpg" alt="" data-bgposition="center center"
+                        <img src="client/03_images/slider/slide-2.jpg" alt="" data-bgposition="center center"
                             data-bgfit="cover" data-bgrepeat="no-repeat" data-bgparallax="10">
 
                         <div class="tp-caption tp-teaser-1" data-x="center" data-y="160" data-width="none"
@@ -52,8 +52,8 @@
 
                     <li data-transition="fade" data-slotamount="10" data-masterspeed="default" data-thumb="">
                         <!--  ẢNH NỀN -->
-                        <img src="client/03_images/slider/slide-2.jpg" alt="" data-bgposition="center center"
-                            data-bgfit="cover" data-bgrepeat="no-repeat" data-bgparallax="10">
+                        <img src="client/03_images/slider/slide-1.jpg" alt="" data-bgposition="center center"
+                            data-bgfit="cover" data-bgrepeat="no-repeat" data-bgparallax="10" style="filter: brightness(30%); width: 100%; height: auto;">
 
                         <div class="tp-caption tp-teaser-1" data-x="center" data-y="160" data-width="none"
                             data-height="none" data-whitespace="nowrap"
@@ -158,10 +158,7 @@
                     <div class="col-lg-6">
                         <h5 class="uptitle wow fadeInUp">Khám phá</h5>
                         <h2 class="wow fadeInUp">Câu chuyện của chúng tôi</h2>
-                        <p class="lead wow fadeInUp">Tại "Baresto", chúng tôi tin tưởng vào sức mạnh của cà phê ngon và sự
-                            hiếu khách ấm áp. Hành trình của chúng tôi bắt đầu với một tầm nhìn đơn giản: tạo ra một không
-                            gian chào đón, nơi bạn bè, gia đình và những người lạ có thể đến và tận hưởng những món đồ uống
-                            ngon lành, bánh ngọt tự làm và những kết nối ý nghĩa.</p>
+                  
 
                         <p class="wow fadeInUp">Là một thành viên tự hào của cộng đồng, chúng tôi cam kết đóng góp và tạo
                             ra tác động tích cực mọi nơi chúng tôi có thể. Từ việc hỗ trợ các nghệ nhân và nông dân địa
@@ -400,7 +397,7 @@
             <div class="container">
                 <div class="row g-4 align-items-center">
                     <div class="col-lg-9 text-lg-start text-sm-center wow fadeIn">
-                        <h3><i class="id-color fa fa-phone mr10"></i>Đặt bàn ngay để nhận ưu đãi đặc biệt!</h3>
+                        <h3><i class="bi bi-calendar2-week mr10"></i>Đặt bàn ngay để nhận ưu đãi đặc biệt!</h3>
                     </div>
                     <div class="col-lg-3 text-lg-end text-sm-center wow fadeIn" data-wow-delay=".2s">
                         <a href="{{ route('booking.client') }}" class="btn-line">Đặt bàn ngay</a>
@@ -416,10 +413,7 @@
                     <div class="col-lg-6">
                         <h5 class="uptitle wow fadeInUp">Khám phá</h5>
                         <h2 class="wow fadeInUp">Câu chuyện của chúng tôi</h2>
-                        <p class="lead wow fadeInUp">Tại "Baresto", chúng tôi tin tưởng vào sức mạnh của cà phê ngon và sự
-                            hiếu khách ấm áp. Hành trình của chúng tôi bắt đầu với một tầm nhìn đơn giản: tạo ra một không
-                            gian chào đón, nơi bạn bè, gia đình và những người lạ có thể đến và tận hưởng những món đồ uống
-                            ngon lành, bánh ngọt tự làm và những kết nối ý nghĩa.</p>
+                        <p class="lead wow fadeInUp">Steak House tự hào mang đến những phân cắt thịt bò chất lượng nhất, được chọn lọc và chế biến bởi đội ngũ đầu bếp tài hoa. Từ món bò bít tết đá nóng cho đến bò nướng sốt vang đỏ, chúng tôi cam kết mang đến hương vị tự nhiên và đậm đà lên từng miếng thịt. Ngoài ra, nhà hàng còn phục vụ các món khai vị tươi ngon, salad thanh đạm, và tráng miệng ngọt ngào để hoàn thiện bữa ăn của bạn.</p>
 
                         <p class="wow fadeInUp">Là một thành viên tự hào của cộng đồng, chúng tôi cam kết đóng góp và tạo
                             ra tác động tích cực mọi nơi chúng tôi có thể. Từ việc hỗ trợ các nghệ nhân và nông dân địa
@@ -430,7 +424,7 @@
                     <div class="col-lg-6">
                         <div class="row">
                             <div class="col-6">
-                                <img src="client/03_images/background/bg-side-4.jpg" class="card-img-top" alt="">
+                                <img src="client/03_images/background/bg-side-20.jpg" class="card-img-top" alt="">
                             </div>
                             <div class="col-6">
                                 <img src="client/03_images/background/bg-side-5.jpg" class="card-img-top" alt="">
