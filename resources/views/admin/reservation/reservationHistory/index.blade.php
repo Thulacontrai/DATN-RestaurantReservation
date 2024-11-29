@@ -15,7 +15,7 @@
                 <div class="col-sm-12 col-12">
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
-                            <div class="card-title">Danh Sách Lịch Sử Đặt Chỗ</div>
+                            <div class="card-title">Danh Sách Lịch Sử Đặt Bàn</div>
 
                         </div>
                         <div class="card-body">
@@ -53,24 +53,29 @@
                                                 <td>{{ optional($history->reservation)->id ?? 'Không rõ' }}</td>
                                                 <td>{{ optional(optional($history->reservation)->customer)->name ?? 'Không rõ' }}
                                                 </td>
-                                                <td>{{ $history->change_time }}</td>
-                                                {{-- <td><span
-                                                        class="badge shade-yellow min-70">{{ optional($history->reservation)->status ?? 'Không rõ' }}</span>
-                                                </td> --}}
+                                                <td >
+
+                                                        {{ \Carbon\Carbon::parse($history->reservation_date . ' ' . $history->change_time)->format('H:i:s') }}<br>
+                                                        {{ \Carbon\Carbon::parse($history->change_date)->format('d/m/Y') }}
+                                                </td>
                                                 <td>
                                                     @switch($history->status)
                                                         @case('pending')
                                                             <span class="badge shade-yellow min-70">Chờ xử lý</span>
-                                                            @break
+                                                        @break
+
                                                         @case('confirmed')
                                                             <span class="badge shade-green min-70">Đã xác nhận</span>
-                                                            @break
+                                                        @break
+
                                                         @case('cancelled')
                                                             <span class="badge shade-red min-70">Đã hủy</span>
-                                                            @break
+                                                        @break
+
                                                         @case('completed')
                                                             <span class="badge shade-blue min-70">Hoàn thành</span>
-                                                            @break
+                                                        @break
+
                                                         @default
                                                             <span class="badge shade-gray min-70">Không rõ</span>
                                                     @endswitch
@@ -80,118 +85,124 @@
                                                 <td>
                                                     <div class="actions">
                                                         <a href="#" class="viewRow" data-bs-toggle="modal"
-                                                            data-bs-target="#viewRow">
+                                                            data-bs-target="#viewRow" data-bs-toggle="tooltip"
+                                                            data-bs-placement="top" title="Sửa">
                                                             <i class="bi bi-list text-green"></i>
                                                         </a>
-                                                        <a href="#" class="deleteRow">
-                                                            <svg class="delete-svgIcon" viewBox="0 0 448 512">
-                                                                <path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"></path>
-                                                              </svg>
+                                                        <a href="#" class="deleteRow" data-bs-toggle="tooltip"
+                                                        data-bs-placement="top" title="Xoá">
+                                                            <button type="submit" class="btn btn-link p-0">
+                                                                <i class="bi bi-trash text-red"></i>
+                                                            </button>
                                                         </a>
                                                     </div>
                                                 </td>
                                             </tr>
-                                        @empty
-                                            <tr>
-                                                <td colspan="8">Không có lịch sử đặt chỗ nào được tìm thấy.</td>
-                                            </tr>
-                                        @endforelse
-                                    </tbody>
+                                            @empty
+                                                <tr>
+                                                    <td colspan="8">Không có lịch sử đặt chỗ nào được tìm thấy.</td>
+                                                </tr>
+                                            @endforelse
+                                        </tbody>
 
 
 
-                                </table>
+                                    </table>
+                                </div>
+
+                                <!-- Pagination -->
+                                <div class="pagination justify-content-center mt-3">
+                                    {{-- {{ $reservationHistory->links() }} --}}
+                                </div>
+                                <!-- Kết thúc Pagination -->
+
                             </div>
-
-                            <!-- Pagination -->
-                            <div class="pagination justify-content-center mt-3">
-                                {{-- {{ $reservationHistory->links() }} --}}
-                            </div>
-                            <!-- Kết thúc Pagination -->
-
                         </div>
+                    </div>
+                </div>
+                <!-- Row end -->
+
+            </div>
+            <!-- Content wrapper end -->
+
+        </div>
+        <!-- Content wrapper scroll end -->
+
+        <!-- Modal hiển thị chi tiết -->
+        <div class="modal fade" id="viewRow" tabindex="-1" aria-labelledby="viewRowLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="viewRowLabel">Chi Tiết Lịch Sử Đặt Chỗ</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="historyId" class="form-label">Mã Lịch Sử</label>
+                                    <input type="text" class="form-control" id="historyId" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="reservationId" class="form-label">Mã Đặt Chỗ</label>
+                                    <input type="text" class="form-control" id="reservationId" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="customerName" class="form-label">Tên Khách Hàng</label>
+                            <input type="text" class="form-control" id="customerName" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="changeTime" class="form-label">Thời Gian Thay Đổi</label>
+                            <input type="text" class="form-control" id="changeTime" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="Status" class="form-label">Trạng Thái </label>
+                            <input type="text" class="form-control" id="Status" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="note" class="form-label">Ghi Chú</label>
+                            <textarea class="form-control" id="note" rows="3" readonly></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
                     </div>
                 </div>
             </div>
-            <!-- Row end -->
-
         </div>
-        <!-- Content wrapper end -->
 
-    </div>
-    <!-- Content wrapper scroll end -->
+        <!-- JavaScript để xử lý sự kiện nhấp vào hàng và hiển thị chi tiết trong modal -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const rows = document.querySelectorAll('.viewRow');
 
-    <!-- Modal hiển thị chi tiết -->
-    <div class="modal fade" id="viewRow" tabindex="-1" aria-labelledby="viewRowLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="viewRowLabel">Chi Tiết Lịch Sử Đặt Chỗ</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="historyId" class="form-label">Mã Lịch Sử</label>
-                                <input type="text" class="form-control" id="historyId" readonly>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="reservationId" class="form-label">Mã Đặt Chỗ</label>
-                                <input type="text" class="form-control" id="reservationId" readonly>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="customerName" class="form-label">Tên Khách Hàng</label>
-                        <input type="text" class="form-control" id="customerName" readonly>
-                    </div>
-                    <div class="mb-3">
-                        <label for="changeTime" class="form-label">Thời Gian Thay Đổi</label>
-                        <input type="text" class="form-control" id="changeTime" readonly>
-                    </div>
-                    <div class="mb-3">
-                        <label for="Status" class="form-label">Trạng Thái </label>
-                        <input type="text" class="form-control" id="Status" readonly>
-                    </div>
-                    <div class="mb-3">
-                        <label for="note" class="form-label">Ghi Chú</label>
-                        <textarea class="form-control" id="note" rows="3" readonly></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                </div>
-            </div>
-        </div>
-    </div>
+                rows.forEach(function(row) {
+                    row.addEventListener('click', function() {
+                        const historyId = this.closest('tr').querySelector('td:nth-child(1)')
+                            .textContent;
+                        const reservationId = this.closest('tr').querySelector('td:nth-child(2)')
+                            .textContent;
+                        const customerName = this.closest('tr').querySelector('td:nth-child(3)')
+                            .textContent;
+                        const changeTime = this.closest('tr').querySelector('td:nth-child(4)')
+                            .textContent;
+                        const newStatus = this.closest('tr').querySelector('td:nth-child(5)')
+                            .textContent.trim();
+                        const note = this.closest('tr').querySelector('td:nth-child(6)').textContent;
 
-    <!-- JavaScript để xử lý sự kiện nhấp vào hàng và hiển thị chi tiết trong modal -->
-    <script>
-       document.addEventListener('DOMContentLoaded', function() {
-    const rows = document.querySelectorAll('.viewRow');
+                        document.getElementById('historyId').value = historyId;
+                        document.getElementById('reservationId').value = reservationId;
+                        document.getElementById('customerName').value = customerName;
+                        document.getElementById('changeTime').value = changeTime;
+                        document.getElementById('Status').value = newStatus; // Update here
+                        document.getElementById('note').value = note;
+                    });
+                });
+            });
+        </script>
 
-    rows.forEach(function(row) {
-        row.addEventListener('click', function() {
-            const historyId = this.closest('tr').querySelector('td:nth-child(1)').textContent;
-            const reservationId = this.closest('tr').querySelector('td:nth-child(2)').textContent;
-            const customerName = this.closest('tr').querySelector('td:nth-child(3)').textContent;
-            const changeTime = this.closest('tr').querySelector('td:nth-child(4)').textContent;
-            const newStatus = this.closest('tr').querySelector('td:nth-child(5)').textContent.trim();
-            const note = this.closest('tr').querySelector('td:nth-child(6)').textContent;
-
-            document.getElementById('historyId').value = historyId;
-            document.getElementById('reservationId').value = reservationId;
-            document.getElementById('customerName').value = customerName;
-            document.getElementById('changeTime').value = changeTime;
-            document.getElementById('Status').value = newStatus;  // Update here
-            document.getElementById('note').value = note;
-        });
-    });
-});
-
-    </script>
-
-@endsection
+    @endsection

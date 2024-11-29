@@ -476,14 +476,14 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    let countdownTimer;
-    let timeRemaining = 90; // Thời gian bắt đầu
+    let otpTimer; // Bộ đếm thời gian OTP
 
     window.onload = function() {
         renderRecaptcha();
         document.getElementById('closePopupButton').onclick = closePopup;
     }
 
+    // Render reCAPTCHA
     function renderRecaptcha() {
         window.recaptchaVerifier = new RecaptchaVerifier('recaptcha-container', {
             'size': 'normal',
@@ -491,22 +491,52 @@
             'expired-callback': function() {}
         }, auth);
 
-        recaptchaVerifier.render().then(function() {
+        recaptchaVerifier.render().then(() => {
             console.log('Recaptcha rendered');
-        }).catch(function(error) {
-            console.error("Error rendering recaptcha:", error);
-        });
+        }).catch(error => console.error("Error rendering recaptcha:", error));
     }
+    // Hiển thị thông báo lỗi dưới các ô nhập OTP
+    function showOTPError(message) {
+        const errorDiv = document.getElementById('otp-error-message');
+        errorDiv.innerText = message;
+        errorDiv.style.display = 'block';
+
+        // Tự động ẩn thông báo sau 5 giây
+        setTimeout(() => {
+            errorDiv.style.display = 'none';
+        }, 3000);
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        const guestCountInput = document.getElementById('guest_count');
+
+        guestCountInput.addEventListener('input', function() {
+            let value = parseInt(guestCountInput.value, 10);
+
+            // Nếu giá trị âm, nhỏ hơn 1 hoặc lớn hơn 50, sửa lại giá trị
+            if (value < 1) {
+                guestCountInput.value = 1;
+                guestCountInput.setCustomValidity('Số người đặt bàn không được nhỏ hơn 1.');
+            } else if (value > 50) {
+                guestCountInput.value = 50;
+                guestCountInput.setCustomValidity('Số người đặt bàn không được lớn hơn 50.');
+            } else {
+                guestCountInput.setCustomValidity('');
+            }
+
+            guestCountInput.classList.toggle('is-invalid', !guestCountInput.checkValidity());
+        });
+    });
 
     window.sendOTP = function() {
         let phoneNumber = document.getElementById("user_phone").value.trim();
 
         if (phoneNumber.startsWith("0")) {
-            phoneNumber = '+84' + phoneNumber.slice(1); // Thay thế '0' bằng '+84'
+            phoneNumber = '+84' + phoneNumber.slice(1); // Chuyển đổi '0' thành '+84'
         }
 
         if (!phoneNumber.match(/^\+\d{1,15}$/)) {
-            alert("Số điện thoại không hợp lệ. Vui lòng nhập số điện thoại đúng định dạng.");
+            showOTPError("Số điện thoại không hợp lệ. Vui lòng nhập số điện thoại đúng định dạng.");
             return;
         }
 
@@ -517,16 +547,15 @@
                 window.confirmationResult = confirmationResult;
                 document.getElementById("otp-popup").style.display = "flex"; // Hiển thị popup OTP
                 startOTPTimer(); // Bắt đầu bộ đếm thời gian
-            }).catch((error) => {
+            }).catch(error => {
                 console.error("Error sending OTP:", error);
-                alert("Có lỗi xảy ra khi gửi OTP! Vui lòng thử lại.");
+                showOTPError("Có lỗi xảy ra khi gửi OTP! Vui lòng thử lại.");
             });
-    }
+    };
 
-    let otpTimer; // Khai báo biến bộ đếm thời gian
-
+    // Khởi động bộ đếm thời gian OTP
     function startOTPTimer() {
-        let timeLeft = 90; // 90 giây
+        let timeLeft = 60;
         document.getElementById("otp-timer").innerText = `Thời gian còn lại: ${timeLeft} giây`;
 
         otpTimer = setInterval(() => {
@@ -535,21 +564,61 @@
 
             if (timeLeft <= 0) {
                 clearInterval(otpTimer);
-                alert("Thời gian nhập OTP đã hết! Vui lòng thử lại.");
-                closePopup(); // Đóng popup
+                document.getElementById("otp-timer").innerText = "Hết thời gian! Vui lòng gửi lại mã OTP.";
+                document.getElementById("resendOtpButton").style.display =
+                "block"; // Hiển thị nút "Gửi lại mã OTP"
+                document.querySelector(".btn-success").style.display = "none"; // Ẩn nút "Xác thực OTP"
+                disableOTPInputs(true); // Vô hiệu hóa các ô nhập OTP
             }
         }, 1000);
     }
 
+    // Vô hiệu hóa hoặc kích hoạt lại các ô nhập OTP
+    function disableOTPInputs(disable) {
+        document.querySelectorAll('.otp-input').forEach(input => {
+            input.disabled = disable;
+        });
+    }
 
+    // Gửi lại mã OTP và làm mới popup
+    window.resendOTP = function() {
+        // Làm mới trạng thái popup
+        document.getElementById("resendOtpButton").style.display = "none"; // Ẩn nút "Gửi lại mã OTP"
+
+        // Reset các ô nhập mã OTP
+        document.querySelectorAll('.otp-input').forEach(input => {
+            input.value = ''; // Làm mới các ô nhập OTP
+            input.disabled = false; // Bật lại các ô nhập liệu
+        });
+
+        // Đảm bảo nút "Xác thực OTP" luôn có thể nhấn
+        document.querySelector(".btn-success").disabled = false;
+        document.querySelector(".btn-success").style.display = "inline-block"; // Hiển thị lại nút xác thực
+
+        // Xóa thời gian cũ
+        document.getElementById("otp-timer").innerText = "";
+
+        // Gửi lại mã OTP
+        sendOTP();
+
+        // Khởi động lại bộ đếm thời gian
+        startOTPTimer();
+
+        // Hiển thị lại popup ban đầu (bao gồm 6 ô nhập mã trống và nút gửi lại mã)
+        document.getElementById("otpPopup").style.display = "block"; // Hiển thị lại popup
+    }
+
+    // Xác thực mã OTP
     window.verifyCode = function() {
         let otpCode = '';
         document.querySelectorAll('.otp-input').forEach(input => otpCode += input.value);
 
-        window.confirmationResult.confirm(otpCode).then((result) => {
-            alert('Xác thực OTP thành công! Đang xử lý đặt bàn.');
+        if (!otpCode || otpCode.length !== 6) {
+            showOTPError("Mã OTP không hợp lệ. Vui lòng nhập đủ 6 ký tự.");
+            return;
+        }
 
-            // Lưu trạng thái xác thực OTP vào session qua AJAX
+        window.confirmationResult.confirm(otpCode).then((result) => {
             fetch('{{ route('storeOtpSession') }}', {
                 method: 'POST',
                 headers: {
@@ -560,43 +629,33 @@
                     otpVerified: true
                 })
             }).then(() => {
+
                 document.getElementById("booking-form")
                     .submit(); // Sau khi xác thực thành công, submit form
+
             });
-
-        }).catch((error) => {
-            alert("Mã OTP không đúng! Vui lòng thử lại.");
+        }).catch(() => {
+            showOTPError("Mã OTP không đúng! Vui lòng thử lại.");
         });
-    }
+    };
 
+    // Đóng popup OTP
     function closePopup() {
-        clearInterval(countdownTimer); // Dừng bộ đếm nếu popup bị đóng
+        clearInterval(otpTimer); // Dừng bộ đếm thời gian nếu popup bị đóng
         document.getElementById("otp-popup").style.display = "none";
     }
 
-    window.onclick = function(event) {
-        const popup = document.getElementById("otp-popup");
-        if (event.target === popup) {
-            closePopup();
-        }
-    };
-
-    // Bắt sự kiện nhấn nút đóng popup
-    document.getElementById('closePopupButton').onclick = closePopup;
-
-    // Script to handle OTP input with focus control and deletion
+    // Tự động chuyển ô khi nhập OTP
     document.querySelectorAll('.otp-input').forEach((input, index, inputs) => {
-        input.addEventListener('keydown', (event) => {
-            if (event.key === 'Backspace' && input.value === '' && index > 0) {
-                inputs[index - 1].focus();
+        input.addEventListener('input', () => {
+            if (input.value.length === 1 && index < inputs.length - 1) {
+                inputs[index + 1].focus();
             }
         });
 
-        input.addEventListener('input', (event) => {
-            const value = event.target.value;
-
-            if (value.length === 1 && index < inputs.length - 1) {
-                inputs[index + 1].focus();
+        input.addEventListener('keydown', (event) => {
+            if (event.key === 'Backspace' && index > 0 && input.value === '') {
+                inputs[index - 1].focus();
             }
         });
     });

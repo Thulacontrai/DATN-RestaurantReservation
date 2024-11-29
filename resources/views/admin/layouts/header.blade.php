@@ -16,7 +16,7 @@
             @endcan
     </ol>
 
-   
+
 
 
     <div class="header-actions-container">
@@ -65,3 +65,4 @@
 
 <!-- Tệp custom-scrollbar.js -->
 <script src="path/to/custom-scrollbar.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>

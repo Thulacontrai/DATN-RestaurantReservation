@@ -11,7 +11,7 @@
         <div class="content-wrapper">
 
             <div id="toastContainer" class="toast-container position-fixed top-0 end-0 p-3">
-              
+
             </div>
 
             <div class="row">
@@ -51,7 +51,7 @@
                                     </div>
                                 </div>
                             </form>
-                            
+
 
                             <!-- Table list of transactions -->
                             <div class="table-responsive">
@@ -61,11 +61,10 @@
                                             <th>ID</th>
                                             <th>Nhân viên</th>
                                             <th>Loại giao dịch</th>
-                                            <th>Tổng số tiền</th>
-                                            <th>Mô tả</th>
+                                            <th>Tổng số tiền</th>                                        
                                             <th>Nhà cung cấp</th>
                                             <th>Trạng thái</th>
-                                            <th>Ngày tạo</th> 
+                                            <th>Ngày tạo</th>
                                             <th>Thao tác</th>
                                         </tr>
                                     </thead>
@@ -75,27 +74,44 @@
                                                 <td>{{ $transaction->id }}</td>
                                                 <td>{{ $transaction->staff_name ?? 'N/A' }}</td>
                                                 <td>{{ $transaction->transaction_type }}</td>
-                                                <td>{{ number_format($transaction->total_amount, 2) }}</td>
-                                                <td>{{ $transaction->description ?? 'N/A' }}</td>
+                                                <td>{{ number_format($transaction->total_amount, 0, ',', '.') }} đ</td>                                       
                                                 <td>{{ $transaction->supplier->name ?? 'N/A' }}</td>
-                                                <td>{{ $transaction->status }}</td>
-                                                <td>{{ $transaction->created_at->format('d/m/Y') }}</td> 
+
                                                 <td>
-                                                    <a href="{{ route('transactions.show', $transaction->id) }}" class="btn btn-info">
-                                                        <i class="bi bi-list"></i> 
+                                                    @if ($transaction->status === 'hoàn thành')
+                                                        <span class="badge shade-green min-70">Hoàn thành</span>
+                                                    @elseif ($transaction->status === 'chờ xử lý')
+                                                        <span class="badge shade-yellow min-70">Chờ xử lý</span>
+                                                    @elseif ($transaction->status === 'Hủy')
+                                                        <span class="badge shade-red min-70">Hủy</span>                                                                                
+                                                    @else
+                                                        <span class="badge shade-gray min-70">Không rõ</span>
+                                                    @endif
+                                                </td>
+                                               <td style="text-align: center">
+
+                                                    {{ \Carbon\Carbon::parse($transaction->change_date . ' ' . $transaction->change_time)->format('H:i:s') }}<br>
+                                                    {{ \Carbon\Carbon::parse($transaction->change_date)->format('d/m/Y') }}
+                                                </td>
+                                                <td>
+                                                    <a href="{{ route('transactions.show', $transaction->id) }}"class="btn btn-link p-1" >
+                                                        <i class="bi bi-list text-green"></i>
                                                     </a>
-                                                    <a href="{{ route('transactions.edit', $transaction->id) }}" class="btn btn-warning">
-                                                        <i class="bi bi-pencil-square"></i> 
+                                                    <a href="{{ route('transactions.edit', $transaction->id) }}" class="btn btn-link p-1" >
+                                                        <i class="bi bi-pencil-square text-warning"></i>
+
                                                     </a>
-                                                    <form action="{{ route('transactions.destroy', $transaction->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa?');">
+                                                    <form action="{{ route('transactions.destroy', $transaction->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa?');">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" class="btn btn-danger">
-                                                            <i class="bi bi-trash"></i> 
+
+                                                        <button type="submit" class="btn btn-link p-1">
+                                                            <i class="bi bi-trash text-red"></i>
+
                                                         </button>
                                                     </form>
                                                 </td>
-                                                
+
                                             </tr>
                                         @empty
                                             <tr>
@@ -104,7 +120,7 @@
                                         @endforelse
                                     </tbody>
                                 </table>
-                                
+
                             </div>
 
                             <!-- Pagination -->
@@ -124,6 +140,6 @@
             return confirm("Bạn có chắc chắn muốn xóa phiếu nhập này không?");
         }
     </script>
-    
+
 
 @endsection

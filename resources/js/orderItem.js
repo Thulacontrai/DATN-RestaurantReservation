@@ -18,18 +18,43 @@ window.Echo.channel('order')
         };
         if (selectedTableId == e.tableId.id) {
             layoutTable.innerHTML = `
+            <div style="display: flex; flex-direction: column; overflow-x: hidden;">
+    <div style="display: flex; justify-content: center;">
         <h3>Chi tiết đơn hàng</h3>
-            <p><strong>Mã đơn hàng:</strong> ${e.order.id}</p>
+    </div>
+
+    <div class="row">
+        <div class="col">
             <p><strong>Bàn:</strong> ${e.tableId.table_number}</p>
+        </div>
+        <div class="col">
+            <p><strong>Mã đơn hàng:</strong> ${e.order.id}</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <p><strong>Khách Hàng:</strong> ${e.order?.reservation?.user_name ?? e.order?.customer?.name ?? 'Khách lẻ'}</p>
+        </div>
+        <div class="col">
             <p><strong>Giờ vào:</strong> ${e.tableId.orders['0'].pivot.start_time.split(" ")[1]}</p>
+        </div>
+    </div>
+</div>
+
+
             <h4>Danh sách món</h4>
         `;
             e.orderItems.order_items.forEach(item => {
                 if (item.status == 'chờ xử lý') {
                     layoutTable.innerHTML += `
                     <div class="item-list" data-dish-id="${item.item_id}" data-dish-order="${item.order_id}" data-dish-status="${item.status}">
-                        <div class="item-name">
-                            <span class="text-dark" title="${item.status}">${item.dish.name}</span>  
+                        <div class="item-name d-flex justify-content-around">
+                            <span class="text-dark" title="${item.status}">${item.dish.name}</span>
+                            <div>
+                                <span>${item.informed}</span>
+                                <i class="fa-regular fa-hourglass-half text-dark" title="${item.status}"></i>
+                            </div>
                         </div>
                         <div class="item-action">
                             <div class="item-quantity">
@@ -44,18 +69,24 @@ window.Echo.channel('order')
                                 Giá: ${item.total_price} VND
                             </div>
                             <div class="item-cancel">
-                                <button class="delete-item" title="Hủy món">Hủy</button>
+                                <button class="delette-item" title="Hủy món">Hủy</button>
                             </div>
                         </div>
                         
-                    </div>
+                    </div >
 
-                `;
+            `;
                 } else if (item.status == 'đang xử lý') {
                     layoutTable.innerHTML += `
-                    <div class="item-list" data-dish-id="${item.item_id}" data-dish-order="${item.order_id}" data-dish-status="${item.status}">
+                    <div class="item-list" data-dish-id="${item.item_id}" data-dish-order="${item.order_id}" data-dish-status="${item.status}" data-dish-informed="${item.informed}" data-dish-processing="${item.processing}" data-dish-quantity="${item.quantity}">
                         <div class="item-name">
-                            <span class="text-danger" title="${item.status}">${item.dish.name}</span>  
+                            <div class="item-name d-flex justify-content-around">
+                                <span class="text-danger" title="${item.status}">${item.dish.name}</span>
+                                <div>
+                                    <span class="text-danger">${item.processing}</span>
+                                    <i class="fa-solid fa-fire-burner text-danger" title="${item.status}"></i> 
+                                </div> 
+                            </div>
                         </div>
                         <div class="item-action">
                             <div class="item-quantity">
@@ -74,13 +105,19 @@ window.Echo.channel('order')
                             </div>
                         </div>
                         
-                    </div>
-                `;
+                    </div >
+            `;
                 } else if (item.status == 'hoàn thành') {
                     layoutTable.innerHTML += `
                     <div class="item-list" data-dish-id="${item.item_id}" data-dish-order="${item.order_id}" data-dish-status="${item.status}">
                         <div class="item-name">
-                            <span class="text-success" title="${item.status}">${item.dish.name}</span>  
+                            <div class="item-name d-flex justify-content-around">
+                                <span class="text-success" title="${item.status}">${item.dish.name}</span>  
+                                <div>
+                                    <span class="text-success">${item.completed}</span>
+                                    <i class="fa-solid fa-square-check text-success" title="${item.status}"></i>
+                                </div>
+                            </div>
                         </div>
                         <div class="item-action">
                             <div class="item-quantity">
@@ -99,8 +136,8 @@ window.Echo.channel('order')
                             </div>
                         </div>
                         
-                    </div>
-                `;
+                    </div >
+            `;
                 }
             });
 
@@ -132,18 +169,43 @@ window.Echo.channel('orders')
         };
         if (selectedTableId == e.tableId.id) {
             layoutTable.innerHTML = `
-        <h3>Chi tiết đơn hàng</h3>
-            <p><strong>Mã đơn hàng:</strong> ${e.order.id}</p>
-            <p><strong>Bàn:</strong> ${e.tableId.table_number}</p>
-            <p><strong>Giờ vào:</strong> ${e.tableId.orders['0'].pivot.start_time.split(" ")[1]}</p>
+            <div style='display: flex; flex-direction: column'>
+                <div style='display: flex; justify-content: center'>
+                    <h3>Chi tiết đơn hàng</h3>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <p><strong>Bàn:</strong> ${e.tableId.table_number}</p>
+                    </div>
+                    <div class="col">
+                        <p><strong>Mã đơn hàng:</strong> ${e.order.id}</p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <p><strong>Khách Hàng:</strong> ${e.order?.reservation?.user_name ?? e.order?.customer?.name ?? 'Khách lẻ'
+                }</p >
+                    </div >
+            <div class="col">
+                <p><strong>Giờ vào:</strong> ${e.tableId.orders['0'].pivot.start_time.split(" ")[1]}</p>
+            </div>
+                </div >
+            </div >
+
             <h4>Danh sách món</h4>
         `;
             e.orderItems.order_items.forEach(item => {
                 if (item.status == 'chờ xử lý') {
                     layoutTable.innerHTML += `
                     <div class="item-list" data-dish-id="${item.item_id}" data-dish-order="${item.order_id}" data-dish-status="${item.status}">
-                        <div class="item-name">
-                            <span class="text-dark" title="${item.status}">${item.dish.name}</span>  
+                        <div class="item-name d-flex justify-content-around">
+                            <span class="text-dark" title="${item.status}">${item.dish.name}</span>
+                            <div>
+                                <span>${item.informed}</span>
+                                <i class="fa-regular fa-hourglass-half text-dark" title="${item.status}"></i>
+                            </div>
                         </div>
                         <div class="item-action">
                             <div class="item-quantity">
@@ -158,18 +220,24 @@ window.Echo.channel('orders')
                                 Giá: ${item.total_price} VND
                             </div>
                             <div class="item-cancel">
-                                <button class="delete-item" title="Hủy món">Hủy</button>
+                                <button class="delette-item" title="Hủy món">Hủy</button>
                             </div>
                         </div>
                         
-                    </div>
+                    </div >
 
-                `;
+            `;
                 } else if (item.status == 'đang xử lý') {
                     layoutTable.innerHTML += `
-                    <div class="item-list" data-dish-id="${item.item_id}" data-dish-order="${item.order_id}" data-dish-status="${item.status}">
+                    <div class="item-list" data-dish-id="${item.item_id}" data-dish-order="${item.order_id}" data-dish-status="${item.status}" data-dish-informed="${item.informed}" data-dish-processing="${item.processing}" data-dish-quantity="${item.quantity}">
                         <div class="item-name">
-                            <span class="text-danger" title="${item.status}">${item.dish.name}</span>  
+                            <div class="item-name d-flex justify-content-around">
+                                <span class="text-danger" title="${item.status}">${item.dish.name}</span>
+                                <div>
+                                    <span class="text-danger">${item.processing}</span>
+                                    <i class="fa-solid fa-fire-burner text-danger" title="${item.status}"></i> 
+                                </div> 
+                            </div>
                         </div>
                         <div class="item-action">
                             <div class="item-quantity">
@@ -188,13 +256,19 @@ window.Echo.channel('orders')
                             </div>
                         </div>
                         
-                    </div>
-                `;
+                    </div >
+            `;
                 } else if (item.status == 'hoàn thành') {
                     layoutTable.innerHTML += `
                     <div class="item-list" data-dish-id="${item.item_id}" data-dish-order="${item.order_id}" data-dish-status="${item.status}">
                         <div class="item-name">
-                            <span class="text-success" title="${item.status}">${item.dish.name}</span>  
+                            <div class="item-name d-flex justify-content-around">
+                                <span class="text-success" title="${item.status}">${item.dish.name}</span>  
+                                <div>
+                                    <span class="text-success">${item.completed}</span>
+                                    <i class="fa-solid fa-square-check text-success" title="${item.status}"></i>
+                                </div>
+                            </div>
                         </div>
                         <div class="item-action">
                             <div class="item-quantity">
@@ -213,8 +287,8 @@ window.Echo.channel('orders')
                             </div>
                         </div>
                         
-                    </div>
-                `;
+                    </div >
+            `;
                 }
             });
 
