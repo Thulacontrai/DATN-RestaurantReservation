@@ -1004,7 +1004,7 @@ class ReservationController extends Controller
         $dishIds = $items->pluck('item_id')->toArray();
         $dishes = Dishes::whereIn('id', $dishIds)->get();
         $staff = User::find($order->staff_id);
-        return view('pos.printf', compact('dishes', 'final', 'data', 'order', 'table', 'staff', 'reservation_table', 'item'))->render();
+        return view('pos.receipt', compact('dishes', 'data', 'order', 'table', 'staff', 'reservation_table', 'item'))->render();
     }
 
     // Hàm chuẩn hóa số điện thoại
