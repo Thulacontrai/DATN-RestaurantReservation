@@ -66,6 +66,10 @@
                                 <label for="roomTable">Phòng/bàn</label>
                                 <select id="roomTable">
                                     <option value="">Chọn phòng bàn</option>
+                                    @foreach ($availableTables as $table )
+                                        
+                                    <option value="{{$table->table_id}}">{{$table->table_number}}</option>
+                                    @endforeach
                                     <!-- Các tùy chọn khác -->
                                 </select>
                             </div>
@@ -81,7 +85,7 @@
                             <thead>
                                 <tr>
                                     <th scope="col">Mã đặt bàn</th>
-                                    <th scope="col">Phòng/bàn</th>
+                                    {{-- <th scope="col">Phòng/bàn<//th> --}}
                                     <th scope="col">Giờ đến</th>
                                     <th scope="col">Khách hàng</th>
                                     <th scope="col">Số điện thoại</th>
@@ -118,7 +122,7 @@
                                         </td>
                                         <td class="text-center">
                                             <div class="actions">
-                                                <a href="{{ route('ReToOr', $reservation->id) }}">Chuyển đơn</a>
+                                                <a href="{{ route('ReToOr', $reservation->id) }}">Khách nhận bàn</a>
                                                 <!-- Các hành động khác như Xem, Sửa, Hủy đơn đặt bàn -->
                                             </div>
                                         </td>
