@@ -7,6 +7,7 @@ use App\Events\MessageSent;
 use App\Events\PosTableUpdated;
 use App\Events\ProvideDishes;
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\Dishes;
 use App\Models\InventoryItem;
 use App\Models\InventoryStock;
@@ -22,6 +23,7 @@ use App\Models\Recipe;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -108,7 +110,7 @@ class PosController extends Controller
                 $query->where('orders.status', '!=', 'completed');
             }
         ])->get();
-
+        $cate = Category::all();
         $orders = Order::with(['reservation', 'staff', 'tables', 'orderItems', 'customer'])->get();
         $dishes = Dishes::where('status', '!=', 'inactive')
             ->where('status', '!=', 'out_of_stock')
@@ -134,6 +136,7 @@ class PosController extends Controller
         // Truyền dữ liệu tới view
         return view('pos.index', [
             'tables' => $tables,
+            'cate' => $cate,
             'order' => $orders,
             'dishes' => $dishes,
             'upcomingReservations' => $upcomingReservations,
@@ -180,6 +183,7 @@ class PosController extends Controller
         $table = Table::findOrFail($id);
         $order = Order::create([
             'table_id' => $id,
+            'staff_id' => Auth::user()->id,
             'status' => 'pending',
             'total_amount' => 0,
             'discount_amount' => 0,
@@ -265,7 +269,12 @@ class PosController extends Controller
             $order->final_amount = $order->total_amount; // Cập nhật tổng tiền cuối cùng
             $order->save();  // Lưu đơn hàng vào cơ sở dữ liệu
             $order = Order::findOrFail($orderId);
-            $orderItems = Order::with(['orderItems', 'orderItems.dish'])->findOrFail($orderId);
+            $orderItems = Order::with([
+                'orderItems' => function ($query) {
+                    $query->where('status', '!=', 'hủy');
+                },
+                'orderItems.dish'
+            ])->findOrFail($orderId);
             $tableId = Table::with('orders')->findOrFail($request->table_id);
             $orderItem = OrderItem::where('order_id', $orderId)
                 ->where(function ($query) {
@@ -306,80 +315,113 @@ class PosController extends Controller
 
 
 
-    public function Ppayment($tableId, Request $request)
+    public function Ppayment($tableId)
     {
-        $orderId = Table::findOrFail($tableId)
-            ->orders
-            ->where('status', 'pending')
-            ->firstOrFail()
-            ->id;
-        DB::transaction(function () use ($tableId, $orderId) {
-            $order = Order::findOrFail($orderId);
-            $dish = $order->items;
-            foreach ($dish as $item) {
-                if ($item->status != 'hoàn thành' && $item->status != 'hủy') {
-                    $item->status = 'hủy';
-                    $item->cancel_reason = 'Khách thanh toán trước khi món hoàn thành';
-                    $item->total_price = $item->quantity * $item->price;
-                    $item->save();
-                    $reciep = Dishes::findOrFail($item->dish->id)->recipes;
-                    foreach ($reciep as $recipe) {
-                        $inventoryStock = InventoryStock::where('ingredient_id', $recipe->ingredient_id)->first();
-                        $inventoryStock->quantity_reserved -= $recipe->quantity_need * $item->quantity;
-                        $inventoryStock->save();
+        try {
+            $orderId = Table::findOrFail($tableId)
+                ->orders
+                ->where('status', 'pending')
+                ->firstOrFail()
+                ->id;
+            $isSuccess = DB::transaction(function () use ($orderId, $tableId) {
+                $order = Order::findOrFail($orderId);
+                $dish = $order->items;
+
+                foreach ($dish as $item) {
+                    if ($item->status != 'hoàn thành' && $item->status != 'hủy') {
+                        $count = $item->informed - $item->processing;
+                        if ($item->status == 'đang xử lý') {
+                            $newRecord = $item->replicate();
+                            $newRecord->status = 'hủy';
+                            $order->total_amount -= ($item->quantity - $item->processing) * $item->price;
+                            $order->final_amount = $order->total_amount;
+                            $newRecord->quantity = $item->quantity - $item->processing;
+                            $newRecord->cancel_reason = 'Khách thanh toán trước khi món hoàn thành';
+                            $newRecord->save();
+                            $item->quantity = $item->processing;
+                            if ($item->quantity == $item->completed) {
+                                $item->status == 'hoàn thành';
+                            }
+                            $item->informed = $item->processing;
+                            $item->total_price = $item->quantity * $item->price;
+                        } else {
+                            $item->status = 'hủy';
+                            $item->cancel_reason = 'Khách thanh toán trước khi món hoàn thành';
+                            $item->total_price = $item->quantity * $item->price;
+                            $order->total_amount -= $item->total_price;
+                            $order->final_amount = $order->total_amount;
+                        }
+                        $order->save();
+                        $item->save();
+
+                        $checkAmount = Table::findOrFail($tableId)
+                            ->orders
+                            ->where('status', 'pending')
+                            ->firstOrFail()
+                            ->total_amount;
+                        if ($checkAmount == 0) {
+                            return false;
+                        }
+
+                        $reciep = Dishes::findOrFail($item->dish->id)->recipes;
+                        foreach ($reciep as $recipe) {
+                            $inventoryStock = InventoryStock::where('ingredient_id', $recipe->ingredient_id)->first();
+                            $inventoryStock->quantity_reserved -= $recipe->quantity_need * $item->quantity;
+                            $inventoryStock->save();
+                        }
+                        $kitchens = Kitchen::where('item_id', $item->dish->id)
+                            ->where('order_id', $orderId)
+                            ->get();
+                        foreach ($kitchens as $kitchen) {
+                            if ($count <= 0) {
+                                break;
+                            }
+                            if ($kitchen->status == 'đang chế biến') {
+                                $available_to_cancel = min($kitchen->quantity, $count);
+                                $kitchen->count_cancel += $available_to_cancel;
+                                $kitchen->quantity -= $available_to_cancel;
+                                $count -= $available_to_cancel;
+                                $kitchen->save();
+                            }
+                        }
+                        foreach ($kitchens as $kitchen) {
+                            if ($count <= 0) {
+                                break;
+                            }
+                            if ($kitchen->status == 'chờ cung ứng') {
+                                $available_to_cancel = min($kitchen->quantity, $count);
+                                $kitchen->count_cancel += $available_to_cancel;
+                                $kitchen->quantity -= $available_to_cancel;
+                                $count -= $available_to_cancel;
+                                $kitchen->save();
+                            }
+                        }
                     }
-                    $kitchens = Kitchen::where('item_id', $item->dish->id)
-                        ->where('order_id', $orderId)
-                        ->get();
-                    foreach ($kitchens as $kitchen) {
-                        $kitchen->count_cancel = $kitchen->quantity;
-                        $kitchen->quantity = 0;
-                        $kitchen->save();
-                    }
-                    $order->total_amount -= $item->total_price;
-                    $order->final_amount = $order->total_amount;
-                    $order->save();
                 }
+
+                return true;
+            });
+
+            $items = Kitchen::where('status', 'đang chế biến')
+                ->with(['dish', 'order.tables'])
+                ->get();
+            $items1 = Kitchen::where('status', 'chờ cung ứng')
+                ->with(['dish', 'order.tables'])
+                ->get();
+            broadcast(new ProcessingDishes($items, null))->toOthers();
+            broadcast(new ProvideDishes($items1))->toOthers();
+
+            if (!$isSuccess) {
+                return response()->json([
+                    'redirect_url' => route('checkout.adminn', ['orderID' => $orderId])
+                ]);
             }
-        });
-        $order = Order::findOrFail($orderId);
-        $orderItems = Order::with(['orderItems', 'orderItems.dish'])->findOrFail($orderId);
-        $tableIdd = Table::with('orders')->findOrFail($tableId);
-        $orderItem = OrderItem::where('order_id', $orderId)
-            ->where(function ($query) {
-                $query->where('status', '!=', 'hủy');
-            })
-            ->get();
-        $checkoutBtn = false;
-        $countItems = $orderItem->count();
-        if ($countItems > 0) {
-            $checkoutBtn = true;
+            return redirect()->route('viewCheckOut', ['table_number' => $tableId]);
+        } catch (Exception $e) {
+            return response()->json(['success' => false, 'error' => $e->getMessage()]);
         }
-        $notiBtn = false;
-        foreach ($orderItem as $item) {
-            if ($item->quantity > $item->informed) {
-                $notiBtn = true;
-                break;
-            } else {
-                $notiBtn = false;
-            }
-        }
-        $order = Order::with(['reservation', 'tables', 'customer'])->findOrFail($orderId);
-        broadcast(new PosTableUpdated($order, $orderItems, $tableIdd, $notiBtn, $checkoutBtn))->toOthers();
-        $items = Kitchen::where('status', 'đang chế biến')
-            ->with(['dish', 'order.tables'])
-            ->get();
-        $items1 = Kitchen::where('status', 'chờ cung ứng')
-            ->with(['dish', 'order.tables'])
-            ->get();
-        broadcast(new ProcessingDishes($items, null))->toOthers();
-        broadcast(new ProvideDishes($items1))->toOthers();
-
-        return redirect()->route('viewCheckOut', ['table_number' => $tableId]);
-
-
-
     }
+
     public function viewCheckOut($tableId)
     {
         $order = Table::findOrFail($tableId)
@@ -392,7 +434,8 @@ class PosController extends Controller
             ->first();
         $order_items = Order::find($order->id)
             ->orderItems
-            ->where('status', 'hoàn thành');
+            ->where('status', '!=', 'hủy')
+            ->where('processing', '>', '0');
         $final = 0;
         return view(
             'pos.payment',
@@ -646,7 +689,12 @@ class PosController extends Controller
         $table = Table::find($id)->orders;
         $orderId = Table::find($id)->orders->where('status', 'pending')->first()->id;
         $order = Order::with('tables')->findOrFail($orderId);
-        $orderItems = Order::with(['orderItems', 'orderItems.dish'])->findOrFail($orderId);
+        $orderItems = Order::with([
+            'orderItems' => function ($query) {
+                $query->where('status', '!=', 'hủy');
+            },
+            'orderItems.dish'
+        ])->findOrFail($orderId);
         $tableId = Table::with('orders')->findOrFail($id);
         $orderItem = OrderItem::where('order_id', $orderId)
             ->where(function ($query) {
@@ -720,7 +768,12 @@ class PosController extends Controller
             $order->final_amount = $order->total_amount; // Cập nhật tổng tiền cuối cùng
             $order->save();  // Lưu đơn hàng vào cơ sở dữ liệu
             $order = Order::findOrFail($orderId);
-            $orderItems = Order::with(['orderItems', 'orderItems.dish'])->findOrFail($orderId);
+            $orderItems = Order::with([
+                'orderItems' => function ($query) {
+                    $query->where('status', '!=', 'hủy');
+                },
+                'orderItems.dish'
+            ])->findOrFail($orderId);
             $tableId = Table::with('orders')->findOrFail($request->table_id);
             $orderItem = OrderItem::where('order_id', $orderId)
                 ->where(function ($query) {
@@ -803,7 +856,12 @@ class PosController extends Controller
         $order->final_amount = $order->total_amount; // Cập nhật tổng tiền cuối cùng
         $order->save();  // Lưu đơn hàng vào cơ sở dữ liệu
         $order = Order::findOrFail($orderId);
-        $orderItems = Order::with(['orderItems', 'orderItems.dish'])->findOrFail($orderId);
+        $orderItems = Order::with([
+            'orderItems' => function ($query) {
+                $query->where('status', '!=', 'hủy');
+            },
+            'orderItems.dish'
+        ])->findOrFail($orderId);
         $tableId = Table::with('orders')->findOrFail($request->table_id);
         $orderItem = OrderItem::where('order_id', $orderId)
             ->where(function ($query) {
@@ -903,7 +961,12 @@ class PosController extends Controller
             $order->final_amount = $order->total_amount; // Cập nhật tổng tiền cuối cùng
             $order->save();  // Lưu đơn hàng vào cơ sở dữ liệu
             $order = Order::findOrFail($orderId);
-            $orderItems = Order::with(['orderItems', 'orderItems.dish'])->findOrFail($orderId);
+            $orderItems = Order::with([
+                'orderItems' => function ($query) {
+                    $query->where('status', '!=', 'hủy');
+                },
+                'orderItems.dish'
+            ])->findOrFail($orderId);
             $tableId = Table::with('orders')->findOrFail($request->table_id);
             $orderItem = OrderItem::where('order_id', $orderId)
                 ->where(function ($query) {
@@ -981,7 +1044,12 @@ class PosController extends Controller
             $order->final_amount = $order->total_amount; // Cập nhật tổng tiền cuối cùng
             $order->save();  // Lưu đơn hàng vào cơ sở dữ liệu
             $order = Order::findOrFail($orderId);
-            $orderItems = Order::with(['orderItems', 'orderItems.dish'])->findOrFail($orderId);
+            $orderItems = Order::with([
+                'orderItems' => function ($query) {
+                    $query->where('status', '!=', 'hủy');
+                },
+                'orderItems.dish'
+            ])->findOrFail($orderId);
             $tableId = Table::with('orders')->findOrFail($request->table_id);
             $orderItem = OrderItem::where('order_id', $orderId)
                 ->where(function ($query) {
@@ -1068,7 +1136,12 @@ class PosController extends Controller
                     $item->save();
                 }
             }
-            $orderItems = Order::with(['orderItems', 'orderItems.dish'])->findOrFail($orderId);
+            $orderItems = Order::with([
+                'orderItems' => function ($query) {
+                    $query->where('status', '!=', 'hủy');
+                },
+                'orderItems.dish'
+            ])->findOrFail($orderId);
             $tableId = Table::with('orders')->findOrFail($table_id);
             $orderItem = OrderItem::where('order_id', $orderId)
                 ->where(function ($query) {
@@ -1100,11 +1173,17 @@ class PosController extends Controller
     }
     public function checkPaymentPondition(Request $request)
     {
-        $checkItem = Table::find($request->table_id)->orders[0]->items;
+        $checkItem = Table::find($request->table_id)
+            ->orders
+            ->where('status', 'pending')
+            ->first()
+            ->items;
         $itemsWithStatusNotCompleted = [];
         foreach ($checkItem as $item) {
             if ($item->status != 'hoàn thành' && $item->status != 'hủy') {
-                $itemsWithStatusNotCompleted[] = '<b>' . $item->dish->name . '</b>' . '<br>';
+                if ($item->quantity > $item->informed || $item->informed > $item->processing) {
+                    $itemsWithStatusNotCompleted[] = '<b>' . $item->dish->name . '</b>' . '<br>';
+                }
             }
         }
         if (count($itemsWithStatusNotCompleted) > 0) {

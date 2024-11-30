@@ -4,9 +4,9 @@
 @section('content')
     @include('client.layouts.component.subheader', [
         'backgroundImage' => 'client/03_images/background/bg-3.jpg',
-        'subtitle' => 'Discover',
-        'title' => 'Our Story',
-        'currentPage' => 'About',
+        // 'subtitle' => 'Discover',
+        'title' => 'Về chúng tôi',
+        'currentPage' => 'Về chúng tôi',
     ])
     <div id="content" class="no-bottom no-top">
         <!-- section begin -->

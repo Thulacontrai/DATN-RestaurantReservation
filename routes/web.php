@@ -245,7 +245,10 @@ route::post(
     action: [ReservationController::class, "checkout"]
 )->name("checkout.admin");
 
-
+route::post(
+    "checkoutt/{orderID}",
+    action: [ReservationController::class, "checkoutt"]
+)->name("checkout.adminn");
 
 // // Process the offline payment (POST)
 // Route::post('/payment/offline', [PosController::class, 'processPaymentOffline'])->name('processPaymentOffline');

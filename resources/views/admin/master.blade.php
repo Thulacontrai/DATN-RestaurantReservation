@@ -10,9 +10,7 @@
 
 
     <!-- Meta -->
-    <link rel="shortcut icon" href="{{ asset('../../adminn/assets/images/favicon.svg') }}">
-
-    <!-- Common Css Files -->
+    <link rel="icon"     type="image/x-icon">    <!-- Common Css Files -->
     <link rel="stylesheet" href="{{ asset('adminn/assets/css/animate.css') }}">
     <link rel="stylesheet" href="{{ asset('adminn/assets/fonts/bootstrap/bootstrap-icons.css') }}">
     <link rel="stylesheet" href="{{ asset('adminn/assets/css/main.min.css') }}">

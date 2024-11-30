@@ -3,7 +3,7 @@
     <!-- Sidebar brand starts -->
     <div class="sidebar-brand">
         <a href="{{ url('admin') }}" class="logo">
-            <img src="{{ asset('adminn/assets/images/logo.svg') }}" alt="Admin Dashboards" />
+            <img src="{{ asset('./client/03_images/logo.png') }}" alt="Admin Dashboards" />
         </a>
     </div>
     <!-- Sidebar brand ends -->

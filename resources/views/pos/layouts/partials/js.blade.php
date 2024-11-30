@@ -196,5 +196,19 @@
             $('.filter-btn').removeClass('active');
             $(this).addClass('active');
         });
+        $(document).ready(function() {
+            $(".filter-btnn").on("click", function() {
+                const selectedCategory = $(this).data("category");
+                $(".filter-btnn").removeClass("active");
+                $(this).addClass("active");
+                if (selectedCategory === "all") {
+                    $(".dish-item").show();
+                } else {
+                    $(".dish-item").hide();
+                    $(`.dish-item[data-category="${selectedCategory}"]`).show();
+                }
+            });
+        });
+
     });
 </script>

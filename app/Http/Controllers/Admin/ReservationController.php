@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Events\MessageSent;
+use App\Events\MessageSentt;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreReservationRquest;
 use App\Models\Coupon;
@@ -767,9 +768,9 @@ class ReservationController extends Controller
         return view('client.deposit', compact('showDeposit', 'deposit', 'orderId'));
     }
 
-    public function checkout($orderId, Request $request)
+    public function checkout($orderId)
     {
-        DB::transaction(function () use ($request, $orderId) {
+        DB::transaction(function () use ($orderId) {
             $order = Order::find($orderId);
             $order->status = 'completed';
             $order->save();
@@ -780,7 +781,7 @@ class ReservationController extends Controller
                 ->where('table_id', $table->id)
                 ->first();
             $orderTable->status = 'Hoàn thành';
-            $orderTable->end_time = $request->end_time;
+            $orderTable->end_time = now();
             $orderTable->save();
             $tables = Table::with([
                 'orders' => function ($query) {
@@ -790,6 +791,33 @@ class ReservationController extends Controller
             broadcast(new MessageSent($tables))->toOthers();
         });
         return redirect(route('pos.index'));
+    }
+    public function checkoutt($orderId)
+    {
+        DB::transaction(function () use ($orderId) {
+            $order = Order::find($orderId);
+            $order->status = 'completed';
+            $order->save();
+            $table = Table::find($order->tables['0']->id);
+            $table->status = 'Available';
+            $table->save();
+            $orderTable = OrdersTable::where('order_id', $orderId)
+                ->where('table_id', $table->id)
+                ->first();
+            $orderTable->status = 'Hoàn thành';
+            $orderTable->end_time = now();
+            $orderTable->save();
+            $tables = Table::with([
+                'orders' => function ($query) {
+                    $query->where('orders.status', '!=', 'completed');
+                }
+            ])->get();
+            broadcast(new MessageSentt($tables))->toOthers();
+        });
+        return response()->json([
+            'success' => true,
+            'message' => 'Thanh toán thành công !'
+        ]);
     }
 
 
@@ -893,10 +921,10 @@ class ReservationController extends Controller
     //     }
     //     ReservationTable::where('reservation_id', $reservationId)->update(['table_id' => $tableId]);
     //     Table::where('id', $tableId)->update(['status' => 'Reserved']);
-    //     return response()->json([
-    //         'success' => true,
-    //         'message' => 'Chuyển bàn thành công'
-    //     ]);
+    // return response()->json([
+    //     'success' => true,
+    //     'message' => 'Chuyển bàn thành công'
+    // ]);
     // }
 
 
