@@ -252,9 +252,11 @@
                             <div class="table-card {{ strtolower(trim($table->status)) }}"
                                 data-table-id="{{ $table->id }}" data-status="{{ $table->status }}">
                                 <span class="table-number">Bàn {{ $table->table_number }}</span>
-                                @foreach ($table->orders as $column)
-                                    <span><i class="fa-solid fa-id-card"></i> {{ $column->id ?? null }}</span>
-                                @endforeach
+                                <div class="table-o">
+                                    @foreach ($table->orders as $column)
+                                        <span><i class="fa-solid fa-id-card"></i> {{ $column->id ?? null }}</span>
+                                    @endforeach
+                                </div>
                             </div>
                         @endforeach
                     </div>
@@ -1027,6 +1029,14 @@
         color: #fff;
         box-shadow: inset 0 0 0 5px #fff;
         transform: translate3d(0, 0, 2em);
+    }
+
+    .table-o{
+        width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     }
 </style>
 

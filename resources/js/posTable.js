@@ -9,11 +9,17 @@ window.Echo.channel('table')
             <div class="table-card ${item.status}"
             data-table-id="${item.id}" data-status="${item.status}">
             <span class="table-number">Bàn ${item.table_number}</span>
-            <span>
-                 ${item.orders && item.orders.length > 0 ?
-                        '<i class="fa-solid fa-id-card"></i> ' + item.orders.map(order => order.id).join(", ") :
-                        ''}
-            </span>
+                <div class="table-o" style="width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;">
+                    <span>
+                        ${item.orders && item.orders.length > 0 ?
+                                '<i class="fa-solid fa-id-card"></i> ' + item.orders.map(order => order.id).join(", ") :
+                                ''}
+                    </span>
+                </div>
             </div>
             `;
             } else {
@@ -21,11 +27,18 @@ window.Echo.channel('table')
                 <div class="table-card ${item.status}" style="background-color: rgb(0, 123, 255);"
      data-table-id="${item.id}" data-status="${item.status}">
     <span class="table-number" style="color:white">Bàn ${item.table_number}</span>
-    <span style="color:white">
+    <div class="table-o" style="color:white" style="width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;">
+    <span>
          ${item.orders && item.orders.length > 0 ?
                         '<i class="fa-solid fa-id-card"></i> ' + item.orders.map(order => order.id).join(", ") :
                         ''}
     </span>
+
+    </div>
 </div>
 
                 `;
@@ -51,11 +64,17 @@ window.Echo.channel('tablee')
             <div class="table-card ${item.status}"
             data-table-id="${item.id}" data-status="${item.status}">
             <span class="table-number">Bàn ${item.table_number}</span>
+            <div class="table-o" style="width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;">
             <span>
                  ${item.orders && item.orders.length > 0 ?
                     '<i class="fa-solid fa-id-card"></i> ' + item.orders.map(order => order.id).join(", ") :
                     ''}
             </span>
+            </div>
             </div>
             `;
         }).join('');
