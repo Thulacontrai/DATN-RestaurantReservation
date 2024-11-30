@@ -267,18 +267,18 @@
                 <!-- Phần hiển thị Thực đơn -->
                 <div class="menu-section transition-section" id="menu-section" style="display: none;">
                     <div class="filter-section mb-4 d-flex justify-content-start flex-nowrap">
-                        <button class="btn btn-outline-primary filter-btn me-2 active" data-category="all">Tất cả</button>
-                        <button class="btn btn-outline-success filter-btn me-2" data-category="mon-an">Món Ăn</button>
-                        <button class="btn btn-outline-warning filter-btn me-2" data-category="do-uong">Đồ Uống</button>
-                        <button class="btn btn-outline-danger filter-btn" data-category="trang-mieng">Tráng Miệng</button>
-                        <button class="btn btn-outline-info filter-btn" data-category="combo">Combo</button>
+                        <button class="btn btn-outline-primary filter-btnn me-2 active" data-category="all">Tất
+                            cả</button>
+                        @foreach ($cate as $cate)
+                            <button class="btn btn-outline-light filter-btnn me-2"
+                                data-category="{{ $cate->id }}">{{ $cate->name }}({{ $cate->dishes->count() }})</button>
+                        @endforeach
                     </div>
 
                     <!-- Phần Danh sách Món ăn -->
                     <div class="row" id="dish-list" style="max-height: 600px; overflow-y: auto;">
                         @foreach ($dishes as $dish)
-                            <div class="col-md-3 dish-item"
-                                data-category="{{ strtolower(str_replace(' ', '-', $dish->category)) }}"
+                            <div class="col-md-3 dish-item" data-category="{{ $dish->category->id }}"
                                 data-dish-id="{{ $dish->id }}" data-dish-price="{{ $dish->price }}">
                                 <div class="card menu-item">
                                     <img class="btn btn-add-dish" data-dish-id="{{ $dish->id }}"
@@ -303,8 +303,8 @@
                 <div class="order-content-container" style="padding-left: 20px;">
                     <div id="order-details" class="order-content-container">
                         <div class="empty-order">
-                            <p>Chưa có món trong đơn</p>
-                            <p>Vui lòng chọn món trong thực đơn bên trái màn hình</p>
+                            <p>Chưa chọn bàn</p>
+                            <p>Vui lòng chọn bàn tại phía bên trái màn hình</p>
                         </div>
                     </div>
                 </div>
@@ -373,9 +373,63 @@
                             }).then((result) => {
                                 if (result.isConfirmed) {
                                     const url = `/Ppayment/${selectedTableId}`;
-                                    window.location.href = url;
+                                    fetch(url, {
+                                            method: 'GET',
+                                            headers: {
+                                                'X-CSRF-TOKEN': document.querySelector(
+                                                        'meta[name="csrf-token"]')
+                                                    .getAttribute('content'),
+                                                'Content-Type': 'application/json',
+                                            },
+                                        })
+                                        .then((response) => {
+                                            if (!response.ok) {
+                                                throw new Error(
+                                                    `HTTP error! Status: ${response.status}`
+                                                );
+                                            }
+                                            return response.json();
+                                        })
+                                        .then((json) => {
+                                            return fetch(json.redirect_url, {
+                                                method: 'POST',
+                                                headers: {
+                                                    'X-CSRF-TOKEN': document
+                                                        .querySelector(
+                                                            'meta[name="csrf-token"]'
+                                                        )
+                                                        .getAttribute(
+                                                            'content'),
+                                                    'Content-Type': 'application/json',
+                                                },
+                                            });
+                                        })
+                                        .then((response) => {
+                                            if (!response.ok) {
+                                                throw new Error(
+                                                    `HTTP error! Status: ${response.status}`
+                                                );
+                                            }
+                                            return response.json();
+                                        })
+                                        .then((finalJson) => {
+                                            if (finalJson.success) {
+                                                Swal.fire({
+                                                    title: 'Thành công!',
+                                                    text: finalJson.message,
+                                                    icon: 'success',
+                                                })
+                                            } else {
+                                                Swal.fire({
+                                                    title: 'Lỗi!',
+                                                    text: finalJson.message,
+                                                    icon: 'error',
+                                                });
+                                            }
+                                        })
                                 }
                             });
+
                         }
                     })
                     .catch(error => console.error('Error:', error));

@@ -64,7 +64,12 @@ class KitchenController extends Controller
             $item->status = 'chờ cung ứng';
             $item->save();
             $item = Kitchen::find($id);
-            $orderItems = Order::with(['orderItems', 'orderItems.dish'])->findOrFail($item->order->id);
+            $orderItems = Order::with([
+                'orderItems' => function ($query) {
+                    $query->where('status', '!=', 'hủy');
+                },
+                'orderItems.dish'
+            ])->findOrFail($item->order->id);
             $itemName = $item->dish->name;
             $tableId = Table::with('orders')->findOrFail($request->tableId);
             $order = Order::with('tables')->findOrFail($item->order->id);
@@ -88,19 +93,8 @@ class KitchenController extends Controller
                     $notiBtn = false;
                 }
             }
-            $order = Order::with(['reservation', 'tables','customer'])->findOrFail($orderId);
+            $order = Order::with(['reservation', 'tables', 'customer'])->findOrFail($orderId);
             broadcast(new PosTableUpdatedWithNoti($order, $orderItems, $tableId, $notiBtn, "Bàn $tableId->table_number đang được chế biến món $itemName"))->toOthers();
-            $items1 = Kitchen::where('status', 'chờ cung ứng')
-                ->with(['dish', 'order.tables'])
-                ->get();
-            $items = Kitchen::where('status', 'đang chế biến')
-                ->with(['dish', 'order.tables'])
-                ->get();
-            $items1 = Kitchen::where('status', 'chờ cung ứng')
-                ->with(['dish', 'order.tables'])
-                ->get();
-            broadcast(new ProcessingDishes($items, null))->toOthers();
-            broadcast(new ProvideDishes($items1))->toOthers();
         });
         return response()->json(['status' => 'success']);
     }
@@ -122,7 +116,12 @@ class KitchenController extends Controller
             }
             $item->save();
             $item = Kitchen::find($id);
-            $orderItems = Order::with(['orderItems', 'orderItems.dish'])->findOrFail($item->order->id);
+            $orderItems = Order::with([
+                'orderItems' => function ($query) {
+                    $query->where('status', '!=', 'hủy');
+                },
+                'orderItems.dish'
+            ])->findOrFail($item->order->id);
             $itemName = $item->dish->name;
             $tableId = Table::with('orders')->findOrFail($request->tableId);
             $order = Order::with('tables')->findOrFail($item->order->id);
@@ -146,12 +145,8 @@ class KitchenController extends Controller
                     $notiBtn = false;
                 }
             }
-            $order = Order::with(['reservation', 'tables','customer'])->findOrFail($orderId);
+            $order = Order::with(['reservation', 'tables', 'customer'])->findOrFail($orderId);
             broadcast(new PosTableUpdatedWithNoti($order, $orderItems, $tableId, $notiBtn, "Bàn $tableId->table_number đã được cung ứng món $itemName"))->toOthers();
-            $items1 = Kitchen::where('status', 'chờ cung ứng')
-                ->with(['dish', 'order.tables'])
-                ->get();
-            broadcast(new ProvideDishes($items1))->toOthers();
         });
         return response()->json(['status' => 'success']);
     }
@@ -160,14 +155,6 @@ class KitchenController extends Controller
         DB::transaction(function () use ($id) {
             $item = Kitchen::find($id);
             $item->delete();
-            $items = Kitchen::where('status', 'đang chế biến')
-                ->with(['dish', 'order.tables'])
-                ->get();
-            $items1 = Kitchen::where('status', 'chờ cung ứng')
-                ->with(['dish', 'order.tables'])
-                ->get();
-            broadcast(new ProcessingDishes($items, null))->toOthers();
-            broadcast(new ProvideDishes($items1))->toOthers();
         });
         return response()->json(['status' => 'success']);
     }
