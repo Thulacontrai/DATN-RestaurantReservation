@@ -154,6 +154,8 @@
                                                         <span class="badge shade-red min-70">Đã hủy</span>
                                                     @elseif ($reservation->status === 'Refund')
                                                         <span class="badge bg-info">Đã hoàn cọc</span>
+                                                    @elseif($reservation->status === 'Completed')
+                                                    <span class="badge shade-primary min-70">Hoàn thành</span>
                                                     @else
                                                         <span class="badge shade-gray min-70">Không rõ</span>
                                                     @endif
