@@ -21,6 +21,83 @@
 
 
 <style>
+       /* paginate */
+       .my-pagination {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+}
+
+.my-pagination li {
+    margin: 0 5px;
+}
+
+.my-pagination a {
+    padding: 10px 15px;
+    color: #f1c40f;
+    background-color: #1b1b1b;
+    border: 1px solid #f1c40f;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.my-pagination a:hover {
+    background-color: #f1c40f;
+    color: #1b1b1b;
+}
+
+.my-pagination .active span {
+    background-color: #f1c40f;
+    color: #1b1b1b;
+    padding: 10px 15px;
+    border-radius: 5px;
+}
+
+    /* Trạng thái của đơn đặt bàn  */
+    .status-confirmed {
+    background-color: #28a745; /* Xanh lá */
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    display: inline-block;
+}
+
+.status-pending {
+    background-color: #ffc107; /* Vàng */
+    color: black;
+    padding: 5px 10px;
+    border-radius: 5px;
+    display: inline-block;
+}
+
+.status-cancelled {
+    background-color: #dc3545; /* Đỏ */
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    display: inline-block;
+}
+
+.status-refund {
+    background-color: #17a2b8; /* Xanh dương nhạt */
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    display: inline-block;
+}
+
+.status-completed {
+    background-color: #007bff; /* Xanh dương đậm */
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    display: inline-block;
+}
+
+
     /* login  */
     .login-container {
         max-width: 400px;
@@ -42,7 +119,10 @@
         background-color: #FFB347;
         color: white;
     }
-
+    .hover-text:hover{
+        color: #f1c40f  !important;
+        
+    }
     .otp-input {
         width: 50px;
         height: 50px;

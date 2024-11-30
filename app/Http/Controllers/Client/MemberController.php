@@ -38,8 +38,10 @@ class MemberController extends Controller
 
         $bankList = $banks['data'];
         $bookingData = Reservation::where('customer_id', $member->id)
-                ->orderBy('reservation_date', 'desc') // Sắp xếp theo ngày đặt
-                ->paginate(3); // Lấy tất cả đơn đặt bàn
+    ->with('refund') // Eager load bản ghi hoàn tiền
+    ->orderBy('reservation_date', 'desc') // Sắp xếp theo ngày đặt
+    ->paginate(3);
+                // dd($bookingData);
     } catch (\Exception $e) {
         return ['error' => $e->getMessage()]; // Xử lý lỗi
     }

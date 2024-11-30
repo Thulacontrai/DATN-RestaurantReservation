@@ -8,24 +8,10 @@
           <span style="cursor: pointer; color: #dc3545;" onclick="hideDropdown()">X</span>
       </div>
       <div class="menu-options">
-          <button class="btn btn-custom w-100 mb-2" style="background-color: #004a89; color: #fff;"><i
-                  class="fas fa-cogs"></i> Quản lý</button>
-          <a href="{{ route('kitchen.index') }}" class="btn btn-custom w-100 mb-2"
-              style="background-color: #004a89; color: #fff;"><i class="fas fa-chart-bar"></i> Bếp</a>
-          <button class="btn btn-custom w-100 mb-2" style="background-color: #004a89; color: #fff;"><i
-                  class="fas fa-file-invoice"></i> Lập phiếu thu</button>
-          <button class="btn btn-custom w-100 mb-2" style="background-color: #004a89; color: #fff;"><i
-                  class="fas fa-clipboard-list"></i> Hoá đơn</button>
+      
           <button class="btn" id="modalListReservation" data-toggle="modal" data-target="#reservationListModal"><i
                   class="fas fa-list"></i> Xem danh sách đặt bàn</button>
-          <button class="btn btn-custom w-100 mb-2" style="background-color: #004a89; color: #fff;"><i
-                  class="fas fa-cog"></i> Cài đặt chung</button>
-          <button class="btn btn-custom w-100 mb-2" style="background-color: #004a89; color: #fff;"><i
-                  class="fas fa-tag"></i> Thiết lập giá</button>
-          <button class="btn btn-custom w-100 mb-2" style="background-color: #004a89; color: #fff;"><i
-                  class="fas fa-box"></i> Món có sẵn trong đơn</button>
-          <button class="btn btn-custom w-100 mb-2" style="background-color: #004a89; color: #fff;"><i
-                  class="fas fa-keyboard"></i> Phím tắt</button>
+         
           <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
               @csrf
           </form>
@@ -34,6 +20,7 @@
                   class="fas fa-sign-out-alt"></i> Đăng xuất</a>
       </div>
   </div>
+
 
 
   <!-- Print Settings Dropdown Form -->

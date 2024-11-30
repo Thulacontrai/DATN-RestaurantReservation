@@ -104,4 +104,9 @@ class Order extends Model
     {
         return !is_null($this->coupon_id); // Kiểm tra có áp dụng mã giảm giá hay không
     }
+    public function orderTables()
+{
+    return $this->belongsToMany(OrdersTable::class, 'order_table_order', 'order_id', 'order_table_id');
+}
+
 }

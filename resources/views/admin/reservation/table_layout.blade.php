@@ -107,39 +107,6 @@
     <form action="{{ route('admin.submit.tables') }}" method="POST" id="reservationForm">
         @csrf
         <input id="reservation_id" type="hidden" name="reservation_id" value="{{ $reservationId }}">
-
-        <div class="text-center my-4">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tableModal">Chuyển Bàn</button>
-        </div>
-
-        <!-- Popup Modal -->
-        <div class="modal fade" id="tableModal" tabindex="-1" aria-labelledby="tableModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered"> <!-- Centering the modal -->
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="tableModalLabel">Chuyển Bàn</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="table-layout" id="table-layout">
-                            {{-- @foreach ($tables as $table)
-                                <div id="data-table"
-                                     class="table {{ $table->status === 'Reserved' ? 'Reserved' : '' }} {{ $table->status === 'Occupied' ? 'Occupied' : '' }}"
-                                     data-id="{{ $table->id }}" data-status="{{ $table->status }}">
-                                    <span id="table-number" class="table-number">{{ $table->table_number }}</span>
-                                </div>
-                            @endforeach --}}
-                            
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" id="submitModalForm" onclick="submitModal()">Submit</button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <div class="table-layout" id="table-layout">
             @foreach ($tables as $table)
             {{-- {{dd($table)}} --}}

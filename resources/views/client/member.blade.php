@@ -22,72 +22,79 @@
             <div class="container-fluid w-100">
                 <div class="row mb-4">
                     <!-- Side Menu -->
-                    <div class="col-md-3 side-menu p-3" style="background-color: #2b2b2b; color: #d3d3d3;">
-                        <!-- Màu nền tối và chữ xám nhạt -->
+                    <div class=" profile col-lg-3  side-menu p-3 bg-dark text-light">
                         <div class="d-flex align-items-center mb-4">
-                            <div class="profile-circle" style="background-color: #8c6c3d; color: white;">
-                                <!-- Màu nâu nhạt -->
-                                {{-- {{ strtoupper(substr($memberData['name'], 0, 1)) }} --}}
-                            </div>
-                            <div class="ms-3">
-                                {{-- <h5 class="text-danger" style="color: #f5cc00;">Hi, {{ $memberData['name'] }}</h5> <!-- Màu vàng nổi bật -->
-                                <p class="text-muted" style="color: #b5b5b5;">{{ $memberData['location'] }}</p> <!-- Xám nhạt -->
-                                <p class="text-muted" style="color: #b5b5b5;">Thành viên từ {{ $memberData['member_since'] }}</p> <!-- Xám nhạt --> --}}
+                            <div class="profile-circle bg-secondary text-white">
+                                <!-- Profile Icon Placeholder -->
                             </div>
                         </div>
                         <ul class="nav flex-column">
                             <li class="nav-item">
-                                <a class="nav-link text-light" href="#" onclick="showSection('reservationSection')"
-                                    style="color: #f5cc00;">Đặt chỗ</a> <!-- Màu vàng -->
+                                <a class="nav-link text-white hover-text" href="#" onclick="showSection('reservationSection')">Đặt chỗ</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-light" href="#" onclick="showSection('accountDetailsSection')"
-                                    style="color: #f5cc00;">Chi tiết tài khoản</a> <!-- Màu vàng -->
+                                <a class="nav-link text-white hover-text" href="#" onclick="showSection('accountDetailsSection')">Chi tiết tài khoản</a>
                             </li>
                             <li class="nav-item">
-                                <form  class="nav-link text-light" id="logout-form" action="{{ route('logout') }}"  style="color: #f5cc00;" method="POST" style="display: none;">
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST">
                                     @csrf
-                                    <button type="submit" style="color: #f5cc00;" >Đăng xuất</button>
+                                    <button type="submit" style="background: transparent; border: none;" class="nav-link  text-white hover-text">Đăng xuất</button>
                                 </form>
                             </li>
                         </ul>
                     </div>
+        
 
                     <!-- Main Content -->
-                    <div class="col-md-9 p-4">
+                    <div class="col-lg-9 col-md-8 p-4">
                         <div id="reservationSection" class="content-section">
                             <h3>Đặt chỗ sắp tới</h3>
                             <!-- Reservation Details -->
                             @foreach ($bookingData as $reservation)
-                                <div class="reservation-card mb-3"
-                                    style="background-color: #2b2b2b; border-radius: 5px; color: #d3d3d3;">
-                                    <div>
-                                        <h3 style="color:white">Họ tên: {{ $reservation->user_name }} -
-                                            {{ $reservation->user_phone }} {{$reservation->id}}</h3>
-                                        <div class="d-flex">
-                                            <div>
-                                                <p style="color:white;">Ngày: {{ $reservation->reservation_date }}</p>
-                                                <p style="display: inline; color:white;">Giờ:
-                                                    {{ $reservation->reservation_time }}</p>
-                                            </div>
-                                            <div>
-                                                <p style="color:white; margin-left: 10px;"><i class="bi bi-people"></i>
-                                                    {{ $reservation->guest_count }} người</p>
-                                                <p style="color:white; margin-right: 10px;">
-                                                    Cọc:
-                                                    {{ number_format($reservation->deposit_amount ?? 0, 0, ',', '.') . ' VNĐ' }}
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <strong
-                                            class="{{ $reservation->status === 'Confirmed' ? 'status-confirmed' : ($reservation->status === 'Checked-in' ? 'status-checked-in' : ($reservation->status === 'Cancelled' ? 'status-cancelled' : 'status-pending')) }}">
-                                            {{ $reservation->status === 'Confirmed' ? 'Đã xác nhận' : ($reservation->status === 'Checked-in' ? 'Đã nhận bàn' : ($reservation->status === 'Cancelled' ? 'Đã hủy' : 'Chờ xử lý')) }}
-                                        </strong>
+                            <div class="reservation-card mb-3 p-3 bg-dark text-light rounded">
+                                <h5>Mã đặt bàn: {{$reservation->id}} - {{ $reservation->user_name }}</h5>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <p class="text-white"><i class="bi bi-person"></i>Số người: {{ $reservation->guest_count }} người</p>
+                                        <p class="text-white"><i class="bi bi-calendar-date"></i> Ngày:{{ \Carbon\Carbon::parse($reservation->reservation_date)->format('d/m/Y') }}
+                                            | {{ $reservation->reservation_time }}</p>
                                     </div>
+                                    <div class="col-4">
+                                        <p class="text-white"><i class="bi bi-telephone"></i> Số điện thoại:{{ $reservation->user_phone }}</p>
+                                        <p class="text-white"><i class="bi bi-cash"></i>Cọc: {{ number_format($reservation->deposit_amount ?? 0, 0, ',', '.') }} VNĐ</p>
+                                    </div>
+                                    @if($reservation->status=='Refund')
+                                    <div class="col-4">
+                                        <p class="text-white"><i style="color:#3ca4ff" class="bi bi-cash"></i>Hoàn tiền: {{ number_format($reservation->refund->refund_amount ?? 0, 0, ',', '.') }} VNĐ</p>
+                                        <p class="text-white"><i class="bi bi-stickies"></i>Lý do hủy:{{ $reservation->refund->reason ?? '' }}</p>
+                                    </div>
+                                    @endif
+                                </div>
+                                @php
+                                    $statusClasses = [
+                                        'Confirmed' => 'status-confirmed',
+                                        'Pending' => 'status-pending',
+                                        'Cancelled' => 'status-cancelled',
+                                        'Refund' => 'status-refund',
+                                        'Completed' => 'status-completed'
+                                    ];
 
-                                    <div class="actions">
-                                        @if ($reservation->status != 'Cancelled')
-                                            @if($reservation->deposit_amount > 0)
+                                    $statusLabels = [
+                                        'Confirmed' => 'Đã xác nhận',
+                                        'Pending' => 'Chờ xử lý',
+                                        'Cancelled' => 'Đã hủy',
+                                        'Refund' => 'Đang hoàn tiền',
+                                        'Completed' => 'Đã hoàn thành'
+                                    ];
+                                @endphp
+                                <strong class=" text-right {{ $statusClasses[$reservation->status] ?? 'status-pending' }}">
+                                    {{ $statusLabels[$reservation->status] ?? 'Chờ xử lý' }}
+                                </strong>
+                            
+        
+                                <div class=" mt-3">
+                                    @if ($reservation->status == 'Pending'||$reservation->status=='Confirmed')
+                                            @if($reservation->deposit_amount > 0) 
                                                 <button class="text-danger cancel-btn-new"
                                                 data-toggle="modal" data-target="#cancelModal"
                                                 style="background: transparent; border: none;" data-bs-toggle="modal"
@@ -97,30 +104,70 @@
                                                 data-reservation-date="{{ \Carbon\Carbon::parse($reservation->reservation_date)->toIso8601String() }}">
                                                 Hủy
                                                 </button>
-
+                                                @else
+                                                    <button style="background: transparent; border: none;" class="text-danger cancel-btn-new deleteButton" id="deleteButton" data-id ="{{$reservation->id}}">Hủy</button>
+                                             @endif
+                                                
+                                            
+                                        @elseif($reservation->status =="Completed")
+                                             @if (isset($reservation->feedback->content))
+                                                 <p class="text-success">Đánh giá của bạn: {{ $reservation->feedback->content }}</p>
+                                                
+                                             {{-- <button style="background: transparent; border: none;" class="text-warning cancel-btn-new deleteButton" id="deleteButton" data-id ="{{$reservation->id}}">Chỉnh sửa</button>  --}}
+                                             @else
+                                             <button style="background: transparent; border: none;" class="text-success  fw-bold" onclick="toggleReviewInput({{ $reservation->id }})">Đánh giá</button>
+                                            
+                                             @endif
+                                            
+                                    @endif
+                                         
+                                      
+                                </div>
+        
+                                <!-- Review Input -->
+                                <div id="review-input-{{ $reservation->id }}" class="mt-2" style="display: none;">
+                                    <textarea id="review-text-{{ $reservation->id }}" class="form-control" placeholder="Nhập đánh giá của bạn..." rows="3"></textarea>
+                                    <button class=" btn-primary btn-sm mt-2" onclick="submitReview({{ $reservation->id }})">Gửi đánh giá</button>
+                                </div>
+                                     <!-- Khu vực hiển thị đánh giá -->
+                                   
+                            </div>
+                            @endforeach
+        
+                            <div class="justify-content-center mt-3">
+                                {{ $bookingData->links('pagination::client-paginate') }}
+                            </div>
+                        </div>
+    
+                        
+                                    {{-- <div class="actions">
+                                        @if ($reservation->status != 'Cancelled')
+                                            @if($reservation->deposit_amount > 0) 
+                                                <button class="text-danger cancel-btn-new"
+                                                data-toggle="modal" data-target="#cancelModal"
+                                                style="background: transparent; border: none;" data-bs-toggle="modal"
+                                                data-bs-target="#cancelModal" data-reservation-id="{{ $reservation->id }}"
+                                                data-deposit-amount="{{ $reservation->deposit_amount }}"
+                                                data-reservation-time="{{ $reservation->reservation_time }}"
+                                                data-reservation-date="{{ \Carbon\Carbon::parse($reservation->reservation_date)->toIso8601String() }}">
+                                                Hủy
+                                                </button>
+                                                 
                                                 @else
                                                     @if ($reservation->status == 'Cancelled')
                                                         <strong>
                                                             Đã hủy
                                                         </strong>
-
+                                                    
                                                     @else
                                                     <button style="background: transparent; border: none;" class="text-danger cancel-btn-new" id="deleteButton" data-id ="{{$reservation->id}}">Hủy</button>
                                                      @endif
-
+                                                
                                             @endif
-
-
                                         @endif
                                     </div>
-                                    <strong
-                                        class="{{ $reservation->status === 'Confirmed' ? 'status-confirmed' : ($reservation->status === 'Checked-in' ? 'status-checked-in' : ($reservation->status === 'Cancelled' ? 'status-cancelled' : 'status-pending')) }}">
-                                        {{ $reservation->status === 'Confirmed' ? 'Đã xác nhận' : ($reservation->status === 'Checked-in' ? 'Đã nhận bàn' : ($reservation->status === 'Cancelled' ? 'Đã hủy' : 'Chờ xử lý')) }}
-                                    </strong>
-                                </div>
-
-                                <!-- Nút đánh giá -->
-                                <div class="actions">
+                                    <!-- Nút đánh giá -->
+                                    <div class="actions">
                                     @if ($reservation->status !== 'Cancelled')
                                         <button class="text-success review-btn"
                                             style="background: transparent; border: none;"
@@ -128,33 +175,51 @@
                                             Đánh giá
                                         </button>
                                     @endif
-                                </div>
+                                    </div>
+                                        <!-- Khu vực nhập đánh giá -->
+                                        <div id="review-input-{{ $reservation->id }}" class="review-input mt-2" style="display: none;">
+                                        <textarea id="review-text-{{ $reservation->id }}" class="form-control" placeholder="Nhập đánh giá của bạn..." rows="3"></textarea>
+                                        <button class="btn-primary mt-2" onclick="submitReview({{ $reservation->id }}, {{ $reservation->customer_id }})">Gửi đánh giá</button>
+                                        </div>
 
-                                <!-- Khu vực nhập đánh giá -->
-                                <div id="review-input-{{ $reservation->id }}" class="review-input mt-2" style="display: none;">
-                                    <textarea id="review-text-{{ $reservation->id }}" class="form-control" placeholder="Nhập đánh giá của bạn..." rows="3"></textarea>
-                                    <button class="btn-primary mt-2" onclick="submitReview({{ $reservation->id }}, {{ $reservation->customer_id }})">Gửi đánh giá</button>
-                                </div>
-
-                                <!-- Khu vực hiển thị đánh giá -->
-                                <div id="review-container-{{ $reservation->id }}" class="mt-2">
-                                    @if ($reservation->review)
+                        
+                                        <!-- Khu vực hiển thị đánh giá -->
+                                        <div id="review-container-{{ $reservation->id }}" class="mt-2">
+                                        @if ($reservation->review)
                                         <p class="text-success">Đánh giá của bạn: {{ $reservation->review }}</p>
-                                    @endif
-                                </div>
-                                </div>
+                                        @endif
+                                        </div>
+                                    </div>
+                        
+                                </div> --}}
+                            {{-- @endforeach --}}
+                        
+                        
 
-
-                            </div>
-                        @endforeach
-
-
-
-
-
-                            <div class="justify-content-center mt-3">
-                                {{ $bookingData->links() }}
-                            </div>
+                           
+                            <div id="accountDetailsSection" class="content-section" style="display:none;">
+                                <h3>Thông tin cá nhân</h3>
+                                <form action="{{ route('member.update') }}" method="POST">
+                                    @csrf
+                                    <div class="modal-body">
+                                        <div class="mb-3">
+                                            <label for="name" class="form-label">Tên</label>
+                                            <input type="text" class="form-control" id="name" name="name"
+                                                value="{{ $member->name }}">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="phone" class="form-label">Số điện thoại</label>
+                                            <input type="text" class="form-control" id="phone" name="phone"
+                                                value="{{ $member->phone }}">
+                                        </div>
+    
+                                    </div>
+                                    <button onclick="saveChanges()" style="display:none;" id="saveButton"
+                                        class="btn-line">Lưu thay đổi</button>
+                                    <button onclick="toggleEdit()" id="editButton" class="btn-line">Chỉnh sửa thông
+                                        tin</button>
+                                </form>
+        </div>
                         </div>
 
                         <!-- Modal -->
@@ -257,29 +322,7 @@
 
 
 
-                        <div id="accountDetailsSection" class="content-section" style="display:none;">
-                            <h3>Thông tin cá nhân</h3>
-                            <form action="{{ route('member.update') }}" method="POST">
-                                @csrf
-                                <div class="modal-body">
-                                    <div class="mb-3">
-                                        <label for="name" class="form-label">Tên</label>
-                                        <input type="text" class="form-control" id="name" name="name"
-                                            value="{{ $member->name }}">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="phone" class="form-label">Số điện thoại</label>
-                                        <input type="text" class="form-control" id="phone" name="phone"
-                                            value="{{ $member->phone }}">
-                                    </div>
-
-                                </div>
-                                <button onclick="saveChanges()" style="display:none;" id="saveButton"
-                                    class="btn-line">Lưu thay đổi</button>
-                                <button onclick="toggleEdit()" id="editButton" class="btn-line">Chỉnh sửa thông
-                                    tin</button>
-                        </div>
-                        </form>
+                        
                     </div>
 
                     {{-- <div id="paymentSection" class="content-section" style="display:none;">
@@ -296,7 +339,7 @@
 <script>
     $(document).ready(function() {
     // Xử lý khi nhấn vào nút "Hủy"
-
+ 
 
     // Khởi tạo Select2 cho danh mục
     $('#bankSelect').select2({
@@ -345,7 +388,7 @@
         }
 
         $(document).ready(function() {
-    $('#deleteButton').click(function() {
+    $('.deleteButton').click(function() {
         var id = this.getAttribute('data-id'); // Lấy ID từ thuộc tính 'data-id'
 
         Swal.fire({
@@ -373,7 +416,6 @@
                         }).then(() => {
                             if (response.success) {
                                 location.reload(); // Tải lại trang
-
                             }
                         });
                     },
@@ -396,7 +438,6 @@
         });
     });
 });
-
 
         // modal hủy
         function openCancelModal(reservationId, depositAmount, reservationDateStr, reservationTimeStr) {

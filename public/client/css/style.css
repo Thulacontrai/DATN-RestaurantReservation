@@ -3923,6 +3923,8 @@ hr.blank {
 /* ================================================== */
 i {
     display: inline-block !important;
+    margin-right: 5px; /* Khoảng cách giữa icon và text */
+    color: #f1c40f;
 }
 
 i.large {

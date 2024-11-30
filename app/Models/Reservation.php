@@ -30,7 +30,7 @@ class Reservation extends Model
     protected $dates = ['deleted_at'];
     
     public function orders(){
-        return $this->hasMany(Order::class);
+        return $this->hasMany(Order::class,'reservation_id');
     }
 
 
@@ -48,4 +48,16 @@ class Reservation extends Model
         return $this->belongsToMany(Table::class, 'reservation_tables');
 
     }
+    public function refund()
+    {
+        return $this->hasOne(Refund::class, 'reservation_id', 'id');
+    }
+    public function feedback()
+    {
+        return $this->hasOne(Feedback::class, 'reservation_id', 'id');
+    }
+
+
+
 }
+
