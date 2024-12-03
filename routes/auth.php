@@ -50,6 +50,29 @@ Route::get('/pos', function() {
     return app(\App\Http\Controllers\Pos\PosController::class)->index();
 })->name('pos.index');
 
+Route::get('/kitchen', function() {
+    if (!Auth::check()) {
+        return redirect()->route('login/admin');
+    }
+
+    if (!Auth::user()->can('Xem bếp')) {
+        return redirect('/');
+    }
+
+    return app(\App\Http\Controllers\KitchenController::class)->index();
+})->name('kitchen.index');
+Route::get('/admin/dashboard', function() {
+    if (!Auth::check()) {
+        return redirect()->route('login/admin');
+    }
+
+    if (!Auth::user()->can('access admin')) {
+        return redirect('/');
+    }
+
+    return app(\App\Http\Controllers\KitchenController::class)->index();
+})->name('admin.dashboard');
+
 
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])

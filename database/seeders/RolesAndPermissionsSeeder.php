@@ -88,14 +88,15 @@ class RolesAndPermissionsSeeder extends Seeder
             'Xóa tồn kho',
             'Xem thống kê',
             'access pos',
+            'Xem bếp'
 
         ];
 
-        // Tạo từng quyền hạn
+        
         foreach ($permissions as $permission) {
             Permission::updateOrCreate(
                 ['name' => $permission],
-                ['guard_name' => 'web'] // Đảm bảo có guard_name
+                ['guard_name' => 'web'] 
             );
         }
 
