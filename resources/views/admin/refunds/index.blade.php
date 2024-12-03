@@ -10,10 +10,18 @@
     @if (session('error'))
         <div class="alert alert-danger">{{ session('error') }}</div>
     @endif
+
+
+
     <div class="content-wrapper-scroll">
         <div class="content-wrapper">
-            <h2>Danh sách yêu cầu hoàn tiền</h2>
-
+            <div class="row">
+                <div class="col-sm-12 col-12">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <div class="card-title">Danh sách yêu cầu hoàn tiền</div>
+                        </div>
+                        <div class="card-body">
             <table class="table table-bordered">
 
                 <thead>
@@ -23,7 +31,7 @@
                         <th>Thông tin tài khoản</th>
                         <th>Số tiền hoàn</th>
                         <th>Email liên hệ</th>
-                        <th>Lý do hoàn lại</th>
+                        <th>Lý do hoàn </th>
                         <th>Trạng thái</th>
                         <th>Ngày xác nhận</th>
                         <th>Người xác nhận</th>
@@ -56,7 +64,7 @@
                                 @if ($refund->status === 'Request_Refund')
                                     <span class="badge shade-yellow">Chưa hoàn tiền</span>
                                 @elseif($refund->status === 'Refund')
-                                    <span class="badge  shade-blue">Đã hoàn tiền</span>
+                                    <span class="badge shade-blue">Đã hoàn tiền</span>
                                 @endif
                             </td>
 
@@ -91,6 +99,10 @@
             </div>
         </div>
     </div>
+</div>
+</div>
+</div>
+
         @endsection
         @section('scripts')
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
