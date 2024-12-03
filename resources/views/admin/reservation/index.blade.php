@@ -182,20 +182,37 @@
                                                             data-bs-placement="top" title="Chuyển Bàn">
                                                             <i class="bi bi-box-arrow-in-right"></i>
                                                         </a>
-                                                        {{-- Nút hủy đặt bàn --> --}}
-                                                        <form
-                                                            action="{{ route('admin.reservation.cancel', $reservation->id) }}"
-                                                            method="POST" style="display:inline-block;">
-                                                            @csrf
-                                                            @method('POST')
-                                                            <a href="#" style="margin-top: 15px" data-bs-toggle="tooltip"
-                                                            data-bs-placement="top" title="Huỷ">
-                                                                <button type="submit" class="btn btn-link p-0"
-                                                                    onclick="return confirm('Bạn có chắc chắn muốn hủy đơn này?');">
-                                                                    <i class="bi bi-x-circle text-danger"></i>
-                                                                </button></a>
+                                                        {{-- Nút hủy đặt bàn --}}
+                                                        <form id="cancelReservationForm{{ $reservation->id }}" action="{{ route('admin.reservation.cancel', $reservation->id) }}" method="POST" style="display:inline-block;">
+    @csrf
+    @method('POST')
+    <a href="#" style="margin-top: 15px" data-bs-toggle="tooltip" data-bs-placement="top" title="Hủy">
+        <button type="button" class="btn btn-link p-0" data-bs-toggle="modal" data-bs-target="#cancelModal{{ $reservation->id }}">
+            <i class="bi bi-x-circle text-danger"></i>
+        </button>
+    </a>
+</form>
 
-                                                        </form>
+<!-- Modal -->
+<div class="modal fade" id="cancelModal{{ $reservation->id }}" tabindex="-1" aria-labelledby="cancelModalLabel{{ $reservation->id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cancelModalLabel{{ $reservation->id }}">Xác nhận hủy đặt bàn</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <label for="cancelReason{{ $reservation->id }}" class="form-label">Lý do hủy</label>
+                <textarea class="form-control" id="cancelReason{{ $reservation->id }}" name="cancelled_reason" rows="3" required></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="submitCancelForm({{ $reservation->id }})">Xác nhận hủy</button>
+            </div>
+        </div>
+    </div>
+</div>
+
                                                         {{-- Hoàn cọc --}}
                                                         {{-- <form action="" method="POST"
                                                       style="display:inline-block;">
@@ -354,6 +371,23 @@
 
             });
         });
+    </script>
+    <script>
+        function submitCancelForm(reservationId) {
+            var cancelReason = document.getElementById('cancelReason' + reservationId).value;
+
+            var form = document.getElementById('cancelReservationForm' + reservationId);
+
+            var hiddenField = document.createElement('input');
+            hiddenField.type = 'hidden';
+            hiddenField.name = 'cancelled_reason';
+            hiddenField.value = cancelReason;
+            
+            form.appendChild(hiddenField);
+
+            form.submit();
+        }
+
     </script>
 @endsection
 
