@@ -202,7 +202,7 @@ Route::patch('/refunds/{id}/updateStatus', [RefundController::class, 'updateStat
 
 Route::get('/admin/refunds', [RefundController::class, 'index'])->name('admin.refunds.index');
 Route::post('client/cancel-reservationpopup', [ReservationController::class, 'cancelReservationPopUp'])->name('client.cancel.reservationpopup');
-
+Route::post('/reservation/cancel', [ReservationController::class, 'cancel'])->name('client.cancel.reservation');
 
 Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
 Route::post('/create-order/{tableId}', [PosController::class, 'createOrder']);
