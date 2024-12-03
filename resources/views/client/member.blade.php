@@ -410,9 +410,9 @@
                     },
                     success: function(response) {
                         Swal.fire({
-                            icon: "success",
-                            title: "Thành công",
-                            text: "Hủy bàn thành công!"
+                            icon: response.icon,
+                            title: response.title,
+                            text: response.message
                         }).then(() => {
                             if (response.success) {
                                 location.reload(); // Tải lại trang

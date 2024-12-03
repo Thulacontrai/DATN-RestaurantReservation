@@ -178,28 +178,29 @@ class PosController extends Controller
 
 
     // Tạo đơn hàng
-    public function createOrder($id)
+    public function createOrder(Request $request)
     {
-        $table = Table::findOrFail($id);
         $order = Order::create([
-            'table_id' => $id,
             'staff_id' => Auth::user()->id,
             'status' => 'pending',
             'total_amount' => 0,
             'discount_amount' => 0,
             'final_amount' => 0,
         ]);
-        $order->tables()->attach(
-            $id,
-            ['start_time' => now()]
-        );
-        $table->update(['status' => 'Occupied']);
+        foreach ($request->table_id as $id) {
+            $table = Table::findOrFail($id);
+            $order->tables()->attach(
+                $id,
+                ['start_time' => now()]
+            );
+            $table->update(['status' => 'Occupied']);
+        }
         $tables = Table::with([
             'orders' => function ($query) {
                 $query->where('orders.status', '!=', 'completed');
-            }
+            },
+            'orders.reservation.customer'
         ])->get();
-
         broadcast(new MessageSent($tables))->toOthers();
         return response()->json([
             'success' => 'success',
@@ -1193,5 +1194,10 @@ class PosController extends Controller
         } else {
             return response()->json(['success' => 'success']);
         }
+    }
+    public function checkAvailableTables()
+    {
+        $availableTables = Table::where('status', 'Available')->get(['id', 'table_number']);
+        return response()->json(['tables' => $availableTables]);
     }
 }

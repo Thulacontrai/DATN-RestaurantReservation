@@ -205,7 +205,7 @@ Route::post('client/cancel-reservationpopup', [ReservationController::class, 'ca
 
 
 Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
-Route::post('/create-order/{tableId}', [PosController::class, 'createOrder']);
+Route::post('/create-order', [PosController::class, 'createOrder']);
 Route::post('/order-details/{tableId}', [PosController::class, 'orderDetails'])->name('order-details');
 Route::post('/add-dish-to-order', [PosController::class, 'addDishToOrder']);
 Route::post('/deleteItem', [PosController::class, 'deleteItem']);
@@ -216,6 +216,7 @@ Route::post('/canelItem', [PosController::class, 'canelItem']);
 Route::get('/Ppayment/{table_number}', [PosController::class, 'Ppayment'])->name('Ppayment');
 Route::get('/viewCheckOut/{table_number}', [PosController::class, 'viewCheckOut'])->name('viewCheckOut');
 Route::post('/check-payment-condition', [PosController::class, 'checkPaymentPondition'])->name('checkPaymentPondition');
+Route::get('/checkAvailableTables', [PosController::class, 'checkAvailableTables'])->name('checkPaymentPondition');
 
 ///
 Route::get('reserToOrder/{reservationId}', [PosController::class, 'reserToOrder'])->name('ReToOr');
@@ -233,7 +234,6 @@ Route::delete('/order/{order_id}/item/{item_id}', [PosController::class, 'delete
 
 
 Route::post('/reservation/check-table', [PosController::class, 'checkTable'])->name('reservation.checkTable');
-
 
 
 
