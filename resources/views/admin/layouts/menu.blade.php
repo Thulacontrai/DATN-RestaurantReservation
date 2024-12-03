@@ -140,39 +140,56 @@
                 @endcan
 
 
-                @can('Xem người dùng')
-                    <li class="sidebar-dropdown">
-                        <a href="#">
-                            <i class="bi bi-people-fill"></i>
-                            <span class="menu-text">Quản lý người dùng</span>
-                        </a>
-                        <div class="sidebar-submenu">
-                            <ul>
-                                @can('Xem vai trò')
-                                    <li>
-                                        <a href="{{ route('admin.role.index') }}">Danh sách vai trò</a>
-                                    </li>
-                                @endcan
-                                @can('Xem quyền hạn')
-                                    <li>
-                                        <a href="{{ route('admin.permissions.index') }}">Danh sách quyền hạn</a>
-                                    </li>
-                                @endcan
-                                @can('Xem người dùng')
-                                    <li>
-                                        <a href="{{ route('admin.user.index') }}">Danh sách người dùng</a>
-                                    </li>
-                                @endcan
-                                @can('Xem feedback')
-                                    <li>
-                                        <a href="{{ route('admin.feedback.index') }}">Danh sách phản hồi</a>
-                                    </li>
-                                @endcan
+         
+            <!-- Menu Quản lý Người Dùng -->
+            @can('Xem người dùng')
+                <li class="sidebar-dropdown">
+                    <a href="#">
+                        <i class="bi bi-person-lines-fill"></i>
+                        <span class="menu-text">Quản lý Người Dùng</span>
+                    </a>
+                    <div class="sidebar-submenu">
+                        <ul>
+                            <li>
+                                <a href="{{ route('admin.user.index') }}">Danh sách Người Dùng</a>
+                            </li>
+                            @can('Xem feedback')
+                                <li>
+                                    <a href="{{ route('admin.feedback.index') }}">Danh sách Phản Hồi</a>
+                                </li>
+                            @endcan
+                        </ul>
+                    </div>
+                </li>
+            @endcan
 
-                            </ul>
-                        </div>
-                    </li>
-                @endcan
+            <!-- Menu Quản lý Nhân Viên -->
+            @can('Xem nhân viên')
+            <li class="sidebar-dropdown">
+                <a href="#">
+                    <i class="bi bi-people-fill"></i>
+                    <span class="menu-text">Quản lý Nhân Viên</span>
+                </a>
+                <div class="sidebar-submenu">
+                    <ul>
+                        <li>
+                            <a href="{{ route('admin.user.employees') }}">Danh sách Nhân Viên</a>
+                        </li>
+                        @can('Xem vai trò')
+                            <li>
+                                <a href="{{ route('admin.role.index') }}">Danh sách Vai Trò</a>
+                            </li>
+                        @endcan
+                        @can('Xem quyền hạn')
+                            <li>
+                                <a href="{{ route('admin.permissions.index') }}">Danh sách Quyền Hạn</a>
+                            </li>
+                        @endcan
+                    </ul>
+                </div>
+            </li>
+          @endcan
+          
 
 
 
