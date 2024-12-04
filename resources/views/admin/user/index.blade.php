@@ -1,7 +1,5 @@
 @extends('admin.master')
 
-@section('title', $type == 'employee' ? 'Danh Sách Nhân Viên' : 'Danh Sách Người Dùng')
-
 @section('content')
     <div class="content-wrapper-scroll">
         <div class="content-wrapper">
@@ -10,46 +8,37 @@
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <div class="card-title">
-                                <div class="btn-group" role="group">
-                                    <a href="{{ route('admin.user.index') }}"
-                                        class="btn btn-{{ $type == 'user' ? 'primary' : 'secondary' }}">
-                                        Người Dùng
-                                    </a>
-                                    <a href="{{ route('admin.user.employees') }}"
-                                        class="btn btn-{{ $type == 'employee' ? 'primary' : 'secondary' }}">
-                                        Nhân Viên
-                                    </a>
-                                </div>
+                                
                             </div>
-
                             <div>
                                 <a href="{{ route('admin.user.create') }}"
-                                    class="btn btn-sm btn-primary d-flex align-items-center">
+                                   class="btn btn-sm btn-primary d-flex align-i">
                                     <i class="bi bi-plus-circle me-2"></i>
                                     {{ $type == 'employee' ? 'Thêm Nhân Viên' : 'Thêm Người Dùng' }}
                                 </a>
                             </div>
                         </div>
+
                         <div class="card-body">
                             <!-- Tìm kiếm người dùng -->
                             <form method="GET"
-                                action="{{ $type == 'employee' ? route('admin.user.employees') : route('admin.user.index') }}"
-                                class="mb-3">
+                                  action="{{ $type == 'employee' ? route('admin.user.employees') : route('admin.user.index') }}"
+                                  class="mb-3">
                                 <div class="row g-2 align-items-center">
                                     <div class="col-auto">
                                         <input type="text" name="search" class="form-control form-control-sm"
-                                            placeholder="Tìm kiếm">
+                                               placeholder="Tìm kiếm">
                                     </div>
                                     <div class="col-auto">
                                         <button type="submit" class="btn btn-sm btn-primary">
-                                            <i class=""></i> Tìm kiếm
+                                            Tìm kiếm
                                         </button>
                                     </div>
-                                    @if (!empty($search))
+                                    @if (!empty($request->search))
                                         <div class="col-auto">
                                             <a href="{{ $type == 'employee' ? route('admin.user.employees') : route('admin.user.index') }}"
-                                                class="btn btn-sm btn-secondary">
-                                                <i class="bi bi-x-circle me-1"></i> Xóa bộ lọc
+                                               class="btn btn-sm btn-secondary">
+                                                Xóa bộ lọc
                                             </a>
                                         </div>
                                     @endif
@@ -68,7 +57,6 @@
                                             @if ($type == 'employee')
                                                 <th>Vai Trò</th>
                                             @endif
-                                            <th>Trạng Thái</th>
                                             <th>Ngày tạo</th>
                                             <th>Hành Động</th>
                                         </tr>
@@ -86,24 +74,23 @@
                                                             {{ $user->roles ? $user->roles->pluck('name')->implode(', ') : 'Không có vai trò' }}
                                                         </td>
                                                     @endif
-                                                    <td>
-                                                        @if ($user->status == 'active')
-                                                            <span class="badge shade-green">Hoạt Động</span>
-                                                        @else
-                                                            <span class="badge shade-red">Ngừng Hoạt Động</span>
-                                                        @endif
-                                                    </td>
                                                     <td>{{ $user->created_at }}</td>
                                                     <td>
                                                         <div class="action text-center">
-                                                            <a href="{{ route('admin.user.edit', $user->id) }}" data-bs-toggle="tooltip"
-                                                                 data-bs-placement="top" title="Sửa">
-     
-                                                                 <i class="bi bi-pencil-square text-warning"></i>
-                                                             </a></div>
+                                                            <a href="{{ route('admin.user.edit', $user->id) }}"
+                                                               data-bs-toggle="tooltip" data-bs-placement="top" title="Sửa">
+                                                                <i class="bi bi-pencil-square text-warning"></i>
+                                                            </a>
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             @endforeach
+                                        @else
+                                            <tr>
+                                                <td colspan="{{ $type == 'employee' ? 6 : 5 }}" class="text-center">
+                                                    Không có dữ liệu.
+                                                </td>
+                                            </tr>
                                         @endif
                                     </tbody>
                                 </table>

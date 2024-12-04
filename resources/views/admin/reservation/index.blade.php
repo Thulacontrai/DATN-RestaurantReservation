@@ -112,34 +112,33 @@
                                 </div>
                             </form>
 
-                        </div>
-
-                        <!-- Table list of reservations -->
-                        <div class="table-responsive">
-                            <table class="table v-middle m-0">
-                                <thead>
-                                    <tr>
-
-                                        <th>Mã Đặt Chỗ</th>
-                                        <th>Tên Khách Hàng</th>
-                                        <th>Số Lượng Khách</th>
-                                        <th>Thời Gian Đặt</th>
-                                        {{-- <th>Bàn</th> --}}
-                                        <th>Tiền cọc</th>
-                                        <th>Ghi Chú</th>
-                                        <th>Trạng Thái</th>
-                                        <th>Hành Động</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse ($reservations as $reservation)
-                                        <tr id="reservation-{{ $reservation->id }}">
-                                            <td >{{ $reservation->id }}</td>
-                                            <td>{{ $reservation->customer->name ?? 'Không rõ' }}</td>
-                                            <td>{{ $reservation->guest_count ?? 'N/A' }}</td>
-                                            <td style="text-align: center">
-                                                <span>
-                                                    {{ \Carbon\Carbon::parse($reservation->reservation_date . ' ' . $reservation->reservation_time)->format('H:i:s') }}<br>
+                            <!-- Table list of reservations -->
+                            <div class="table-responsive">
+                                <table class="table v-middle m-0">
+                                    <thead>
+                                        <tr>
+                                            <th><input type="checkbox" id="select-all"></th>
+                                            <th>Mã Đặt Chỗ</th>
+                                            <th>Tên Khách Hàng</th>
+                                            <th>Số Lượng Khách</th>
+                                            <th>Thời Gian Đặt</th>
+                                            {{-- <th>Bàn</th> --}}
+                                            <th>Tiền cọc</th>
+                                            <th>Ghi Chú</th>
+                                            <th>Trạng Thái</th>
+                                            <th>Hành Động</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse ($reservations as $reservation)
+                                            <tr id="reservation-{{ $reservation->id }}">
+                                                <td><input type="checkbox" name="selected_reservations[]"
+                                                        value="{{ $reservation->id }}"></td>
+                                                <td>{{ $reservation->id }}</td>
+                                                <td>{{ $reservation->customer->name ?? 'Không rõ' }}</td>
+                                                <td>{{ $reservation->guest_count ?? 'N/A' }}</td>
+                                                <td style="text-align: center">
+                                                   <span> {{ \Carbon\Carbon::parse($reservation->reservation_date . ' ' . $reservation->reservation_time)->format('H:i:s') }}<br>
                                                     {{ \Carbon\Carbon::parse($reservation->reservation_date)->format('d/m/Y') }}
                                             </td>
 
@@ -148,17 +147,17 @@
                                                 {{ number_format($reservation->deposit_amount, 0, ',', '.') }}
                                             </td>
 
-                                            <td>{{ $reservation->note ?? 'Không có' }}</td>
-                                            <td>
-                                                @if ($reservation->status === 'Confirmed')
-                                                    <span class="badge shade-green min-70">Đã xác nhận</span>
-                                                @elseif ($reservation->status === 'Pending')
-                                                    <span class="badge shade-yellow min-70">Chờ xử lý</span>
-                                                @elseif ($reservation->status === 'Cancelled')
-                                                    <span class="badge shade-red min-70">Đã hủy</span>
-                                                @elseif ($reservation->status === 'Refund')
-                                                    <span class="badge bg-info">Đã hoàn cọc</span>
-                                                @elseif($reservation->status === 'Completed')
+                                                <td>{{ $reservation->note ?? 'Không có' }}</td>
+                                                <td>
+                                                    @if ($reservation->status === 'Confirmed')
+                                                        <span class="badge shade-green min-70">Đã xác nhận</span>
+                                                    @elseif ($reservation->status === 'Pending')
+                                                        <span class="badge shade-yellow min-70">Chờ xử lý</span>
+                                                    @elseif ($reservation->status === 'Cancelled')
+                                                        <span class="badge shade-red min-70">Đã hủy</span>
+                                                    @elseif ($reservation->status === 'Refund')
+                                                        <span class="badge bg-info">Đã hoàn cọc</span>
+                                                    @elseif($reservation->status === 'Completed')
                                                     <span class="badge shade-primary min-70">Hoàn thành</span>
                                                 @else
                                                     <span class="badge shade-gray min-70">Không rõ</span>

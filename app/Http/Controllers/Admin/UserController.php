@@ -29,7 +29,6 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $title = 'Người Dùng';
         $query = User::whereDoesntHave('roles');
 
         // Tìm kiếm tổng hợp
@@ -46,8 +45,7 @@ class UserController extends Controller
         return view('admin.user.index', [
             'users' => $users,
             'type' => 'user',
-            'request' => $request,
-            'title' => $title,
+            'request' => $request
         ]);
     }
 

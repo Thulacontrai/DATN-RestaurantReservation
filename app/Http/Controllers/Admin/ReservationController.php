@@ -1057,8 +1057,11 @@ class ReservationController extends Controller
     {
         try {
             $id = $request->id;
+            $reason = $request->reason; // Lấy lý do từ request
             $reservation = Reservation::findOrFail($id);
             $reservation->status = 'Cancelled';
+            $reservation->cancelled_reason = $reason; // Lưu lý do hủy
+            
             $reservation->save();
             return response()->json([
                 'success' => true,

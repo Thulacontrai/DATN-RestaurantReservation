@@ -96,8 +96,13 @@ Route::post('/change-password', [MemberController::class, 'changePassword'])->na
 Route::post('/member/update-booking', [MemberController::class, 'updateBooking'])->name('member.updateBooking');
 
 
-Route::get('/admin/users', [UserController::class, 'index'])->name('admin.user.index');
-Route::get('/admin/employees', [UserController::class, 'employeeList'])->name('admin.user.employees');
+// web.php
+// web.php
+Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () {
+    Route::get('user', [UserController::class, 'index'])->name('user.index'); // Danh sách người dùng
+    Route::get('user/employees', [UserController::class, 'employeeList'])->name('user.employees'); // Danh sách nhân viên
+});
+
 
 
 // login
@@ -202,7 +207,7 @@ Route::patch('/refunds/{id}/updateStatus', [RefundController::class, 'updateStat
 
 Route::get('/admin/refunds', [RefundController::class, 'index'])->name('admin.refunds.index');
 Route::post('client/cancel-reservationpopup', [ReservationController::class, 'cancelReservationPopUp'])->name('client.cancel.reservationpopup');
-
+Route::post('/reservation/cancel', [ReservationController::class, 'cancel'])->name('client.cancel.reservation');
 
 Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
 Route::post('/create-order/{tableId}', [PosController::class, 'createOrder']);
