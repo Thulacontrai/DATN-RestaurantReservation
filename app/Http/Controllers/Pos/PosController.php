@@ -109,7 +109,8 @@ class PosController extends Controller
         // Lấy danh sách các bàn
         $tables = Table::with([
             'orders' => function ($query) {
-                $query->where('orders.status', '!=', 'completed');
+                $query->where('orders.status', '!=', 'completed')
+                ->where('orders.status', '!=', 'waiting');
             }
         ])->get();
         $cate = Category::all();
