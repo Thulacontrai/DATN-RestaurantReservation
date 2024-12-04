@@ -6,6 +6,7 @@ use App\Events\PosTableUpdated;
 use App\Events\PosTableUpdatedWithNoti;
 use App\Events\ProcessingDishes;
 use App\Events\ProvideDishes;
+use App\Models\Combo;
 use App\Models\Dishes;
 use App\Models\InventoryItem;
 use App\Models\InventoryStock;
@@ -43,24 +44,50 @@ class KitchenController extends Controller
     {
         DB::transaction(function () use ($id, $request) {
             $item = Kitchen::find($id);
-            $reciep = Dishes::findOrFail($item->item_id)->recipes;
-            foreach ($reciep as $recipe) {
-                $inventoryStock = InventoryStock::where('ingredient_id', $recipe->ingredient_id)->first();
-                $inventoryStock->quantity_reserved -= $recipe->quantity_need * $item->quantity;
-                $inventoryStock->quantity_stock -= $recipe->quantity_need * $item->quantity;
-                $inventoryStock->save();
-                $inventoryTransaction = InventoryTransaction::create([
-                    'transaction_type' => 'xuất',
-                    'staff_id' => Auth::user()->id,
-                    'total_amount' => $recipe->quantity_need * $item->quantity * $recipe->ingredient->price,
-                    'description' => 'Xuất nguyên liệu chế biến món',
-                    'status' => 'hoàn thành'
-                ]);
-                $inventoryItems = InventoryItem::create([
-                    'ingredient_id' => $recipe->ingredient_id,
-                    'inventory_transaction_id' => $inventoryTransaction->id,
-                    'quantity' => $recipe->quantity_need * $item->quantity
-                ]);
+            if ($item->item_type == 1) {
+                $reciep = Dishes::findOrFail($item->item_id)->recipes;
+                foreach ($reciep as $recipe) {
+                    $inventoryStock = InventoryStock::where('ingredient_id', $recipe->ingredient_id)->first();
+                    $inventoryStock->quantity_reserved -= $recipe->quantity_need * $item->quantity;
+                    $inventoryStock->quantity_stock -= $recipe->quantity_need * $item->quantity;
+                    $inventoryStock->save();
+                    $inventoryTransaction = InventoryTransaction::create([
+                        'transaction_type' => 'xuất',
+                        'staff_id' => Auth::user()->id,
+                        'total_amount' => $recipe->quantity_need * $item->quantity * $recipe->ingredient->price,
+                        'description' => 'Xuất nguyên liệu chế biến món',
+                        'status' => 'hoàn thành'
+                    ]);
+                    $inventoryItems = InventoryItem::create([
+                        'ingredient_id' => $recipe->ingredient_id,
+                        'inventory_transaction_id' => $inventoryTransaction->id,
+                        'quantity' => $recipe->quantity_need * $item->quantity
+                    ]);
+                }
+            } else {
+                $combos = Combo::findOrFail($item->item_id);
+                // $combos = $combos->recieps;
+                dd($combos);
+                foreach ($combos as $combo) {
+                    foreach ($combo as $recipe) {
+                        $inventoryStock = InventoryStock::where('ingredient_id', $recipe->ingredient_id)->first();
+                        $inventoryStock->quantity_reserved -= $recipe->quantity_need * $item->quantity;
+                        $inventoryStock->quantity_stock -= $recipe->quantity_need * $item->quantity;
+                        $inventoryStock->save();
+                        $inventoryTransaction = InventoryTransaction::create([
+                            'transaction_type' => 'xuất',
+                            'staff_id' => Auth::user()->id,
+                            'total_amount' => $recipe->quantity_need * $item->quantity * $recipe->ingredient->price,
+                            'description' => 'Xuất nguyên liệu chế biến món',
+                            'status' => 'hoàn thành'
+                        ]);
+                        $inventoryItems = InventoryItem::create([
+                            'ingredient_id' => $recipe->ingredient_id,
+                            'inventory_transaction_id' => $inventoryTransaction->id,
+                            'quantity' => $recipe->quantity_need * $item->quantity
+                        ]);
+                    }
+                }
             }
             $orderItem = OrderItem::where('item_id', $item->item_id)
                 ->where('order_id', $item->order_id)
@@ -76,7 +103,19 @@ class KitchenController extends Controller
                 'orderItems' => function ($query) {
                     $query->where('status', '!=', 'hủy');
                 },
-                'orderItems.dish'
+                'orderItems.dish' => function ($query) {
+                    $query->whereHas('orderItems', function ($q) {
+                        $q->where('item_type', 1);
+                    });
+                },
+                'orderItems.combo' => function ($query) {
+                    $query->whereHas('orderItems', function ($q) {
+                        $q->where('item_type', 2);
+                    });
+                },
+                'reservation',
+                'tables',
+                'customer'
             ])->findOrFail($item->order->id);
             $itemName = $item->dish->name;
             $tableId = Table::with('orders')->findOrFail($request->tableId);
@@ -102,7 +141,7 @@ class KitchenController extends Controller
                 }
             }
             $order = Order::with(['reservation', 'tables', 'customer'])->findOrFail($orderId);
-            broadcast(new PosTableUpdatedWithNoti($order, $orderItems, $tableId, $notiBtn, "Bàn $tableId->table_number đang được chế biến món $itemName"))->toOthers();
+            broadcast(new PosTableUpdatedWithNoti($orderItems, $tableId, $notiBtn, "Bàn $tableId->table_number đang được chế biến món $itemName"))->toOthers();
         });
         return response()->json(['status' => 'success']);
     }
@@ -128,7 +167,19 @@ class KitchenController extends Controller
                 'orderItems' => function ($query) {
                     $query->where('status', '!=', 'hủy');
                 },
-                'orderItems.dish'
+                'orderItems.dish' => function ($query) {
+                    $query->whereHas('orderItems', function ($q) {
+                        $q->where('item_type', 1);
+                    });
+                },
+                'orderItems.combo' => function ($query) {
+                    $query->whereHas('orderItems', function ($q) {
+                        $q->where('item_type', 2);
+                    });
+                },
+                'reservation',
+                'tables',
+                'customer'
             ])->findOrFail($item->order->id);
             $itemName = $item->dish->name;
             $tableId = Table::with('orders')->findOrFail($request->tableId);
@@ -154,7 +205,7 @@ class KitchenController extends Controller
                 }
             }
             $order = Order::with(['reservation', 'tables', 'customer'])->findOrFail($orderId);
-            broadcast(new PosTableUpdatedWithNoti($order, $orderItems, $tableId, $notiBtn, "Bàn $tableId->table_number đã được cung ứng món $itemName"))->toOthers();
+            broadcast(new PosTableUpdatedWithNoti($orderItems, $tableId, $notiBtn, "Bàn $tableId->table_number đã được cung ứng món $itemName"))->toOthers();
         });
         return response()->json(['status' => 'success']);
     }

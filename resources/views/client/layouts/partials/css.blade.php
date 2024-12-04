@@ -30,6 +30,10 @@
     margin: 20px 0;
 }
 
+input{
+    background-color: white !important;
+}
+
 .my-pagination li {
     margin: 0 5px;
 }
