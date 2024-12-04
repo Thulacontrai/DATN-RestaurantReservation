@@ -3,18 +3,53 @@
 @section('title', 'Chỉnh Sửa Đơn Hàng')
 
 @section('content')
+    <!-- SweetAlert -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 
-    @if (session('error'))
-        <div class="alert alert-danger">
-            {{ session('error') }}
-        </div>
-    @endif
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Kiểm tra lỗi từ session
+            @if ($errors->any())
+                Swal.fire({
+                    position: "top-end", // Góc trên bên phải
+                    icon: "error",
+                    toast: true, // Hiển thị nhỏ gọn
+                    title: "{{ $errors->first() }}", // Lấy thông báo lỗi đầu tiên
+                    showConfirmButton: false, // Không hiển thị nút xác nhận
+                    timerProgressBar: true, // Hiển thị thanh tiến trình
+                    timer: 3500 // Tự động đóng sau 3.5 giây
+                });
+            @endif
 
-    @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
+            // Kiểm tra thông báo lỗi từ session
+            @if (session('error'))
+                Swal.fire({
+                    position: "top-end",
+                    icon: "error",
+                    toast: true,
+                    title: "{{ session('error') }}",
+                    showConfirmButton: false,
+                    timerProgressBar: true,
+                    timer: 3500
+                });
+            @endif
+
+            // Kiểm tra thông báo thành công từ session
+            @if (session('success'))
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    toast: true,
+                    title: "{{ session('success') }}",
+                    showConfirmButton: false,
+                    timerProgressBar: true,
+                    timer: 3500
+                });
+            @endif
+        });
+    </script>
+
 
     <!-- Content wrapper scroll start -->
     <div class="content-wrapper-scroll">
@@ -23,44 +58,54 @@
         <div class="content-wrapper">
             <div class="row">
                 <div class="col-sm-12 col-12">
-                    <div class="card shadow-lg">
-                        <div class="card-header d-flex justify-content-between align-items-center bg-primary text-white">
-                            <h4 class="card-title mb-3 text-white">Chỉnh Sửa Đơn Hàng</h4>
-                            <a href="{{ route('admin.order.index') }}" class="btn btn-sm btn-light mb-3">Quay Lại</a>
+                    <div class="card shadow-lg border-0">
+                        <div class="card-header d-flex justify-content-between align-items-center bg-light">
+                            <h4 class="card-title mb-0 text-primary">Chỉnh Sửa Hoá Đơn</h4>
+                            <a href="{{ route('admin.order.index') }}" class="btn btn-sm btn-outline-secondary mb-3">Quay
+                                Lại</a>
                         </div>
                         <div class="card-body">
-                            <form action="{{ route('admin.order.update', $order->id) }}" method="POST">
+                            <form action="{{ route('admin.order.update', $order->id) }}" method="POST"
+                                onsubmit="return validateForm()">
                                 @csrf
                                 @method('PUT')
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
-                                        <label for="reservation_id" class="form-label">Mã Đặt Chỗ</label>
-                                        <input type="number" class="form-control" id="reservation_id" name="reservation_id"
+                                        <label for="reservation_id" class="form-label">Mã Đặt Bàn</label>
+                                        <input type="number" class="form-control text-primary" id="reservation_id"
+                                            name="reservation_id"
                                             value="{{ old('reservation_id', $order->reservation_id) }}" required
-                                            placeholder="Nhập mã đặt chỗ" min="1">
+                                            placeholder="Nhập mã đặt chỗ" min="1" readonly>
                                     </div>
 
                                     <div class="col-md-6 mb-3">
                                         <label for="staff_id" class="form-label">Nhân Viên</label>
-                                        <input type="number" class="form-control" id="staff_id" name="staff_id"
-                                            value="{{ old('staff_id', $order->staff_id) }}" required
-                                            placeholder="Nhập mã nhân viên" min="1">
+                                        <input type="number" class="form-control text-primary" id="staff_id"
+                                            name="staff_id" value="{{ old('staff_id', $order->staff_id) }}" required
+                                            placeholder="Nhập mã nhân viên" min="1" readonly>
                                     </div>
 
                                     <div class="col-md-6 mb-3">
                                         <label for="customer_id" class="form-label">Mã Khách Hàng</label>
-                                        <input type="number" class="form-control" id="customer_id" name="customer_id"
-                                            value="{{ old('customer_id', $order->customer_id) }}" required
-                                            placeholder="Nhập mã khách hàng" min="1">
+                                        <input type="number" class="form-control text-primary" id="customer_id"
+                                            name="customer_id" value="{{ old('customer_id', $order->customer_id) }}"
+                                            required placeholder="Nhập mã khách hàng" min="1" readonly>
                                     </div>
 
                                     <div class="col-md-6 mb-3">
                                         <label for="total_amount" class="form-label">Tổng Tiền</label>
-                                        <input type="number" class="form-control" id="total_amount" name="total_amount"
-                                            value="{{ old('total_amount', $order->total_amount) }}" required
-                                            placeholder="Nhập tổng tiền" min="1" max="99999999" step="0.01"
-                                            oninput="validateAmount(this)">
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-success text-white">₫</span>
+                                            <input type="number" class="form-control rounded-end" id="total_amount"
+                                                name="total_amount" value="{{ old('total_amount', $order->total_amount) }}"
+                                                placeholder="Nhập tổng tiền" min="1" max="50000000" step="0.01"
+                                                oninput="validateAmount(this, 'total_amount_error')">
+                                        </div>
+                                        <span id="total_amount_error" class="text-danger small"></span>
                                     </div>
+
+
+
 
                                     <div class="col-md-6 mb-3">
                                         <label for="order_type" class="form-label">Loại Đơn Hàng</label>
@@ -81,36 +126,56 @@
                                         <label for="status" class="form-label">Trạng Thái</label>
                                         <select class="form-select" id="status" name="status" required>
                                             <option value="completed"
-                                                {{ old('status', $order->status) === 'completed' ? 'selected' : '' }}>Hoàn
-                                                thành</option>
+                                                {{ old('status', $order->status) === 'completed' ? 'selected' : '' }}>
+                                                Hoàn thành
+                                            </option>
                                             <option value="pending"
-                                                {{ old('status', $order->status) === 'pending' ? 'selected' : '' }}>Đang xử
-                                                lý</option>
+                                                {{ old('status', $order->status) === 'pending' ? 'selected' : '' }}>
+                                                Đang xử lý
+                                            </option>
                                             <option value="cancelled"
-                                                {{ old('status', $order->status) === 'cancelled' ? 'selected' : '' }}>Đã
-                                                hủy</option>
+                                                {{ old('status', $order->status) === 'cancelled' ? 'selected' : '' }}>
+                                                Đã hủy
+                                            </option>
                                         </select>
+                                        <div id="status-error" class="text-danger mt-2 d-none">Trạng thái không hợp lệ. Vui
+                                            lòng chọn lại.</div>
                                     </div>
+
 
                                     <div class="col-md-6 mb-3">
                                         <label for="discount_amount" class="form-label">Số Tiền Giảm Giá</label>
-                                        <input type="number" class="form-control" id="discount_amount"
-                                            name="discount_amount"
-                                            value="{{ old('discount_amount', $order->discount_amount) }}"
-                                            placeholder="Nhập số tiền giảm giá" min="1" max="99999999" step="0.01"
-                                            oninput="validateAmount(this)">
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-success text-white">₫</span>
+                                            <input type="number" class="form-control rounded-end" id="discount_amount"
+                                                name="discount_amount"
+                                                value="{{ old('discount_amount', $order->discount_amount) }}"
+                                                placeholder="Nhập số tiền giảm giá" min="1" max="50000000"
+                                                step="0.01" oninput="validateAmount(this, 'discount_amount_error')">
+                                        </div>
+                                        <span id="discount_amount_error" class="text-danger small"></span>
                                     </div>
+
 
                                     <div class="col-md-6 mb-3">
                                         <label for="final_amount" class="form-label">Số Tiền Cuối Cùng</label>
-                                        <input type="number" class="form-control" id="final_amount" name="final_amount"
-                                            value="{{ old('final_amount', $order->final_amount) }}" required
-                                            placeholder="Nhập số tiền cuối cùng" min="1" max="99999999"
-                                            step="0.01" oninput="validateAmount(this)">
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-success text-white">₫</span>
+                                            <input type="number" class="form-control rounded-end" id="final_amount"
+                                                name="final_amount"
+                                                value="{{ old('final_amount', $order->final_amount) }}"
+                                                placeholder="Nhập số tiền cuối cùng" min="1" max="50000000"
+                                                step="0.01" oninput="validateAmount(this, 'final_amount_error')">
+                                        </div>
+                                        <span id="final_amount_error" class="text-danger small"></span>
                                     </div>
-                                </div>
 
-                                <button type="submit" class="btn btn-primary mt-3">Cập Nhật Đơn Hàng</button>
+
+                                    <!-- Nút cập nhật đơn hàng -->
+                                    <div class="col-md-6 mb-3">
+                                        <button type="submit" id="update-order-btn" class="btn btn-primary">Cập nhật đơn
+                                            hàng</button>
+                                    </div>
                             </form>
                         </div>
                     </div>
@@ -126,12 +191,108 @@
 <script>
     // Hàm kiểm tra và thông báo lỗi nếu giá trị nhập vào không hợp lệ
     function validateAmount(input) {
-        const value = input.value;
-        if (value < 1 || value > 99999999) {
-            alert("Số tiền phải nằm trong khoảng từ 1 đến 99999999!");
+        const value = parseFloat(input.value);
+        const maxValue = parseFloat(input.getAttribute('max'));
+
+        // Kiểm tra nếu giá trị vượt quá giới hạn
+        if (value > maxValue) {
+            alert("Số tiền không được vượt quá " + maxValue);
             input.setCustomValidity("Giá trị không hợp lệ!");
+            input.value = maxValue; // Đặt lại giá trị về giới hạn tối đa
         } else {
             input.setCustomValidity(""); // Hủy bỏ thông báo lỗi nếu giá trị hợp lệ
+        }
+    }
+
+    // Hàm chặn việc nhập thêm số vào ô input nếu đã đạt giới hạn max
+    function blockExtraInput(input) {
+        const value = input.value;
+        const maxValue = input.getAttribute('max');
+
+        if (value.length > 0 && parseFloat(value) > parseFloat(maxValue)) {
+            alert("Số tiền không được vượt quá " + maxValue);
+            input.value = maxValue; // Đặt lại giá trị về giới hạn tối đa
+        }
+    }
+
+    // Lắng nghe sự kiện keyup và chặn khi giá trị vượt quá max
+    document.querySelectorAll('input[type="number"]').forEach(function(input) {
+        input.addEventListener('input', function() {
+            validateAmount(input);
+            blockExtraInput(input);
+        });
+
+
+        function validateAmount(input, errorElementId) {
+            const value = parseFloat(input.value);
+            const minValue = parseFloat(input.getAttribute('min'));
+            const maxValue = parseFloat(input.getAttribute('max'));
+            const errorElement = document.getElementById(errorElementId);
+
+            // Reset lỗi
+            errorElement.textContent = "";
+
+            if (isNaN(value)) {
+                errorElement.textContent = "Giá trị phải là số hợp lệ.";
+                input.classList.add("is-invalid");
+            } else if (value < minValue) {
+                errorElement.textContent = `Số tiền phải lớn hơn hoặc bằng ${minValue}.`;
+                input.classList.add("is-invalid");
+            } else if (value > maxValue) {
+                errorElement.textContent = `Số tiền không được vượt quá ${maxValue}.`;
+                input.classList.add("is-invalid");
+            } else if (value < 0) {
+                errorElement.textContent = "Số tiền không được âm.";
+                input.classList.add("is-invalid");
+            } else {
+                input.classList.remove("is-invalid");
+            }
+        }
+
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const statusSelect = document.getElementById('status');
+        const updateButton = document.getElementById('update-order-btn');
+        const statusError = document.getElementById('status-error');
+
+        // Lấy trạng thái ban đầu từ server
+        const initialStatus = "{{ $order->status }}";
+
+        // Theo dõi thay đổi trạng thái
+        statusSelect.addEventListener('change', function() {
+            const selectedStatus = statusSelect.value;
+
+            // Kiểm tra trạng thái ngược
+            if (
+                (initialStatus === 'completed' && selectedStatus !== 'completed') ||
+                (initialStatus === 'cancelled' && selectedStatus === 'pending')
+            ) {
+                // Hiển thị lỗi và vô hiệu hóa nút
+                statusError.classList.remove('d-none');
+                updateButton.disabled = true;
+            } else {
+                // Ẩn lỗi và kích hoạt nút
+                statusError.classList.add('d-none');
+                updateButton.disabled = false;
+            }
+        });
+    });
+
+    function validateAmount(input, errorId) {
+        const errorElement = document.getElementById(errorId);
+        const value = parseFloat(input.value);
+
+        // Kiểm tra nếu giá trị không hợp lệ
+        if (isNaN(value) || value < 1) {
+            errorElement.textContent = "Tổng tiền không được nhỏ hơn 1.";
+            input.value = ""; // Reset giá trị không hợp lệ
+        } else if (value > 50000000) {
+            errorElement.textContent = "Tổng tiền không được lớn hơn 50.000.000";
+            input.value = ""; // Reset giá trị không hợp lệ
+        } else {
+            // Xóa lỗi nếu giá trị hợp lệ
+            errorElement.textContent = "";
         }
     }
 </script>

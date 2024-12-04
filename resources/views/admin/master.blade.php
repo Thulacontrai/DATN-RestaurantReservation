@@ -10,7 +10,7 @@
 
 
     <!-- Meta -->
-    <link rel="icon"     type="image/x-icon">    <!-- Common Css Files -->
+    <link rel="icon" type="image/x-icon"> <!-- Common Css Files -->
     <link rel="stylesheet" href="{{ asset('adminn/assets/css/animate.css') }}">
     <link rel="stylesheet" href="{{ asset('adminn/assets/fonts/bootstrap/bootstrap-icons.css') }}">
     <link rel="stylesheet" href="{{ asset('adminn/assets/css/main.min.css') }}">
@@ -38,20 +38,18 @@
             @include('admin.layouts.menu')
 
             <!-- Content Wrapper. Contains page content -->
-            <div class="content-wrapper">
-                <!-- Content Header (Page header) -->
-                <section class="content-header">
-                    <div class="alert">
-                        <h4>@yield('title-page')</h4>
-                    </div>
-                </section>
 
-                <!-- Main content -->
-                <div class="container">
-                    @yield('content')
+            <!-- Content Header (Page header) -->
+            <section class="content-header">
+                <div class="alert">
+                <h4>@yield('title-page')</h4>
                 </div>
-                <!-- /.content -->
-            </div>
+            </section>
+
+            @yield('content')
+
+            <!-- /.content -->
+
             <!-- /.content-wrapper -->
 
             @include('admin.layouts.footer')
@@ -74,7 +72,7 @@
         <script src="{{ asset('adminn/assets/vendor/apex/custom/sales/salesGraph.js') }}"></script>
         <script src="{{ asset('adminn/assets/vendor/apex/custom/sales/revenueGraph.js') }}"></script>
         <script src="{{ asset('adminn/assets/vendor/apex/custom/sales/taskGraph.js') }}"></script>
-        
+
 
         <!-- Main Js Required -->
         <script src="{{ asset('adminn/assets/js/main.js') }}"></script>

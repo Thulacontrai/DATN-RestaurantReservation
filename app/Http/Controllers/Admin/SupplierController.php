@@ -23,7 +23,7 @@ class SupplierController extends Controller
         $this->middleware('permission:Tạo mới nhà cung cấp', ['only' => ['create']]);
         $this->middleware('permission:Sửa nhà cung cấp', ['only' => ['edit']]);
         $this->middleware('permission:Xóa nhà cung cấp', ['only' => ['destroy']]);
-        
+
     }
     use TraitCRUD;
 
@@ -34,11 +34,12 @@ class SupplierController extends Controller
 
     public function index(Request $request)
     {
+        $title = 'Nhà Cung Cấp';
         $suppliers = Supplier::when($request->name, function ($query) use ($request) {
             $query->where('name', 'like', '%' . $request->name . '%');
         })->paginate(10);
 
-        return view('admin.ingredientType.supplier.index', compact('suppliers'));
+        return view('admin.ingredientType.supplier.index', compact('suppliers', 'title'));
     }
 
 
@@ -98,7 +99,7 @@ class SupplierController extends Controller
 
         return redirect()->route('admin.supplier.index')->with('success', 'Cập nhật nhà cung cấp thành công.');
     }
-    
+
 
     public function destroy($id)
     {

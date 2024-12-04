@@ -29,8 +29,9 @@ class ReservationHistoryController extends Controller
 
     public function index()
 {
+    $title = ' Lịch Sử Đặt Bàn';
     $reservationHistories = ReservationHistory::all();
-    return view('admin.reservation.reservationHistory.index', compact('reservationHistories'));
+    return view('admin.reservation.reservationHistory.index', compact('reservationHistories', 'title'));
 }
 
 

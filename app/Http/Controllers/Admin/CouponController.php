@@ -17,7 +17,7 @@ class CouponController extends Controller
         $this->middleware('permission:Tạo mới mã giảm giá', ['only' => ['create']]);
         $this->middleware('permission:Sửa mã giảm giá', ['only' => ['edit']]);
         $this->middleware('permission:Xóa mã giảm giá', ['only' => ['destroy']]);
-        
+
     }
 
     use TraitCRUD;
@@ -29,7 +29,8 @@ class CouponController extends Controller
     public function index()
     {
         $coupons = Coupon::all();
-        return view('admin.coupon.index', compact('coupons'));
+        $title = 'Phiếu giảm giá';
+        return view('admin.coupon.index', compact('coupons', 'title'));
     }
 
     public function create()

@@ -55,7 +55,7 @@
                                     <div class="text-danger position-absolute">{{ $message }}</div>
                                 @enderror
                             </div>
-                            
+
                         </div>
                         <div class="row m-4 d-flex justify-content-center">
                             <div>
@@ -309,7 +309,7 @@
             errorDiv.style.display = 'none';
         }, 3000);
     }
-    
+
     document.addEventListener('DOMContentLoaded', function() {
     const userNameInput = document.getElementById('user_name');
     const userPhoneInput = document.getElementById('user_phone');
@@ -385,7 +385,7 @@
     // Validation số lượng khách
     function validateGuestCount() {
         const guestCount = parseInt(guestCountInput.value, 10);
-        
+
         if (guestCount < 1 || guestCount > 50) {
             guestCountInput.classList.add('is-invalid', 'shake-input');
             return false;
@@ -420,7 +420,7 @@
         // Tiếp tục logic gửi OTP
         let phoneNumber = userPhoneInput.value.trim();
         phoneNumber = phoneNumber.startsWith('0') ? '+84' + phoneNumber.slice(1) : phoneNumber;
-        
+
         const appVerifier = window.recaptchaVerifier;
 
         signInWithPhoneNumber(auth, phoneNumber, appVerifier)

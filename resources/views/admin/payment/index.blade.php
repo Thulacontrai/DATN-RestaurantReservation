@@ -68,11 +68,11 @@
 
                                                 <td>
                                                     @if ($payment->transaction_status === 'completed')
-                                                        Hoàn thành
+                                                    <span class="badge rounded-pill shade-primary">Hoàn thành</span>
                                                     @elseif ($payment->transaction_status === 'pending')
-                                                        Đang xử lý
+                                                    <span class="badge rounded-pill shade-yellow">Đang xử lý</span>
                                                     @elseif ($payment->transaction_status === 'failed')
-                                                        Thất bại
+                                                    <span class="badge rounded-pill shade-red">Thất bại</span>
                                                     @else
                                                         Không rõ
                                                     @endif
@@ -80,11 +80,11 @@
 
                                                 <td>
                                                     @if ($payment->payment_method === 'Cash')
-                                                        Tiền mặt
+                                                    <span class="badge rounded-pill shade-primary">Tiền mặt</span>
                                                     @elseif ($payment->payment_method === 'Credit Card')
-                                                        Thẻ tín dụng
+                                                    <span class="badge rounded-pill shade-secondary">Thẻ tín dụng</span>
                                                     @elseif ($payment->payment_method === 'Online')
-                                                        Thanh toán trực tuyến
+                                                    <span class="badge rounded-pill shade-red">Thanh toán trực tuyến</span>
                                                     @else
                                                         Không rõ
                                                     @endif

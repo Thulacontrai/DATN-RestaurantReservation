@@ -53,8 +53,9 @@ class ReservationController extends Controller
     public function index(Request $request)
     {
 
-        // $this->updateOverdueReservations(); // Cập nhật các đơn quá hạn
 
+        // $this->updateOverdueReservations(); // Cập nhật các đơn quá hạn
+        $title = ' Đặt Bàn';
         $query = Reservation::query();
 
         // Lọc theo tên khách hàng
@@ -104,6 +105,7 @@ class ReservationController extends Controller
             'waitingReservations' => $this->getWaitingReservations(),
             'overdueReservations' => $this->getOverdueReservations(),
             'reservations' => $reservations,
+            'title' => $title,
         ]);
     }
     public function apiIndex()
@@ -269,44 +271,76 @@ class ReservationController extends Controller
         $customers = User::all();
         $coupons = Coupon::all();
 
-        return view('admin.reservation.edit', compact('reservation', 'customers', 'coupons'));
+        // Tách ngày và giờ từ reservation_time
+        $reservationDate = \Carbon\Carbon::parse($reservation->reservation_date)->format('Y-m-d');
+        $reservationTime = \Carbon\Carbon::parse($reservation->reservation_time)->format('H:i');
+
+        return view('admin.reservation.edit', compact('reservation', 'customers', 'coupons', 'reservationDate', 'reservationTime'));
     }
+
+
+
 
     public function update(Request $request, $id)
     {
         DB::beginTransaction();
         try {
+            // Kiểm tra trạng thái trước khi cập nhật
+            $reservation = Reservation::findOrFail($id);
+            $currentStatus = $reservation->status;
+
+            // Kiểm tra nếu trạng thái là "Đã hủy" hoặc "Đã xác nhận" và không cho phép thay đổi
+            if ($currentStatus === 'Cancelled' && !in_array($request->status, ['Pending', 'Confirmed'])) {
+                return back()->withErrors(['status' => 'Không thể thay đổi trạng thái bàn này theo cách này.".']);
+            }
+
+            if ($currentStatus === 'Confirmed' && $request->status !== 'Confirmed') {
+                return back()->withErrors(['status' => 'Không thể thay đổi trạng thái bàn này theo cách này.".']);
+            }
+
             $validated = $request->validate([
                 'customer_name' => 'required|string|max:255',
-                'reservation_time' => 'required|date_format:Y-m-d\TH:i',
+                'reservation_date' => 'required|date',
+                'reservation_time' => 'required|date_format:H:i',
                 'guest_count' => 'required|integer|min:1',
                 'note' => 'nullable|string',
                 'status' => 'required|in:Confirmed,Pending,Cancelled',
                 'cancelled_reason' => 'nullable|string|max:255',
             ]);
 
+            // Kết hợp ngày và giờ thành một giá trị duy nhất
+            $reservationTime = Carbon::createFromFormat('Y-m-d', $request->reservation_date)
+                ->setTimeFromTimeString($request->reservation_time)
+                ->format('Y-m-d H:i:s');
+
+            // Kiểm tra nếu thời gian đã chọn là quá khứ
+            if (Carbon::parse($reservationTime)->isPast()) {
+                return back()->withErrors(['reservation_time' => 'Thời gian đặt bàn không được là quá khứ. Vui lòng chọn lại thời gian hợp lệ.']);
+            }
+
+            $validated['reservation_time'] = $reservationTime;
 
             $validated['deposit_amount'] = $request->input('guest_count') >= 6
                 ? $request->input('guest_count') * 100000
                 : 0;
 
-
-            $validated['reservation_time'] = Carbon::createFromFormat('Y-m-d\TH:i', $request->reservation_time)
-                ->format('Y-m-d H:i:s');
-
-            $reservation = Reservation::findOrFail($id);
+            // Cập nhật dữ liệu
             $reservation->update($validated);
 
             DB::commit();
-            return redirect()->route('admin.reservation.index')->with('success', 'Đặt bàn được cập nhật thành công !');
+            return redirect()->route('admin.reservation.index')->with('success', 'Đặt bàn được cập nhật thành công!');
         } catch (\Illuminate\Validation\ValidationException $e) {
             DB::rollBack();
             return back()->withErrors($e->errors());
         } catch (\Throwable $e) {
             DB::rollBack();
-            return back()->withErrors(['error' => "Đã xảy ra lỗi khi cập nhật đặt bàn: " . $e->getMessage()]);
+            return back()->withErrors(['error' => "Đã xảy ra lỗi khi cập nhật đặt bàn: " . $e->getMessage()]);
         }
     }
+
+
+
+
 
     public function cancel($id)
     {
@@ -823,133 +857,133 @@ class ReservationController extends Controller
 
 
 
-     //Layout bàn
-     public function assignTables($reservationId)
-     {
-  
-         DB::beginTransaction();
-         try {
-             // Tìm reservation
-             $reservation = Reservation::query()->findOrFail($reservationId);
-  
-             // Parse start_time và tính end_time
-             $startTime = Carbon::parse($reservation->reservation_time);
-             $endTime = $startTime->copy()->addHours(1);
-             // dd($startTime);
-             // Lấy tất cả các bàn
-             $allTables = Table::all();
-  
-             // Lấy các bàn có trạng thái trong khung giờ
-             $reservedTables = OrdersTable::where('start_time', '<', $endTime) // Bàn bắt đầu trước khi kết thúc khung giờ
-                 ->where(function ($query) use ($startTime) {
-                     $query->where('end_time', '>', $startTime)
-                     ->orWhereNull('end_time');  // Bàn kết thúc sau khi bắt đầu khung giờ
-                 })
-                 ->get();
-  
-             // Map các bàn
-             $tables = $allTables->map(function ($table) use ($reservedTables, $startTime) {
-                 // Tìm bàn trong danh sách đã đặt
-                 $order = $reservedTables->firstWhere('table_id', $table->id); // Tìm order có table_id trùng với table->id
-                 // dd($table, $order);
-                 if ($order) {
-                     // Kiểm tra trạng thái để xác định
-                     if ($order->status === 'Đang sử dụng' && $order->start_time <= $startTime) {
-                         return [
-                             'table_id' => $table->id,
-                             'name' => $table->table_number,
-                             'status' => 'Occupied',
-                             'start_time' => $order->start_time,
-                             'end_time' => $order->end_time,
-  
-                         ];
-                     } elseif ($order->status === 'Đặt trước') {
-                         return [
-                             'table_id' => $table->id,
-                             'name' => $table->table_number,
-                             'status' => 'Reserved',
-                             'start_time' => $order->start_time,
-                             'end_time' => $order->end_time,
-                         ];
-                     }
-                 }
-                 // Nếu không có trong danh sách, bàn còn trống
-                 return [
-                     'table_id' => $table->id,
-                     'name' => $table->table_number,
-                     'status' => 'Available',
-                     'start_time' => null,
-                     'end_time' => null,
-                 ];
-             });
-             // dd($tables);
-             // Commit transaction nếu không có lỗi
-             DB::commit();
-  
-             // Trả về view với các thông tin đã lấy
-             return view('admin.reservation.table_layout', compact('tables', 'reservationId'));
-         } catch (\Exception $e) {
-             // Nếu có lỗi, rollback transaction
-             DB::rollBack();
-  
-             // Xử lý lỗi (hoặc trả về một thông báo lỗi)
-             return back()->withErrors(['error' => 'Có lỗi xảy ra: ' . $e->getMessage()]);
-         }
-     }
-  
-     public function submitTable(Request $request)
-     {
-         // dd($request->all());
-         // DB::beginTransaction();
-         //lấy ra đơn đặt bàn
-         $reservationId = $request->reservation_id;
-         $reservation = Reservation::query()->FindOrfail($reservationId);
-         //lấy ra giờ check-in 
-         $start_time = Carbon::parse($reservation->reservation_time);
-         $end_time = $start_time->copy()->addHours(1);
-         $tables = $request->tables;
-  
-         $order = Order::where('reservation_id', $reservationId)->first();
-  
-         if (!$order) {
-             // Nếu không có order liên kết với reservation_id, tạo một order mới
-             $order = Order::create([
-                 'reservation_id' => $reservationId,
-                 'status' => 'pending', // Hoặc trạng thái bạn muốn
-             ]);
-         }
-         $reservation->update([
-             'status' => 'Confirmed', //
-         ]);
-         // dd($order);
-         foreach ($tables as $table) {
-             // Kiểm tra xung đột với bàn trong orders_tables
-             $conflicts = DB::table('orders_tables')
-                 ->where('table_id', $table)
-                 ->where(function ($query) use ($start_time, $end_time) {
-                     $query->whereBetween('start_time', [$start_time, $end_time])
-                         ->orWhereBetween('end_time', [$start_time, $end_time])
-                         ->orWhere(function ($query) use ($start_time, $end_time) {
-                             $query->where('start_time', '<', $start_time)
-                                 ->where('end_time', '>', $end_time);
-                         });
-                 })
-                 ->exists();
-  
-             // Nếu có xung đột thời gian, trả về lỗi
-             if ($conflicts) {
-                 return redirect()->route('admin.reservation.index')->with('success', ' Bàn đã được đặt vui lòng chọn bàn khác');
-             }
-             $order->tables()->attach($table, [
-                 'order_id' => $order->id,
-                 'table_id' => $table,
-                 'start_time' => $start_time,
-                 'end_time' => $end_time,
-                 'status' => "Đặt trước",
-             ]);
-         }
-         return redirect()->route('admin.reservation.index')->with('success', 'Xếp bàn thành công.');
-     }
+    //Layout bàn
+    public function assignTables($reservationId)
+    {
+
+        DB::beginTransaction();
+        try {
+            // Tìm reservation
+            $reservation = Reservation::query()->findOrFail($reservationId);
+
+            // Parse start_time và tính end_time
+            $startTime = Carbon::parse($reservation->reservation_time);
+            $endTime = $startTime->copy()->addHours(1);
+            // dd($startTime);
+            // Lấy tất cả các bàn
+            $allTables = Table::all();
+
+            // Lấy các bàn có trạng thái trong khung giờ
+            $reservedTables = OrdersTable::where('start_time', '<', $endTime) // Bàn bắt đầu trước khi kết thúc khung giờ
+                ->where(function ($query) use ($startTime) {
+                    $query->where('end_time', '>', $startTime)
+                        ->orWhereNull('end_time');  // Bàn kết thúc sau khi bắt đầu khung giờ
+                })
+                ->get();
+
+            // Map các bàn
+            $tables = $allTables->map(function ($table) use ($reservedTables, $startTime) {
+                // Tìm bàn trong danh sách đã đặt
+                $order = $reservedTables->firstWhere('table_id', $table->id); // Tìm order có table_id trùng với table->id
+                // dd($table, $order);
+                if ($order) {
+                    // Kiểm tra trạng thái để xác định
+                    if ($order->status === 'Đang sử dụng' && $order->start_time <= $startTime) {
+                        return [
+                            'table_id' => $table->id,
+                            'name' => $table->table_number,
+                            'status' => 'Occupied',
+                            'start_time' => $order->start_time,
+                            'end_time' => $order->end_time,
+
+                        ];
+                    } elseif ($order->status === 'Đặt trước') {
+                        return [
+                            'table_id' => $table->id,
+                            'name' => $table->table_number,
+                            'status' => 'Reserved',
+                            'start_time' => $order->start_time,
+                            'end_time' => $order->end_time,
+                        ];
+                    }
+                }
+                // Nếu không có trong danh sách, bàn còn trống
+                return [
+                    'table_id' => $table->id,
+                    'name' => $table->table_number,
+                    'status' => 'Available',
+                    'start_time' => null,
+                    'end_time' => null,
+                ];
+            });
+            // dd($tables);
+            // Commit transaction nếu không có lỗi
+            DB::commit();
+
+            // Trả về view với các thông tin đã lấy
+            return view('admin.reservation.table_layout', compact('tables', 'reservationId'));
+        } catch (\Exception $e) {
+            // Nếu có lỗi, rollback transaction
+            DB::rollBack();
+
+            // Xử lý lỗi (hoặc trả về một thông báo lỗi)
+            return back()->withErrors(['error' => 'Có lỗi xảy ra: ' . $e->getMessage()]);
+        }
+    }
+
+    public function submitTable(Request $request)
+    {
+        // dd($request->all());
+        // DB::beginTransaction();
+        //lấy ra đơn đặt bàn
+        $reservationId = $request->reservation_id;
+        $reservation = Reservation::query()->FindOrfail($reservationId);
+        //lấy ra giờ check-in
+        $start_time = Carbon::parse($reservation->reservation_time);
+        $end_time = $start_time->copy()->addHours(1);
+        $tables = $request->tables;
+
+        $order = Order::where('reservation_id', $reservationId)->first();
+
+        if (!$order) {
+            // Nếu không có order liên kết với reservation_id, tạo một order mới
+            $order = Order::create([
+                'reservation_id' => $reservationId,
+                'status' => 'pending', // Hoặc trạng thái bạn muốn
+            ]);
+        }
+        $reservation->update([
+            'status' => 'Confirmed', //
+        ]);
+        // dd($order);
+        foreach ($tables as $table) {
+            // Kiểm tra xung đột với bàn trong orders_tables
+            $conflicts = DB::table('orders_tables')
+                ->where('table_id', $table)
+                ->where(function ($query) use ($start_time, $end_time) {
+                    $query->whereBetween('start_time', [$start_time, $end_time])
+                        ->orWhereBetween('end_time', [$start_time, $end_time])
+                        ->orWhere(function ($query) use ($start_time, $end_time) {
+                            $query->where('start_time', '<', $start_time)
+                                ->where('end_time', '>', $end_time);
+                        });
+                })
+                ->exists();
+
+            // Nếu có xung đột thời gian, trả về lỗi
+            if ($conflicts) {
+                return redirect()->route('admin.reservation.index')->with('success', ' Bàn đã được đặt vui lòng chọn bàn khác');
+            }
+            $order->tables()->attach($table, [
+                'order_id' => $order->id,
+                'table_id' => $table,
+                'start_time' => $start_time,
+                'end_time' => $end_time,
+                'status' => "Đặt trước",
+            ]);
+        }
+        return redirect()->route('admin.reservation.index')->with('success', 'Xếp bàn thành công.');
+    }
 
     // public function submitMoveTable(Request $request)
     // {
@@ -1117,32 +1151,32 @@ class ReservationController extends Controller
         }
     }
 
-     // review
-     public function submitFeedback(Request $request)
-     {
-         // $validated = $request->validate([
-         //     'reservation_id' => 'required|exists:reservations,id',
-         //     'customer_id' => 'required|exists:customers,id',
-         //     'content' => 'required|string|max:500'
-         // ]);
-         // dd($validated);
-      
-         Feedback::create([
-             'reservation_id' => $request->reservation_id,
-             'customer_id' => $request->customer_id,
-             'content' => $request->content
-         ]);
-         
-     
-         return response()->json(['success' => true]);
-     }
-     
-     public function showFeedback($reservationId)
-         {
-             // Lấy danh sách đánh giá theo reservation_id
-             $feedbacks = Feedback::where('reservation_id', $reservationId)->get();
-     
-             // Trả về view kèm danh sách đánh giá
-             return view('reservation.feedback', compact('feedbacks'));
-         }
+    // review
+    public function submitFeedback(Request $request)
+    {
+        // $validated = $request->validate([
+        //     'reservation_id' => 'required|exists:reservations,id',
+        //     'customer_id' => 'required|exists:customers,id',
+        //     'content' => 'required|string|max:500'
+        // ]);
+        // dd($validated);
+
+        Feedback::create([
+            'reservation_id' => $request->reservation_id,
+            'customer_id' => $request->customer_id,
+            'content' => $request->content
+        ]);
+
+
+        return response()->json(['success' => true]);
+    }
+
+    public function showFeedback($reservationId)
+    {
+        // Lấy danh sách đánh giá theo reservation_id
+        $feedbacks = Feedback::where('reservation_id', $reservationId)->get();
+
+        // Trả về view kèm danh sách đánh giá
+        return view('reservation.feedback', compact('feedbacks'));
+    }
 }

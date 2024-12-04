@@ -34,6 +34,9 @@
                                     </div>
                                     <div class="col-auto">
                                         <button type="submit" class="btn btn-sm btn-primary">Tìm kiếm</button>
+                                        <a href="{{ route('admin.category.index') }}" class="btn btn-sm btn-success">
+                                            <i class="bi bi-arrow-repeat"></i>
+                                        </a>
                                     </div>
                                 </div>
                             </form>
@@ -43,7 +46,7 @@
                                 <table class="table v-middle m-0">
                                     <thead>
                                         <tr>
-                                            <th>Tên Category</th>
+                                            <th>Tên Thực Đơn</th>
                                             <th>Mô Tả</th>
                                             <th>Hành Động</th>
                                         </tr>

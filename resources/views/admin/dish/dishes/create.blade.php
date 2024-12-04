@@ -22,7 +22,7 @@
                 <div class="col-sm-12 col-12">
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
-                            <div class="card-title">Thêm Mới Món Ăn</div>
+                            <div class="card-title text-primary">Thêm Mới Món Ăn</div>
                             <a href="{{ route('admin.dishes.index') }}" class="btn btn-sm btn-secondary">Quay lại</a>
                         </div>
                         <div class="card-body">
@@ -32,25 +32,35 @@
 
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
-                                        <label for="dish-name" class="form-label">Tên Món Ăn</label>
+                                        <label for="dish-name" class="form-label">Tên Món Ăn <span class="text-danger required">*</span></label>
                                         <input type="text" id="dish-name" name="name" class="form-control"
-                                            placeholder="Nhập tên món ăn" required>
+                                            placeholder="Nhập tên món ăn" required maxlength="50">
+
+                                        <!-- Thông báo nếu tên món ăn đã tồn tại hoặc dài quá 50 ký tự -->
+                                        <div id="name-exists-warning" class="invalid-feedback" style="display: none;">Tên
+                                            món ăn đã tồn tại.</div>
+                                        <div id="max-length-warning" class="invalid-feedback" style="display: none;">Tên món
+                                            ăn không được vượt quá 50 ký tự.</div>
                                         <div class="invalid-feedback">Vui lòng nhập tên món ăn.</div>
                                     </div>
+
                                     <div class="col-md-6 mb-3">
-                                        <label for="dish-category" class="form-label">Loại:</label>
+                                        <label for="dish-category" class="form-label">Loại Món Ăn <span class="text-danger required">*</span></label>
                                         <select id="dish-category" name="category_id" class="form-select" required>
+                                            <option value="0" selected disabled>--- Chọn Loại ---</option>
+                                            <!-- Mặc định là lựa chọn chưa chọn -->
                                             @foreach ($categories as $category)
                                                 <option value="{{ $category->id }}">{{ $category->name }}</option>
                                             @endforeach
                                         </select>
-                                        <div class="invalid-feedback">Vui lòng chọn loại.</div>
+                                        <div class="invalid-feedback">Vui lòng chọn loại món ăn.</div>
                                     </div>
                                 </div>
 
+
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
-                                        <label for="dish-price" class="form-label">Giá</label>
+                                        <label for="dish-price" class="form-label">Giá <span class="text-danger required">*</span></label>
                                         <input type="number" id="dish-price" name="price" class="form-control"
                                             placeholder="Nhập giá món ăn" required min="0" step="0.01">
                                         <div class="invalid-feedback">Vui lòng nhập giá món ăn trong khoảng từ 1 đến
@@ -77,7 +87,7 @@
                                         <div class="invalid-feedback">Vui lòng chọn trạng thái món ăn.</div>
                                     </div>
                                     <div class="col-md-6 mb-3">
-                                        <label for="dish-image" class="form-label">Hình Ảnh</label>
+                                        <label for="dish-image" class="form-label">Hình Ảnh <span class="text-danger required">*</span></label>
                                         <input type="file" id="dish-image" name="image" class="form-control"
                                             accept="image/*" required>
                                         <div class="invalid-feedback">Vui lòng chọn ảnh món ăn.</div>
@@ -87,11 +97,11 @@
                                 <div id="ingredientsSection">
                                     <div id="ingredientsContainer">
                                         <div class="card-header d-flex justify-content-between align-items-center">
-                                            <div class="card-title">Thêm Mới Công Thức Món Ăn</div>
+                                            <div class="card-title text-primary">Thêm Mới Công Thức Món Ăn</div>
                                         </div>
                                         <!-- Chọn Nguyên Liệu (multiple) -->
                                         <div class="mb-4">
-                                            <label for="ingredients" class="form-label fw-bold">Nguyên Liệu</label>
+                                            <label for="ingredients" class="form-label fw-bold">Nguyên Liệu <span class="text-danger required">*</span></label>
                                             <select id="ingredients" name="ingredient_id[]" class="form-select" multiple
                                                 required>
                                                 @foreach ($ingredients as $ingredient)
@@ -210,11 +220,11 @@
         });
     </script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const priceInput = document.getElementById('dish-price');
 
             // Giới hạn giá trị khi người dùng nhập
-            priceInput.addEventListener('input', function () {
+            priceInput.addEventListener('input', function() {
                 const value = parseFloat(priceInput.value);
 
                 // Nếu giá trị nhỏ hơn 0 hoặc không hợp lệ
@@ -230,6 +240,40 @@
                 // Nếu giá trị hợp lệ
                 else {
                     priceInput.classList.remove('is-invalid');
+                }
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const dishNameInput = document.getElementById('dish-name');
+            const nameExistsWarning = document.getElementById('name-exists-warning');
+            const maxLengthWarning = document.getElementById('max-length-warning');
+
+            // Hàm kiểm tra tên món ăn đã tồn tại (có thể thay bằng AJAX để kiểm tra trong cơ sở dữ liệu)
+            function checkDishNameExists(name) {
+                const existingDishNames = ['Món ăn 1',
+                    'Món ăn 2'
+                ]; // Danh sách tên món ăn đã tồn tại trong CSDL (dữ liệu mẫu)
+                return existingDishNames.includes(name);
+            }
+
+            dishNameInput.addEventListener('input', function() {
+                let value = dishNameInput.value;
+
+                // Kiểm tra nếu tên món ăn dài quá 50 ký tự
+                if (value.length > 50) {
+                    dishNameInput.value = value.substring(0, 50); // Cắt chuỗi về 50 ký tự
+                    maxLengthWarning.style.display = 'block'; // Hiển thị cảnh báo
+                } else {
+                    maxLengthWarning.style.display = 'none'; // Ẩn cảnh báo khi dưới 50 ký tự
+                }
+
+                // Kiểm tra nếu tên món ăn đã tồn tại trong cơ sở dữ liệu
+                if (checkDishNameExists(value)) {
+                    nameExistsWarning.style.display =
+                        'block'; // Hiển thị cảnh báo nếu tên món ăn đã tồn tại
+                } else {
+                    nameExistsWarning.style.display = 'none'; // Ẩn cảnh báo nếu tên món ăn không trùng
                 }
             });
         });

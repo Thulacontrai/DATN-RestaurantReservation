@@ -15,7 +15,7 @@
                 <div class="col-sm-12 col-12">
                     <div class="card">
                         <div class="card-header">
-                            <div class="card-title">Thêm Mới Bàn</div>
+                            <div class="card-title text-primary">Thêm Mới Bàn</div>
                         </div>
                         <div class="card-body">
                             <form id="tableForm" action="{{ route('admin.table.store') }}" method="POST" novalidate>
@@ -23,51 +23,37 @@
 
                                 <!-- Khu Vực -->
                                 <div class="mb-3">
-                                    <label for="area" class="form-label">Khu Vực</label>
+                                    <label for="area" class="form-label">Khu Vực <span class="text-danger required">*</span></label>
                                     <select class="form-control" id="area" name="area" required>
-                                        <option value="Tầng 1" {{ old('area') == 'Tầng 1' ? 'selected' : '' }}>Tầng 1
-                                        </option>
-                                        <option value="Tầng 2" {{ old('area') == 'Tầng 2' ? 'selected' : '' }}>Tầng 2
-                                        </option>
+                                        <option value="Tầng 1" {{ old('area') == 'Tầng 1' ? 'selected' : '' }}>Tầng 1</option>
+                                        <option value="Tầng 2" {{ old('area') == 'Tầng 2' ? 'selected' : '' }}>Tầng 2</option>
                                     </select>
                                     <div class="invalid-feedback">Vui lòng chọn khu vực.</div>
-
                                 </div>
 
+                                <!-- Số Bàn -->
                                 <div class="mb-3">
-                                    <label for="table_number" class="form-label">Số Bàn</label>
-                                    <input type="number" class="form-control" id="table_number" name="table_number"
-                                        value="{{ old('table_number') }}" required min="1" max="100" placeholder="Nhập số bàn">
-                                    <div class="invalid-feedback">Vui lòng nhập số bàn từ 1 đến 100.</div>
-                                </div>
-
-
-                                <!-- Loại Bàn -->
-                                <div class="mb-3">
-                                    <label for="table_type" class="form-label">Loại Bàn</label>
-                                    <select class="form-control" id="table_type" name="table_type" required>
-                                        <option value="Thường" {{ old('table_type') == 'Thường' ? 'selected' : '' }}>Thường
-                                        </option>
-                                        <option value="VIP" {{ old('table_type') == 'VIP' ? 'selected' : '' }}>VIP
-                                        </option>
-                                    </select>
-                                    <div class="invalid-feedback">Vui lòng chọn loại bàn.</div>
-
+                                    <label for="table_number" class="form-label">Số Bàn <span class="text-danger required">*</span></label>
+                                    <input type="number" class="form-control @error('table_number') is-invalid @enderror" id="table_number"
+                                           name="table_number" value="{{ old('table_number') }}" required min="1" max="100" placeholder="Nhập số bàn">
+                                    <div class="invalid-feedback">
+                                        @error('table_number')
+                                            {{ $message }}
+                                        @else
+                                            Vui lòng nhập số bàn từ 1 đến 100.
+                                        @enderror
+                                    </div>
                                 </div>
 
                                 <!-- Trạng Thái -->
                                 <div class="mb-3">
-                                    <label for="status" class="form-label">Trạng Thái</label>
+                                    <label for="status" class="form-label">Trạng Thái <span class="text-danger required">*</span></label>
                                     <select class="form-control" id="status" name="status" required>
-                                        <option value="Available" {{ old('status') == 'Available' ? 'selected' : '' }}>Có
-                                            sẵn</option>
-                                        <option value="Reserved" {{ old('status') == 'Reserved' ? 'selected' : '' }}>Đã đặt
-                                            trước</option>
-                                        <option value="Occupied" {{ old('status') == 'Occupied' ? 'selected' : '' }}>Đang sử
-                                            dụng</option>
+                                        <option value="Available" {{ old('status') == 'Available' ? 'selected' : '' }}>Có sẵn</option>
+                                        <option value="Reserved" {{ old('status') == 'Reserved' ? 'selected' : '' }}>Đã đặt trước</option>
+                                        <option value="Occupied" {{ old('status') == 'Occupied' ? 'selected' : '' }}>Đang sử dụng</option>
                                     </select>
                                     <div class="invalid-feedback">Vui lòng chọn trạng thái bàn.</div>
-
                                 </div>
 
                                 <button type="submit" class="btn btn-primary">Thêm Bàn</button>
@@ -89,10 +75,16 @@
 
 @section('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const form = document.getElementById('tableForm');
             const inputs = form.querySelectorAll('input, select');
             const tableNumberInput = document.getElementById('table_number');
+            const errorMessage = "{{ $errors->first('table_number') }}";
+
+            // Hiển thị lỗi nếu có
+            if (errorMessage) {
+                tableNumberInput.classList.add('is-invalid');
+            }
 
             // Thêm sự kiện kiểm tra cho từng input
             inputs.forEach(input => {
@@ -129,31 +121,6 @@
                 if (!form.checkValidity()) {
                     event.preventDefault(); // Ngăn biểu mẫu gửi nếu không hợp lệ
                     event.stopPropagation();
-                }
-            });
-        });
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const tableNumberInput = document.getElementById('table_number');
-
-            // Giới hạn giá trị khi người dùng nhập
-            tableNumberInput.addEventListener('input', function () {
-                const value = parseInt(tableNumberInput.value);
-
-                // Nếu giá trị nhỏ hơn 1 hoặc không hợp lệ
-                if (isNaN(value) || value < 1) {
-                    tableNumberInput.value = ''; // Reset giá trị
-                    tableNumberInput.classList.add('is-invalid');
-                }
-                // Nếu giá trị vượt quá 100
-                else if (value > 100) {
-                    tableNumberInput.value = 100; // Giới hạn giá trị tối đa
-                    tableNumberInput.classList.add('is-invalid');
-                }
-                // Nếu giá trị hợp lệ
-                else {
-                    tableNumberInput.classList.remove('is-invalid');
                 }
             });
         });

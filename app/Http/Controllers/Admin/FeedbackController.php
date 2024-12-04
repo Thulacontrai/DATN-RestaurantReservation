@@ -19,7 +19,7 @@ class FeedbackController extends Controller
         $this->middleware('permission:Tạo mới feedback', ['only' => ['create']]);
         $this->middleware('permission:Sửa feedback', ['only' => ['edit']]);
         $this->middleware('permission:Xóa feedback', ['only' => ['destroy']]);
-        
+
     }
 
 
@@ -35,7 +35,8 @@ class FeedbackController extends Controller
     public function index()
     {
             $feedbacks = Feedback::all();
-            return view('admin.feedback.index', compact('feedbacks'));
+            $title = 'Phản Hồi';
+            return view('admin.feedback.index', compact('feedbacks', 'title'));
     }
 
 

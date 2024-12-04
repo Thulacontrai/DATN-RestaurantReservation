@@ -19,7 +19,6 @@ class CategoryController extends Controller
         $this->middleware('permission:Tạo mới danh mục', ['only' => ['create']]);
         $this->middleware('permission:Sửa danh mục', ['only' => ['edit']]);
         $this->middleware('permission:Xóa danh mục', ['only' => ['destroy']]);
-
     }
 
 
@@ -32,6 +31,7 @@ class CategoryController extends Controller
     public function index(Request $request)
     {
         $query = Category::query();
+        $title = 'Thực Đơn';
 
         if ($request->filled('name')) {
             $query->where('name', 'like', '%' . $request->name . '%');
@@ -39,7 +39,7 @@ class CategoryController extends Controller
 
         $categories = $query->paginate(10);
 
-        return view('admin.dish.category.index', compact('categories'));
+        return view('admin.dish.category.index', compact('categories', 'title'));
     }
 
     public function create()
@@ -49,13 +49,25 @@ class CategoryController extends Controller
 
     public function store(Request $request)
     {
+        // Kiểm tra tên danh mục có bị trùng không
+        $request->validate([
+            'name' => 'required|unique:categories,name',  // Kiểm tra tính duy nhất của tên danh mục
+            'description' => 'nullable|max:1000',
+        ], [
+            'name.unique' => 'Tên danh mục đã tồn tại. Vui lòng nhập tên khác.'
+        ]);
+
+        // Thêm danh mục mới
         Category::create([
             'name' => $request->name,
             'description' => $request->description
         ]);
 
-        return redirect()->route('admin.category.index')->with('success', 'Danh mục đã được thêm thành công!');
+        // Quay lại trang danh sách danh mục với thông báo thành công
+        return redirect()->route('admin.category.index')->with('success', 'Danh mục đã được thêm thành công!');
     }
+
+
 
     public function edit($id)
     {
@@ -66,11 +78,20 @@ class CategoryController extends Controller
 
     public function update(Request $request, $id)
     {
+        // Kiểm tra xem tên danh mục đã tồn tại hay chưa (ngoại trừ danh mục hiện tại)
+        $request->validate([
+            'name' => 'required|unique:categories,name,' . $id,
+            'description' => 'nullable',  // Nếu mô tả không bắt buộc, thì chỉ cần nullable
+        ], [
+            'name.unique' => 'Tên danh mục đã tồn tại, vui lòng chọn tên khác.'
+        ]);
+
         $category = Category::findOrFail($id);
         $category->update($request->all());
 
-        return redirect()->route('admin.category.index')->with('success', 'Danh mục đã được cập nhật thành công!');
+        return redirect()->route('admin.category.index')->with('success', 'Danh mục đã được cập nhật thành công!');
     }
+
 
     public function destroy($id)
     {

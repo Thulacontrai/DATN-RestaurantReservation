@@ -5,78 +5,76 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Order;
-use App\Models\Payment;
+use App\Models\Reservation;
 use App\Models\Table;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
     /**
-     * Display the admin dashboard with general statistics.
+     * Display the admin dashboard with general statistics from reservations.
      */
     public function index()
     {
-        $startDate = Carbon::now()->startOfMonth(); // Lấy ngày đầu tháng
-        $endDate = Carbon::now(); // Ngày hiện tại
+        $title = 'Dashboard';
 
-        // General counts for dashboard summary
+        // Tổng số bàn và danh mục món ăn
         $tableCount = Table::count(); // Số lượng bàn
         $categoryCount = Category::count(); // Số lượng danh mục món ăn
-        $orderCount = Order::count(); // Tổng số đơn hàng
         $userCount = User::count(); // Tổng số người dùng
+        $orderCount = Order::count(); // Tổng số đơn hàng
 
-        // Tổng doanh thu trong tháng này (Gross Revenue)
-        $totalRevenue = Order::where('status', 'completed')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->sum('total_amount'); // Tổng doanh thu từ các đơn hàng đã hoàn thành
+        // Tổng số đặt bàn và doanh thu từ đặt bàn
+        $reservationCount = Reservation::count(); // Tổng số đặt bàn
 
-        // Doanh thu ròng trong tháng này (Net Revenue)
-        $netRevenue = Order::where('status', 'completed')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->sum(DB::raw('total_amount - final_amount'));
+        // Doanh thu từ đặt cọc trong tháng hiện tại
+        $totalRevenue = Reservation::whereMonth('created_at', Carbon::now()->month)->sum('deposit_amount');
 
-        // Tổng thu nhập từ bảng payments
-        $totalEarnings = Payment::where('status', 'completed') // Lọc các thanh toán hoàn thành
-            ->whereBetween('created_at', [$startDate, $endDate]) // Lọc theo khoảng thời gian
-            ->sum('transaction_amount'); // Tính tổng thu nhập (sử dụng cột 'transaction_amount' trong bảng payments)
+        // Số lượng đặt bàn trong tháng hiện tại
+        $totalBookings = Reservation::whereMonth('created_at', Carbon::now()->month)->count();
 
-        // Số lượng khách hàng mới
-        $newCustomers = User::whereBetween('created_at', [$startDate, $endDate])
-            ->count(); // Đếm tất cả người dùng mới
+        // Tỉ lệ hủy đặt bàn trong tháng hiện tại
+        $cancelledBookings = Reservation::whereMonth('created_at', Carbon::now()->month)
+            ->where('status', 'Cancelled') // Trạng thái 'Cancelled' giả định cho đơn hàng hủy
+            ->count();
+        $cancellationRate = $totalBookings > 0 ? ($cancelledBookings / $totalBookings) * 100 : 0;
 
+        // Số lượng khách trong tháng hiện tại
+        $totalCustomers = Reservation::whereMonth('created_at', Carbon::now()->month)->sum('guest_count');
 
+        // Doanh thu tháng này và tăng trưởng doanh thu so với tháng trước
+        $salesThisMonth = number_format($totalRevenue);
+        $previousMonthRevenue = Reservation::whereMonth('created_at', Carbon::now()->subMonth()->month)->sum('deposit_amount');
+        $salesGrowth = $previousMonthRevenue > 0 ? (($totalRevenue - $previousMonthRevenue) / $previousMonthRevenue) * 100 : 0;
 
-
-
-        // // Số đơn hoàn thành trong tháng này
-        // $completedOrders = Order::where('status', 'completed')
-        //     ->whereBetween('created_at', [$startDate, $endDate])
-        //     ->count();
-
-        // // Số đơn hủy trong tháng này
-        // $cancelledOrders = Order::where('status', 'cancelled')
-        //     ->whereBetween('created_at', [$startDate, $endDate])
-        //     ->count();
+        // Dữ liệu cho biểu đồ
+        $bookingData = [];
+        $revenueData = [];
+        for ($i = 1; $i <= 12; $i++) {
+            $bookingData[] = Reservation::whereMonth('created_at', $i)->count();
+            $revenueData[] = Reservation::whereMonth('created_at', $i)->sum('deposit_amount');
+        }
 
         // Pass data to view
         return view('admin.dashboard.index', compact(
+            'title',
             'tableCount',
             'categoryCount',
-            'orderCount',
             'userCount',
-            'totalRevenue', // Tổng doanh số (Gross Revenue)
-            'netRevenue',   // Doanh thu ròng (Net Revenue)
-            'totalEarnings', // Tổng thu nhập
-            'newCustomers',
-            // 'completedOrders',
-            // 'cancelledOrders'
+            'orderCount',
+            'reservationCount',
+            'totalBookings',
+            'totalRevenue',
+            'cancellationRate',
+            'totalCustomers',
+            'salesThisMonth',
+            'salesGrowth',
+            'bookingData',   // Truyền dữ liệu đặt bàn theo tháng
+            'revenueData'    // Truyền dữ liệu doanh thu theo tháng
         ));
     }
-
-
 
 
     public function show($id = null)
@@ -87,77 +85,6 @@ class DashboardController extends Controller
     /**
      * Get monthly statistics for the dashboard (for charts or reports).
      */
-    public function getMonthlyStatistics()
-    {
-        $currentYear = Carbon::now()->year;
-
-        // Default months array
-        $months = range(1, 12);
-
-        // Doanh số bán hàng (total_amount) theo tháng
-        $sales = Order::selectRaw('MONTH(created_at) as month, SUM(total_amount) as total_sales')
-            ->whereYear('created_at', $currentYear)
-            ->groupBy('month')
-            ->orderBy('month')
-            ->pluck('total_sales', 'month')
-            ->toArray();
-
-        // Doanh thu thực tế (final_amount) theo tháng, sau khi trừ giảm giá
-        $finalSales = Order::selectRaw('MONTH(created_at) as month, SUM(final_amount) as total_final_sales')
-            ->whereYear('created_at', $currentYear)
-            ->groupBy('month')
-            ->orderBy('month')
-            ->pluck('total_final_sales', 'month')
-            ->toArray();
-
-        // Số đơn hàng theo trạng thái (completed, cancelled, pending, etc.)
-        $orderStatuses = Order::selectRaw('MONTH(created_at) as month, status, COUNT(*) as order_count')
-            ->whereYear('created_at', $currentYear)
-            ->groupBy('month', 'status')
-            ->orderBy('month')
-            ->get()
-            ->groupBy('month')
-            ->map(fn($statusGroup) => $statusGroup->keyBy('status')->toArray())
-            ->toArray();
-
-        // Thống kê theo loại đơn hàng (order_type)
-        $orderTypes = Order::selectRaw('MONTH(created_at) as month, order_type, COUNT(*) as order_type_count')
-            ->whereYear('created_at', $currentYear)
-            ->groupBy('month', 'order_type')
-            ->orderBy('month')
-            ->get()
-            ->groupBy('month')
-            ->map(fn($typeGroup) => $typeGroup->keyBy('order_type')->toArray())
-            ->toArray();
-
-        // Chuẩn bị dữ liệu trả về với các giá trị mặc định cho tất cả các tháng
-        $data = [
-            'sales' => array_map(fn($month) => $sales[$month] ?? 0, $months),
-            'final_sales' => array_map(fn($month) => $finalSales[$month] ?? 0, $months),
-            'order_statuses' => array_map(
-                fn($month) => [
-                    'completed' => $orderStatuses[$month]['completed']['order_count'] ?? 0,
-                    'cancelled' => $orderStatuses[$month]['cancelled']['order_count'] ?? 0,
-                    'pending' => $orderStatuses[$month]['pending']['order_count'] ?? 0,
-                    'other' => array_sum(array_map(fn($status) => $status['order_count'], array_diff_key($orderStatuses[$month], ['completed' => 1, 'cancelled' => 1, 'pending' => 1]))),
-                ],
-                $months
-            ),
-            'order_types' => array_map(
-                fn($month) => [
-                    'delivery' => $orderTypes[$month]['delivery']['order_type_count'] ?? 0,
-                    'pickup' => $orderTypes[$month]['pickup']['order_type_count'] ?? 0,
-                    'other' => array_sum(array_map(fn($type) => $type['order_type_count'], array_diff_key($orderTypes[$month], ['delivery' => 1, 'pickup' => 1]))),
-                ],
-                $months
-            ),
-        ];
-
-        // Trả về dữ liệu dưới dạng JSON
-        return response()->json($data);
-    }
-
-
     public function report(Request $request)
     {
         return view('admin.dashboard.report', compact('request'));

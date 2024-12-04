@@ -72,7 +72,7 @@
                                             <td>{{ number_format($ingredient->price, 0, ',', '.') }} VNĐ</td>
                                             <td>{{ $ingredient->unit }}</td>
                                             <td>
-                                                <div class="actions d-flex gap-2" style="justify-content: center;">
+                                                <div class="actions d-flex gap-2" >
                                                     <a href="{{ route('admin.ingredient.show', $ingredient->id) }}"
                                                         class="text-success" title="Xem">
                                                         <i class="bi bi-list"></i>
@@ -146,7 +146,7 @@
                                             <td>{{ number_format($ingredient->price, 0, ',', '.') }} VNĐ</td>
                                             <td>{{ $ingredient->unit }}</td>
                                             <td>
-                                                <div class="actions d-flex gap-2" style="justify-content: center;">
+                                                <div class="actions d-flex gap-2" >
                                                     <a href="{{ route('admin.ingredient.show', $ingredient->id) }}"
                                                         class="text-primary" data-bs-toggle="tooltip"
                                                         data-bs-placement="top" title="Chi tiết">

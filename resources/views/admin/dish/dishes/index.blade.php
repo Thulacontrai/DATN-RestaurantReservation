@@ -70,6 +70,9 @@
                                     </div>
                                     <div class="col-auto">
                                         <button type="submit" class="btn btn-sm btn-primary">Tìm kiếm</button>
+                                        <a href="{{ route('admin.dishes.index') }}" class="btn btn-sm btn-success">
+                                            <i class="bi bi-arrow-repeat"></i>
+                                           </a>
                                     </div>
                                 </div>
                             </form>

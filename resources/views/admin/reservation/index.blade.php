@@ -86,7 +86,7 @@
                                             value="{{ request('date') }}" id="dateFilter">
                                     </div>
 
-                                    <!-- New filter for notifications -->
+                                    {{-- <!-- New filter for notifications -->
                                     <div class="col-auto">
                                         <select name="notification_type" class="form-select form-select-sm"
                                             id="notificationTypeFilter">
@@ -101,103 +101,107 @@
                                                 {{ request('notification_type') == 'overdue' ? 'selected' : '' }}>Quá hạn
                                             </option>
                                         </select>
-                                    </div>
+                                    </div> --}}
 
                                     <div class="col-auto">
                                         <button type="submit" class="btn btn-sm btn-primary">Tìm kiếm</button>
+                                        <a href="{{ route('admin.reservation.index') }}" class="btn btn-sm btn-success">
+                                            <i class="bi bi-arrow-repeat"></i>
+                                        </a>
                                     </div>
                                 </div>
                             </form>
 
-                            <!-- Table list of reservations -->
-                            <div class="table-responsive">
-                                <table class="table v-middle m-0">
-                                    <thead>
-                                        <tr>
-                                            <th><input type="checkbox" id="select-all"></th>
-                                            <th>Mã Đặt Chỗ</th>
-                                            <th>Tên Khách Hàng</th>
-                                            <th>Số Lượng Khách</th>
-                                            <th>Thời Gian Đặt</th>
-                                            {{-- <th>Bàn</th> --}}
-                                            <th>Tiền cọc</th>
-                                            <th>Ghi Chú</th>
-                                            <th>Trạng Thái</th>
-                                            <th>Hành Động</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @forelse ($reservations as $reservation)
-                                            <tr id="reservation-{{ $reservation->id }}">
-                                                <td><input type="checkbox" name="selected_reservations[]"
-                                                        value="{{ $reservation->id }}"></td>
-                                                <td>{{ $reservation->id }}</td>
-                                                <td>{{ $reservation->customer->name ?? 'Không rõ' }}</td>
-                                                <td>{{ $reservation->guest_count ?? 'N/A' }}</td>
-                                                <td style="text-align: center">
-                                                   <span> {{ \Carbon\Carbon::parse($reservation->reservation_date . ' ' . $reservation->reservation_time)->format('H:i:s') }}<br>
+                        </div>
+
+                        <!-- Table list of reservations -->
+                        <div class="table-responsive">
+                            <table class="table v-middle m-0">
+                                <thead>
+                                    <tr>
+
+                                        <th>Mã Đặt Chỗ</th>
+                                        <th>Tên Khách Hàng</th>
+                                        <th>Số Lượng Khách</th>
+                                        <th>Thời Gian Đặt</th>
+                                        {{-- <th>Bàn</th> --}}
+                                        <th>Tiền cọc</th>
+                                        <th>Ghi Chú</th>
+                                        <th>Trạng Thái</th>
+                                        <th>Hành Động</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($reservations as $reservation)
+                                        <tr id="reservation-{{ $reservation->id }}">
+                                            <td >{{ $reservation->id }}</td>
+                                            <td>{{ $reservation->customer->name ?? 'Không rõ' }}</td>
+                                            <td>{{ $reservation->guest_count ?? 'N/A' }}</td>
+                                            <td style="text-align: center">
+                                                <span>
+                                                    {{ \Carbon\Carbon::parse($reservation->reservation_date . ' ' . $reservation->reservation_time)->format('H:i:s') }}<br>
                                                     {{ \Carbon\Carbon::parse($reservation->reservation_date)->format('d/m/Y') }}
-                                                </td>
+                                            </td>
 
 
-                                                <td>
-                                                    {{ number_format($reservation->deposit_amount, 0, ',', '.') }}
-                                                </td>
+                                            <td>
+                                                {{ number_format($reservation->deposit_amount, 0, ',', '.') }}
+                                            </td>
 
-                                                <td>{{ $reservation->note ?? 'Không có' }}</td>
-                                                <td>
-                                                    @if ($reservation->status === 'Confirmed')
-                                                        <span class="badge shade-green min-70">Đã xác nhận</span>
-                                                    @elseif ($reservation->status === 'Pending')
-                                                        <span class="badge shade-yellow min-70">Chờ xử lý</span>
-                                                    @elseif ($reservation->status === 'Cancelled')
-                                                        <span class="badge shade-red min-70">Đã hủy</span>
-                                                    @elseif ($reservation->status === 'Refund')
-                                                        <span class="badge bg-info">Đã hoàn cọc</span>
-                                                    @elseif($reservation->status === 'Completed')
+                                            <td>{{ $reservation->note ?? 'Không có' }}</td>
+                                            <td>
+                                                @if ($reservation->status === 'Confirmed')
+                                                    <span class="badge shade-green min-70">Đã xác nhận</span>
+                                                @elseif ($reservation->status === 'Pending')
+                                                    <span class="badge shade-yellow min-70">Chờ xử lý</span>
+                                                @elseif ($reservation->status === 'Cancelled')
+                                                    <span class="badge shade-red min-70">Đã hủy</span>
+                                                @elseif ($reservation->status === 'Refund')
+                                                    <span class="badge bg-info">Đã hoàn cọc</span>
+                                                @elseif($reservation->status === 'Completed')
                                                     <span class="badge shade-primary min-70">Hoàn thành</span>
-                                                    @else
-                                                        <span class="badge shade-gray min-70">Không rõ</span>
-                                                    @endif
-                                                </td>
+                                                @else
+                                                    <span class="badge shade-gray min-70">Không rõ</span>
+                                                @endif
+                                            </td>
 
 
-                                                <td>
-                                                    <div class="actions">
-                                                        <a href="{{ route('admin.reservation.show', $reservation->id) }}"
-                                                            class="editRow" data-id="{{ $reservation->id }}" data-bs-toggle="tooltip"
-                                                            data-bs-placement="top" title="Chi Tiết">
-                                                            <i class="bi bi-list text-green"></i>
-                                                        </a>
-                                                        <a href="{{ route('admin.reservation.edit', $reservation->id) }}"
-                                                            class="editRow" data-id="{{ $reservation->id }}"
-                                                            data-bs-toggle="tooltip"
-                                                            data-bs-placement="top" title="Sửa">
-                                                            <i class="bi bi-pencil-square text-warning"></i>
+                                            <td>
+                                                <div class="actions">
+                                                    <a href="{{ route('admin.reservation.show', $reservation->id) }}"
+                                                        class="editRow" data-id="{{ $reservation->id }}"
+                                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Chi Tiết">
+                                                        <i class="bi bi-list text-green"></i>
+                                                    </a>
+                                                    <a href="{{ route('admin.reservation.edit', $reservation->id) }}"
+                                                        class="editRow" data-id="{{ $reservation->id }}"
+                                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Sửa">
+                                                        <i class="bi bi-pencil-square text-warning"></i>
 
-                                                        </a>
-                                                        <a href="{{ route('admin.reservation.assignTables', $reservation->id) }}"
-                                                            class="editRow" data-id="{{ $reservation->id }}"
-                                                            data-bs-toggle="tooltip"
-                                                            data-bs-placement="top" title="Chuyển Bàn">
-                                                            <i class="bi bi-box-arrow-in-right"></i>
-                                                        </a>
-                                                        {{-- Nút hủy đặt bàn --> --}}
-                                                        <form
-                                                            action="{{ route('admin.reservation.cancel', $reservation->id) }}"
-                                                            method="POST" style="display:inline-block;">
-                                                            @csrf
-                                                            @method('POST')
-                                                            <a href="#" style="margin-top: 15px" data-bs-toggle="tooltip"
-                                                            data-bs-placement="top" title="Huỷ">
-                                                                <button type="submit" class="btn btn-link p-0"
-                                                                    onclick="return confirm('Bạn có chắc chắn muốn hủy đơn này?');">
-                                                                    <i class="bi bi-x-circle text-danger"></i>
-                                                                </button></a>
+                                                    </a>
+                                                    <a href="{{ route('admin.reservation.assignTables', $reservation->id) }}"
+                                                        class="editRow" data-id="{{ $reservation->id }}"
+                                                        data-bs-toggle="tooltip" data-bs-placement="top"
+                                                        title="Chuyển Bàn">
+                                                        <i class="bi bi-box-arrow-in-right"></i>
+                                                    </a>
+                                                    {{-- Nút hủy đặt bàn --> --}}
+                                                    <form
+                                                        action="{{ route('admin.reservation.cancel', $reservation->id) }}"
+                                                        method="POST" style="display:inline-block;">
+                                                        @csrf
+                                                        @method('POST')
+                                                        <a href="#" style="margin-top: 15px"
+                                                            data-bs-toggle="tooltip" data-bs-placement="top"
+                                                            title="Huỷ">
+                                                            <button type="submit" class="btn btn-link p-0"
+                                                                onclick="return confirm('Bạn có chắc chắn muốn hủy đơn này?');">
+                                                                <i class="bi bi-x-circle text-danger"></i>
+                                                            </button></a>
 
-                                                        </form>
-                                                        {{-- Hoàn cọc --}}
-                                                        {{-- <form action="" method="POST"
+                                                    </form>
+                                                    {{-- Hoàn cọc --}}
+                                                    {{-- <form action="" method="POST"
                                                       style="display:inline-block;">
                                                       <div style="display: flex; gap: 10px; align-items: center;">
                                                           <a href="{{ route('refunds.create', ['reservation_id' => $reservation->id]) }}"
@@ -207,47 +211,48 @@
                                                           </a>
                                                       </div>
                                                   </form> --}}
-                                                        <form
-                                                            action="{{ route('admin.reservation.destroy', $reservation->id) }}"
-                                                            method="POST" style="display:inline-block;">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <a href="#" style="margin-top: 18px;" data-bs-toggle="tooltip"
-                                                            data-bs-placement="top" title="Xoá">
-                                                                <button type="submit" class="btn btn-link p-0"
-                                                                    onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
-                                                                    <i class="bi bi-trash text-red"></i>
-                                                                </button></a>
-                                                        </form>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        @empty
-                                            <tr>
-                                                <td colspan="8">Không có đặt bàn nào được tìm thấy.</td>
-                                            </tr>
-                                        @endforelse
-                                    </tbody>
-                                </table>
-                            </div>
-
-
-                            <!-- Pagination -->
-                            <div class="pagination justify-content-center mt-3">
-                                {{ $reservations->links() }}
-                            </div>
+                                                    <form
+                                                        action="{{ route('admin.reservation.destroy', $reservation->id) }}"
+                                                        method="POST" style="display:inline-block;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <a href="#" style="margin-top: 18px;"
+                                                            data-bs-toggle="tooltip" data-bs-placement="top"
+                                                            title="Xoá">
+                                                            <button type="submit" class="btn btn-link p-0"
+                                                                onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
+                                                                <i class="bi bi-trash text-red"></i>
+                                                            </button></a>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="8">Không có đặt bàn nào được tìm thấy.</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
                         </div>
 
-                        <!-- End Pagination -->
 
+                        <!-- Pagination -->
+                        <div class="pagination justify-content-center mt-3">
+                            {{ $reservations->links() }}
+                        </div>
                     </div>
+
+                    <!-- End Pagination -->
+
                 </div>
             </div>
-
-            <!-- Row end -->
-
         </div>
+
         <!-- Row end -->
+
+    </div>
+    <!-- Row end -->
     </div>
 
     </div>

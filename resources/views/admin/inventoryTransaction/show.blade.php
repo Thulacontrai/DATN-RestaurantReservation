@@ -1,88 +1,163 @@
 @extends('admin.master')
 
+@section('title', 'Chi Tiết Phiếu Nhập Kho')
+
 @section('content')
-<div class="container">
-    <h1 class="mb-4">Chi tiết phiếu nhập kho #{{ $transaction->id }}</h1>
+ <!-- SweetAlert -->
+ <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 
-    @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    @endif
+ <script>
+     document.addEventListener("DOMContentLoaded", function() {
+         // Kiểm tra lỗi từ session
+         @if ($errors->any())
+             Swal.fire({
+                 position: "top-end", // Góc trên bên phải
+                 icon: "error",
+                 toast: true, // Hiển thị nhỏ gọn
+                 title: "{{ $errors->first() }}", // Lấy thông báo lỗi đầu tiên
+                 showConfirmButton: false, // Không hiển thị nút xác nhận
+                 timerProgressBar: true, // Hiển thị thanh tiến trình
+                 timer: 3500 // Tự động đóng sau 3.5 giây
+             });
+         @endif
 
-    @if(session('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            {{ session('error') }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    @endif
+         // Kiểm tra thông báo lỗi từ session
+         @if (session('error'))
+             Swal.fire({
+                 position: "top-end",
+                 icon: "error",
+                 toast: true,
+                 title: "{{ session('error') }}",
+                 showConfirmButton: false,
+                 timerProgressBar: true,
+                 timer: 3500
+             });
+         @endif
 
-    <div class="card mb-4">
-        <div class="card-body">
-            <h5 class="card-title">Thông tin giao dịch</h5>
-            <p><strong>Loại giao dịch:</strong> {{ $transaction->transaction_type }}</p>
-            <p><strong>Tổng số tiền:</strong> {{ number_format($transaction->total_amount, 0, ',', '.') }} đ</p>
-            <p><strong>Mô tả:</strong> {{ $transaction->description ?? 'N/A' }}</p>
-            <p><strong>Nhà cung cấp:</strong> {{ $transaction->supplier->name ?? 'N/A' }}</p>
-            <p><strong>Nhân viên:</strong> {{ $staff->name ?? 'N/A' }}</p>
-            <p><strong>Trạng thái:</strong> {{ $transaction->status }}</p>
-            <p><strong>Ngày tạo:</strong> {{ $transaction->created_at->format('d/m/Y H:i:s') }}</p>
-        </div>
-    </div>
-
-   
-    <div class="card mb-4">
-        <div class="card-body">
-            <table class="table table-bordered">
-                <h3>Danh sách nguyên liệu</h2>
-                <thead>
-                    <tr>
-                        <th>ID Nguyên Liệu</th>
-                        <th>Tên Nguyên Liệu</th>
-                        <th>Số lượng</th>
-                       
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($transaction->inventoryItems as $item)
-                    <tr>
-                        <td>{{ $item->ingredient->id }}</td>
-                        <td>{{ $item->ingredient->name }}</td>
-                        <td>{{ $item->quantity }}</td>
-                        {{-- <td>{{ number_format($item->unit_price, 2) }}</td> --}}
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    @if($transaction->status !== 'Hủy') <!-- Chỉ hiển thị nếu trạng thái không phải là "Hủy" -->
-        <div class="card mb-4">
-            <div class="card-body">
-                <h3>Cập nhật trạng thái</h2>
-                <form action="{{ route('transactions.update.status', $transaction->id) }}" method="POST">
-                    @csrf
-                    @method('PATCH')
-                    <div class="form-group">
-                        <label for="status">Trạng thái</label>
-                        <select name="status" id="status" class="form-control">
-                            <option value="chờ xử lý" {{ $transaction->status == 'chờ xử lý' ? 'selected' : '' }}>Chờ xử lý</option>
-                            <option value="hoàn thành" {{ $transaction->status == 'hoàn thành' ? 'selected' : '' }}>Hoàn thành</option>
-                            <option value="Hủy" {{ $transaction->status == 'Hủy' ? 'selected' : '' }}>Hủy</option>
-                        </select>
+         // Kiểm tra thông báo thành công từ session
+         @if (session('success'))
+             Swal.fire({
+                 position: "top-end",
+                 icon: "success",
+                 toast: true,
+                 title: "{{ session('success') }}",
+                 showConfirmButton: false,
+                 timerProgressBar: true,
+                 timer: 3500
+             });
+         @endif
+     });
+ </script>
+<div class="content-wrapper-scroll">
+    <div class="content-wrapper">
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow-lg rounded-4">
+                    <div class="card-header d-flex justify-content-between align-items-center bg-gradient-primary text-white rounded-top-4">
+                        <h4 class="card-title mb-0">Chi Tiết Phiếu Nhập Kho #{{ $transaction->id }}</h4>
+                        <a href="{{ route('transactions.index') }}" class="btn btn-sm btn-light text-dark mb-0">Quay Lại</a>
                     </div>
-                    <button type="submit" class="btn btn-success mt-2">Cập nhật trạng thái</button>
-                </form>
+                    <div class="card-body">
+                        <!-- Thông Tin Phiếu Nhập -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <h5 class="text-blue font-weight-bold">Thông Tin Phiếu Nhập</h5>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <strong>Loại Giao Dịch:</strong> <span>{{ ucfirst($transaction->transaction_type) }}</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <strong>Nhà Cung Cấp:</strong> <span>{{ $transaction->supplier->name ?? 'Không rõ' }}</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <strong>Nhân Viên:</strong> <span>{{ $staff->name ?? 'Không rõ' }}</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <strong>Tổng Số Tiền:</strong> <span class="font-weight-bold text-primary">{{ number_format($transaction->total_amount, 0, ',', '.') }} VND</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <strong>Mô Tả:</strong> <span>{{ $transaction->description ?? 'Không rõ' }}</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <strong>Trạng Thái:</strong>
+                                        <span class="badge
+                                            @if ($transaction->status === 'hoàn thành') bg-success
+                                            @elseif ($transaction->status === 'chờ xử lý') bg-warning text-dark
+                                            @elseif ($transaction->status === 'Hủy') bg-danger
+                                            @else bg-secondary @endif">
+                                            {{ ucfirst($transaction->status) }}
+                                        </span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <!-- Thời Gian -->
+                            <div class="col-md-6">
+                                <h5 class="text-blue font-weight-bold">Thời Gian</h5>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <strong>Ngày Tạo:</strong> <span>{{ $transaction->created_at->format('d/m/Y H:i:s') }}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Danh Sách Nguyên Liệu -->
+                        <div class="row mb-4">
+                            <div class="col-md-12">
+                                <h5 class="text-blue font-weight-bold">Danh Sách Nguyên Liệu</h5>
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover">
+                                        <thead>
+                                            <tr class="table-primary">
+                                                <th>ID Nguyên Liệu</th>
+                                                <th>Tên Nguyên Liệu</th>
+                                                <th>Số Lượng</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach($transaction->inventoryItems as $item)
+                                                <tr>
+                                                    <td>{{ $item->ingredient->id }}</td>
+                                                    <td>{{ $item->ingredient->name }}</td>
+                                                    <td>{{ $item->quantity }}</td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cập Nhật Trạng Thái -->
+                        @if($transaction->status !== 'Hủy')
+                        <div class="row mb-4">
+                            <div class="col-md-12">
+                                <h5 class="text-blue font-weight-bold">Cập Nhật Trạng Thái</h5>
+                                <form action="{{ route('transactions.update.status', $transaction->id) }}" method="POST">
+                                    @csrf
+                                    @method('PATCH')
+                                    <div class="form-group">
+                                        <label for="status">Trạng Thái</label>
+                                        <select name="status" id="status" class="form-control">
+                                            <option value="chờ xử lý" {{ $transaction->status == 'chờ xử lý' ? 'selected' : '' }}>Chờ xử lý</option>
+                                            <option value="hoàn thành" {{ $transaction->status == 'hoàn thành' ? 'selected' : '' }}>Hoàn thành</option>
+                                            <option value="Hủy" {{ $transaction->status == 'Hủy' ? 'selected' : '' }}>Hủy</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-success mt-2">Cập Nhật Trạng Thái</button>
+                                </form>
+                            </div>
+                        </div>
+                        @endif
+
+                        <div class="text-center">
+                            <a href="{{ route('transactions.index') }}" class="btn btn-secondary mt-3 px-5 py-2">Trở Về</a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    @endif
-
-    <a href="{{ route('transactions.index') }}" class="btn btn-secondary">Trở về</a>
+    </div>
 </div>
 @endsection

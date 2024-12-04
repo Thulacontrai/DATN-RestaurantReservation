@@ -21,7 +21,7 @@
                                 <i class="bi bi-plus-circle me-2"></i> Thêm Mới
                             </a>
                         </div>
-                        
+
                         <div class="card-body">
                             <table class="table v-middle m-0">
                                 <thead>
@@ -38,7 +38,11 @@
                                             <tr>
                                                 <td>{{ $permission->id }}</td>
                                                 <td>{{ $permission->name }}</td>
-                                                <td>{{ $permission->created_at }}</td>
+                                                <td >
+
+                                                    {{ \Carbon\Carbon::parse($permission->change_date . ' ' . $permission->change_time)->format('H:i:s') }}<br>
+                                                    {{ \Carbon\Carbon::parse($permission->change_date)->format('d/m/Y') }}
+                                                </td>
                                                 <td>
                                                     <div class="actions">
                                                         <a href="{{ route('admin.permissions.edit', $permission->id) }}">

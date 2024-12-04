@@ -31,7 +31,7 @@
                 <div class="col-sm-12 col-12">
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
-                            <div class="card-title">Thêm Combo Mới</div>
+                            <div class="card-title text-primary">Thêm Combo Mới</div>
 
                             <a href="{{ route('admin.combo.index') }}" class="btn btn-sm btn-dark">Quay lại</a>
                         </div>
@@ -43,16 +43,17 @@
                                 <div class="row">
                                     <div class="col-sm-6 col-12">
                                         <div class="mb-3">
-                                            <label class="form-label">Tên Combo</label>
-                                            <input type="text" name="name" class="form-control"
+                                            <label class="form-label">Tên Combo <span class="text-danger required">*</span></label>
+                                            <input type="text" id="combo-name" name="name" class="form-control"
                                                 placeholder="Tên Combo" required>
-                                            <div class="invalid-feedback">Vui lòng nhập tên combo.</div>
-
+                                            <!-- Các thông báo lỗi sẽ được hiển thị qua JS -->
                                         </div>
                                     </div>
+
+
                                     <div class="col-sm-6 col-12">
                                         <div class="mb-3">
-                                            <label class="form-label">Giá Combo</label>
+                                            <label class="form-label">Giá Combo <span class="text-danger required">*</span></label>
                                             <input type="number" name="price" id="price" class="form-control"
                                                 placeholder="Giá Combo" required min="1" max="100000000">
                                             <div class="invalid-feedback">Vui lòng nhập giá combo hợp lệ (từ 1 đến
@@ -60,7 +61,7 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-12 col-12">
-                                        <label for="dishes">Chọn Món Ăn:</label>
+                                        <label for="dishes">Chọn Món Ăn: <span class="text-danger required">*</span></label>
                                         <select name="dishes[]" id="dishes" multiple="multiple" style="width: 100%">
                                             @foreach ($dishes as $dish)
                                                 <option value="{{ $dish->id }}">{{ $dish->name }}</option>
@@ -69,7 +70,7 @@
                                     </div>
                                     <div class="col-sm-6 col-12">
                                         <div class="mb-3">
-                                            <label class="form-label">Ảnh Combo</label>
+                                            <label class="form-label">Ảnh Combo <span class="text-danger required">*</span></label>
                                             <input type="file" name="image" class="form-control" accept="image/*"
                                                 required>
                                             <div class="invalid-feedback">Vui lòng chọn ảnh combo.</div>
@@ -78,7 +79,7 @@
                                     </div>
                                     <div class="col-sm-6 col-12">
                                         <div class="mb-3">
-                                            <label class="form-label">Số Lượng Món Ăn</label>
+                                            <label class="form-label">Số Lượng Món Ăn <span class="text-danger required">*</span></label>
                                             <input type="number" name="quantity_dishes" id="quantity_dishes"
                                                 class="form-control" placeholder="Số lượng món ăn trong combo" required
                                                 readonly>
@@ -194,6 +195,50 @@
                     priceInput.classList.remove('is-invalid');
                 }
             });
+        });
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const comboNameInput = document.getElementById('combo-name');
+            const maxLengthWarning = 'Tên combo dài quá 50 ký tự. Vui lòng rút ngắn.';
+            const nameExistsError = 'Tên combo đã tồn tại. Vui lòng chọn tên khác.';
+            const comboNameParent = comboNameInput.closest('.mb-3'); // Lấy phần tử cha để thêm lỗi
+
+            // Lấy danh sách tên combo từ server
+            const existingComboNames = window.existingComboNames || []; // Danh sách tên combo có sẵn
+
+            comboNameInput.addEventListener('input', function() {
+                const name = comboNameInput.value.trim();
+
+                // Xóa các thông báo lỗi cũ
+                removeErrorMessages();
+
+                // Kiểm tra độ dài tên combo
+                if (name.length > 50) {
+                    showError(maxLengthWarning);
+                    comboNameInput.value = name.substring(0, 50); // Cắt chuỗi về 50 ký tự
+                    return; // Dừng lại ở đây nếu dài quá 50 ký tự
+                }
+
+                // Kiểm tra tên combo có bị trùng không
+                if (existingComboNames.includes(name)) {
+                    showError(nameExistsError);
+                }
+            });
+
+            // Hàm hiển thị lỗi
+            function showError(message) {
+                const errorDiv = document.createElement('div');
+                errorDiv.classList.add('text-danger', 'd-block', 'mt-1');
+                errorDiv.textContent = message;
+                comboNameParent.appendChild(errorDiv);
+            }
+
+            // Hàm xóa các thông báo lỗi cũ
+            function removeErrorMessages() {
+                const existingErrorMessages = comboNameParent.querySelectorAll('.text-danger');
+                existingErrorMessages.forEach(error => error.remove());
+            }
         });
     </script>
 

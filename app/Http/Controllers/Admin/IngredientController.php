@@ -24,7 +24,7 @@ class IngredientController extends Controller
         $this->middleware('permission:Tạo mới nguyên liệu', ['only' => ['create']]);
         $this->middleware('permission:Sửa nguyên liệu', ['only' => ['edit']]);
         $this->middleware('permission:Xóa nguyên liệu', ['only' => ['destroy']]);
-        
+
     }
 
     use TraitCRUD;
@@ -37,24 +37,25 @@ class IngredientController extends Controller
     {
 
           // Nhận các tham số sắp xếp từ request
+          $title = 'Nguyên liệu';
           $sort = $request->input('sort', 'id'); // Mặc định sắp xếp theo id
           $direction = $request->input('direction', 'asc'); // Mặc định theo thứ tự tăng dần
-  
+
           // Nhận tham số tìm kiếm từ request
           $searchTerm = $request->input('search', ''); // Mặc định là chuỗi rỗng nếu không tìm
-  
+
           // Lấy danh sách nguyên liệu theo loại và sắp xếp, đồng thời áp dụng tìm kiếm
           $freshIngredients = Ingredient::where('category', 'Đồ Tươi')
               ->where('name', 'like', '%' . $searchTerm . '%') // Tìm kiếm theo tên
               ->orderBy($sort, $direction)
               ->paginate(6);
-  
+
           $cannedIngredients = Ingredient::where('category', 'Đồ Đóng Hộp')
               ->where('name', 'like', '%' . $searchTerm . '%') // Tìm kiếm theo tên
               ->orderBy($sort, $direction)
               ->paginate(6);
         $ingredients = Ingredient::paginate(10);
-        return view('admin.ingredientType.ingredient.index', compact('freshIngredients', 'cannedIngredients', 'searchTerm'));
+        return view('admin.ingredientType.ingredient.index', compact('freshIngredients', 'cannedIngredients', 'searchTerm', 'title', 'ingredients'));
     }
 
     public function create()
@@ -146,41 +147,41 @@ class IngredientController extends Controller
             'file.required' => 'Vui lòng chọn file.',
             'file.mimes' => 'File phải là định dạng Excel (.xlsx, .xls).',
         ]);
-    
+
         // Đọc file Excel
         $file = $request->file('file');
         $spreadsheet = IOFactory::load($file->getPathname());
-    
+
         // Lấy dữ liệu từ sheet đầu tiên
         $sheetData = $spreadsheet->getActiveSheet()->toArray();
-    
+
         // Các cột cần thiết
         $requiredColumns = ['name', 'price', 'unit', 'quantity', 'category'];
         $numRequiredColumns = count($requiredColumns);
-    
+
         $headerRow = true;
         $errors = [];
-    
+
         foreach ($sheetData as $index => $row) {
             // Bỏ qua dòng tiêu đề nếu có
             if ($headerRow) {
                 $headerRow = false;
-    
+
                 // Kiểm tra xem header có nhiều hơn số cột yêu cầu không
                 if (count($row) > $numRequiredColumns) {
                     $errors[] = "File không đúng, vui lòng kiểm tra lại file của bạn.";
                     break;
                 }
-    
+
                 continue;
             }
-    
+
             // Kiểm tra nếu hàng hiện tại có nhiều cột hơn số cột cần thiết
             if (count($row) > $numRequiredColumns) {
                 $errors[] = "Dòng " . ($index + 1) . ": File không đúng, vui lòng kiểm tra lại file của bạn.";
                 continue;
             }
-    
+
             // Thực hiện validation cho từng dòng
             $validator = Validator::make([
                 'name'     => $row[0],
@@ -195,24 +196,24 @@ class IngredientController extends Controller
                 'quantity' => 'required|numeric|min:0',
                 'category' => 'required|string|max:100', // Quy tắc xác thực cho 'category'
             ]);
-    
+
             // Kiểm tra nếu dữ liệu không hợp lệ
             if ($validator->fails()) {
                 $errors[] = "Dòng " . ($index + 1) . ": " . implode(', ', $validator->errors()->all());
                 continue;
             }
-    
+
             // Kiểm tra trùng lặp trước khi thêm mới
             $existingIngredient = Ingredient::where('name', $row[0])
                 // ->where('price', $row[1])
                 // ->where('unit', $row[2])
                 ->first();
-    
+
             if ($existingIngredient) {
                 $errors[] = "Dòng " . ($index + 1) . ": Nguyên liệu đã tồn tại.";
                 continue;
             }
-    
+
             // Tạo nguyên liệu mới nếu dữ liệu hợp lệ
             $ingredient = Ingredient::create([
                 'name'     => $row[0],
@@ -220,7 +221,7 @@ class IngredientController extends Controller
                 'unit'     => $row[2],
                 'category' => $row[4], // Thêm 'category'
             ]);
-    
+
             // Thêm nguyên liệu vào bảng tồn kho (inventory_stock) với số lượng từ file Excel
             InventoryStock::create([
                 'ingredient_id'  => $ingredient->id, // Thêm dòng này để liên kết với bảng Ingredient
@@ -230,63 +231,63 @@ class IngredientController extends Controller
                 'last_update' => now(), // Thêm giá trị cho 'last_update'
             ]);
         }
-    
+
         // Kiểm tra nếu có lỗi trong quá trình import
         if (!empty($errors)) {
             return redirect()->back()->withErrors(['errors' => $errors]);
         }
-    
+
         });
-    
+
         // Sau khi import thành công, quay lại trang danh sách nguyên liệu
         return redirect()->route('admin.ingredient.index')->with('success', 'Import nguyên liệu thành công!');
-    
-    
+
+
     }
-    
-    
-    
-        
+
+
+
+
         // Hiển thị form import
         public function showImportForm()
         {
             return view('admin.ingredientType.ingredient.import');
         }
-    
+
         public function downloadTemplate()
         {
             // Tạo một file Excel mới
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
-        
+
             // Thiết lập tiêu đề cho các cột
             $sheet->setCellValue('A1', 'Name');      // Tên nguyên liệu
             $sheet->setCellValue('B1', 'Price');     // Giá
             $sheet->setCellValue('C1', 'Unit');      // Đơn vị
             $sheet->setCellValue('D1', 'Quantity');  // Số lượng
             $sheet->setCellValue('E1', 'Category');  // Phân loại
-        
+
             // Thiết lập một số ví dụ dữ liệu mẫu (tùy chọn)
             $sheet->setCellValue('A2', 'Đường');
             $sheet->setCellValue('B2', '10000');      // Giá mẫu
             $sheet->setCellValue('C2', 'g');          // Đơn vị mẫu
             $sheet->setCellValue('D2', '500');        // Số lượng mẫu
             $sheet->setCellValue('E2', 'Đồ đóng hộp');     // Phân loại mẫu
-        
+
             // Tạo writer và xuất file Excel
             $writer = new Xlsx($spreadsheet);
             $fileName = 'template_ingredients.xlsx';
-        
+
             // Thiết lập header để download file
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
             header("Content-Disposition: attachment; filename=\"$fileName\"");
             header('Cache-Control: max-age=0');
-        
+
             $writer->save('php://output');
             exit;
         }
-        
-    
-    
+
+
+
 
 }

@@ -1,6 +1,6 @@
 @extends('admin.master')
 
-@section('title', 'Danh Sách Đơn Hàng')
+@section('title', 'Danh Sách Hoá Đơn')
 
 @section('content')
 
@@ -16,7 +16,7 @@
                 <div class="col-sm-12 col-12">
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
-                            <div class="card-title">Danh sách đơn hàng</div>
+                            <div class="card-title">Danh sách hoá đơn</div>
 
                             <!-- Nút Thêm Mới và Khôi Phục -->
                             <div class="d-flex gap-2">
@@ -46,7 +46,7 @@
                                     <thead>
                                         <tr>
                                             <th>Mã Đơn Hàng</th>
-                                            <th>Mã Đặt Chỗ</th>
+                                            <th>Mã Đặt Bàn</th>
                                             <th>Nhân Viên</th>
                                             <th>Bàn</th>
                                             <th>Tổng Tiền</th>

@@ -1,4 +1,4 @@
-<?php 
+<?php
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -33,10 +33,11 @@ class InventoryController extends Controller
         $this->middleware('permission:Tạo mới tồn kho', ['only' => ['create']]);
         $this->middleware('permission:Sửa tồn kho', ['only' => ['edit']]);
         $this->middleware('permission:Xóa tồn kho', ['only' => ['destroy']]);
-        
+
     }
     public function index(Request $request)
     {
+        $title = 'Hàng Tồn Kho';
         $query = InventoryStock::with('ingredient');
 
         if ($request->has('search') && $request->input('search') !== '') {
@@ -70,7 +71,7 @@ class InventoryController extends Controller
         $lowStock = InventoryStock::whereBetween('quantity_stock', [1, 10])->get();
         $highStock = InventoryStock::whereBetween('quantity_stock', [50, 100])->get();
 
-        return view('admin.inventory.index', compact('inventoryStocks', 'outOfStock', 'lowStock', 'highStock'));
+        return view('admin.inventory.index', compact('inventoryStocks', 'outOfStock', 'lowStock', 'highStock', 'title'));
     }
 
     public function edit($id)

@@ -4,20 +4,18 @@
 <div class="container">
     {{-- Hiển thị thông báo thành công hoặc lỗi --}}
     @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <div class="alert alert-success alert-dismissible fade show d-flex align-items-center" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
             {{ session('success') }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
 
     @if(session('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
             {{ session('error') }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
 
@@ -25,57 +23,66 @@
         @csrf
         @method('PUT')
 
-        <div class="card mb-4">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header  text-white">
+                <h5 class="mb-0 text-primary">Chỉnh sửa phiếu nhập kho</h5>
+            </div>
             <div class="card-body">
-                <h3 class="mb-4">Chỉnh sửa phiếu nhập kho</h3>
-                <div class="form-group">
-                    <label for="total_amount">Tổng số tiền</label>
-                    <input type="hidden" id="total_amount" name="total_amount" value="{{ old('total_amount', $transaction->total_amount) }}" required>
-                    <input type="text" id="total_amount_display" class="form-control" value="{{ number_format($transaction->total_amount, 0, ',', '.') }} đ" readonly>
-                </div>
-                
-                <div class="form-group">
-                    <label for="description">Ghi chú</label>
-                    <textarea name="description" class="form-control">{{ old('description', $transaction->description) }}</textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="supplier_id">Nhà cung cấp</label>
-                    <select name="supplier_id" class="form-control" required>
-                        <option value="">Chọn nhà cung cấp</option>
-                        @foreach($suppliers as $supplier)
-                            <option value="{{ $supplier->id }}" {{ $supplier->id == $transaction->supplier_id ? 'selected' : '' }}>{{ $supplier->name }}</option>
-                        @endforeach
-                    </select>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="total_amount_display" class="form-label">Tổng số tiền</label>
+                        <input type="hidden" id="total_amount" name="total_amount" value="{{ old('total_amount', $transaction->total_amount) }}" required>
+                        <input type="text" id="total_amount_display" class="form-control" value="{{ number_format($transaction->total_amount, 0, ',', '.') }} đ" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="supplier_id" class="form-label">Nhà cung cấp</label>
+                        <select name="supplier_id" class="form-select" required>
+                            <option value="">Chọn nhà cung cấp</option>
+                            @foreach($suppliers as $supplier)
+                                <option value="{{ $supplier->id }}" {{ $supplier->id == $transaction->supplier_id ? 'selected' : '' }}>{{ $supplier->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
 
-                <h4 class="mt-4">Nguyên liệu</h4>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Ghi chú</label>
+                    <textarea name="description" class="form-control" rows="3">{{ old('description', $transaction->description) }}</textarea>
+                </div>
+
+                <h5 class="mt-4 mb-3 text-primary">Nguyên liệu</h5>
                 <div id="ingredients-container">
                     @foreach($transaction->inventoryItems as $index => $item)
-                        <div class="ingredient-item mb-3 p-3 border rounded">
-                            <div class="form-group">
-                                <label for="ingredient_id">Nguyên liệu:</label>
-                                <select name="ingredients[{{ $index }}][ingredient_id]" class="form-select" required data-price="{{ $ingredients->firstWhere('id', $item->ingredient_id)->price ?? 0 }}">
-                                    <option value="">Chọn nguyên liệu</option>
-                                    @foreach($ingredients as $ingredient)
-                                        <option value="{{ $ingredient->id }}" {{ $ingredient->id == $item->ingredient_id ? 'selected' : '' }}>{{ $ingredient->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="quantity">Số lượng:</label>
-                                <input type="number" name="ingredients[{{ $index }}][quantity]" class="form-control quantity-input" value="{{ $item->quantity }}" required>
+                        <div class="ingredient-item mb-3 p-3 border rounded bg-light shadow-sm">
+                            <div class="row">
+                                <div class="col-md-6 mb-3 mb-md-0">
+                                    <label for="ingredient_id" class="form-label">Nguyên liệu:</label>
+                                    <select name="ingredients[{{ $index }}][ingredient_id]" class="form-select" required data-price="{{ $ingredients->firstWhere('id', $item->ingredient_id)->price ?? 0 }}">
+                                        <option value="">Chọn nguyên liệu</option>
+                                        @foreach($ingredients as $ingredient)
+                                            <option value="{{ $ingredient->id }}" {{ $ingredient->id == $item->ingredient_id ? 'selected' : '' }}>{{ $ingredient->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="quantity" class="form-label">Số lượng:</label>
+                                    <input type="number" name="ingredients[{{ $index }}][quantity]" class="form-control quantity-input" value="{{ $item->quantity }}" required>
+                                </div>
                             </div>
                         </div>
                     @endforeach
                 </div>
 
-                <button type="submit" class="btn btn-primary mt-3">Cập nhật</button>
+                <button type="submit" class="btn btn-primary mt-3 float-end">
+                    <i class="fas fa-save me-1"></i> Cập nhật
+                </button>
             </div>
         </div>
     </form>
 
-    <a href="{{ route('transactions.index') }}" class="btn btn-secondary">Trở về</a>
+    <a href="{{ route('transactions.index') }}" class="btn btn-secondary mt-3">
+        <i class="fas fa-arrow-left me-1"></i> Trở về
+    </a>
 </div>
 
 <script>
@@ -93,9 +100,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 totalAmount += price * quantity;
             }
         });
-        // Gán giá trị thực vào input ẩn
         totalAmountInput.value = totalAmount;
-        // Định dạng số tiền cho người dùng thấy
         totalAmountDisplay.value = totalAmount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
     }
 
@@ -103,9 +108,7 @@ document.addEventListener('DOMContentLoaded', function () {
         input.addEventListener('input', updateTotalAmount);
     });
 
-    // Tính tổng tiền ban đầu
     updateTotalAmount();
 });
-
 </script>
 @endsection

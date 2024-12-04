@@ -17,8 +17,9 @@ class ReportController extends Controller
 
     public function index()
     {
+        $title = 'Báo Cáo Thống Kê';
 
-        return view('admin.dashboard.reports.index');
+        return view('admin.dashboard.reports.index', compact('title'));
 
     }
 

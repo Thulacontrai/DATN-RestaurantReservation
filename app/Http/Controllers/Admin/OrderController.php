@@ -26,8 +26,9 @@ class OrderController extends Controller
 
     public function index()
     {
+        $title = 'Hoá Đơn';
         $orders = Order::all();
-        return view('admin.order.index', compact('orders'));
+        return view('admin.order.index', compact('orders', 'title',));
     }
 
     public function create()
@@ -71,38 +72,65 @@ class OrderController extends Controller
             'staff_id' => 'required|integer|exists:users,id', // Kiểm tra nhân viên hợp lệ
             'total_amount' => 'required|numeric|min:0', // Tổng tiền phải là số hợp lệ và >= 0
             'order_type' => 'required|in:dine_in,take_away,delivery', // Loại đơn hàng phải hợp lệ
-            'status' => 'required|in:pending,completed,cancelled', // Trạng thái phải là một trong ba giá trị
+            'status' => 'nullable|in:pending,completed,cancelled', // Trạng thái có thể thay đổi hoặc không
             'discount_amount' => 'nullable|numeric|min:0', // Số tiền giảm giá có thể là null nhưng nếu có phải là số hợp lệ
             'final_amount' => 'required|numeric|min:0', // Số tiền cuối cùng phải là số hợp lệ và >= 0
         ]);
 
-        // Kiểm tra nếu số tiền cuối cùng có hợp lệ hơn tổng tiền (nếu có giảm giá)
-        if (isset($validated['discount_amount']) && $validated['final_amount'] < $validated['total_amount'] - $validated['discount_amount']) {
-            return redirect()->back()->with('error', 'Số tiền cuối cùng không hợp lệ. Nó phải lớn hơn hoặc bằng tổng tiền trừ số tiền giảm giá.');
+        // Lấy trạng thái hiện tại và trạng thái mới
+        $currentStatus = $order->status;
+        $newStatus = $validated['status'] ?? $currentStatus;
+
+        // Kiểm tra trạng thái ngược
+        if ($this->isStatusReversal($currentStatus, $newStatus)) {
+            return redirect()->back()->with('error', 'Không thể cập nhật trạng thái ngược.');
         }
 
-        // Đảm bảo rằng giá trị của discount_amount nếu không có sẽ được gán là 0
+        // Kiểm tra tính hợp lệ của số tiền cuối cùng
         $discountAmount = $validated['discount_amount'] ?? 0;
 
-        // Kiểm tra xem final_amount có hợp lệ và không nhỏ hơn discount_amount
         if ($validated['final_amount'] < $validated['total_amount'] - $discountAmount) {
             return redirect()->back()->with('error', 'Số tiền cuối cùng không hợp lệ. Nó phải lớn hơn hoặc bằng tổng tiền trừ số tiền giảm giá.');
         }
 
-        // Cập nhật thông tin đơn hàng với dữ liệu đã xác thực
-        $order->update([
+        // Chuẩn bị dữ liệu để cập nhật
+        $orderData = [
             'reservation_id' => $validated['reservation_id'],
             'staff_id' => $validated['staff_id'],
             'total_amount' => $validated['total_amount'],
             'order_type' => $validated['order_type'],
-            'status' => $validated['status'],
-            'discount_amount' => $discountAmount, // Gán giá trị giảm giá nếu có, hoặc 0
+            'discount_amount' => $discountAmount,
             'final_amount' => $validated['final_amount'],
-        ]);
+            'status' => $newStatus,
+        ];
 
-        // Trả về trang danh sách đơn hàng với thông báo thành công
+        // Cập nhật thông tin đơn hàng
+        $order->update($orderData);
+
         return redirect()->route('admin.order.index')->with('success', 'Đơn hàng đã được cập nhật thành công.');
     }
+
+    /**
+     * Kiểm tra trạng thái ngược.
+     *
+     * @param string $currentStatus
+     * @param string $newStatus
+     * @return bool
+     */
+    private function isStatusReversal($currentStatus, $newStatus)
+    {
+        $statusOrder = [
+            'pending' => 1,    // Trạng thái khởi tạo
+            'completed' => 2,  // Trạng thái hoàn thành
+            'cancelled' => 3,  // Trạng thái hủy
+        ];
+
+        // Kiểm tra thứ tự trạng thái
+        return isset($statusOrder[$currentStatus], $statusOrder[$newStatus]) &&
+               $statusOrder[$currentStatus] > $statusOrder[$newStatus];
+    }
+
+
 
 
 

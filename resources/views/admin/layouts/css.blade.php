@@ -46,19 +46,25 @@
     }
 
     /* Scrollbar styling */
-    .sidebarMenuScroll {
+     nav .sidebar-wrapper {
         max-height: 600px;
         /* Chiều cao tối đa, có thể điều chỉnh theo ý muốn */
         overflow-y: auto;
         /* Kích hoạt thanh cuộn dọc */
     }
 
-    .sidebarMenuScroll::-webkit-scrollbar {
+    nav.sidebar-wrapper::-webkit-scrollbar {
         width: 8px;
     }
 
-    .sidebarMenuScroll::-webkit-scrollbar-thumb {
+    nav.sidebar-wrapper::-webkit-scrollbar-thumb {
         background-color: rgba(0, 0, 0, 0.2);
         border-radius: 4px;
     }
+    .required {
+    font-weight: bold;
+    font-size: 1.2em;
+    color: #dc3545; /* Màu đỏ */
+}
+
 </style>
