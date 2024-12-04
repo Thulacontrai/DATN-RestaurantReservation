@@ -24,7 +24,7 @@
                     <div class="card shadow-sm">
                         <div class="card-header d-flex justify-content-between align-items-center text-white">
                             <h5 class="card-title mb-3">Chỉnh Sửa Người Dùng</h5>
-                            <a href="{{ route('admin.user.index') }}" class="btn btn-sm btn-secondary">Quay lại</a>
+                            <a href="{{ route('admin.user.employees') }}" class="btn btn-sm btn-secondary">Quay lại</a>
                         </div>
                         <div class="card-body">
                             <!-- Form Chỉnh Sửa -->
@@ -82,7 +82,7 @@
                                 </div>
 
                                 <button type="submit" class="btn btn-sm btn-primary">Cập Nhật</button>
-                                <a href="{{ route('admin.user.index') }}" class="btn btn-sm btn-secondary">Hủy</a>
+                                <a href="{{ route('admin.user.employees') }}" class="btn btn-sm btn-secondary">Hủy</a>
                             </form>
                             <!-- Kết thúc Form Chỉnh Sửa -->
                         </div>

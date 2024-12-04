@@ -21,6 +21,14 @@ use PhpParser\Node\Scalar\MagicConst\Dir;
 
 class KitchenController extends Controller
 {
+
+    public function __construct()
+    {
+        // Gán middleware cho các phương thức
+        $this->middleware('permission:Xem bếp', ['only' => ['index']]);
+
+    }
+
     public function index()
     {
         $items = Kitchen::where('status', 'đang chế biến')

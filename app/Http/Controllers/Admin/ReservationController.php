@@ -1045,6 +1045,7 @@ class ReservationController extends Controller
     {
         try {
             $id = $request->id;
+            $reason = $request->reason; // Lấy lý do từ request
             $reservation = Reservation::findOrFail($id);
             if ($reservation->status != 'Completed') {
                 $reservation->status = 'Cancelled';

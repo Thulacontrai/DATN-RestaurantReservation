@@ -39,9 +39,13 @@ class AuthenticatedSessionController extends Controller
             // Nếu chỉ có quyền 'access pos', chuyển hướng đến trang POS
             return redirect()->route('pos.index');
         }
+        if ($user->can('Xem bếp') && !$user->can('access admin')) {
+            // Nếu chỉ có quyền 'access pos', chuyển hướng đến trang POS
+            return redirect()->route('kitchen.index');
+        }
     
         // Nếu không có quyền admin và đang truy cập /admin
-        if (!$user->can('access admin', 'access pos') && request()->is('admin', 'pos')) {
+        if (!$user->can('access admin', 'access pos', 'Xem bếp') && request()->is('admin', 'pos', 'Xem bếp')) {
             return redirect('/');
         }
     

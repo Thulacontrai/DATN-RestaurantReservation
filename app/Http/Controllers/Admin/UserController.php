@@ -27,52 +27,56 @@ class UserController extends Controller
      /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
-    {
-        $query = User::whereDoesntHave('roles');
-        
-        // Tìm kiếm tổng hợp
-        if ($request->has('search') && !empty($request->search)) {
-            $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('name', 'like', '%' . $search . '%')
-                  ->orWhere('email', 'like', '%' . $search . '%')
-                  ->orWhere('phone', 'like', '%' . $search . '%');
-            });
-        }
-        
-        $users = $query->latest()->paginate(10);
-        return view('admin.user.index', [
-            'users' => $users,
-            'type' => 'user',
-            'request' => $request
-        ]);
+    // Controller
+// Controller
+public function index(Request $request)
+{
+    $query = User::whereDoesntHave('roles'); // Những người dùng không có vai trò
+
+    if ($request->has('search') && !empty($request->search)) {
+        $search = $request->search;
+        $query->where(function($q) use ($search) {
+            $q->where('name', 'like', '%' . $search . '%')
+              ->orWhere('email', 'like', '%' . $search . '%')
+              ->orWhere('phone', 'like', '%' . $search . '%');
+        });
     }
-    
-    public function employeeList(Request $request)
-    {
-        $query = User::whereHas('roles');
-        
-        // Tìm kiếm tổng hợp
-        if ($request->has('search') && !empty($request->search)) {
-            $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('name', 'like', '%' . $search . '%')
-                  ->orWhere('email', 'like', '%' . $search . '%')
-                  ->orWhere('phone', 'like', '%' . $search . '%')
-                  ->orWhereHas('roles', function($roleQuery) use ($search) {
-                      $roleQuery->where('name', 'like', '%' . $search . '%');
-                  });
-            });
-        }
-        
-        $users = $query->latest()->paginate(10);
-        return view('admin.user.index', [
-            'users' => $users,
-            'type' => 'employee',
-            'request' => $request
-        ]);
+
+    $users = $query->latest()->paginate(10);
+
+    return view('admin.user.index', [
+        'users' => $users,
+        'type' => 'user',  // Điều này đảm bảo view sẽ biết đang hiển thị người dùng
+        'request' => $request
+    ]);
+}
+
+public function employeeList(Request $request)
+{
+    $query = User::whereHas('roles'); // Những người dùng có vai trò
+
+    if ($request->has('search') && !empty($request->search)) {
+        $search = $request->search;
+        $query->where(function($q) use ($search) {
+            $q->where('name', 'like', '%' . $search . '%')
+              ->orWhere('email', 'like', '%' . $search . '%')
+              ->orWhere('phone', 'like', '%' . $search . '%')
+              ->orWhereHas('roles', function($roleQuery) use ($search) {
+                  $roleQuery->where('name', 'like', '%' . $search . '%');
+              });
+        });
     }
+
+    $users = $query->latest()->paginate(10);
+
+    return view('admin.user.index', [
+        'users' => $users,
+        'type' => 'employee',  // Điều này đảm bảo view sẽ biết đang hiển thị nhân viên
+        'request' => $request
+    ]);
+}
+
+
     /**
      * Show the form for creating a new resource.
      */
