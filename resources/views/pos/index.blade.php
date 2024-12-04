@@ -282,6 +282,8 @@
                     <div class="filter-section mb-4 d-flex justify-content-start flex-nowrap">
                         <button class="btn btn-outline-primary filter-btnn me-2 active" data-category="all">Tất
                             cả</button>
+                        <button class="btn btn-outline-primary filter-btnn me-2"
+                            data-category="combo">Combo({{ $combo->count() }})</button>
                         @foreach ($cate as $cate)
                             <button class="btn btn-outline-primary filter-btnn me-2"
                                 data-category="{{ $cate->id }}">{{ $cate->name }}({{ $cate->dishes->count() }})</button>
@@ -302,6 +304,23 @@
                                         <h5 class="card-price text-primary">{{ number_format($dish->price, 0, ',', '.') }}
                                             VND</h5>
                                         <p class="card-title">{{ \Str::limit($dish->name, 20, '...') }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                        @foreach ($combo as $combo)
+                            <div class="col-md-3 dish-combo" data-category="combo" data-combo-id="{{ $combo->id }}"
+                                data-combo-price="{{ $combo->price }}">
+                                <div class="card menu-item">
+                                    <img class="btn btn-add-combo" data-combo-id="{{ $combo->id }}"
+                                        src="{{ asset($combo->image ? 'storage/' . $combo->image : 'images/placeholder.jpg') }}"
+                                        alt="{{ $combo->name }}" class="img-fluid rounded"
+                                        style="height: 200px; object-fit: cover;" />
+                                    <div class="card-body text-center">
+                                        <h5 class="card-price text-primary">
+                                            {{ number_format($combo->price, 0, ',', '.') }}
+                                            VND</h5>
+                                        <p class="card-title">{{ \Str::limit($combo->name, 20, '...') }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -349,9 +368,16 @@
         });
         document.querySelector('#dish-list').addEventListener('click', function(event) {
             const card = event.target.closest('.dish-item');
-            if (!card) return;
-            const dishId = card.dataset.dishId;
-            addDishToOrder(dishId, selectedTableId);
+            const combo = event.target.closest('.dish-combo');
+
+            if (card) {
+                const dishId = card.dataset.dishId;
+                addDishToOrder(dishId, selectedTableId);
+            }
+            if (combo) {
+                const comboId = combo.dataset.comboId;
+                addComboToOrder(comboId, selectedTableId);
+            }
         });
         document.querySelector('#notification-button').addEventListener('click', function(event) {
             notificationButton(selectedTableId);
@@ -774,6 +800,36 @@ ${availableTables.map(table => `
             }
         }
 
+        function addComboToOrder(comboId, selectedTableId) {
+            if (selectedTableId) {
+                fetch(`/add-combo-to-order`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                .getAttribute('content'),
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            table_id: selectedTableId,
+                            combo_id: comboId
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showNotification('Thêm món thành công')
+                        } else {
+                            console.log(data);
+                            
+                            showNotification('Món đã hết nguyên liệu', 'error')
+                        }
+                    })
+                    .catch(error => console.log('Error:', error));
+            } else {
+                showNotification('Hãy chọn bàn trước khi thêm món', 'error')
+            }
+        }
+
         function showOrderDetails(tableId) {
             fetch('/order-details/' + tableId, {
                     method: 'POST',
@@ -800,7 +856,6 @@ ${availableTables.map(table => `
             const selectedTableIds = data.table.tables.map(table => String(table.table_number));
             tableCards.forEach(card => {
                 const isSelected = selectedTableIds.includes(card.getAttribute('data-table-id'));
-                console.log();
 
                 if (isSelected) {
                     card.style.backgroundColor = '#007bff';

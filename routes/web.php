@@ -213,6 +213,7 @@ Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
 Route::post('/create-order', [PosController::class, 'createOrder']);
 Route::post('/order-details/{tableId}', [PosController::class, 'orderDetails'])->name('order-details');
 Route::post('/add-dish-to-order', [PosController::class, 'addDishToOrder']);
+Route::post('/add-combo-to-order', [PosController::class, 'addComboToOrder']);
 Route::post('/deleteItem', [PosController::class, 'deleteItem']);
 Route::post('/increaseQuantity', [PosController::class, 'increaseQuantity']);
 Route::post('/decreaseQuantity', [PosController::class, 'decreaseQuantity']);

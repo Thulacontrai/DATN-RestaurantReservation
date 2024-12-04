@@ -28,6 +28,10 @@ class Kitchen extends Model
     {
         return $this->belongsTo(Dishes::class, 'item_id');
     }
+    public function combo()
+    {
+        return $this->belongsTo(Combo::class, 'item_id');
+    }
 
     public function canceler()
     {

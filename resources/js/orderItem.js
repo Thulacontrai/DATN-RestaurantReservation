@@ -28,13 +28,13 @@ window.Echo.channel('order')
             <p><strong>Bàn:</strong> ${e.tableId.table_number}</p>
         </div>
         <div class="col">
-            <p><strong>Mã đơn hàng:</strong> ${e.order?.reservation?.id ?? e.order.id}</p>
+            <p><strong>Mã đơn hàng:</strong> ${e.orderItems?.reservation?.id ?? e.orderItems.id}</p>
         </div>
     </div>
 
     <div class="row">
         <div class="col">
-            <p><strong>Khách Hàng:</strong> ${e.order?.reservation?.user_name ?? e.order?.customer?.name ?? 'Khách lẻ'}</p>
+            <p><strong>Khách Hàng:</strong> ${e.orderItems?.reservation?.user_name ?? e.orderItems?.customer?.name ?? 'Khách lẻ'}</p>
         </div>
         <div class="col">
             <p><strong>Giờ vào:</strong> ${e.tableId.orders['0'].pivot.start_time.split(" ")[1]}</p>
@@ -42,7 +42,7 @@ window.Echo.channel('order')
     </div>
     <div class="row">
         <div class="col">
-            <p><strong>Số người:</strong> ${e.order?.reservation?.guest_count ?? 'Khách lẻ'}</p>
+            <p><strong>Số người:</strong> ${e.orderItems?.reservation?.guest_count ?? 'Khách lẻ'}</p>
         </div>
     </div>
 </div>
@@ -57,7 +57,7 @@ window.Echo.channel('order')
                     layoutTable.innerHTML += `
                     <div class="item-list" data-dish-id="${item.item_id}" data-dish-order="${item.order_id}" data-dish-status="${item.status}">
                         <div class="item-name d-flex justify-content-around">
-                            <span class="text-dark" title="${item.status}">${item.dish.name}</span>
+                            <span class="text-dark" title="${item.status}">${item.item_type == 1 ? item.dish.name : item.combo.name}</span>
                             <div>
                                 <span>${item.informed}</span>
                                 <i class="fa-regular fa-hourglass-half text-dark" title="${item.status}"></i>
@@ -88,7 +88,7 @@ window.Echo.channel('order')
                     <div class="item-list" data-dish-id="${item.item_id}" data-dish-order="${item.order_id}" data-dish-status="${item.status}" data-dish-informed="${item.informed}" data-dish-processing="${item.processing}" data-dish-quantity="${item.quantity}">
                         <div class="item-name">
                             <div class="item-name d-flex justify-content-around">
-                                <span class="text-danger" title="${item.status}">${item.dish.name}</span>
+                                <span class="text-danger" title="${item.status}">${item.item_type == 1 ? item.dish.name : item.combo.name}</span>
                                 <div>
                                     <span class="text-danger">${item.processing}</span>
                                     <i class="fa-solid fa-fire-burner text-danger" title="${item.status}"></i> 
@@ -119,7 +119,7 @@ window.Echo.channel('order')
                     <div class="item-list" data-dish-id="${item.item_id}" data-dish-order="${item.order_id}" data-dish-status="${item.status}">
                         <div class="item-name">
                             <div class="item-name d-flex justify-content-around">
-                                <span class="text-success" title="${item.status}">${item.dish.name}</span>  
+                                <span class="text-success" title="${item.status}">${item.item_type == 1 ? item.dish.name : item.combo.name}</span>  
                                 <div>
                                     <span class="text-success">${item.completed}</span>
                                     <i class="fa-solid fa-square-check text-success" title="${item.status}"></i>
@@ -151,7 +151,7 @@ window.Echo.channel('order')
             document.getElementById('totalAmount').innerHTML = new Intl.NumberFormat('vi-VN', {
                 style: 'currency',
                 currency: 'VND'
-            }).format(e.order.total_amount);
+            }).format(e.orderItems.total_amount);
         }
     });
 window.Echo.channel('orders')
@@ -186,13 +186,13 @@ window.Echo.channel('orders')
             <p><strong>Bàn:</strong> ${e.tableId.table_number}</p>
         </div>
         <div class="col">
-            <p><strong>Mã đơn hàng:</strong> ${e.order?.reservation?.id ?? e.order.id}</p>
+            <p><strong>Mã đơn hàng:</strong> ${e.orderItems?.reservation?.id ?? e.orderItems.id}</p>
         </div>
     </div>
 
     <div class="row">
         <div class="col">
-            <p><strong>Khách Hàng:</strong> ${e.order?.reservation?.user_name ?? e.order?.customer?.name ?? 'Khách lẻ'}</p>
+            <p><strong>Khách Hàng:</strong> ${e.orderItems?.reservation?.user_name ?? e.orderItems?.customer?.name ?? 'Khách lẻ'}</p>
         </div>
         <div class="col">
             <p><strong>Giờ vào:</strong> ${e.tableId.orders['0'].pivot.start_time.split(" ")[1]}</p>
@@ -200,7 +200,7 @@ window.Echo.channel('orders')
     </div>
     <div class="row">
         <div class="col">
-            <p><strong>Số người:</strong> ${e.order?.reservation?.guest_count ?? 'Khách lẻ'}</p>
+            <p><strong>Số người:</strong> ${e.orderItems?.reservation?.guest_count ?? 'Khách lẻ'}</p>
         </div>
     </div>
 </div>
@@ -215,7 +215,7 @@ window.Echo.channel('orders')
                     layoutTable.innerHTML += `
                 <div class="item-list" data-dish-id="${item.item_id}" data-dish-order="${item.order_id}" data-dish-status="${item.status}">
                     <div class="item-name d-flex justify-content-around">
-                        <span class="text-dark" title="${item.status}">${item.dish.name}</span>
+                        <span class="text-dark" title="${item.status}">${item.item_type == 1 ? item.dish.name : item.combo.name}</span>
                         <div>
                             <span>${item.informed}</span>
                             <i class="fa-regular fa-hourglass-half text-dark" title="${item.status}"></i>
@@ -246,7 +246,7 @@ window.Echo.channel('orders')
                 <div class="item-list" data-dish-id="${item.item_id}" data-dish-order="${item.order_id}" data-dish-status="${item.status}" data-dish-informed="${item.informed}" data-dish-processing="${item.processing}" data-dish-quantity="${item.quantity}">
                     <div class="item-name">
                         <div class="item-name d-flex justify-content-around">
-                            <span class="text-danger" title="${item.status}">${item.dish.name}</span>
+                            <span class="text-danger" title="${item.status}">${item.item_type == 1 ? item.dish.name : item.combo.name}</span>
                             <div>
                                 <span class="text-danger">${item.processing}</span>
                                 <i class="fa-solid fa-fire-burner text-danger" title="${item.status}"></i> 
@@ -277,7 +277,7 @@ window.Echo.channel('orders')
                 <div class="item-list" data-dish-id="${item.item_id}" data-dish-order="${item.order_id}" data-dish-status="${item.status}">
                     <div class="item-name">
                         <div class="item-name d-flex justify-content-around">
-                            <span class="text-success" title="${item.status}">${item.dish.name}</span>  
+                            <span class="text-success" title="${item.status}">${item.item_type == 1 ? item.dish.name : item.combo.name}</span>  
                             <div>
                                 <span class="text-success">${item.completed}</span>
                                 <i class="fa-solid fa-square-check text-success" title="${item.status}"></i>
@@ -309,6 +309,6 @@ window.Echo.channel('orders')
             document.getElementById('totalAmount').innerHTML = new Intl.NumberFormat('vi-VN', {
                 style: 'currency',
                 currency: 'VND'
-            }).format(e.order.total_amount);
+            }).format(e.orderItems.total_amount);
         }
     });
