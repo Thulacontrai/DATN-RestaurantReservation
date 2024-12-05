@@ -135,127 +135,102 @@
                         </div>
 
                         <script>
-                            var options = {
-                                chart: {
-                                    height: 317,
-                                    type: 'area',
-                                    toolbar: {
-                                        show: false, // Ẩn thanh công cụ
-                                    },
-                                    events: {
-                                        resize: function(chart) {
-                                            chart.updateOptions({
-                                                chart: {
-                                                    height: 317, // Đảm bảo kích thước biểu đồ không bị thay đổi quá mức
-                                                }
-                                            });
+                            document.addEventListener('DOMContentLoaded', function () {
+                                // Tùy chọn biểu đồ
+                                var options = {
+                                    chart: {
+                                        height: 317,
+                                        type: 'area',
+                                        toolbar: {
+                                            show: false, // Ẩn thanh công cụ
+                                        },
+                                        events: {
+                                            resize: function (chart) {
+                                                chart.updateOptions({
+                                                    chart: {
+                                                        height: 317, // Duy trì kích thước ổn định khi thay đổi kích thước
+                                                    }
+                                                });
+                                            }
                                         }
-                                    }
-                                },
-                                dataLabels: {
-                                    enabled: false // Tắt hiển thị nhãn dữ liệu
-                                },
-                                stroke: {
-                                    curve: 'smooth',
-                                    width: 3
-                                },
-                                series: [{
-                                        name: 'Số Lượng Đặt Bàn',
-                                        data: [{{ implode(',', $bookingData) }}], // Dữ liệu Số Lượng Đặt Bàn từ server
-                                        yAxisIndex: 0,
                                     },
-                                    {
-                                        name: 'Doanh Thu Từ Đặt Bàn',
-                                        data: [{{ implode(',', $revenueData) }}], // Dữ liệu Doanh Thu từ server
-                                        yAxisIndex: 1,
-                                    }
-                                ],
-                                grid: {
-                                    borderColor: '#e0e6ed',
-                                    strokeDashArray: 5,
+                                    dataLabels: {
+                                        enabled: false // Tắt nhãn dữ liệu
+                                    },
+                                    stroke: {
+                                        curve: 'smooth',
+                                        width: 3
+                                    },
+                                    series: [
+                                        {
+                                            name: 'Số Lượng Đặt Bàn',
+                                            data: [{{ implode(',', $bookingData) }}], // Dữ liệu đặt bàn
+                                        },
+                                        {
+                                            name: 'Doanh Thu Từ Đặt Bàn',
+                                            data: [{{ implode(',', $revenueData) }}], // Dữ liệu doanh thu
+                                        }
+                                    ],
+                                    grid: {
+                                        borderColor: '#e0e6ed',
+                                        strokeDashArray: 5,
+                                    },
                                     xaxis: {
-                                        lines: {
-                                            show: true // Hiển thị các đường trên trục X
+                                        categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], // Các tháng
+                                        labels: {
+                                            style: {
+                                                colors: '#6c757d',
+                                                fontSize: '12px',
+                                            }
                                         }
                                     },
-                                    yaxis: {
-                                        lines: {
-                                            show: false, // Không hiển thị các đường trên trục Y
+                                    yaxis: [
+                                        {
+                                            show: false // Ẩn trục Y "Số Lượng"
+                                        },
+                                        {
+                                            opposite: true,
+                                            show: false // Ẩn trục Y "Doanh Thu (VND)"
                                         }
-                                    },
-                                    padding: {
-                                        top: 0,
-                                        right: 0,
-                                        bottom: 10,
-                                        left: 0
-                                    },
-                                },
-                                xaxis: {
-                                    categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov",
-                                        "Dec"
-                                    ], // Các tháng trong năm
-                                    labels: {
-                                        style: {
-                                            colors: '#9a9a9a',
-                                            fontSize: '12px',
-                                            fontWeight: 600
-                                        }
-                                    }
-                                },
-                                yaxis: [{
-                                        opposite: true, // Trục Y thứ nhất hiển thị ở phía đối diện
-                                    },
-                                    {
-                                        opposite: false, // Trục Y thứ hai hiển thị bình thường
-                                    }
-                                ],
-                                colors: ['#4267cd', '#32b2fa'], // Màu sắc cho hai chuỗi dữ liệu
-                                markers: {
-                                    size: 0,
-                                    opacity: 0.1,
-                                    colors: ['#4267cd', '#32b2fa'],
-                                    strokeColor: "#ffffff",
-                                    strokeWidth: 2,
-                                    hover: {
-                                        size: 7, // Kích thước điểm khi hover
-                                    }
-                                },
-                                tooltip: {
-                                    enabled: true,
-                                    shared: true, // Tooltip sẽ chia sẻ thông tin giữa các chuỗi dữ liệu
-                                    theme: 'dark', // Chế độ giao diện tối cho tooltip
-                                },
-                                legend: {
-                                    position: 'bottom', // Chuyển vị trí chú thích xuống dưới
-                                    horizontalAlign: 'center', // Căn giữa chú thích
+                                    ],
+                                    colors: ['#4267cd', '#32b2fa'], // Màu sắc cho chuỗi dữ liệu
                                     markers: {
-                                        width: 12,
-                                        height: 12,
-                                        radius: 6
+                                        size: 0, // Ẩn hoàn toàn các chấm tròn
                                     },
-                                },
-                            };
+                                    tooltip: {
+                                        shared: true, // Tooltip chia sẻ giữa các chuỗi dữ liệu
+                                        x: {
+                                            format: 'dd-MM-yyyy' // Định dạng ngày tháng
+                                        },
+                                        y: {
+                                            formatter: function (value) {
+                                                return value.toLocaleString('vi-VN', {
+                                                    style: 'currency',
+                                                    currency: 'VND'
+                                                });
+                                            }
+                                        }
+                                    },
+                                    legend: {
+                                        position: 'bottom',
+                                        horizontalAlign: 'center',
+                                    }
+                                };
 
-                            var chart = new ApexCharts(
-                                document.querySelector("#revenueGraph"), // ID phần tử HTML cần vẽ biểu đồ
-                                options
-                            );
+                                // Khởi tạo biểu đồ
+                                var chart = new ApexCharts(document.querySelector("#revenueGraph"), options);
+                                chart.render();
 
-                            chart.render();
+                                // Xử lý sự kiện thay đổi khoảng thời gian
+                                document.querySelectorAll('.graph-day-selection .btn').forEach(button => {
+                                    button.addEventListener('click', function () {
+                                        document.querySelectorAll('.graph-day-selection .btn').forEach(btn => btn.classList.remove('active'));
+                                        this.classList.add('active');
 
-                            // Xử lý sự kiện thay đổi khoảng thời gian
-                            document.querySelectorAll('.graph-day-selection .btn').forEach(button => {
-                                button.addEventListener('click', function() {
-                                    // Thay đổi lớp active khi chọn khoảng thời gian
-                                    document.querySelectorAll('.graph-day-selection .btn').forEach(btn => btn.classList.remove(
-                                        'active'));
-                                    this.classList.add('active');
+                                        var period = this.getAttribute('data-period');
 
-                                    // Lấy khoảng thời gian được chọn
-                                    var period = this.getAttribute('data-period');
-
-                                    // Gửi yêu cầu tới server để lấy dữ liệu mới cho khoảng thời gian này
-                                    fetch('/getDataForPeriod', { // URL này sẽ cần được thay đổi sao cho phù hợp với backend của bạn
+                                        // Fetch dữ liệu mới
+                                        fetch('/getDataForPeriod', {
                                             method: 'POST',
                                             headers: {
                                                 'Content-Type': 'application/json'
@@ -264,23 +239,25 @@
                                                 period: period
                                             })
                                         })
-                                        .then(response => response.json())
-                                        .then(data => {
-                                            // Cập nhật lại biểu đồ sau khi lấy dữ liệu mới
-                                            chart.updateSeries([{
-                                                    name: 'Số Lượng Đặt Bàn',
-                                                    data: data.bookingData // Dữ liệu mới cho số lượng đặt bàn
-                                                },
-                                                {
-                                                    name: 'Doanh Thu Từ Đặt Bàn',
-                                                    data: data.revenueData // Dữ liệu mới cho doanh thu
-                                                }
-                                            ]);
-                                        })
-                                        .catch(error => console.error('Error fetching data:', error));
+                                            .then(response => response.json())
+                                            .then(data => {
+                                                chart.updateSeries([
+                                                    {
+                                                        name: 'Số Lượng Đặt Bàn',
+                                                        data: data.bookingData
+                                                    },
+                                                    {
+                                                        name: 'Doanh Thu Từ Đặt Bàn',
+                                                        data: data.revenueData
+                                                    }
+                                                ]);
+                                            })
+                                            .catch(error => console.error('Error:', error));
+                                    });
                                 });
                             });
                         </script>
+
 
                     </div>
 
