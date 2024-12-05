@@ -37,7 +37,8 @@ class DashboardController extends Controller
         $orderCount = Order::count(); // Tổng số đơn hàng
 
         $reservationCount = Reservation::count(); // Tổng số đặt bàn
-        $totalRevenue = Reservation::whereMonth('created_at', Carbon::now()->month)->sum('deposit_amount');
+        $totalRevenue = Reservation::sum('deposit_amount') / 1000000; // Tính tổng doanh thu và chia cho 1 triệu
+
         $totalBookings = Reservation::whereMonth('created_at', Carbon::now()->month)->count();
 
         $cancelledBookings = Reservation::whereMonth('created_at', Carbon::now()->month)

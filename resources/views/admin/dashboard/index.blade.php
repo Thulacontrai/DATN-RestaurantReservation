@@ -82,9 +82,10 @@
                                             <i class="bi bi-circle-fill text-success me-2"></i>
                                             <div class="d-flex flex-column">
                                                 <h6>Doanh Thu Từ Đặt Bàn</h6>
-                                                <h5>{{ number_format($totalBookingRevenue ?? 0, 0, '.', ',') }} Triệu</h5>
+                                                <h5>{{ number_format($totalRevenue ?? 0, 0, '.', ',') }} Triệu</h5>
                                             </div>
                                         </div>
+
                                         <!-- Doanh thu tổng quan -->
                                         <div class="reports-summary-block">
                                             <i class="bi bi-circle-fill text-danger me-2"></i>

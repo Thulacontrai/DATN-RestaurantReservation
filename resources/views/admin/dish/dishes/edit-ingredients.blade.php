@@ -64,105 +64,160 @@
     <div class="container my-5">
         <div class="row justify-content-center">
             <div class="col-md-8 col-lg-10">
-                <!-- Card cập nhật nguyên liệu -->
-                <div class="card border-0 shadow rounded-lg mb-5">
-                    <div class="card-header bg-gradient-primary text-white d-flex align-items-center py-3">
-                        <h5 class="card-title mb-0">Cập Nhật Nguyên Liệu cho Món: <strong>{{ $dish->name }}</strong></h5>
-                    </div>
-                    <div class="card-body p-4">
-                        <form id="updateIngredientsForm" method="POST"
-                            action="{{ route('admin.dishes.updateIngredients', $dish->id) }}">
-                            @csrf
-                            <ul class="list-group list-group-flush" id="ingredientList">
-                                @foreach ($dish->recipes as $recipe)
-                                    <li
-                                        class="list-group-item d-flex flex-wrap align-items-center justify-content-between border-0 bg-light rounded-lg mb-3">
-                                        <div class="col-md-5">
-                                            <select class="form-select form-select-lg border-0 bg-white shadow-sm"
-                                                name="ingredients[]" required>
-                                                @foreach ($ingredients as $ingredient)
-                                                    <option value="{{ $ingredient->id }}"
-                                                        {{ $recipe->ingredient->id == $ingredient->id ? 'selected' : '' }}>
-                                                        {{ $ingredient->name }}</option>
-                                                @endforeach
-                                            </select>
-                                            <input type="hidden" name="recipe_ids[]" value="{{ $recipe->id }}">
-                                        </div>
-                                        <div class="col-md-4">
-                                            <input type="number"
-                                                class="form-control form-control-lg border-0 bg-white shadow-sm"
-                                                name="quantities[]" value="{{ $recipe->quantity_need }}" min="0"
-                                                placeholder="Số lượng" required>
-                                        </div>
-                                        <div class="col-md-2 d-flex justify-content-end">
-                                            <select class="form-select form-select-lg border-0 bg-white shadow-sm"
-                                                name="units[]" required>
-                                                <option value="" disabled>Đơn vị</option>
-                                                <option value="kg" {{ $recipe->unit == 'kg' ? 'selected' : '' }}>Kg
-                                                </option>
-                                                <option value="g" {{ $recipe->unit == 'g' ? 'selected' : '' }}>G
-                                                </option>
-                                                <option value="l" {{ $recipe->unit == 'l' ? 'selected' : '' }}>L
-                                                </option>
-                                                <option value="ml" {{ $recipe->unit == 'ml' ? 'selected' : '' }}>Ml
-                                                </option>
-                                                <option value="cái" {{ $recipe->unit == 'cái' ? 'selected' : '' }}>Cái
-                                                </option>
-                                                <option value="muỗng" {{ $recipe->unit == 'muỗng' ? 'selected' : '' }}>
-                                                    Muỗng</option>
-                                            </select>
-                                        </div>
-                                    </li>
-                                @endforeach
-                            </ul>
-                            <div class="text-end mt-4">
-                                <button type="submit" class="btn btn-success btn-lg rounded-pill shadow">
-                                    <i class="bi bi-save me-1"></i> Lưu Thay Đổi
-                                </button>
+                <!-- Container chứa hai trang -->
+                <div class="flip-container">
+                    <!-- Trang 1: Form Cập Nhật Nguyên Liệu -->
+                    <div class="flip-page front-page" style="margin-top: 35%">
+                        <div class="card border-0 shadow-lg rounded-4 mb-5 overflow-hidden">
+                            <div class="card-header bg-primary-gradient text-white py-4">
+                                <h5 class="card-title mb-0 d-flex align-items-center">
+                                    <i class="bi bi-pencil-square me-2"></i> Cập Nhật Nguyên Liệu cho Món:
+                                    <strong class="ms-2 text-warning">{{ $dish->name }}</strong>
+                                </h5>
                             </div>
-                        </form>
+                            <div class="card-body p-4">
+                                <form id="updateIngredientsForm" method="POST"
+                                    action="{{ route('admin.dishes.updateIngredients', $dish->id) }}">
+                                    @csrf
+                                    <!-- Form cập nhật nguyên liệu -->
+                                    <div class="row g-3">
+                                        @foreach ($dish->recipes as $recipe)
+                                            <!-- Nguyên liệu -->
+                                            <div class="col-12 bg-light p-3 rounded-3 shadow-sm d-flex align-items-center">
+                                                <div class="col-md-5">
+                                                    <label class="form-label text-secondary fw-bold">
+                                                        <i class="bi bi-box2 me-1"></i> Nguyên liệu
+                                                    </label>
+                                                    <select class="form-select border-0 shadow-sm" name="ingredients[]"
+                                                        required>
+                                                        @foreach ($ingredients as $ingredient)
+                                                            <option value="{{ $ingredient->id }}"
+                                                                {{ $recipe->ingredient->id == $ingredient->id ? 'selected' : '' }}>
+                                                                {{ $ingredient->name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                    <input type="hidden" name="recipe_ids[]" value="{{ $recipe->id }}">
+                                                </div>
+                                                <!-- Số lượng -->
+                                                <div class="col-md-4">
+                                                    <label class="form-label text-secondary fw-bold">
+                                                        <i class="bi bi-arrow-up-right-circle me-1"></i> Số lượng
+                                                    </label>
+                                                    <input type="number" class="form-control border-0 shadow-sm"
+                                                        name="quantities[]" value="{{ $recipe->quantity_need }}"
+                                                        min="0" step="0.01" placeholder="Nhập số lượng" required>
+                                                </div>
+                                                <!-- Đơn vị -->
+                                                <div class="col-md-3">
+                                                    <label class="form-label text-secondary fw-bold">
+                                                        <i class="bi bi-rulers me-1"></i> Đơn vị
+                                                    </label>
+                                                    <input type="text" class="form-control border-0 shadow-sm bg-white"
+                                                        value="Kg" readonly>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                    <div class="text-end mt-4">
+                                        <button type="submit" class="btn btn-success btn-lg rounded-pill shadow-lg px-4">
+                                            <i class="bi bi-check-circle me-2"></i> Lưu Thay Đổi
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="card-footer text-end">
+                                <button class="btn btn-link text-primary fw-bold flip-button">Chuyển sang Xóa Nguyên
+                                    Liệu</button>
+                            </div>
+                        </div>
                     </div>
-                </div>
 
-                <!-- Card xóa nguyên liệu -->
-                <div class="card border-0 shadow rounded-lg mb-5">
-                    <div class="card-header bg-gradient-danger text-white d-flex align-items-center py-3">
-                        <h5 class="card-title mb-0">Xoá Nguyên Liệu cho Món: <strong>{{ $dish->name }}</strong></h5>
-                    </div>
-                    <div class="card-body p-4">
-                        <ul class="list-group list-group-flush" id="ingredientListDelete">
-                            @foreach ($dish->recipes as $recipe)
-                                <li
-                                    class="list-group-item d-flex flex-wrap align-items-center justify-content-between border-0 bg-light rounded-lg mb-3">
-                                    <div class="col-md-5">
-                                        <input type="text"
-                                            class="form-control-plaintext form-control-lg text-dark fw-bold"
-                                            value="{{ $recipe->ingredient->name ?? 'N/A' }}" readonly>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <input type="number"
-                                            class="form-control-plaintext form-control-lg text-dark fw-bold"
-                                            value="{{ $recipe->quantity_need }}" readonly>
-                                    </div>
-                                    <div class="col-md-2 d-flex justify-content-end">
-                                        <span
-                                            class="badge bg-secondary text-white px-3 py-2 shadow-sm">{{ $recipe->unit ?? '' }}</span>
-                                        <form action="{{ route('admin.dishes.deleteIngredient', $recipe->id) }}"
-                                            method="POST" class="ms-3">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit"
-                                                class="btn btn-outline-danger btn-sm rounded-circle shadow"
-                                                onclick="return confirm('Bạn có chắc chắn muốn xóa nguyên liệu này?')">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </li>
-                            @endforeach
-                        </ul>
+                    <!-- Trang 2: Form Xóa Nguyên Liệu -->
+                    <div class="flip-page back-page" style="margin-top: 35%">
+                        <div class="card border-0 shadow rounded-lg mb-5">
+                            <div class="card-header bg-gradient-danger text-white d-flex align-items-center py-3">
+                                <h5 class="card-title mb-0">Xoá Nguyên Liệu cho Món: <strong>{{ $dish->name }}</strong>
+                                </h5>
+                            </div>
+                            <div class="card-body p-4">
+                                <ul class="list-group list-group-flush" id="ingredientListDelete">
+                                    @foreach ($dish->recipes as $recipe)
+                                        <li
+                                            class="list-group-item d-flex flex-wrap align-items-center justify-content-between border-0 bg-light rounded-lg mb-3">
+                                            <div class="col-md-5">
+                                                <input type="text"
+                                                    class="form-control-plaintext form-control-lg text-secondary fw-bold"
+                                                    value="{{ $recipe->ingredient->name ?? 'N/A' }}" readonly>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <input type="number"
+                                                    class="form-control-plaintext form-control-lg text-secondary fw-bold"
+                                                    value="{{ $recipe->quantity_need }}" readonly>
+                                            </div>
+                                            <div class="col-md-2 d-flex justify-content-end">
+                                                <span
+                                                    class="badge  text-secondary px-3 py-2 shadow-sm">{{ $recipe->unit ?? '' }}</span>
+                                                <form action="{{ route('admin.dishes.deleteIngredient', $recipe->id) }}"
+                                                    method="POST" class="ms-3">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit"
+                                                        class="btn btn-outline-danger btn-sm rounded-circle shadow"
+                                                        onclick="return confirm('Bạn có chắc chắn muốn xóa nguyên liệu này?')">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                            <div class="card-footer text-end">
+                                <button class="btn btn-link text-danger fw-bold flip-button">Quay lại Cập Nhật Nguyên
+                                    Liệu</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
+                <style>
+                    .flip-container {
+                        perspective: 1000px;
+                        width: 100%;
+                        height: auto;
+                    }
+
+                    .flip-page {
+                        width: 100%;
+                        backface-visibility: hidden;
+                        transition: transform 0.6s ease-in-out;
+                    }
+
+                    .front-page {
+                        position: absolute;
+                        transform: rotateY(0deg);
+                    }
+
+                    .back-page {
+                        position: absolute;
+                        transform: rotateY(180deg);
+                    }
+
+                    .flip-container.flipped .front-page {
+                        transform: rotateY(-180deg);
+                    }
+
+                    .flip-container.flipped .back-page {
+                        transform: rotateY(0deg);
+                    }
+                </style>
+                <script>
+                    document.querySelectorAll('.flip-button').forEach(button => {
+                        button.addEventListener('click', () => {
+                            document.querySelector('.flip-container').classList.toggle('flipped');
+                        });
+                    });
+                </script>
 
                 <!-- Card thêm nguyên liệu mới -->
                 <div class="card border-0 shadow rounded-lg mb-5">
@@ -186,7 +241,7 @@
                                     <div class="col-md-4">
                                         <input type="number"
                                             class="form-control form-control-lg border-0 bg-white shadow-sm"
-                                            name="new_quantity[]" min="0" placeholder="Số lượng" required>
+                                            name="new_quantity[]" min="0" placeholder="Định lượng" required>
                                     </div>
                                     {{-- <div class="col-md-3">
                                     <select class="form-select form-select-lg border-0 bg-white shadow-sm" name="new_unit[]" required>
@@ -221,35 +276,11 @@
                     </div>
                 </div>
 
-                <!-- Nút quay lại -->
-                <div class="text-center">
-                    <a href="{{ route('admin.dishes.index') }}"
-                        class="btn btn-outline-secondary btn-lg rounded-pill shadow-sm">
-                        <i class="bi bi-arrow-left me-1"></i> Quay lại danh sách
-                    </a>
-                </div>
+
             </div>
         </div>
     </div>
 
-    <style>
-        /* Card header gradient */
-        .bg-gradient-primary {
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-        }
-
-        .bg-gradient-danger {
-            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
-        }
-
-        .bg-gradient-success {
-            background: linear-gradient(135deg, #00b09b 0%, #96c93d 100%);
-        }
-
-        .ingredient-row {
-            position: relative;
-        }
-    </style>
 
     <script>
         @php

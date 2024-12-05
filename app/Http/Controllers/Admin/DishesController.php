@@ -75,7 +75,7 @@ class DishesController extends Controller
         $categories = Category::all(); // Lấy tất cả các loại món ăn
         $ingredients = Ingredient::all(); // Lấy tất cả nguyên liệu
 
-        return view('admin.dish.dishes.create', compact('categories', 'ingredients','title')); // Truyền cả hai biến vào view
+        return view('admin.dish.dishes.create', compact('categories', 'ingredients', 'title')); // Truyền cả hai biến vào view
     }
 
 
@@ -162,7 +162,7 @@ class DishesController extends Controller
         $title = 'Chỉnh Sửa Món Ăn';
         $dish = Dishes::findOrFail($id);
         $categories = Category::all();
-        return view('admin.dish.dishes.edit', compact('dish', 'categories','title'));
+        return view('admin.dish.dishes.edit', compact('dish', 'categories', 'title'));
     }
 
 
@@ -249,7 +249,7 @@ class DishesController extends Controller
     {
         $title = 'Chi Tiết Món Ăn';
         $dish = Dishes::with('recipes.ingredient')->findOrFail($id);
-        return view('admin.dish.dishes.detail', compact('dish','title'));
+        return view('admin.dish.dishes.detail', compact('dish', 'title'));
     }
 
 
@@ -323,7 +323,7 @@ class DishesController extends Controller
             ]);
         }
 
-        return redirect()->route('admin.dishes.show', $dish->id)->with('success', 'Nguyên liệu đã được thêm thành công.');
+        return redirect()->back()->with('success', 'Nguyên liệu đã được thêm thành công.!');
     }
 
 
@@ -382,7 +382,7 @@ class DishesController extends Controller
     {
         $title = 'Khôi Phục Danh Sách Món Ăn';
         $dishes = Dishes::onlyTrashed()->paginate(10); // Lấy tất cả món ăn bị xóa mềm
-        return view('admin.dish.dishes.trash', compact('dishes','title'));
+        return view('admin.dish.dishes.trash', compact('dishes', 'title'));
     }
 
     public function restore($id)
