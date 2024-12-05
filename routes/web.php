@@ -94,6 +94,17 @@ Route::get('/member', [MemberController::class, 'show'])->name('client.member');
 Route::post('/update-member', [MemberController::class, 'update'])->name('member.update');
 Route::post('/change-password', [MemberController::class, 'changePassword'])->name('member.changePassword');
 Route::post('/member/update-booking', [MemberController::class, 'updateBooking'])->name('member.updateBooking');
+// edit thông tin đặt bàn 
+Route::middleware(['auth'])->group(function () {
+    Route::get('/member/reservation/{id}', [MemberController::class, 'editReservation'])->name('member.reservation.edit');
+    Route::post('/member/reservation/update', [MemberController::class, 'updateReservation'])->name('member.reservation.update');
+
+});
+
+Route::post('/member/reservation/{id}/rate', [MemberController::class, 'rateReservation'])->name('member.reservation.rate');
+
+
+
 
 
 Route::get('/admin/users', [UserController::class, 'index'])->name('admin.user.index');
@@ -104,7 +115,10 @@ Route::get('/admin/employees', [UserController::class, 'employeeList'])->name('a
 
 Route::get('/home', [HomeController::class, 'index'])->middleware('auth');
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login.client');
+// chỉnh sửa thông tin đặt bàn 
 
+// Route::get('/reservation/edit/{id}', [ReservationController::class, 'edit'])->name('reservation.edit');
+// Route::post('/reservation/update/{id}', [ReservationController::class, 'update'])->name('reservation.update');
 
 
 

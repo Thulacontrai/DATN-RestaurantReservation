@@ -269,44 +269,59 @@ class ReservationController extends Controller
         $customers = User::all();
         $coupons = Coupon::all();
 
+       
+
         return view('admin.reservation.edit', compact('reservation', 'customers', 'coupons'));
     }
 
     public function update(Request $request, $id)
-    {
-        DB::beginTransaction();
-        try {
-            $validated = $request->validate([
-                'customer_name' => 'required|string|max:255',
-                'reservation_time' => 'required|date_format:Y-m-d\TH:i',
-                'guest_count' => 'required|integer|min:1',
-                'note' => 'nullable|string',
-                'status' => 'required|in:Confirmed,Pending,Cancelled',
-                'cancelled_reason' => 'nullable|string|max:255',
+{
+    DB::beginTransaction();
+    try {
+        // Validate các trường đầu vào
+        $validated = $request->validate([
+            'customer_name' => 'required|string|max:255',
+            'reservation_time' => 'required|date_format:Y-m-d\TH:i',
+            'guest_count' => 'required|integer|min:1|max:50',
+            'note' => 'nullable|string',
+            'status' => 'required|in:Confirmed,Pending,Cancelled',
+            'cancelled_reason' => 'nullable|string|max:255',
+        ]);
+
+        // Tính số tiền đặt cọc
+        $validated['deposit_amount'] = $request->input('guest_count') >= 6
+            ? $request->input('guest_count') * 100000
+            : 0;
+
+        // Chuyển định dạng thời gian đặt về chuẩn lưu trữ
+        $validated['reservation_time'] = Carbon::createFromFormat('Y-m-d\TH:i', $request->reservation_time)
+            ->format('Y-m-d H:i:s');
+
+        // Kiểm tra nếu trạng thái là "Cancelled" thì lý do hủy phải được cung cấp
+        if ($validated['status'] === 'Cancelled' && empty($validated['cancelled_reason'])) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'cancelled_reason' => 'Bạn phải cung cấp lý do hủy khi trạng thái là "Đã hủy".'
             ]);
-
-
-            $validated['deposit_amount'] = $request->input('guest_count') >= 6
-                ? $request->input('guest_count') * 100000
-                : 0;
-
-
-            $validated['reservation_time'] = Carbon::createFromFormat('Y-m-d\TH:i', $request->reservation_time)
-                ->format('Y-m-d H:i:s');
-
-            $reservation = Reservation::findOrFail($id);
-            $reservation->update($validated);
-
-            DB::commit();
-            return redirect()->route('admin.reservation.index')->with('success', 'Đặt bàn được cập nhật thành công !');
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            DB::rollBack();
-            return back()->withErrors($e->errors());
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            return back()->withErrors(['error' => "Đã xảy ra lỗi khi cập nhật đặt bàn: " . $e->getMessage()]);
         }
+
+        // Lấy bản ghi đặt bàn
+        $reservation = Reservation::findOrFail($id);
+
+        // Cập nhật thông tin đặt bàn
+        $reservation->update($validated);
+
+        DB::commit();
+
+        return redirect()->route('admin.reservation.index')->with('success', 'Đặt bàn được cập nhật thành công !');
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        DB::rollBack();
+        return back()->withErrors($e->errors());
+    } catch (\Throwable $e) {
+        DB::rollBack();
+        return back()->withErrors(['error' => "Đã xảy ra lỗi khi cập nhật đặt bàn: " . $e->getMessage()]);
     }
+}
+
 
     public function cancel($id)
     {
