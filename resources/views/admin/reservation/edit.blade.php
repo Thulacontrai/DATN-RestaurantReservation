@@ -7,35 +7,47 @@
  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 
+ <style>
+     @keyframes gradientMove {
+         0% {
+             background-position: 0% 50%;
+         }
+
+         50% {
+             background-position: 100% 50%;
+         }
+
+         100% {
+             background-position: 0% 50%;
+         }
+     }
+
+     .swal2-timer-progress-bar {
+         background: linear-gradient(90deg, #34eb4f, #00bcd4, #ffa726, #ffeb3b, #f44336);
+         /* Gradient màu */
+         background-size: 300% 300%;
+         /* Kích thước gradient lớn để tạo hiệu ứng động */
+         animation: gradientMove 2s ease infinite;
+         /* Hiệu ứng lăn tăn */
+     }
+ </style>
+
  <script>
      document.addEventListener("DOMContentLoaded", function() {
-         // Kiểm tra lỗi từ session
+         // Hiển thị thông báo lỗi
          @if ($errors->any())
-             Swal.fire({
-                 position: "top-end", // Góc trên bên phải
-                 icon: "error",
-                 toast: true, // Hiển thị nhỏ gọn
-                 title: "{{ $errors->first() }}", // Lấy thông báo lỗi đầu tiên
-                 showConfirmButton: false, // Không hiển thị nút xác nhận
-                 timerProgressBar: true, // Hiển thị thanh tiến trình
-                 timer: 3500 // Tự động đóng sau 3.5 giây
-             });
-         @endif
-
-         // Kiểm tra thông báo lỗi từ session
-         @if (session('error'))
              Swal.fire({
                  position: "top-end",
                  icon: "error",
                  toast: true,
-                 title: "{{ session('error') }}",
+                 title: "{{ $errors->first() }}",
                  showConfirmButton: false,
                  timerProgressBar: true,
-                 timer: 3500
+                 timer: 3000
              });
          @endif
 
-         // Kiểm tra thông báo thành công từ session
+         // Hiển thị thông báo thành công
          @if (session('success'))
              Swal.fire({
                  position: "top-end",
@@ -44,7 +56,7 @@
                  title: "{{ session('success') }}",
                  showConfirmButton: false,
                  timerProgressBar: true,
-                 timer: 3500
+                 timer: 3000
              });
          @endif
      });
@@ -159,9 +171,9 @@
 
                                     </div>
                                 </div>
-
-                                <button type="submit" class="btn btn-primary" id="updateButton">Cập Nhật Đặt Bàn</button>
-                                <a href="{{ route('admin.reservation.index') }}" class="btn btn-secondary">Quay lại</a>
+                                 <div class="text-end">
+                                <button type="submit" class="btn btn-primary" id="updateButton">Cập Nhật</button>
+                                <a href="{{ route('admin.reservation.index') }}" class="btn btn-secondary">Quay lại</a></div>
                             </form>
 
                         </div>

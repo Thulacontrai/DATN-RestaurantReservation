@@ -8,35 +8,47 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 
+    <style>
+        @keyframes gradientMove {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .swal2-timer-progress-bar {
+            background: linear-gradient(90deg, #34eb4f, #00bcd4, #ffa726, #ffeb3b, #f44336);
+            /* Gradient màu */
+            background-size: 300% 300%;
+            /* Kích thước gradient lớn để tạo hiệu ứng động */
+            animation: gradientMove 2s ease infinite;
+            /* Hiệu ứng lăn tăn */
+        }
+    </style>
+
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // Kiểm tra lỗi từ session
+            // Hiển thị thông báo lỗi
             @if ($errors->any())
-                Swal.fire({
-                    position: "top-end", // Góc trên bên phải
-                    icon: "error",
-                    toast: true, // Hiển thị nhỏ gọn
-                    title: "{{ $errors->first() }}", // Lấy thông báo lỗi đầu tiên
-                    showConfirmButton: false, // Không hiển thị nút xác nhận
-                    timerProgressBar: true, // Hiển thị thanh tiến trình
-                    timer: 3500 // Tự động đóng sau 3.5 giây
-                });
-            @endif
-
-            // Kiểm tra thông báo lỗi từ session
-            @if (session('error'))
                 Swal.fire({
                     position: "top-end",
                     icon: "error",
                     toast: true,
-                    title: "{{ session('error') }}",
+                    title: "{{ $errors->first() }}",
                     showConfirmButton: false,
                     timerProgressBar: true,
-                    timer: 3500
+                    timer: 3000
                 });
             @endif
 
-            // Kiểm tra thông báo thành công từ session
+            // Hiển thị thông báo thành công
             @if (session('success'))
                 Swal.fire({
                     position: "top-end",
@@ -45,7 +57,7 @@
                     title: "{{ session('success') }}",
                     showConfirmButton: false,
                     timerProgressBar: true,
-                    timer: 3500
+                    timer: 3000
                 });
             @endif
         });
@@ -70,88 +82,67 @@
                                 @csrf
                                 @method('PUT')
 
-                                <!-- Khu Vực -->
-                                <div class="mb-3">
-                                    <label for="area" class="form-label">Khu Vực </label>
-                                    <select name="area" id="area" class="form-select" required>
-                                        <option value="Tầng 1" {{ $table->area == 'Tầng 1' ? 'selected' : '' }}>Tầng 1
-                                        </option>
-                                        <option value="Tầng 2" {{ $table->area == 'Tầng 2' ? 'selected' : '' }}>Tầng 2
-                                        </option>
-                                    </select>
-                                    <div class="invalid-feedback">Vui lòng chọn khu vực.</div>
+                                <div class="row">
+                                    <!-- Khu Vực -->
+                                    <div class="col-md-6 mb-3">
+                                        <label for="area" class="form-label">Khu Vực</label>
+                                        <select name="area" id="area" class="form-select" required>
+                                            <option value="Tầng 1" {{ $table->area == 'Tầng 1' ? 'selected' : '' }}>Tầng 1
+                                            </option>
+                                            <option value="Tầng 2" {{ $table->area == 'Tầng 2' ? 'selected' : '' }}>Tầng 2
+                                            </option>
+                                        </select>
+                                        <div class="invalid-feedback">Vui lòng chọn khu vực.</div>
 
-                                    @error('area')
-                                        <div class="text-danger">{{ $message }}</div>
-                                    @enderror
-                                </div>
-
-                                <!-- Số Bàn -->
-                                <div class="mb-3">
-                                    <label for="table_number" class="form-label">Số Bàn</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text bg-primary text-white">
-                                            <i class="bi bi-door-open text-white"></i> <!-- Icon số bàn từ Bootstrap Icons -->
-                                        </span>
-                                        <input type="number" name="table_number" id="table_number"
-                                            class="form-control {{ $errors->has('table_number') ? 'is-invalid' : '' }}"
-                                            value="{{ old('table_number', $table->table_number) }}" required min="1"
-                                            max="100" placeholder="Nhập số bàn" oninput="toggleErrorMessages()">
+                                        @error('area')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
                                     </div>
 
-                                    <div class="invalid-feedback" id="invalid-feedback-1">
-                                        Vui lòng nhập số bàn hợp lệ (từ 1 đến 100).
+                                    <!-- Số Bàn -->
+                                    <div class="col-md-6 mb-3">
+                                        <label for="table_number" class="form-label">Số Bàn</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-primary text-white">
+                                                <i class="bi bi-door-open text-white"></i>
+                                            </span>
+                                            <input type="number" name="table_number" id="table_number"
+                                                class="form-control {{ $errors->has('table_number') ? 'is-invalid' : '' }}"
+                                                value="{{ old('table_number', $table->table_number) }}" required
+                                                min="1" max="100" placeholder="Nhập số bàn"
+                                                oninput="toggleErrorMessages()">
+                                        </div>
+                                        <div class="invalid-feedback" id="invalid-feedback-1">
+                                            Vui lòng nhập số bàn hợp lệ (từ 1 đến 100).
+                                        </div>
+                                        @error('table_number')
+                                            <div class="text-danger" id="invalid-feedback-2">Số bàn này đã tồn tại. Vui lòng
+                                                nhập số
+                                                khác.</div>
+                                        @enderror
                                     </div>
-                                    @error('table_number')
-                                        <div class="text-danger" id="invalid-feedback-2">Số bàn này đã tồn tại. Vui lòng nhập số
-                                            khác.</div>
-                                    @enderror
-                                </div>
 
+                                    <!-- Trạng Thái -->
+                                    <div class="col-md-6 mb-3">
+                                        <label for="status" class="form-label">Trạng Thái</label>
+                                        <select name="status" id="status" class="form-select" required
+                                            data-current-status="{{ $table->status }}">
+                                            <option value="Available" {{ $table->status == 'Available' ? 'selected' : '' }}>
+                                                Có
+                                                sẵn</option>
+                                            <option value="Reserved" {{ $table->status == 'Reserved' ? 'selected' : '' }}>
+                                                Đã
+                                                đặt trước</option>
+                                            <option value="Occupied" {{ $table->status == 'Occupied' ? 'selected' : '' }}>
+                                                Đang
+                                                sử dụng</option>
+                                        </select>
+                                        <div class="invalid-feedback">Trạng thái không hợp lệ. Vui lòng chọn lại.</div>
 
-                                <script>
-                                    // Function to toggle error messages
-                                    function toggleErrorMessages() {
-                                        var invalidFeedback1 = document.getElementById('invalid-feedback-1');
-                                        var invalidFeedback2 = document.getElementById('invalid-feedback-2');
-                                        var tableNumberInput = document.getElementById('table_number');
-
-                                        // Hide both error messages initially
-                                        invalidFeedback1.style.display = 'none';
-                                        invalidFeedback2.style.display = 'none';
-
-                                        // Show the appropriate error message based on validation
-                                        if (tableNumberInput.validity.valueMissing || tableNumberInput.validity.rangeOverflow || tableNumberInput
-                                            .validity.rangeUnderflow) {
-                                            invalidFeedback1.style.display = 'block';
-                                        }
-                                        // Only show the "Số bàn đã tồn tại" message if there's an error from the server
-                                        else if (invalidFeedback2 && !tableNumberInput.validity.valueMissing) {
-                                            invalidFeedback2.style.display = 'block';
-                                        }
-                                    }
-
-                                    // Call toggleErrorMessages on page load to check initial validation state
-                                    document.addEventListener('DOMContentLoaded', toggleErrorMessages);
-                                </script>
-
-                                <!-- Trạng Thái -->
-                                <div class="mb-3">
-                                    <label for="status" class="form-label">Trạng Thái</label>
-                                    <select name="status" id="status" class="form-select" required
-                                        data-current-status="{{ $table->status }}">
-                                        <option value="Available" {{ $table->status == 'Available' ? 'selected' : '' }}>Có
-                                            sẵn</option>
-                                        <option value="Reserved" {{ $table->status == 'Reserved' ? 'selected' : '' }}>Đã
-                                            đặt trước</option>
-                                        <option value="Occupied" {{ $table->status == 'Occupied' ? 'selected' : '' }}>Đang
-                                            sử dụng</option>
-                                    </select>
-                                    <div class="invalid-feedback">Trạng thái không hợp lệ. Vui lòng chọn lại.</div>
-
-                                    @error('status')
-                                        <div class="text-danger">{{ $message }}</div>
-                                    @enderror
+                                        @error('status')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
                                 </div>
 
                                 <!-- Nút Lưu và Hủy -->
@@ -235,9 +226,10 @@
                     (currentStatus === "Đã xác nhận" && selectedStatus !== "Đã xác nhận")
                 ) {
                     event.preventDefault(); // Ngừng gửi form
-                    alert("Không thể thay đổi trạng thái từ 'Đã hủy' sang 'Chờ xử lý' hoặc 'Đã xác nhận'.");
+                    alert("Không thể thay đổi trạng thái từ 'Đã hủy' sang 'Đã xác nhận' hoặc ngược lại.");
                 }
             });
         });
     </script>
+
 @endsection

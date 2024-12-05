@@ -49,7 +49,8 @@ class SupplierController extends Controller
      */
     public function create()
     {
-        return view('admin.ingredientType.supplier.create');
+        $title = 'Thêm Mới Nhà Cung Cấp';
+        return view('admin.ingredientType.supplier.create', compact('title'));
     }
 
 
@@ -76,12 +77,14 @@ class SupplierController extends Controller
 
     public function edit($id)
     {
+        $title = 'Chỉnh Sửa Nhà Cung Cấp';
         $supplier = Supplier::findOrFail($id);
-        return view('admin.ingredientType.supplier.edit', compact('supplier'));
+        return view('admin.ingredientType.supplier.edit', compact('supplier','title'));
     }
 
     public function update(Request $request, $id)
     {
+
         $request->validate([
             'name' => 'required|string|max:255',
             'phone' => 'required|string|max:20',

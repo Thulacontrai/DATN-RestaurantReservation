@@ -123,8 +123,9 @@ class RoleController extends Controller
 
     public function trash()
     {
+        $title = 'Khôi Phục Danh Sách Vai Trò';
         $roles = Role::onlyTrashed()->paginate(10);
-        return view('admin.role.trash', compact('roles')); // Sửa 'role' thành 'roles'
+        return view('admin.role.trash', compact('roles','title')); // Sửa 'role' thành 'roles'
     }
 
     public function restore($id)

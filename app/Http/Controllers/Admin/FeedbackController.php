@@ -42,6 +42,7 @@ class FeedbackController extends Controller
 
     public function create()
     {
+        
         return view('admin.feedback.create');
     }
 

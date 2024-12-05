@@ -44,7 +44,8 @@ class CategoryController extends Controller
 
     public function create()
     {
-        return view('admin.dish.category.create');
+        $title = 'Thêm Mới Danh Mục Thực Đơn';
+        return view('admin.dish.category.create', compact('title'));
     }
 
     public function store(Request $request)
@@ -71,9 +72,10 @@ class CategoryController extends Controller
 
     public function edit($id)
     {
+        $title = 'Chỉnh Sửa Danh Mục Thực Đơn';
         $category = Category::findOrFail($id);
 
-        return view('admin.dish.category.edit', compact('category'));
+        return view('admin.dish.category.edit', compact('category', 'title'));
     }
 
     public function update(Request $request, $id)
@@ -112,9 +114,10 @@ class CategoryController extends Controller
     // Hiển thị thùng rác
     public function trash()
     {
+        $title = 'Khôi Phục Danh Mục Thực Đơn';
         $categories = Category::onlyTrashed()->paginate(10); // Lấy ra các danh mục đã bị xóa mềm
 
-        return view('admin.dish.category.trash', compact('categories'));
+        return view('admin.dish.category.trash', compact('categories','title'));
     }
 
     // Khôi phục

@@ -3,7 +3,64 @@
 @section('title', 'Thêm Mới Danh Mục Thực Đơn')
 
 @section('content')
+    <!-- SweetAlert -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 
+    <style>
+        @keyframes gradientMove {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .swal2-timer-progress-bar {
+            background: linear-gradient(90deg, #34eb4f, #00bcd4, #ffa726, #ffeb3b, #f44336);
+            /* Gradient màu */
+            background-size: 300% 300%;
+            /* Kích thước gradient lớn để tạo hiệu ứng động */
+            animation: gradientMove 2s ease infinite;
+            /* Hiệu ứng lăn tăn */
+        }
+    </style>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Hiển thị thông báo lỗi
+            @if ($errors->any())
+                Swal.fire({
+                    position: "top-end",
+                    icon: "error",
+                    toast: true,
+                    title: "{{ $errors->first() }}",
+                    showConfirmButton: false,
+                    timerProgressBar: true,
+                    timer: 3000
+                });
+            @endif
+
+            // Hiển thị thông báo thành công
+            @if (session('success'))
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    toast: true,
+                    title: "{{ session('success') }}",
+                    showConfirmButton: false,
+                    timerProgressBar: true,
+                    timer: 3000
+                });
+            @endif
+        });
+    </script>
     <!-- Content wrapper scroll start -->
     <div class="content-wrapper-scroll">
 
@@ -19,43 +76,48 @@
                         </div>
                         <div class="card-body">
 
-                            <form id="addCategoryForm" method="POST" action="{{ route('admin.category.store') }}" novalidate>
+                            <form id="addCategoryForm" method="POST" action="{{ route('admin.category.store') }}"
+                                novalidate>
                                 @csrf
 
-                                <!-- Tên Danh Mục -->
-                                <!-- Tên Danh Mục -->
-                                <div class="mb-3">
-                                    <label for="category-name" class="form-label">
-                                        Tên Danh Mục <span class="text-danger required">*</span>
-                                    </label>
-                                    <div class="input-group">
-                                        <span class="input-group-text bg-primary text-white">
-                                            <i class="bi bi-list"></i> <!-- Icon danh mục từ Bootstrap Icons -->
-                                        </span>
-                                        <input type="text" id="category-name" name="name"
-                                            class="form-control @error('name') is-invalid @enderror"
-                                            placeholder="Nhập tên danh mục" required value="{{ old('name') }}">
-                                    </div>
+                                <!-- Row for Tên Danh Mục and Mô Tả -->
+                                <div class="row">
+                                    <!-- Tên Danh Mục -->
+                                    <div class="col-md-6 mb-3">
+                                        <label for="category-name" class="form-label">
+                                            Tên Danh Mục <span class="text-danger required">*</span>
+                                        </label>
+                                        <div class="input-group">
+                                            {{-- <span class="input-group-text bg-primary text-white">
+                                                <i class="bi bi-list"></i> <!-- Icon danh mục từ Bootstrap Icons -->
+                                            </span> --}}
+                                            <input type="text" id="category-name" name="name"
+                                                class="form-control @error('name') is-invalid @enderror"
+                                                placeholder="Nhập tên danh mục" required value="{{ old('name') }}">
+                                        </div>
 
-                                    @error('name')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @else
-                                        <div class="invalid-feedback">Vui lòng nhập tên danh mục.</div>
-                                        @endif
-                                    </div>
+                                        @error('name')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @else
+                                            <div class="invalid-feedback">Vui lòng nhập tên danh mục.</div>
+                                            @endif
+                                        </div>
 
-
-                                    <!-- Mô Tả -->
-                                    <div class="mb-3">
-                                        <label for="category-description" class="form-label">Mô Tả</label>
-                                        <textarea id="category-description" name="description" class="form-control" placeholder="Nhập mô tả danh mục"
-                                            rows="4">{{ old('description') }}</textarea>
-                                        <div class="invalid-feedback">Vui lòng nhập mô tả danh mục.</div>
+                                        <!-- Mô Tả -->
+                                        <div class="col-md-6 mb-3">
+                                            <label for="category-description" class="form-label">Mô Tả</label>
+                                            <textarea id="category-description" name="description" class="form-control" placeholder="Nhập mô tả danh mục"
+                                                rows="4">{{ old('description') }}</textarea>
+                                            <div class="invalid-feedback">Vui lòng nhập mô tả danh mục.</div>
+                                        </div>
                                     </div>
 
                                     <!-- Nút Thêm Mới -->
-                                    <button type="submit" class="btn btn-sm btn-primary">Thêm Mới</button>
-                                    <a href="{{ route('admin.category.index') }}" class="btn btn-sm btn-secondary">Quay Lại</a>
+                                    <div class="text-end">
+                                        <button type="submit" class="btn btn-sm btn-primary">Thêm Mới</button>
+                                        <a href="{{ route('admin.category.index') }}" class="btn btn-sm btn-secondary">Quay
+                                            Lại</a>
+                                    </div>
                                 </form>
 
                             </div>

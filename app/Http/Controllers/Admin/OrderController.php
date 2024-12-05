@@ -54,14 +54,16 @@ class OrderController extends Controller
 
     public function show($id)
     {
+        $title = 'Chi Tiết Hoá Đơn';
         $order = Order::with(['staff', 'reservation', 'customer'])->findOrFail($id);
-        return view('admin.order.show', compact('order'));
+        return view('admin.order.show', compact('order','title'));
     }
 
     public function edit(Order $order)
     {
         // Trả về view chỉnh sửa với dữ liệu đơn hàng
-        return view('admin.order.edit', compact('order'));
+        $title = 'Chỉnh Sửa Hoá Đơn';
+        return view('admin.order.edit', compact('order','title'));
     }
 
     public function update(Request $request, Order $order)
@@ -153,8 +155,9 @@ class OrderController extends Controller
 
     public function trash()
     {
+        $title = 'Khôi Phục Danh Sách Hoá Đơn';
         $orders = Order::onlyTrashed()->paginate(10);
-        return view('admin.order.trash', compact('orders'));
+        return view('admin.order.trash', compact('orders','title'));
     }
 
     public function restore($id)

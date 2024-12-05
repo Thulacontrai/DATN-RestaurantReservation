@@ -45,7 +45,8 @@ class PermissionController extends Controller
 
     public function create()
     {
-        return view('admin.user.permissions.create');
+        $title = 'Thêm Mới Quyền Hạn';
+        return view('admin.user.permissions.create', compact('title'));
     }
     public function store(Request $request)
     {

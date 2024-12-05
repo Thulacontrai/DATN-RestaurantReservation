@@ -13,7 +13,7 @@
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h5 class="card-title">Thùng Rác Mã Giảm Giá</h5>
                             <a href="{{ route('admin.coupon.index') }}" class="btn btn-sm btn-primary">
-                                Quay lại danh sách mã giảm giá
+                                Quay lại
                             </a>
                         </div>
                         <div class="card-body">

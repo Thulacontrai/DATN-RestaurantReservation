@@ -165,13 +165,14 @@ class InventoryTransactionController extends Controller
 
     public function show($id)
     {
+        $title = 'Chi Tiết Phiếu Nhập Kho';
         $transaction = InventoryTransaction::with(['supplier', 'inventoryItems.ingredient'])
             ->findOrFail($id);
 
         // Lấy thông tin nhân viên từ bảng users
         $staff = User::find($transaction->staff_id);
 
-        return view('admin.inventoryTransaction.show', compact('transaction', 'staff'));
+        return view('admin.inventoryTransaction.show', compact('transaction','title', 'staff'));
     }
 
     public function createTransaction()
@@ -272,6 +273,7 @@ class InventoryTransactionController extends Controller
 
     public function edit($id)
     {
+        $title = 'Chỉnh Sửa Phiếu Nhập Kho';
         $transaction = InventoryTransaction::findOrFail($id);
 
         // Kiểm tra nếu trạng thái là "hoàn thành" thì ngăn chỉnh sửa
@@ -284,7 +286,7 @@ class InventoryTransactionController extends Controller
         $suppliers = Supplier::all();
         $ingredients = Ingredient::all();
 
-        return view('admin.inventoryTransaction.edit', compact('transaction', 'suppliers', 'ingredients', 'user'));
+        return view('admin.inventoryTransaction.edit', compact('transaction' ,'title', 'suppliers', 'ingredients', 'user'));
     }
 
 

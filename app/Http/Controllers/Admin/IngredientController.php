@@ -60,10 +60,11 @@ class IngredientController extends Controller
 
     public function create()
     {
+        $title = 'Thêm Mới Nguyên liệu';
         $suppliers = Supplier::all();
         // $ingredientTypes = IngredientType::all();
 
-        return view('admin.ingredientType.ingredient.create', compact('suppliers'));
+        return view('admin.ingredientType.ingredient.create', compact('suppliers','title'));
     }
 
     public function store(Request $request)
@@ -90,10 +91,11 @@ class IngredientController extends Controller
     }
     public function edit($id)
     {
+        $title = 'Chỉnh Sửa Nguyên liệu';
         $ingredient = Ingredient::findOrFail($id);
         // $suppliers = Supplier::all(); // Bỏ comment nếu cần sử dụng
 
-        return view('admin.ingredientType.ingredient.edit', compact('ingredient'));
+        return view('admin.ingredientType.ingredient.edit', compact('ingredient','title'));
     }
 
     public function update(Request $request, $id)
@@ -122,9 +124,10 @@ class IngredientController extends Controller
 
     public function show($id)
     {
+        $title = 'Chi Tiết Nguyên liệu';
         $ingredient = Ingredient::findOrFail($id);
 
-        return view('admin.ingredientType.ingredient.show', compact('ingredient'));
+        return view('admin.ingredientType.ingredient.show', compact('ingredient','title'));
     }
 
 

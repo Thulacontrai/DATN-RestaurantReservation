@@ -267,6 +267,7 @@ class ReservationController extends Controller
 
     public function edit($id)
     {
+        $title = 'Chỉnh Sửa Đặt Bàn';
         $reservation = Reservation::findOrFail($id);
         $customers = User::all();
         $coupons = Coupon::all();
@@ -275,7 +276,7 @@ class ReservationController extends Controller
         $reservationDate = \Carbon\Carbon::parse($reservation->reservation_date)->format('Y-m-d');
         $reservationTime = \Carbon\Carbon::parse($reservation->reservation_time)->format('H:i');
 
-        return view('admin.reservation.edit', compact('reservation', 'customers', 'coupons', 'reservationDate', 'reservationTime'));
+        return view('admin.reservation.edit', compact('reservation', 'customers', 'coupons', 'reservationDate', 'reservationTime','title'));
     }
 
 
@@ -367,8 +368,9 @@ class ReservationController extends Controller
 
     public function show($id)
     {
+        $title = 'Chi Tiết Đặt Bàn';
         $reservation = Reservation::with('customer')->findOrFail($id);
-        return view('admin.reservation.show', compact('reservation'));
+        return view('admin.reservation.show', compact('reservation','title'));
     }
 
 

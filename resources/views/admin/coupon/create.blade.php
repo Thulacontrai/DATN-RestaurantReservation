@@ -1,20 +1,67 @@
 @extends('admin.master')
 
-@section('title', 'Thêm Mới Coupon')
+@section('title', 'Thêm Mới Phiếu Giảm Giá')
 
 @section('content')
 
-    @if (session('error'))
-        <div class="alert alert-danger">
-            {{ session('error') }}
-        </div>
-    @endif
+    <!-- SweetAlert -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 
-    @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
+    <style>
+        @keyframes gradientMove {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .swal2-timer-progress-bar {
+            background: linear-gradient(90deg, #34eb4f, #00bcd4, #ffa726, #ffeb3b, #f44336);
+            /* Gradient màu */
+            background-size: 300% 300%;
+            /* Kích thước gradient lớn để tạo hiệu ứng động */
+            animation: gradientMove 2s ease infinite;
+            /* Hiệu ứng lăn tăn */
+        }
+    </style>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Hiển thị thông báo lỗi
+            @if ($errors->any())
+                Swal.fire({
+                    position: "top-end",
+                    icon: "error",
+                    toast: true,
+                    title: "{{ $errors->first() }}",
+                    showConfirmButton: false,
+                    timerProgressBar: true,
+                    timer: 3000
+                });
+            @endif
+
+            // Hiển thị thông báo thành công
+            @if (session('success'))
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    toast: true,
+                    title: "{{ session('success') }}",
+                    showConfirmButton: false,
+                    timerProgressBar: true,
+                    timer: 3000
+                });
+            @endif
+        });
+    </script>
 
     <!-- Content wrapper scroll start -->
     <div class="content-wrapper-scroll">
@@ -37,7 +84,7 @@
                                     <!-- Mã Coupon -->
                                     <div class="col-md-6 mb-3">
                                         <label for="code" class="form-label">Mã Giảm Giá <span
-                                            class="text-danger required">*</span></label>
+                                                class="text-danger required">*</span></label>
                                         <div class="input-group">
                                             <span class="input-group-text bg-info text-white">
                                                 <i class="bi bi-upc-scan text-white"></i>
@@ -53,8 +100,7 @@
 
                                     <!-- Mô Tả -->
                                     <div class="col-md-6 mb-3">
-                                        <label for="description" class="form-label">Mô Tả <span
-                                            class="text-danger required">*</span></label>
+                                        <label for="description" class="form-label">Mô Tả </label>
                                         <textarea class="form-control" id="description" name="description" placeholder="Nhập mô tả"></textarea>
                                         @error('description')
                                             <div class="text-danger">{{ $message }}</div>
@@ -67,7 +113,7 @@
                                     <!-- Số Lượt Sử Dụng Tối Đa -->
                                     <div class="col-md-6 mb-3">
                                         <label for="max_uses" class="form-label">Số Lượt Sử Dụng Tối Đa <span
-                                            class="text-danger required">*</span></label>
+                                                class="text-danger required">*</span></label>
                                         <div class="input-group">
                                             <span class="input-group-text bg-warning text-white">
                                                 <i class="bi bi-person-check text-white"></i>
@@ -87,7 +133,7 @@
                                     <!-- Thời Gian Bắt Đầu -->
                                     <div class="col-md-6 mb-3">
                                         <label for="start_time" class="form-label">Thời Gian Bắt Đầu <span
-                                            class="text-danger required">*</span></label>
+                                                class="text-danger required">*</span></label>
                                         <div class="input-group">
                                             <span class="input-group-text bg-info text-white">
                                                 <i class="bi bi-calendar-date text-white"></i>
@@ -107,10 +153,11 @@
                                     <!-- Thời Gian Kết Thúc -->
                                     <div class="col-md-6 mb-3">
                                         <label for="end_time" class="form-label">Thời Gian Kết Thúc <span
-                                            class="text-danger required">*</span></label>
+                                                class="text-danger required">*</span></label>
                                         <div class="input-group">
                                             <span class="input-group-text bg-danger text-white">
-                                                <i class="bi bi-calendar-x text-white"></i> <!-- Biểu tượng thời gian kết thúc -->
+                                                <i class="bi bi-calendar-x text-white"></i>
+                                                <!-- Biểu tượng thời gian kết thúc -->
                                             </span>
                                             <input type="datetime-local" class="form-control" id="end_time"
                                                 name="end_time">
@@ -138,7 +185,7 @@
                                     <!-- Số Tiền Giảm Giá -->
                                     <div class="col-md-6 mb-3">
                                         <label for="discount_amount" class="form-label">Số Tiền Giảm Giá <span
-                                            class="text-danger required">*</span></label>
+                                                class="text-danger required">*</span></label>
                                         <div class="input-group">
                                             <span class="input-group-text bg-success text-white">₫</span>
                                             <input type="number" class="form-control" id="discount_amount"

@@ -62,7 +62,8 @@ class TableController extends Controller
 
     public function create()
     {
-        return view('admin.tables.create'); // Kiểm tra xem view này có tồn tại không
+        $title = 'Thêm Mới Bàn';
+        return view('admin.tables.create', compact('title')); // Kiểm tra xem view này có tồn tại không
     }
 
     public function store(StoreTableRequest $request)
@@ -73,6 +74,7 @@ class TableController extends Controller
 
     public function edit(Table $table)
     {
+        $title = 'Chỉnh Sửa Bàn';
         // Kiểm tra nếu bàn đã thay đổi số bàn và số bàn mới đã tồn tại trong khu vực
         if ($table->isDirty('table_number')) {
             $existingTable = Table::where('area', $table->area)
@@ -85,7 +87,7 @@ class TableController extends Controller
             }
         }
 
-        return view('admin.tables.edit', compact('table'));
+        return view('admin.tables.edit', compact('table','title'));
     }
 
 
@@ -166,8 +168,9 @@ class TableController extends Controller
 
     public function trash()
     {
+        $title = 'Khôi Phục Danh Sách Bàn';
         $tables = Table::onlyTrashed()->paginate(10);
-        return view('admin.tables.trash', compact('tables'));
+        return view('admin.tables.trash', compact('tables','title'));
     }
 
     public function restore($id)

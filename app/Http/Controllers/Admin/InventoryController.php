@@ -76,10 +76,11 @@ class InventoryController extends Controller
 
     public function edit($id)
     {
+        $title = 'Chỉnh Sửa Hàng Tồn Kho';
         try {
             $inventory = InventoryStock::findOrFail($id);
             $ingredients = Ingredient::all(); // Thay thế Ingredient bằng model phù hợp với nguyên liệu của bạn
-            return view('admin.inventory.edit', compact('inventory', 'ingredients'));
+            return view('admin.inventory.edit', compact('inventory','title', 'ingredients'));
         } catch (\Exception $e) {
             return redirect()->route('admin.inventory.index')->with('error', 'Có lỗi xảy ra khi lấy dữ liệu kho.');
         }

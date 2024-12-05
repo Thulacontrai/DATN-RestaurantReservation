@@ -27,7 +27,7 @@ class PaymentController extends Controller
 
     public function index()
     {
-        $title = 'Thanh Toán';
+        $title = 'Phương Thức Thanh Toán';
         $payments = Payment::all();
         return view('admin.payment.index', compact('payments', 'title'));
     }
@@ -56,12 +56,14 @@ class PaymentController extends Controller
 
     public function show(Payment $payment)
     {
-        return view('admin.payment.detail', compact('payment'));
+        $title = 'Chi Tiết Phương Thức Thanh Toán';
+        return view('admin.payment.detail', compact('payment','title'));
     }
 
     public function edit(Payment $payment)
     {
-        return view('admin.payment.edit', compact('payment'));
+        $title = 'Chỉnh Sửa Phương Thức Thanh Toán';
+        return view('admin.payment.edit', compact('payment','title'));
     }
 
     public function update(Request $request, Payment $payment)
@@ -114,8 +116,9 @@ class PaymentController extends Controller
 
     public function trash()
     {
+        $title = 'Khôi Phục Danh Sách Thanh Toán';
         $payments = Payment::onlyTrashed()->paginate(10); // Lấy tất cả các thanh toán đã bị xóa mềm
-        return view($this->viewPath . '.trash', compact('payments'));
+        return view($this->viewPath . '.trash', compact('payments', 'title'));
     }
 
 

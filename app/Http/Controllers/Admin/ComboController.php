@@ -78,9 +78,10 @@ class ComboController extends Controller
 
     public function create()
     {
+        $title = 'Thêm Mới Combo';
         $categories = Category::all();
         $dishes = Dishes::all();
-        return view($this->viewPath . '.create', compact('categories', 'dishes'));
+        return view($this->viewPath . '.create', compact('categories', 'dishes', 'title'));
     }
 
 
@@ -127,11 +128,12 @@ class ComboController extends Controller
 
     public function edit($id)
     {
+        $title = 'Chỉnh Sửa Combo';
         $combo = $this->model::findOrFail($id);
         $categories = Category::all();
         $dishes = Dishes::all();
 
-        return view($this->viewPath . '.edit', compact('combo', 'categories', 'dishes'));
+        return view($this->viewPath . '.edit', compact('combo', 'categories', 'dishes','title'));
     }
 
 
@@ -179,17 +181,19 @@ class ComboController extends Controller
 
     public function show($id)
     {
+        $title = 'Chi Tiết Combo';
         $combo = $this->model::findOrFail($id);
         $dishes = $combo->dishes;
 
-        return view($this->viewPath . '.detail', compact('combo', 'dishes'));
+        return view($this->viewPath . '.detail', compact('combo', 'dishes' ,'title'));
     }
 
 
     public function trash()
     {
+        $title = 'Khôi Phục Danh Sách Combo';
         $combos = Combo::onlyTrashed()->paginate(10);
-        return view($this->viewPath . '.trash', compact('combos'));
+        return view($this->viewPath . '.trash', compact('combos' ,'title'));
     }
 
     public function restore($id)

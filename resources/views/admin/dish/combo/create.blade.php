@@ -8,17 +8,64 @@
 @endsection
 @section('content')
 
-    @if (session('error'))
-        <div class="alert alert-danger">
-            {{ session('error') }}
-        </div>
-    @endif
+    <!-- SweetAlert -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 
-    @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
+    <style>
+        @keyframes gradientMove {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .swal2-timer-progress-bar {
+            background: linear-gradient(90deg, #34eb4f, #00bcd4, #ffa726, #ffeb3b, #f44336);
+            /* Gradient màu */
+            background-size: 300% 300%;
+            /* Kích thước gradient lớn để tạo hiệu ứng động */
+            animation: gradientMove 2s ease infinite;
+            /* Hiệu ứng lăn tăn */
+        }
+    </style>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Hiển thị thông báo lỗi
+            @if ($errors->any())
+                Swal.fire({
+                    position: "top-end",
+                    icon: "error",
+                    toast: true,
+                    title: "{{ $errors->first() }}",
+                    showConfirmButton: false,
+                    timerProgressBar: true,
+                    timer: 3000
+                });
+            @endif
+
+            // Hiển thị thông báo thành công
+            @if (session('success'))
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    toast: true,
+                    title: "{{ session('success') }}",
+                    showConfirmButton: false,
+                    timerProgressBar: true,
+                    timer: 3000
+                });
+            @endif
+        });
+    </script>
 
     <!-- Content wrapper scroll start -->
     <div class="content-wrapper-scroll">
@@ -33,7 +80,7 @@
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <div class="card-title text-primary">Thêm Combo Mới</div>
 
-                            <a href="{{ route('admin.combo.index') }}" class="btn btn-sm btn-dark">Quay lại</a>
+
                         </div>
                         <div class="card-body">
 
@@ -43,10 +90,12 @@
                                 <div class="row">
                                     <div class="col-sm-6 col-12">
                                         <div class="mb-3">
-                                            <label class="form-label">Tên Combo <span class="text-danger required">*</span></label>
+                                            <label class="form-label">Tên Combo <span
+                                                    class="text-danger required">*</span></label>
                                             <div class="input-group">
                                                 <span class="input-group-text bg-primary text-white">
-                                                    <i class="bi bi-egg-fried text-white" ></i> <!-- Biểu tượng combo (hoặc món ăn) -->
+                                                    <i class="bi bi-egg-fried text-white"></i>
+                                                    <!-- Biểu tượng combo (hoặc món ăn) -->
                                                 </span>
                                                 <input type="text" id="combo-name" name="name" class="form-control"
                                                     placeholder="Tên Combo" required>
@@ -59,18 +108,22 @@
 
                                     <div class="col-sm-6 col-12">
                                         <div class="mb-3">
-                                            <label class="form-label">Giá Combo <span class="text-danger required">*</span></label>
+                                            <label class="form-label">Giá Combo <span
+                                                    class="text-danger required">*</span></label>
                                             <div class="input-group">
                                                 <span class="input-group-text bg-success text-white">₫</span>
                                                 <input type="number" name="price" id="price" class="form-control"
-                                                       placeholder="Giá Combo" required min="1" max="100000000" step="0.01">
+                                                    placeholder="Giá Combo" required min="1" max="100000000"
+                                                    step="0.01">
                                             </div>
-                                            <div class="invalid-feedback">Vui lòng nhập giá combo hợp lệ (từ 1 đến 100.000.000 VND).</div>
+                                            <div class="invalid-feedback">Vui lòng nhập giá combo hợp lệ (từ 1 đến
+                                                100.000.000 VND).</div>
                                         </div>
 
                                     </div>
                                     <div class="col-sm-12 col-12">
-                                        <label for="dishes">Chọn Món Ăn: <span class="text-danger required">*</span></label>
+                                        <label for="dishes">Chọn Món Ăn: <span
+                                                class="text-danger required">*</span></label>
                                         <select name="dishes[]" id="dishes" multiple="multiple" style="width: 100%">
                                             @foreach ($dishes as $dish)
                                                 <option value="{{ $dish->id }}">{{ $dish->name }}</option>
@@ -79,7 +132,8 @@
                                     </div>
                                     <div class="col-sm-6 col-12">
                                         <div class="mb-3">
-                                            <label class="form-label">Ảnh Combo <span class="text-danger required">*</span></label>
+                                            <label class="form-label">Ảnh Combo <span
+                                                    class="text-danger required">*</span></label>
                                             <input type="file" name="image" class="form-control" accept="image/*"
                                                 required>
                                             <div class="invalid-feedback">Vui lòng chọn ảnh combo.</div>
@@ -88,13 +142,16 @@
                                     </div>
                                     <div class="col-sm-6 col-12">
                                         <div class="mb-3">
-                                            <label class="form-label">Số Lượng Món Ăn <span class="text-danger required">*</span></label>
+                                            <label class="form-label">Số Lượng Món Ăn <span
+                                                    class="text-danger required">*</span></label>
                                             <div class="input-group">
                                                 <span class="input-group-text bg-success">
-                                                    <i class="bi bi-stack text-white"></i> <!-- Biểu tượng số lượng món ăn -->
+                                                    <i class="bi bi-stack text-white"></i>
+                                                    <!-- Biểu tượng số lượng món ăn -->
                                                 </span>
-                                                <input type="number" name="quantity_dishes" id="quantity_dishes" class="form-control"
-                                                       placeholder="Số lượng món ăn trong combo" required readonly>
+                                                <input type="number" name="quantity_dishes" id="quantity_dishes"
+                                                    class="form-control" placeholder="Số lượng món ăn trong combo" required
+                                                    readonly>
                                             </div>
                                             <div class="invalid-feedback">Vui lòng nhập số lượng món ăn.</div>
                                         </div>
@@ -108,8 +165,9 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="mt-3">
-                                    <button type="submit" class="btn btn-success">Lưu Combo</button>
+                                <div class="text-end">
+                                    <button type="submit" class="btn btn-primary">Thêm mới</button>
+                                    <a href="{{ route('admin.combo.index') }}" class="btn btn-sm btn-secondary">Quay lại</a>
                                 </div>
                             </form>
 

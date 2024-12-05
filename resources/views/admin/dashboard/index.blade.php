@@ -295,7 +295,7 @@
                         <div class="card-body">
                             <div id="salesGraph" class="auto-align-graph"></div>
                             <div class="num-stats text-center mt-3">
-                                <h5 id="totalRevenue" style="color: #acd3ea; font-size: 22px; font-weight: 600;">0₫.00</h5>
+                                <h5 id="totalRevenue" style="color: #94cff1; font-size: 22px; font-weight: 600;">0₫.00</h5>
                                 <!-- Tổng doanh thu -->
                             </div>
                         </div>

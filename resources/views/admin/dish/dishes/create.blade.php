@@ -4,17 +4,64 @@
 
 @section('content')
 
-    @if (session('error'))
-        <div class="alert alert-danger">
-            {{ session('error') }}
-        </div>
-    @endif
+    <!-- SweetAlert -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 
-    @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
+    <style>
+        @keyframes gradientMove {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .swal2-timer-progress-bar {
+            background: linear-gradient(90deg, #34eb4f, #00bcd4, #ffa726, #ffeb3b, #f44336);
+            /* Gradient màu */
+            background-size: 300% 300%;
+            /* Kích thước gradient lớn để tạo hiệu ứng động */
+            animation: gradientMove 2s ease infinite;
+            /* Hiệu ứng lăn tăn */
+        }
+    </style>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Hiển thị thông báo lỗi
+            @if ($errors->any())
+                Swal.fire({
+                    position: "top-end",
+                    icon: "error",
+                    toast: true,
+                    title: "{{ $errors->first() }}",
+                    showConfirmButton: false,
+                    timerProgressBar: true,
+                    timer: 3000
+                });
+            @endif
+
+            // Hiển thị thông báo thành công
+            @if (session('success'))
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    toast: true,
+                    title: "{{ session('success') }}",
+                    showConfirmButton: false,
+                    timerProgressBar: true,
+                    timer: 3000
+                });
+            @endif
+        });
+    </script>
 
     <div class="content-wrapper-scroll">
         <div class="content-wrapper">
@@ -23,7 +70,7 @@
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <div class="card-title text-primary">Thêm Mới Món Ăn</div>
-                            <a href="{{ route('admin.dishes.index') }}" class="btn btn-sm btn-secondary">Quay lại</a>
+
                         </div>
                         <div class="card-body">
                             <form id="addDishForm" method="POST" action="{{ route('admin.dishes.store') }}"
@@ -37,10 +84,13 @@
                                         </label>
                                         <div class="input-group">
                                             <span class="input-group-text bg-success text-white">
-                                                <i class="bi bi-patch-check text-white"></i> <!-- Icon món ăn từ Bootstrap Icons -->
+                                                <i class="bi bi-patch-check text-white"></i>
+                                                <!-- Icon món ăn từ Bootstrap Icons -->
                                             </span>
-                                            <input type="text" id="dish-name" name="name" class="form-control @error('name') is-invalid @enderror"
-                                                   placeholder="Nhập tên món ăn" required maxlength="50" value="{{ old('name') }}">
+                                            <input type="text" id="dish-name" name="name"
+                                                class="form-control @error('name') is-invalid @enderror"
+                                                placeholder="Nhập tên món ăn" required maxlength="50"
+                                                value="{{ old('name') }}">
                                         </div>
 
                                         <!-- Thông báo lỗi -->
@@ -57,7 +107,8 @@
 
 
                                     <div class="col-md-6 mb-3">
-                                        <label for="dish-category" class="form-label">Loại Món Ăn <span class="text-danger required">*</span></label>
+                                        <label for="dish-category" class="form-label">Loại Món Ăn <span
+                                                class="text-danger required">*</span></label>
                                         <select id="dish-category" name="category_id" class="form-select" required>
                                             <option value="0" selected disabled>--- Chọn Loại ---</option>
                                             <!-- Mặc định là lựa chọn chưa chọn -->
@@ -76,10 +127,12 @@
                                             Giá <span class="text-danger required">*</span>
                                         </label>
                                         <div class="input-group">
-                                                <span class="input-group-text bg-success text-white">₫</span>
+                                            <span class="input-group-text bg-success text-white">₫</span>
                                             </span>
-                                            <input type="number" id="dish-price" name="price" class="form-control @error('price') is-invalid @enderror"
-                                                   placeholder="Nhập giá món ăn" required min="1" max="5000000" step="0.01" value="{{ old('price') }}">
+                                            <input type="number" id="dish-price" name="price"
+                                                class="form-control @error('price') is-invalid @enderror"
+                                                placeholder="Nhập giá món ăn" required min="1" max="5000000"
+                                                step="0.01" value="{{ old('price') }}">
                                         </div>
 
                                         <!-- Thông báo lỗi -->
@@ -114,7 +167,8 @@
                                         <div class="invalid-feedback">Vui lòng chọn trạng thái món ăn.</div>
                                     </div>
                                     <div class="col-md-6 mb-3">
-                                        <label for="dish-image" class="form-label">Hình Ảnh <span class="text-danger required">*</span></label>
+                                        <label for="dish-image" class="form-label">Hình Ảnh <span
+                                                class="text-danger required">*</span></label>
                                         <input type="file" id="dish-image" name="image" class="form-control"
                                             accept="image/*" required>
                                         <div class="invalid-feedback">Vui lòng chọn ảnh món ăn.</div>
@@ -128,7 +182,8 @@
                                         </div>
                                         <!-- Chọn Nguyên Liệu (multiple) -->
                                         <div class="mb-4">
-                                            <label for="ingredients" class="form-label fw-bold">Nguyên Liệu <span class="text-danger required">*</span></label>
+                                            <label for="ingredients" class="form-label fw-bold">Nguyên Liệu <span
+                                                    class="text-danger required">*</span></label>
                                             <select id="ingredients" name="ingredient_id[]" class="form-select" multiple
                                                 required>
                                                 @foreach ($ingredients as $ingredient)
@@ -141,8 +196,11 @@
                                         <div id="ingredient-quantities" class="mb-4"></div>
                                     </div>
                                 </div>
-
-                                <button type="submit" class="btn btn-sm btn-primary">Thêm Mới</button>
+                                <div class="text-end">
+                                    <button type="submit" class="btn btn-sm btn-primary">Thêm Mới</button>
+                                    <a href="{{ route('admin.dishes.index') }}" class="btn btn-sm btn-secondary">Quay
+                                        lại</a>
+                                </div>
                             </form>
                         </div>
                     </div>

@@ -3,7 +3,64 @@
 @section('title', 'Thêm Mới Bàn')
 
 @section('content')
+    <!-- SweetAlert -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 
+    <style>
+        @keyframes gradientMove {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .swal2-timer-progress-bar {
+            background: linear-gradient(90deg, #34eb4f, #00bcd4, #ffa726, #ffeb3b, #f44336);
+            /* Gradient màu */
+            background-size: 300% 300%;
+            /* Kích thước gradient lớn để tạo hiệu ứng động */
+            animation: gradientMove 2s ease infinite;
+            /* Hiệu ứng lăn tăn */
+        }
+    </style>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Hiển thị thông báo lỗi
+            @if ($errors->any())
+                Swal.fire({
+                    position: "top-end",
+                    icon: "error",
+                    toast: true,
+                    title: "{{ $errors->first() }}",
+                    showConfirmButton: false,
+                    timerProgressBar: true,
+                    timer: 3000
+                });
+            @endif
+
+            // Hiển thị thông báo thành công
+            @if (session('success'))
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    toast: true,
+                    title: "{{ session('success') }}",
+                    showConfirmButton: false,
+                    timerProgressBar: true,
+                    timer: 3000
+                });
+            @endif
+        });
+    </script>
     <!-- Content wrapper scroll start -->
     <div class="content-wrapper-scroll">
 
@@ -21,59 +78,74 @@
                             <form id="tableForm" action="{{ route('admin.table.store') }}" method="POST" novalidate>
                                 @csrf
 
-                                <!-- Khu Vực -->
-                                <div class="mb-3">
-                                    <label for="area" class="form-label">Khu Vực <span
-                                            class="text-danger required">*</span></label>
-                                    <select class="form-control" id="area" name="area" required>
-                                        <option value="Tầng 1" {{ old('area') == 'Tầng 1' ? 'selected' : '' }}>Tầng 1
-                                        </option>
-                                        <option value="Tầng 2" {{ old('area') == 'Tầng 2' ? 'selected' : '' }}>Tầng 2
-                                        </option>
-                                    </select>
-                                    <div class="invalid-feedback">Vui lòng chọn khu vực.</div>
+                                <!-- Khu Vực và Số Bàn -->
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="area" class="form-label">Khu Vực <span
+                                                class="text-danger required">*</span></label>
+                                        <select class="form-control" id="area" name="area" required>
+                                            <option value="Tầng 1" {{ old('area') == 'Tầng 1' ? 'selected' : '' }}>Tầng 1
+                                            </option>
+                                            <option value="Tầng 2" {{ old('area') == 'Tầng 2' ? 'selected' : '' }}>Tầng 2
+                                            </option>
+                                        </select>
+                                        <div class="invalid-feedback">Vui lòng chọn khu vực.</div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="table_number" class="form-label">Số Bàn <span
+                                                class="text-danger required">*</span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-primary text-white">
+                                                <i class="bi bi-door-open text-white"></i>
+                                            </span>
+                                            <input type="number"
+                                                class="form-control @error('table_number') is-invalid @enderror"
+                                                id="table_number" name="table_number" value="{{ old('table_number') }}"
+                                                required min="1" max="100" placeholder="Nhập số bàn">
+                                        </div>
+                                        <div class="invalid-feedback">
+                                            @error('table_number')
+                                                {{ $message }}
+                                            @else
+                                                Vui lòng nhập số bàn từ 1 đến 100.
+                                            @enderror
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <!-- Số Bàn -->
+                                <!-- Trạng Thái với radio button -->
                                 <div class="mb-3">
-                                    <label for="table_number" class="form-label">Số Bàn <span
-                                            class="text-danger required">*</span></label>
-                                    <div class="input-group">
-                                        <span class="input-group-text bg-primary text-white">
-                                            <i class="bi bi-door-open text-white"></i> <!-- Icon số bàn từ Bootstrap Icons -->
-                                        </span>
-                                        <input type="number"
-                                            class="form-control @error('table_number') is-invalid @enderror"
-                                            id="table_number" name="table_number" value="{{ old('table_number') }}" required
-                                            min="1" max="100" placeholder="Nhập số bàn">
+                                    <label class="form-label">Trạng Thái <span class="text-danger required">*</span></label>
+                                    <div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="status"
+                                                id="statusAvailable" value="Available"
+                                                {{ old('status') == 'Available' ? 'checked' : '' }} required>
+                                            <label class="form-check-label" for="statusAvailable">Có Sẵn</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="status"
+                                                id="statusReserved" value="Reserved"
+                                                {{ old('status') == 'Reserved' ? 'checked' : '' }} required>
+                                            <label class="form-check-label" for="statusReserved">Đã Đặt</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="status"
+                                                id="statusOccupied" value="Occupied"
+                                                {{ old('status') == 'Occupied' ? 'checked' : '' }} required>
+                                            <label class="form-check-label" for="statusOccupied">Đang Sử Dụng</label>
+                                        </div>
                                     </div>
-                                    <div class="invalid-feedback">
-                                        @error('table_number')
-                                            {{ $message }}
-                                        @else
-                                            Vui lòng nhập số bàn từ 1 đến 100.
-                                        @enderror
-                                    </div>
-                                </div>
-
-
-                                <!-- Trạng Thái -->
-                                <div class="mb-3">
-                                    <label for="status" class="form-label">Trạng Thái <span
-                                            class="text-danger required">*</span></label>
-                                    <select class="form-control" id="status" name="status" required>
-                                        <option value="Available" {{ old('status') == 'Available' ? 'selected' : '' }}>Có
-                                            sẵn</option>
-                                        <option value="Reserved" {{ old('status') == 'Reserved' ? 'selected' : '' }}>Đã đặt
-                                            trước</option>
-                                        <option value="Occupied" {{ old('status') == 'Occupied' ? 'selected' : '' }}>Đang sử
-                                            dụng</option>
-                                    </select>
                                     <div class="invalid-feedback">Vui lòng chọn trạng thái bàn.</div>
                                 </div>
 
-                                <button type="submit" class="btn btn-primary">Thêm Bàn</button>
-                                <a href="{{ route('admin.table.index') }}" class="btn btn-sm btn-secondary">Quay lại</a>
+                                <!-- Các nút ở bên phải -->
+                                <div class="text-end">
+                                    <button type="submit" class="btn btn-primary">Thêm Bàn</button>
+                                    <a href="{{ route('admin.table.index') }}" class="btn btn-sm btn-secondary">Quay
+                                        lại</a>
+                                </div>
                             </form>
 
                         </div>

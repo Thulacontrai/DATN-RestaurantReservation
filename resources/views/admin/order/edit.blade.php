@@ -7,35 +7,47 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 
+    <style>
+        @keyframes gradientMove {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .swal2-timer-progress-bar {
+            background: linear-gradient(90deg, #34eb4f, #00bcd4, #ffa726, #ffeb3b, #f44336);
+            /* Gradient màu */
+            background-size: 300% 300%;
+            /* Kích thước gradient lớn để tạo hiệu ứng động */
+            animation: gradientMove 2s ease infinite;
+            /* Hiệu ứng lăn tăn */
+        }
+    </style>
+
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // Kiểm tra lỗi từ session
+            // Hiển thị thông báo lỗi
             @if ($errors->any())
-                Swal.fire({
-                    position: "top-end", // Góc trên bên phải
-                    icon: "error",
-                    toast: true, // Hiển thị nhỏ gọn
-                    title: "{{ $errors->first() }}", // Lấy thông báo lỗi đầu tiên
-                    showConfirmButton: false, // Không hiển thị nút xác nhận
-                    timerProgressBar: true, // Hiển thị thanh tiến trình
-                    timer: 3500 // Tự động đóng sau 3.5 giây
-                });
-            @endif
-
-            // Kiểm tra thông báo lỗi từ session
-            @if (session('error'))
                 Swal.fire({
                     position: "top-end",
                     icon: "error",
                     toast: true,
-                    title: "{{ session('error') }}",
+                    title: "{{ $errors->first() }}",
                     showConfirmButton: false,
                     timerProgressBar: true,
-                    timer: 3500
+                    timer: 3000
                 });
             @endif
 
-            // Kiểm tra thông báo thành công từ session
+            // Hiển thị thông báo thành công
             @if (session('success'))
                 Swal.fire({
                     position: "top-end",
@@ -44,7 +56,7 @@
                     title: "{{ session('success') }}",
                     showConfirmButton: false,
                     timerProgressBar: true,
-                    timer: 3500
+                    timer: 3000
                 });
             @endif
         });
@@ -61,8 +73,7 @@
                     <div class="card shadow-lg border-0">
                         <div class="card-header d-flex justify-content-between align-items-center bg-light">
                             <h4 class="card-title mb-0 text-primary">Chỉnh Sửa Hoá Đơn</h4>
-                            <a href="{{ route('admin.order.index') }}" class="btn btn-sm btn-outline-secondary mb-3">Quay
-                                Lại</a>
+
                         </div>
                         <div class="card-body">
                             <form action="{{ route('admin.order.update', $order->id) }}" method="POST"
@@ -96,7 +107,8 @@
                                         <label for="total_amount" class="form-label">Tổng Tiền</label>
                                         <div class="input-group">
                                             <span class="input-group-text bg-success text-white">₫</span>
-                                            <input type="text" class="form-control rounded-end" id="total_amount" name="total_amount"
+                                            <input type="text" class="form-control rounded-end" id="total_amount"
+                                                name="total_amount"
                                                 value="{{ number_format(old('total_amount', $order->total_amount) ?? 0, 0, ',', '.') }}"
                                                 placeholder="Nhập tổng tiền" oninput="formatCurrency(this)"
                                                 data-raw-value="{{ old('total_amount', $order->total_amount) }}">
@@ -110,18 +122,29 @@
 
                                     <div class="col-md-6 mb-3">
                                         <label for="order_type" class="form-label">Loại Đơn Hàng</label>
-                                        <select class="form-select" id="order_type" name="order_type" required>
-                                            <option value="dine_in"
-                                                {{ old('order_type', $order->order_type) === 'dine_in' ? 'selected' : '' }}>
-                                                Dùng tại chỗ</option>
-                                            <option value="take_away"
-                                                {{ old('order_type', $order->order_type) === 'take_away' ? 'selected' : '' }}>
-                                                Mang về</option>
-                                            <option value="delivery"
-                                                {{ old('order_type', $order->order_type) === 'delivery' ? 'selected' : '' }}>
-                                                Giao hàng</option>
-                                        </select>
+                                        <div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="order_type"
+                                                    id="dine_in" value="dine_in"
+                                                    {{ old('order_type', $order->order_type) === 'dine_in' ? 'checked' : '' }}
+                                                    required>
+                                                <label class="form-check-label" for="dine_in">Dùng tại chỗ</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="order_type"
+                                                    id="take_away" value="take_away"
+                                                    {{ old('order_type', $order->order_type) === 'take_away' ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="take_away">Mang về</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="order_type"
+                                                    id="delivery" value="delivery"
+                                                    {{ old('order_type', $order->order_type) === 'delivery' ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="delivery">Giao hàng</label>
+                                            </div>
+                                        </div>
                                     </div>
+
 
                                     <div class="col-md-6 mb-3">
                                         <label for="status" class="form-label">Trạng Thái</label>
@@ -147,7 +170,8 @@
                                         <label for="discount_amount" class="form-label">Số Tiền Giảm Giá</label>
                                         <div class="input-group">
                                             <span class="input-group-text bg-success text-white">₫</span>
-                                            <input type="text" class="form-control rounded-end" id="discount_amount" name="discount_amount"
+                                            <input type="text" class="form-control rounded-end" id="discount_amount"
+                                                name="discount_amount"
                                                 value="{{ number_format(old('discount_amount', $order->discount_amount) ?? 0, 0, ',', '.') }}"
                                                 placeholder="Nhập số tiền giảm giá" oninput="formatCurrency(this)"
                                                 data-raw-value="{{ old('discount_amount', $order->discount_amount) }}">
@@ -161,7 +185,8 @@
                                         <label for="final_amount" class="form-label">Số Tiền Cuối Cùng</label>
                                         <div class="input-group">
                                             <span class="input-group-text bg-success text-white">₫</span>
-                                            <input type="text" class="form-control rounded-end" id="final_amount" name="final_amount"
+                                            <input type="text" class="form-control rounded-end" id="final_amount"
+                                                name="final_amount"
                                                 value="{{ number_format(old('final_amount', $order->final_amount) ?? 0, 0, ',', '.') }}"
                                                 placeholder="Nhập số tiền cuối cùng" oninput="formatCurrency(this)"
                                                 data-raw-value="{{ old('final_amount', $order->final_amount) }}">
@@ -172,9 +197,11 @@
 
 
                                     <!-- Nút cập nhật đơn hàng -->
-                                    <div class="col-md-6 mb-3">
-                                        <button type="submit" id="update-order-btn" class="btn btn-primary">Cập nhật đơn
-                                            hàng</button>
+                                    <div class="text-end">
+                                        <button type="submit" id="update-order-btn" class="btn btn-primary">Cập
+                                            nhật</button>
+                                        <a href="{{ route('admin.order.index') }}" class="btn btn-sm btn-secondary ">Quay
+                                            Lại</a>
                                     </div>
                             </form>
                         </div>
