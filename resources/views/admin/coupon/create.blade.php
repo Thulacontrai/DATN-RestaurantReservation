@@ -36,16 +36,25 @@
                                 <div class="row">
                                     <!-- Mã Coupon -->
                                     <div class="col-md-6 mb-3">
-                                        <label for="code" class="form-label">Mã Giảm giá</label>
-                                        <input type="text" class="form-control" id="code" name="code" required placeholder="Nhập mã giảm giá">
+                                        <label for="code" class="form-label">Mã Giảm Giá <span
+                                            class="text-danger required">*</span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-info text-white">
+                                                <i class="bi bi-upc-scan text-white"></i>
+                                            </span>
+                                            <input type="text" class="form-control" id="code" name="code"
+                                                required placeholder="Nhập mã giảm giá">
+                                        </div>
                                         @error('code')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
 
+
                                     <!-- Mô Tả -->
                                     <div class="col-md-6 mb-3">
-                                        <label for="description" class="form-label">Mô Tả</label>
+                                        <label for="description" class="form-label">Mô Tả <span
+                                            class="text-danger required">*</span></label>
                                         <textarea class="form-control" id="description" name="description" placeholder="Nhập mô tả"></textarea>
                                         @error('description')
                                             <div class="text-danger">{{ $message }}</div>
@@ -55,10 +64,18 @@
 
                                 <div class="row">
                                     <!-- Số Lượt Sử Dụng Tối Đa -->
+                                    <!-- Số Lượt Sử Dụng Tối Đa -->
                                     <div class="col-md-6 mb-3">
-                                        <label for="max_uses" class="form-label">Số Lượt Sử Dụng Tối Đa</label>
-                                        <input type="number" class="form-control" id="max_uses" name="max_uses" min="1" max="100"
-                                            value="1" required>
+                                        <label for="max_uses" class="form-label">Số Lượt Sử Dụng Tối Đa <span
+                                            class="text-danger required">*</span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-warning text-white">
+                                                <i class="bi bi-person-check text-white"></i>
+                                                <!-- Biểu tượng số lượt sử dụng -->
+                                            </span>
+                                            <input type="number" class="form-control" id="max_uses" name="max_uses"
+                                                min="1" max="100" value="1" required>
+                                        </div>
                                         <div class="invalid-feedback">Số lượt sử dụng phải nằm trong khoảng từ 1 đến 100 và
                                             không được âm.</div>
                                         @error('max_uses')
@@ -66,25 +83,43 @@
                                         @enderror
                                     </div>
 
+
                                     <!-- Thời Gian Bắt Đầu -->
                                     <div class="col-md-6 mb-3">
-                                        <label for="start_time" class="form-label">Thời Gian Bắt Đầu</label>
-                                        <input type="datetime-local" class="form-control" id="start_time" name="start_time">
+                                        <label for="start_time" class="form-label">Thời Gian Bắt Đầu <span
+                                            class="text-danger required">*</span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-info text-white">
+                                                <i class="bi bi-calendar-date text-white"></i>
+                                                <!-- Biểu tượng thời gian bắt đầu -->
+                                            </span>
+                                            <input type="datetime-local" class="form-control" id="start_time"
+                                                name="start_time">
+                                        </div>
                                         @error('start_time')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
+
                                 </div>
 
                                 <div class="row">
                                     <!-- Thời Gian Kết Thúc -->
                                     <div class="col-md-6 mb-3">
-                                        <label for="end_time" class="form-label">Thời Gian Kết Thúc</label>
-                                        <input type="datetime-local" class="form-control" id="end_time" name="end_time">
+                                        <label for="end_time" class="form-label">Thời Gian Kết Thúc <span
+                                            class="text-danger required">*</span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-danger text-white">
+                                                <i class="bi bi-calendar-x text-white"></i> <!-- Biểu tượng thời gian kết thúc -->
+                                            </span>
+                                            <input type="datetime-local" class="form-control" id="end_time"
+                                                name="end_time">
+                                        </div>
                                         @error('end_time')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
+
 
                                     <!-- Loại Giảm Giá -->
                                     <div class="col-md-6 mb-3">
@@ -102,11 +137,12 @@
                                 <div class="row">
                                     <!-- Số Tiền Giảm Giá -->
                                     <div class="col-md-6 mb-3">
-                                        <label for="discount_amount" class="form-label">Số Tiền Giảm Giá</label>
+                                        <label for="discount_amount" class="form-label">Số Tiền Giảm Giá <span
+                                            class="text-danger required">*</span></label>
                                         <div class="input-group">
                                             <span class="input-group-text bg-success text-white">₫</span>
-                                            <input type="number" class="form-control" id="discount_amount" name="discount_amount" step="0.01"
-                                                placeholder="Nhập số tiền giảm giá">
+                                            <input type="number" class="form-control" id="discount_amount"
+                                                name="discount_amount" step="0.01" placeholder="Nhập số tiền giảm giá">
                                         </div>
                                         @error('discount_amount')
                                             <div class="text-danger mt-1">{{ $message }}</div>

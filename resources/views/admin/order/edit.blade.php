@@ -96,13 +96,14 @@
                                         <label for="total_amount" class="form-label">Tổng Tiền</label>
                                         <div class="input-group">
                                             <span class="input-group-text bg-success text-white">₫</span>
-                                            <input type="number" class="form-control rounded-end" id="total_amount"
-                                                name="total_amount" value="{{ old('total_amount', $order->total_amount) }}"
-                                                placeholder="Nhập tổng tiền" min="1" max="50000000" step="0.01"
-                                                oninput="validateAmount(this, 'total_amount_error')">
+                                            <input type="text" class="form-control rounded-end" id="total_amount" name="total_amount"
+                                                value="{{ number_format(old('total_amount', $order->total_amount) ?? 0, 0, ',', '.') }}"
+                                                placeholder="Nhập tổng tiền" oninput="formatCurrency(this)"
+                                                data-raw-value="{{ old('total_amount', $order->total_amount) }}">
                                         </div>
                                         <span id="total_amount_error" class="text-danger small"></span>
                                     </div>
+
 
 
 
@@ -142,33 +143,32 @@
                                             lòng chọn lại.</div>
                                     </div>
 
-
                                     <div class="col-md-6 mb-3">
                                         <label for="discount_amount" class="form-label">Số Tiền Giảm Giá</label>
                                         <div class="input-group">
                                             <span class="input-group-text bg-success text-white">₫</span>
-                                            <input type="number" class="form-control rounded-end" id="discount_amount"
-                                                name="discount_amount"
-                                                value="{{ old('discount_amount', $order->discount_amount) }}"
-                                                placeholder="Nhập số tiền giảm giá" min="1" max="50000000"
-                                                step="0.01" oninput="validateAmount(this, 'discount_amount_error')">
+                                            <input type="text" class="form-control rounded-end" id="discount_amount" name="discount_amount"
+                                                value="{{ number_format(old('discount_amount', $order->discount_amount) ?? 0, 0, ',', '.') }}"
+                                                placeholder="Nhập số tiền giảm giá" oninput="formatCurrency(this)"
+                                                data-raw-value="{{ old('discount_amount', $order->discount_amount) }}">
                                         </div>
                                         <span id="discount_amount_error" class="text-danger small"></span>
                                     </div>
+
 
 
                                     <div class="col-md-6 mb-3">
                                         <label for="final_amount" class="form-label">Số Tiền Cuối Cùng</label>
                                         <div class="input-group">
                                             <span class="input-group-text bg-success text-white">₫</span>
-                                            <input type="number" class="form-control rounded-end" id="final_amount"
-                                                name="final_amount"
-                                                value="{{ old('final_amount', $order->final_amount) }}"
-                                                placeholder="Nhập số tiền cuối cùng" min="1" max="50000000"
-                                                step="0.01" oninput="validateAmount(this, 'final_amount_error')">
+                                            <input type="text" class="form-control rounded-end" id="final_amount" name="final_amount"
+                                                value="{{ number_format(old('final_amount', $order->final_amount) ?? 0, 0, ',', '.') }}"
+                                                placeholder="Nhập số tiền cuối cùng" oninput="formatCurrency(this)"
+                                                data-raw-value="{{ old('final_amount', $order->final_amount) }}">
                                         </div>
                                         <span id="final_amount_error" class="text-danger small"></span>
                                     </div>
+
 
 
                                     <!-- Nút cập nhật đơn hàng -->

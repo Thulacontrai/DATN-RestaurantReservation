@@ -52,7 +52,7 @@
             <div class="col-sm-12 col-12">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="card-title mb-0">Thêm Vai Trò Mới</h5>
+                        <h5 class="card-title mb-0 text-primary" >Thêm Vai Trò Mới</h5>
                         <a href="{{ route('admin.role.index') }}" class="btn btn-sm btn-secondary">
                             <i class="bi bi-arrow-left me-2"></i> Quay lại
                         </a>
@@ -64,21 +64,25 @@
 
                             <div class="mb-4">
                                 <label for="name" class="form-label">Tên Vai Trò</label>
-                                <input type="text" name="name" id="name" class="form-control" placeholder="Nhập tên vai trò" value="{{ old('name') }}" required>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-primary text-white"><i class="bi bi-person text-white"></i></span>
+                                    <input type="text" name="name" id="name" class="form-control" placeholder="Nhập tên vai trò" value="{{ old('name') }}" required>
+                                </div>
                                 <div class="invalid-feedback">Vui lòng nhập tên vai trò.</div>
                                 @error('name')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
 
+
                             <!-- Hiển thị nhóm quyền -->
                             <div class="permission-group">
-                                <div class="permission-group-title">Xem</div>
+                                <div class="permission-group-title text-primary">Xem</div>
                                 <div class="permissions">
                                     @foreach ($permissions as $permission)
                                         @if (Str::startsWith($permission->name, 'Xem'))
                                             <div class="custom-checkbox">
-                                                <input 
+                                                <input
                                                     type="checkbox"
                                                     name="permission[]"
                                                     value="{{ $permission->name }}"
@@ -91,12 +95,12 @@
                             </div>
 
                             <div class="permission-group">
-                                <div class="permission-group-title">Tạo mới</div>
+                                <div class="permission-group-title text-primary">Tạo mới</div>
                                 <div class="permissions">
                                     @foreach ($permissions as $permission)
                                         @if (Str::startsWith($permission->name, 'Tạo mới'))
                                             <div class="custom-checkbox">
-                                                <input 
+                                                <input
                                                     type="checkbox"
                                                     name="permission[]"
                                                     value="{{ $permission->name }}"
@@ -109,12 +113,12 @@
                             </div>
 
                             <div class="permission-group">
-                                <div class="permission-group-title">Sửa</div>
+                                <div class="permission-group-title text-primary">Sửa</div>
                                 <div class="permissions">
                                     @foreach ($permissions as $permission)
                                         @if (Str::startsWith($permission->name, 'Sửa'))
                                             <div class="custom-checkbox">
-                                                <input 
+                                                <input
                                                     type="checkbox"
                                                     name="permission[]"
                                                     value="{{ $permission->name }}"
@@ -127,12 +131,12 @@
                             </div>
 
                             <div class="permission-group">
-                                <div class="permission-group-title">Xóa</div>
+                                <div class="permission-group-title text-primary">Xóa</div>
                                 <div class="permissions">
                                     @foreach ($permissions as $permission)
                                         @if (Str::startsWith($permission->name, 'Xóa'))
                                             <div class="custom-checkbox">
-                                                <input 
+                                                <input
                                                     type="checkbox"
                                                     name="permission[]"
                                                     value="{{ $permission->name }}"
@@ -145,12 +149,12 @@
                             </div>
 
                             <div class="permission-group">
-                                <div class="permission-group-title">Pos</div>
+                                <div class="permission-group-title text-primary">Pos</div>
                                 <div class="permissions">
                                     @foreach ($permissions as $permission)
                                         @if (Str::startsWith($permission->name, 'access'))
                                             <div class="custom-checkbox">
-                                                <input 
+                                                <input
                                                     type="checkbox"
                                                     name="permission[]"
                                                     value="{{ $permission->name }}"

@@ -32,17 +32,29 @@
 
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
-                                        <label for="dish-name" class="form-label">Tên Món Ăn <span class="text-danger required">*</span></label>
-                                        <input type="text" id="dish-name" name="name" class="form-control"
-                                            placeholder="Nhập tên món ăn" required maxlength="50">
+                                        <label for="dish-name" class="form-label">
+                                            Tên Món Ăn <span class="text-danger required">*</span>
+                                        </label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-success text-white">
+                                                <i class="bi bi-patch-check text-white"></i> <!-- Icon món ăn từ Bootstrap Icons -->
+                                            </span>
+                                            <input type="text" id="dish-name" name="name" class="form-control @error('name') is-invalid @enderror"
+                                                   placeholder="Nhập tên món ăn" required maxlength="50" value="{{ old('name') }}">
+                                        </div>
 
-                                        <!-- Thông báo nếu tên món ăn đã tồn tại hoặc dài quá 50 ký tự -->
-                                        <div id="name-exists-warning" class="invalid-feedback" style="display: none;">Tên
-                                            món ăn đã tồn tại.</div>
-                                        <div id="max-length-warning" class="invalid-feedback" style="display: none;">Tên món
-                                            ăn không được vượt quá 50 ký tự.</div>
-                                        <div class="invalid-feedback">Vui lòng nhập tên món ăn.</div>
+                                        <!-- Thông báo lỗi -->
+                                        <div id="name-exists-warning" class="invalid-feedback" style="display: none;">
+                                            Tên món ăn đã tồn tại.
+                                        </div>
+                                        <div id="max-length-warning" class="invalid-feedback" style="display: none;">
+                                            Tên món ăn không được vượt quá 50 ký tự.
+                                        </div>
+                                        <div class="invalid-feedback">
+                                            Vui lòng nhập tên món ăn.
+                                        </div>
                                     </div>
+
 
                                     <div class="col-md-6 mb-3">
                                         <label for="dish-category" class="form-label">Loại Món Ăn <span class="text-danger required">*</span></label>
@@ -60,12 +72,27 @@
 
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
-                                        <label for="dish-price" class="form-label">Giá <span class="text-danger required">*</span></label>
-                                        <input type="number" id="dish-price" name="price" class="form-control"
-                                            placeholder="Nhập giá món ăn" required min="0" step="0.01">
-                                        <div class="invalid-feedback">Vui lòng nhập giá món ăn trong khoảng từ 1 đến
-                                            5.000.000.</div>
+                                        <label for="dish-price" class="form-label">
+                                            Giá <span class="text-danger required">*</span>
+                                        </label>
+                                        <div class="input-group">
+                                                <span class="input-group-text bg-success text-white">₫</span>
+                                            </span>
+                                            <input type="number" id="dish-price" name="price" class="form-control @error('price') is-invalid @enderror"
+                                                   placeholder="Nhập giá món ăn" required min="1" max="5000000" step="0.01" value="{{ old('price') }}">
+                                        </div>
+
+                                        <!-- Thông báo lỗi -->
+                                        <div class="invalid-feedback">
+                                            Vui lòng nhập giá món ăn trong khoảng từ 1 đến 5.000.000.
+                                        </div>
+                                        @error('price')
+                                            <div class="text-danger">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
                                     </div>
+
                                     <div class="col-md-6 mb-3">
                                         <label for="dish-description" class="form-label">Mô tả Món Ăn</label>
                                         <textarea id="dish-description" name="description" class="form-control" placeholder="Nhập mô tả món ăn"></textarea>

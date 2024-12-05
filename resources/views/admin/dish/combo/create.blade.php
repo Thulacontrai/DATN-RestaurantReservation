@@ -44,21 +44,30 @@
                                     <div class="col-sm-6 col-12">
                                         <div class="mb-3">
                                             <label class="form-label">Tên Combo <span class="text-danger required">*</span></label>
-                                            <input type="text" id="combo-name" name="name" class="form-control"
-                                                placeholder="Tên Combo" required>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-primary text-white">
+                                                    <i class="bi bi-egg-fried text-white" ></i> <!-- Biểu tượng combo (hoặc món ăn) -->
+                                                </span>
+                                                <input type="text" id="combo-name" name="name" class="form-control"
+                                                    placeholder="Tên Combo" required>
+                                            </div>
                                             <!-- Các thông báo lỗi sẽ được hiển thị qua JS -->
                                         </div>
                                     </div>
 
 
+
                                     <div class="col-sm-6 col-12">
                                         <div class="mb-3">
                                             <label class="form-label">Giá Combo <span class="text-danger required">*</span></label>
-                                            <input type="number" name="price" id="price" class="form-control"
-                                                placeholder="Giá Combo" required min="1" max="100000000">
-                                            <div class="invalid-feedback">Vui lòng nhập giá combo hợp lệ (từ 1 đến
-                                                10.000.000VND).</div>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-success text-white">₫</span>
+                                                <input type="number" name="price" id="price" class="form-control"
+                                                       placeholder="Giá Combo" required min="1" max="100000000" step="0.01">
+                                            </div>
+                                            <div class="invalid-feedback">Vui lòng nhập giá combo hợp lệ (từ 1 đến 100.000.000 VND).</div>
                                         </div>
+
                                     </div>
                                     <div class="col-sm-12 col-12">
                                         <label for="dishes">Chọn Món Ăn: <span class="text-danger required">*</span></label>
@@ -80,12 +89,16 @@
                                     <div class="col-sm-6 col-12">
                                         <div class="mb-3">
                                             <label class="form-label">Số Lượng Món Ăn <span class="text-danger required">*</span></label>
-                                            <input type="number" name="quantity_dishes" id="quantity_dishes"
-                                                class="form-control" placeholder="Số lượng món ăn trong combo" required
-                                                readonly>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-success">
+                                                    <i class="bi bi-stack text-white"></i> <!-- Biểu tượng số lượng món ăn -->
+                                                </span>
+                                                <input type="number" name="quantity_dishes" id="quantity_dishes" class="form-control"
+                                                       placeholder="Số lượng món ăn trong combo" required readonly>
+                                            </div>
                                             <div class="invalid-feedback">Vui lòng nhập số lượng món ăn.</div>
-
                                         </div>
+
                                     </div>
                                     <div class="col-sm-12 col-12">
                                         <div class="mb-3">

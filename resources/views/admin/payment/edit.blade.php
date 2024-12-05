@@ -78,9 +78,14 @@
 
                                 <div class="mb-3">
                                     <label class="form-label">Số Tiền (Amount)</label>
-                                    <input type="number" name="amount" class="form-control text-primary"
-                                        value="{{ $payment->transaction_amount }}" readonly>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-success text-white">₫</span>
+                                        <input type="number" name="amount" class="form-control text-primary" id="amount"
+                                               value="{{ number_format($payment->transaction_amount, 0, ',', '.') }}" readonly>
+                                    </div>
                                 </div>
+
+
 
                                 <div class="mb-3">
                                     <label class="form-label">Phương Thức Thanh Toán (Payment Method)</label>

@@ -89,10 +89,15 @@
                                 <!-- Số Bàn -->
                                 <div class="mb-3">
                                     <label for="table_number" class="form-label">Số Bàn</label>
-                                    <input type="number" name="table_number" id="table_number"
-                                        class="form-control {{ $errors->has('table_number') ? 'is-invalid' : '' }}"
-                                        value="{{ old('table_number', $table->table_number) }}" required min="1"
-                                        max="100" placeholder="Nhập số bàn" oninput="toggleErrorMessages()">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-primary text-white">
+                                            <i class="bi bi-door-open text-white"></i> <!-- Icon số bàn từ Bootstrap Icons -->
+                                        </span>
+                                        <input type="number" name="table_number" id="table_number"
+                                            class="form-control {{ $errors->has('table_number') ? 'is-invalid' : '' }}"
+                                            value="{{ old('table_number', $table->table_number) }}" required min="1"
+                                            max="100" placeholder="Nhập số bàn" oninput="toggleErrorMessages()">
+                                    </div>
 
                                     <div class="invalid-feedback" id="invalid-feedback-1">
                                         Vui lòng nhập số bàn hợp lệ (từ 1 đến 100).
@@ -102,6 +107,7 @@
                                             khác.</div>
                                     @enderror
                                 </div>
+
 
                                 <script>
                                     // Function to toggle error messages

@@ -8,33 +8,46 @@
             <div class="row">
                 <div class="col-sm-12 col-12">
                     <div class="card">
-                        <div class="card-header">Thêm Nguyên Liệu Mới</div>
+                        <div class="card-header">
+                        <div class="card-title text-primary">Thêm Nguyên Liệu Mới</div>
+                        </div>
                         <div class="card-body">
                             <form id="ingredientForm" action="{{ route('admin.ingredient.store') }}" method="POST" novalidate>
                                 @csrf
 
-                                <!-- Tên Nguyên Liệu -->
                                 <div class="mb-3">
-                                    <label for="name" class="form-label">Tên Nguyên Liệu</label>
-                                    <input type="text" name="name" class="form-control"
-                                        placeholder="Nhập tên nguyên liệu" required>
+                                    <label for="name" class="form-label">Tên Nguyên Liệu <span
+                                        class="text-danger required">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-primary text-white"><i class="bi bi-apple text-white"></i></span>
+                                        <input type="text" name="name" class="form-control" placeholder="Nhập tên nguyên liệu" required>
+                                    </div>
                                     <div class="invalid-feedback">Vui lòng nhập tên nguyên liệu.</div>
                                 </div>
 
+
                                 <div class="mb-3">
-                                    <label for="price" class="form-label">Giá</label>
-                                    <input type="number" step="0.01" name="price" class="form-control"
-                                        placeholder="Nhập giá" min="1" max="5000000" required>
-                                    <div class="invalid-feedback">Giá phải nằm trong khoảng từ 1 đến 1.000.000 VNĐ</div>
+                                    <label for="price" class="form-label">Giá <span
+                                        class="text-danger required">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-success text-white">₫</span>
+                                        <input type="number" step="0.01" name="price" class="form-control"
+                                            placeholder="Nhập giá" min="1" max="5000000" required>
+                                    </div>
+                                    <div class="invalid-feedback">Giá phải nằm trong khoảng từ 1 đến 5.000.000 VNĐ.</div>
                                 </div>
 
-                                <!-- Đơn Vị -->
+
                                 <div class="mb-3">
-                                    <label for="unit" class="form-label">Đơn Vị</label>
-                                    <input type="text" name="unit" class="form-control" placeholder="Nhập đơn vị"
-                                        required>
+                                    <label for="unit" class="form-label">Đơn Vị <span
+                                        class="text-danger required">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-warning"><i class="bi bi-modem text-white"></i></span>
+                                        <input type="text" name="unit" class="form-control" placeholder="Nhập đơn vị" required>
+                                    </div>
                                     <div class="invalid-feedback">Vui lòng nhập đơn vị.</div>
                                 </div>
+
 
                                 <!-- Phân Loại -->
                                 <div class="mb-3">

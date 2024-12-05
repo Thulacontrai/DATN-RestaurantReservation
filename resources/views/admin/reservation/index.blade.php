@@ -117,7 +117,7 @@
                                 <table class="table v-middle m-0">
                                     <thead>
                                         <tr>
-                                            <th><input type="checkbox" id="select-all"></th>
+                                            
                                             <th>Mã Đặt Chỗ</th>
                                             <th>Tên Khách Hàng</th>
                                             <th>Số Lượng Khách</th>
@@ -132,8 +132,6 @@
                                     <tbody>
                                         @forelse ($reservations as $reservation)
                                             <tr id="reservation-{{ $reservation->id }}">
-                                                <td><input type="checkbox" name="selected_reservations[]"
-                                                        value="{{ $reservation->id }}"></td>
                                                 <td>{{ $reservation->id }}</td>
                                                 <td>{{ $reservation->customer->name ?? 'Không rõ' }}</td>
                                                 <td>{{ $reservation->guest_count ?? 'N/A' }}</td>

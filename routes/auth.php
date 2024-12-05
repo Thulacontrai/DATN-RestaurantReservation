@@ -61,17 +61,18 @@ Route::get('/kitchen', function() {
 
     return app(\App\Http\Controllers\KitchenController::class)->index();
 })->name('kitchen.index');
-Route::get('/admin/dashboard', function() {
-    if (!Auth::check()) {
-        return redirect()->route('login/admin');
-    }
 
-    if (!Auth::user()->can('access admin')) {
-        return redirect('/');
-    }
+// Route::get('/admin/dashboard', function() {
+//     if (!Auth::check()) {
+//         return redirect()->route('login/admin');
+//     }
 
-    return app(\App\Http\Controllers\KitchenController::class)->index();
-})->name('admin.dashboard');
+//     if (!Auth::user()->can('access admin')) {
+//         return redirect('/');
+//     }
+
+//     return app(\App\Http\Controllers\KitchenController::class)->index();
+// })->name('admin.dashboard');
 
 
 Route::middleware('guest')->group(function () {

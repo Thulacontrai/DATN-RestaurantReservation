@@ -10,52 +10,87 @@ use App\Models\Table;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class DashboardController extends Controller
 {
     /**
      * Display the admin dashboard with general statistics from reservations.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $title = 'Dashboard';
+        $title = 'Thống Kê';
 
-        // Tổng số bàn và danh mục món ăn
+        // Lấy dữ liệu doanh thu từ bảng orders
+        $revenues = DB::table('orders')
+            ->selectRaw('MONTH(created_at) as month, SUM(total_amount) as total_revenue') // Sửa total_price thành total_amount
+            ->groupByRaw('MONTH(created_at)')
+            ->get();
+
+        $orders = Order::latest()->take(10)->get(); // Lấy 10 đơn hàng mới nhất
+
+        // Logic tổng hợp dữ liệu cho view
         $tableCount = Table::count(); // Số lượng bàn
         $categoryCount = Category::count(); // Số lượng danh mục món ăn
         $userCount = User::count(); // Tổng số người dùng
         $orderCount = Order::count(); // Tổng số đơn hàng
 
-        // Tổng số đặt bàn và doanh thu từ đặt bàn
         $reservationCount = Reservation::count(); // Tổng số đặt bàn
-
-        // Doanh thu từ đặt cọc trong tháng hiện tại
         $totalRevenue = Reservation::whereMonth('created_at', Carbon::now()->month)->sum('deposit_amount');
-
-        // Số lượng đặt bàn trong tháng hiện tại
         $totalBookings = Reservation::whereMonth('created_at', Carbon::now()->month)->count();
 
-        // Tỉ lệ hủy đặt bàn trong tháng hiện tại
         $cancelledBookings = Reservation::whereMonth('created_at', Carbon::now()->month)
-            ->where('status', 'Cancelled') // Trạng thái 'Cancelled' giả định cho đơn hàng hủy
+            ->where('status', 'Cancelled')
             ->count();
         $cancellationRate = $totalBookings > 0 ? ($cancelledBookings / $totalBookings) * 100 : 0;
 
-        // Số lượng khách trong tháng hiện tại
         $totalCustomers = Reservation::whereMonth('created_at', Carbon::now()->month)->sum('guest_count');
 
-        // Doanh thu tháng này và tăng trưởng doanh thu so với tháng trước
         $salesThisMonth = number_format($totalRevenue);
         $previousMonthRevenue = Reservation::whereMonth('created_at', Carbon::now()->subMonth()->month)->sum('deposit_amount');
         $salesGrowth = $previousMonthRevenue > 0 ? (($totalRevenue - $previousMonthRevenue) / $previousMonthRevenue) * 100 : 0;
 
-        // Dữ liệu cho biểu đồ
+        // Dữ liệu cho biểu đồ khách cọc và không cọc
+        $depositData = [
+            'coc' => Reservation::whereMonth('created_at', Carbon::now()->month)->where('deposit_amount', '>', 0)->sum('deposit_amount'),
+            'khongCoc' => Reservation::whereMonth('created_at', Carbon::now()->month)->where('deposit_amount', '=', 0)->sum('deposit_amount'),
+        ];
+
+        // Lấy dữ liệu cho biểu đồ doanh thu và số lượng đặt bàn theo tháng
         $bookingData = [];
         $revenueData = [];
+        $statusData = [
+            'Confirmed' => [],
+            'Cancelled' => [],
+            'Pending' => []
+        ];
+
         for ($i = 1; $i <= 12; $i++) {
+            // Tổng số đặt bàn theo tháng
             $bookingData[] = Reservation::whereMonth('created_at', $i)->count();
+
+            // Doanh thu theo tháng
             $revenueData[] = Reservation::whereMonth('created_at', $i)->sum('deposit_amount');
+
+            // Dữ liệu trạng thái đặt bàn
+            $statusData['Confirmed'][] = Reservation::whereMonth('created_at', $i)->where('status', 'Confirmed')->count();
+            $statusData['Cancelled'][] = Reservation::whereMonth('created_at', $i)->where('status', 'Cancelled')->count();
+            $statusData['Pending'][] = Reservation::whereMonth('created_at', $i)->where('status', 'Pending')->count();
         }
+
+        // Tính toán số lượng khách cọc và không cọc (sử dụng deposit_amount thay vì deposit_status)
+        $coc = Reservation::where('deposit_amount', '>', 0)->count(); // Khách đã cọc
+        $khongCoc = Reservation::where('deposit_amount', '=', 0)->count(); // Khách chưa cọc
+
+        // Tính toán trạng thái đặt bàn với các trạng thái mới: Confirmed, Pending, checked-in, Cancelled, Refund
+        $confirmed = Reservation::whereMonth('created_at', Carbon::now()->month)->where('status', 'Confirmed')->count();
+        $pending = Reservation::whereMonth('created_at', Carbon::now()->month)->where('status', 'Pending')->count();
+        $checkedIn = Reservation::whereMonth('created_at', Carbon::now()->month)->where('status', 'Checked-in')->count();  // Chỉnh lại tên 'checked-in' đúng chính tả
+        $cancelled = Reservation::whereMonth('created_at', Carbon::now()->month)->where('status', 'Cancelled')->count();
+        $refund = Reservation::whereMonth('created_at', Carbon::now()->month)->where('status', 'Refund')->count();  // Chỉnh lại tên biến 'Refund' không viết hoa đầu
+
+
 
         // Pass data to view
         return view('admin.dashboard.index', compact(
@@ -71,10 +106,22 @@ class DashboardController extends Controller
             'totalCustomers',
             'salesThisMonth',
             'salesGrowth',
-            'bookingData',   // Truyền dữ liệu đặt bàn theo tháng
-            'revenueData'    // Truyền dữ liệu doanh thu theo tháng
+            'bookingData',
+            'revenueData',
+            'revenues',
+            'orders',
+            'statusData', // Pass thêm dữ liệu trạng thái cho biểu đồ
+            'depositData', // Pass dữ liệu khách cọc và không cọc cho biểu đồ
+            'confirmed',
+            'pending',
+            'checkedIn',
+            'cancelled',
+            'refund',
+            'coc',
+            'khongCoc' // Pass thêm các biến này
         ));
     }
+
 
 
     public function show($id = null)
@@ -87,6 +134,7 @@ class DashboardController extends Controller
      */
     public function report(Request $request)
     {
+
         return view('admin.dashboard.report', compact('request'));
     }
 }

@@ -289,14 +289,23 @@ class ReservationController extends Controller
             $reservation = Reservation::findOrFail($id);
             $currentStatus = $reservation->status;
 
-            // Kiểm tra nếu trạng thái là "Đã hủy" hoặc "Đã xác nhận" và không cho phép thay đổi
-            if ($currentStatus === 'Cancelled' && !in_array($request->status, ['Pending', 'Confirmed'])) {
-                return back()->withErrors(['status' => 'Không thể thay đổi trạng thái bàn này theo cách này.".']);
+            // Kiểm tra nếu trạng thái là "Đã hủy" và không cho phép thay đổi thành "Chờ xử lý" hoặc "Đã xác nhận"
+            if ($currentStatus === 'Cancelled' && in_array($request->status, ['Pending', 'Confirmed'])) {
+                return back()->withErrors(['status' => 'Không thể thay đổi trạng thái bàn này từ Đã hủy về Chờ xử lý hoặc Đã xác nhận.']);
             }
 
-            if ($currentStatus === 'Confirmed' && $request->status !== 'Confirmed') {
-                return back()->withErrors(['status' => 'Không thể thay đổi trạng thái bàn này theo cách này.".']);
+
+            // Kiểm tra nếu trạng thái là "Đã xác nhận" và chỉ có thể chuyển thành "Đã hủy" hoặc "Chờ xử lý"
+            if ($currentStatus === 'Confirmed' && !in_array($request->status, ['Cancelled', 'Pending'])) {
+                return back()->withErrors(['status' => 'Không thể thay đổi trạng thái bàn này theo cách này.']);
             }
+
+            // Kiểm tra nếu trạng thái là "Chờ xử lý" và không thể chuyển sang "Đã xác nhận"
+            if ($currentStatus === 'Pending' && $request->status === 'Confirmed') {
+                return back()->withErrors(['status' => 'Chờ xử lý không thể chuyển sang trạng thái Đã xác nhận.']);
+            }
+
+
 
             $validated = $request->validate([
                 'customer_name' => 'required|string|max:255',
@@ -1061,7 +1070,7 @@ class ReservationController extends Controller
             $reservation = Reservation::findOrFail($id);
             $reservation->status = 'Cancelled';
             $reservation->cancelled_reason = $reason; // Lưu lý do hủy
-            
+
             $reservation->save();
             return response()->json([
                 'success' => true,

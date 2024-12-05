@@ -37,11 +37,11 @@
                                 <!-- Nguyên Liệu -->
                                 <div class="mb-3">
                                     <label for="ingredient_id" class="form-label">Nguyên Liệu</label>
-                                    <select class="form-control @error('ingredient_id') is-invalid @enderror" 
+                                    <select class="form-control @error('ingredient_id') is-invalid @enderror"
                                             id="ingredient_id" name="ingredient_id">
                                         <option value="">Chọn nguyên liệu</option>
                                         @foreach($ingredients as $ingredient)
-                                            <option value="{{ $ingredient->id }}" 
+                                            <option value="{{ $ingredient->id }}"
                                                 {{ (old('ingredient_id', $inventory->ingredient_id) == $ingredient->id) ? 'selected' : '' }}>
                                                 {{ $ingredient->name }}
                                             </option>
@@ -55,16 +55,16 @@
                                 <!-- Số Lượng -->
                                 <div class="mb-3">
                                     <label for="quantity" class="form-label">Số Lượng</label>
-                                    <input type="number" class="form-control @error('quantity_stock') is-invalid @enderror" 
-                                           id="quantity" name="quantity_stock" 
+                                    <input type="number" class="form-control @error('quantity_stock') is-invalid @enderror"
+                                           id="quantity" name="quantity_stock"
                                            value="{{ old('quantity_stock', $inventory->quantity_stock) }}">
                                     @error('quantity_stock')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
-                                </div>                  
+                                </div>
 
                                 <button type="submit" class="btn btn-primary">Cập Nhật</button>
-                            </form>                            
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -99,6 +99,6 @@
     select {
         background-color: white;
         color: black;
-    }u đ
+    }
 </style>
 

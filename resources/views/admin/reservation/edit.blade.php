@@ -81,36 +81,55 @@
                                         </div>
 
                                         <div class="mb-3">
-                                            <label for="reservation_date" class="form-label">Ngày đặt</label>
-                                            <input type="date" class="form-control" id="reservation_date"
-                                                name="reservation_date"
-                                                value="{{ old('reservation_date', $reservationDate) }}" required>
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label for="reservation_time" class="form-label">Giờ đặt</label>
-                                            <input type="time" class="form-control" id="reservation_time"
-                                                name="reservation_time"
-                                                value="{{ old('reservation_time', $reservationTime) }}" required>
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label for="guest_count" class="form-label">Số lượng khách</label>
-                                            <input type="number" class="form-control text-primary" id="guest_count"
-                                                name="guest_count" value="{{ $reservation->guest_count }}" min="1"
-                                                max="50" readonly>
-                                            <div class="invalid-feedback">Số lượng khách phải nằm trong khoảng từ 1 đến 50.
+                                            <label for="reservation_date" class="form-label">Ngày Đặt</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-warning text-white">
+                                                    <i class="bi bi-calendar-date text-white"></i> <!-- Icon lịch từ Bootstrap Icons -->
+                                                </span>
+                                                <input type="date" class="form-control" id="reservation_date" name="reservation_date"
+                                                    value="{{ old('reservation_date', $reservationDate) }}" required>
                                             </div>
                                         </div>
+
+
+                                        <div class="mb-3">
+                                            <label for="reservation_time" class="form-label">Giờ Đặt</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-danger text-white">
+                                                    <i class="bi bi-clock text-white"></i> <!-- Icon đồng hồ từ Bootstrap Icons -->
+                                                </span>
+                                                <input type="time" class="form-control" id="reservation_time" name="reservation_time"
+                                                    value="{{ old('reservation_time', $reservationTime) }}" required>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="mb-3">
+                                            <label for="guest_count" class="form-label">Số Lượng Khách</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-primary text-white">
+                                                    <i class="bi bi-people text-white"></i> <!-- Icon người từ Bootstrap Icons -->
+                                                </span>
+                                                <input type="number" class="form-control text-primary" id="guest_count" name="guest_count"
+                                                    value="{{ $reservation->guest_count }}" min="1" max="50" readonly>
+                                                <div class="invalid-feedback">Số lượng khách phải nằm trong khoảng từ 1 đến 50.</div>
+                                            </div>
+                                        </div>
+
                                     </div>
 
                                     <!-- Cột phải -->
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label for="deposit_amount" class="form-label">Số tiền đặt cọc</label>
-                                            <input type="number" class="form-control text-primary" id="deposit_amount"
-                                                name="deposit_amount" value="{{ $reservation->deposit_amount }}" readonly>
+                                            <label for="deposit_amount" class="form-label">Số Tiền Đặt Cọc</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-success text-white">₫</span>
+                                                <input type="text" class="form-control text-primary" id="deposit_amount" name="deposit_amount"
+                                                    value="{{ number_format($reservation->deposit_amount ?? 0, 0, ',', '.') }}"
+                                                    readonly data-raw-value="{{ $reservation->deposit_amount }}">
+                                            </div>
                                         </div>
+
 
                                         <div class="mb-3">
                                             <label for="status" class="form-label">Trạng thái</label>
@@ -131,9 +150,13 @@
                                         </div>
 
                                         <div class="mb-3">
-                                            <label for="note" class="form-label">Ghi chú</label>
-                                            <textarea class="form-control" id="note" name="note">{{ $reservation->note }}</textarea>
+                                            <label for="note" class="form-label">Ghi Chú</label>
+                                            <div class="input-group">
+
+                                                <textarea class="form-control" id="note" name="note" rows="3" placeholder="Nhập ghi chú...">{{ $reservation->note }}</textarea>
+                                            </div>
                                         </div>
+
                                     </div>
                                 </div>
 

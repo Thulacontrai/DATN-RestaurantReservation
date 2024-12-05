@@ -57,9 +57,9 @@
                                         @enderror
                                     </div>
                                     <div class="col-md-6 mb-4">
-                                        <label for="discount_amount" class="form-label"><i class="bi bi-currency-dollar"></i> Số Tiền Giảm Giá</label>
+                                        <label for="discount_amount" class="form-label">₫</i> Số Tiền Giảm Giá</label>
                                         <input type="number" class="form-control" id="discount_amount" name="discount_amount"
-                                               step="0.01" value="{{ old('discount_amount', $coupon->discount_amount) }}" required>
+                                               step="0.01" value="{{ number_format(old('discount_amount', $coupon->discount_amount), 0, ',', '.') }}" required>
                                         @error('discount_amount')
                                             <div class="text-danger mt-1"><i class="bi bi-exclamation-circle"></i> {{ $message }}</div>
                                         @enderror

@@ -15,7 +15,7 @@
                 <div class="col-sm-12 col-12">
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
-                            <div class="card-title">Thêm Mới Danh Mục Thực Đơn</div>
+                            <div class="card-title text-primary">Thêm Mới Danh Mục Thực Đơn</div>
                         </div>
                         <div class="card-body">
 
@@ -23,14 +23,19 @@
                                 @csrf
 
                                 <!-- Tên Danh Mục -->
+                                <!-- Tên Danh Mục -->
                                 <div class="mb-3">
-                                    <label for="category-name" class="form-label text-primary">
+                                    <label for="category-name" class="form-label">
                                         Tên Danh Mục <span class="text-danger required">*</span>
                                     </label>
-
-                                    <input type="text" id="category-name" name="name"
-                                        class="form-control @error('name') is-invalid @enderror"
-                                        placeholder="Nhập tên danh mục" required value="{{ old('name') }}">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-primary text-white">
+                                            <i class="bi bi-list"></i> <!-- Icon danh mục từ Bootstrap Icons -->
+                                        </span>
+                                        <input type="text" id="category-name" name="name"
+                                            class="form-control @error('name') is-invalid @enderror"
+                                            placeholder="Nhập tên danh mục" required value="{{ old('name') }}">
+                                    </div>
 
                                     @error('name')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -38,6 +43,7 @@
                                         <div class="invalid-feedback">Vui lòng nhập tên danh mục.</div>
                                         @endif
                                     </div>
+
 
                                     <!-- Mô Tả -->
                                     <div class="mb-3">
@@ -49,6 +55,7 @@
 
                                     <!-- Nút Thêm Mới -->
                                     <button type="submit" class="btn btn-sm btn-primary">Thêm Mới</button>
+                                    <a href="{{ route('admin.category.index') }}" class="btn btn-sm btn-secondary">Quay Lại</a>
                                 </form>
 
                             </div>

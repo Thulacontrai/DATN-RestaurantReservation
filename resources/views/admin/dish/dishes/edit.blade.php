@@ -75,15 +75,25 @@
 
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
-                                        <label for="dish-name" class="form-label">Tên Món Ăn</label>
-                                        <input type="text" id="dish-name" name="name" class="form-control"
-                                            value="{{ $dish->name ?? '' }}" required>
-                                        <!-- Thông báo lỗi -->
-                                        <small id="dish-name-error" class="text-danger d-block mt-1"
-                                            style="display: none;">Tên món ăn đã tồn tại. Vui lòng chọn tên khác.</small>
-                                        <div class="invalid-feedback">Vui lòng nhập tên món ăn hợp lệ (từ 3 đến 50 ký tự).
+                                        <label for="dish-name" class="form-label">
+                                            Tên Món Ăn
+                                        </label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-success text-white">
+                                                <i class="bi bi-patch-check text-white"></i>
+                                            </span>
+                                            <input type="text" id="dish-name" name="name" class="form-control @error('name') is-invalid @enderror"
+                                                   value="{{ $dish->name ?? '' }}" required placeholder="Nhập tên món ăn">
+                                        </div>
+                                        <small id="dish-name-error" class="text-danger d-block mt-1" style="display: none;">
+                                            Tên món ăn đã tồn tại. Vui lòng chọn tên khác.
+                                        </small>
+                                        <div class="invalid-feedback">
+                                            Vui lòng nhập tên món ăn hợp lệ (từ 3 đến 50 ký tự).
                                         </div>
                                     </div>
+
+
                                     <script>
                                         document.addEventListener('DOMContentLoaded', function() {
                                             const dishNameInput = document.getElementById('dish-name');
@@ -135,12 +145,21 @@
                                 <div class="row">
                                     <!-- Giá -->
                                     <div class="col-md-6 mb-3">
-                                        <label for="dish-price" class="form-label">Giá</label>
-                                        <input type="number" id="dish-price" name="price" class="form-control"
-                                            value="{{ $dish->price }}" required min="0" step="0.01"
-                                            placeholder="Nhập giá món ăn">
-                                        <div class="invalid-feedback">Vui lòng nhập giá món ăn hợp lệ (1 - 5.000.000).</div>
+                                        <label for="dish-price" class="form-label">
+                                            Giá
+                                        </label>
+                                        <div class="input-group">
+
+                                                <span class="input-group-text bg-success text-white">₫</span>
+                                        
+                                            <input type="number" id="dish-price" name="price" class="form-control @error('price') is-invalid @enderror"
+                                                   value="{{ $dish->price }}" required min="1" max="5000000" step="0.01" placeholder="Nhập giá món ăn">
+                                        </div>
+                                        <div class="invalid-feedback">
+                                            Vui lòng nhập giá món ăn hợp lệ (1 - 5.000.000).
+                                        </div>
                                     </div>
+
 
                                     <!-- Trạng Thái -->
                                     <div class="col-md-6 mb-3">
