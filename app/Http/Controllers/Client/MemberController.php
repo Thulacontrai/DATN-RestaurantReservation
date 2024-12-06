@@ -90,52 +90,52 @@ class MemberController extends Controller
     public function updateReservation(Request $request)
     {
         // dd($request->all());
-        $data=$request->all();
-         return response()->json([
-            'success' => true,
-                     'message' => 'OKKKKKK!',
+        // $data=$request->all();
+        //  return response()->json([
+        //     'success' => true,
+        //              'message' => 'OKKKKKK!',
 
-                     'data' => $data,
-         ]);
+        //              'data' => $data,
+        //  ]);
         // $id = $request->reservationId;
         // DB::beginTransaction();
 
 
 
         // Xử lý và validate dữ liệu
-        // $validated = $request->all();
+        $validated = $request->all();
 
-        // // $reservation = Reservation::where('id', $id)
-        // //     ->where('customer_id', auth()->id())
-        // //     ->firstOrFail();
+        // $reservation = Reservation::where('id', $id)
+        //     ->where('customer_id', auth()->id())
+        //     ->firstOrFail();
 
 
 
-        // // Cập nhật dữ liệu trong cơ sở dữ liệu
-        // $id = $request->reservationId;
+        // Cập nhật dữ liệu trong cơ sở dữ liệu
+        $id = $request->reservationId;
 
-        // // Tìm đơn đặt bàn theo ID
-        // $reservation = Reservation::findOrFail($id);
+        // Tìm đơn đặt bàn theo ID
+        $reservation = Reservation::findOrFail($id);
 
-        // // Cập nhật dữ liệu với validate
-        // $reservation->update($validated);
+        // Cập nhật dữ liệu với validate
+        $reservation->update($validated);
 
-        // // Tính tiền cọc
-        // if ($reservation->guest_count >= 6) {
-        //     $reservation->deposit_amount = $reservation->guest_count * 100000;
-        // } else {
-        //     $reservation->deposit_amount = 0; // Đặt về 0 nếu không đạt điều kiện
-        // }
+        // Tính tiền cọc
+        if ($reservation->guest_count >= 6) {
+            $reservation->deposit_amount = $reservation->guest_count * 100000;
+        } else {
+            $reservation->deposit_amount = 0; // Đặt về 0 nếu không đạt điều kiện
+        }
 
-        // // Lưu thay đổi vào cơ sở dữ liệu
-        // $reservation->save();
+        // Lưu thay đổi vào cơ sở dữ liệu
+        $reservation->save();
 
-        // // Trả về dữ liệu đã cập nhật
-        // return response()->json([
-        //     'success' => true,
-        //     'reservation' => $reservation,
-        //     'message' => 'Cập nhật thành công!',
-        // ]);
+        // Trả về dữ liệu đã cập nhật
+        return response()->json([
+            'success' => true,
+            'reservation' => $reservation,
+            'message' => 'Cập nhật thành công!',
+        ]);
     }
 
 
