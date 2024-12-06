@@ -121,6 +121,7 @@
                                             <th>Thời Gian Đặt</th>
                                             {{-- <th>Bàn</th> --}}
                                             <th>Tiền cọc</th>
+                                            <th>Lý do hủy</th>
                                             <th>Ghi Chú</th>
                                             <th>Trạng Thái</th>
                                             <th>Hành Động</th>
@@ -144,6 +145,7 @@
                                                     {{ number_format($reservation->deposit_amount, 0, ',', '.') }}
                                                 </td>
 
+                                                <td>{{ $reservation->cancelled_reason ?? 'Không có' }}</td>
                                                 <td>{{ $reservation->note ?? 'Không có' }}</td>
                                                 <td>
                                                     @if ($reservation->status === 'Confirmed')

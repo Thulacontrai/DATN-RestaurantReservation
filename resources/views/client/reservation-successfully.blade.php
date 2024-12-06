@@ -50,4 +50,18 @@
             </div>
         </section>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @if (isset($msg))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Thông báo',
+                text: "{{ $msg }}",
+                timer: 3000,
+                showConfirmButton: false,
+                toast: true,
+                position: 'top-end'
+            });
+        </script>
+    @endif
 @endsection

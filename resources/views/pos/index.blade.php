@@ -1,7 +1,17 @@
 @extends('pos.layouts.master')
 
 @section('title', 'POS | Trang chủ')
+<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+<style>
+    .swal2-container .select2-dropdown {
+        z-index: 1060 !important;
+    }
 
+    .swal2-container .select2-container--default .select2-selection--multiple {
+        width: 100%;
+    }
+</style>
 @section('content')
     @if (session('error'))
         <script>
@@ -66,9 +76,8 @@
                                 <label for="roomTable">Phòng/bàn</label>
                                 <select id="roomTable">
                                     <option value="">Chọn phòng bàn</option>
-                                    @foreach ($availableTables as $table )
-                                        
-                                    <option value="{{$table->table_id}}">{{$table->table_number}}</option>
+                                    @foreach ($availableTables as $table)
+                                        <option value="{{ $table->table_id }}">{{ $table->table_number }}</option>
                                     @endforeach
                                     <!-- Các tùy chọn khác -->
                                 </select>
@@ -254,11 +263,13 @@
                         style="max-height: 600px; overflow-y: auto;" id="layoutTable">
                         @foreach ($tables as $table)
                             <div class="table-card {{ strtolower(trim($table->status)) }}"
-                                data-table-id="{{ $table->id }}" data-status="{{ $table->status }}">
+                                data-table-id="{{ $table->id }}" data-status="{{ $table->status }}"
+                                data-order-id="@foreach ($table->orders as $column) {{ $column->reservation->user_name ?? null }} @endforeach">
                                 <span class="table-number">Bàn {{ $table->table_number }}</span>
                                 <div class="table-o">
                                     @foreach ($table->orders as $column)
-                                        <span><i class="fa-solid fa-id-card"></i> {{ $column->id ?? null }}</span>
+                                        <span><i class="fa-solid fa-id-card"></i>
+                                            {{ $column->reservation->id ?? ($column->id ?? null) }}</span>
                                     @endforeach
                                 </div>
                             </div>
@@ -271,8 +282,10 @@
                     <div class="filter-section mb-4 d-flex justify-content-start flex-nowrap">
                         <button class="btn btn-outline-primary filter-btnn me-2 active" data-category="all">Tất
                             cả</button>
+                        <button class="btn btn-outline-primary filter-btnn me-2"
+                            data-category="combo">Combo({{ $combo->count() }})</button>
                         @foreach ($cate as $cate)
-                            <button class="btn btn-outline-light filter-btnn me-2"
+                            <button class="btn btn-outline-primary filter-btnn me-2"
                                 data-category="{{ $cate->id }}">{{ $cate->name }}({{ $cate->dishes->count() }})</button>
                         @endforeach
                     </div>
@@ -312,6 +325,23 @@
                                     <div class="card-body text-center">
                                         <h5 class="card-price text-primary">{{ number_format($dish->price, 0, ',', '.') }} VND</h5>
                                         <p class="card-title">{{ \Str::limit($dish->name, 20, '...') }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                        @foreach ($combo as $combo)
+                            <div class="col-md-3 dish-combo" data-category="combo" data-combo-id="{{ $combo->id }}"
+                                data-combo-price="{{ $combo->price }}">
+                                <div class="card menu-item">
+                                    <img class="btn btn-add-combo" data-combo-id="{{ $combo->id }}"
+                                        src="{{ asset($combo->image ? 'storage/' . $combo->image : 'images/placeholder.jpg') }}"
+                                        alt="{{ $combo->name }}" class="img-fluid rounded"
+                                        style="height: 200px; object-fit: cover;" />
+                                    <div class="card-body text-center">
+                                        <h5 class="card-price text-primary">
+                                            {{ number_format($combo->price, 0, ',', '.') }}
+                                            VND</h5>
+                                        <p class="card-title">{{ \Str::limit($combo->name, 20, '...') }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -359,9 +389,16 @@
         });
         document.querySelector('#dish-list').addEventListener('click', function(event) {
             const card = event.target.closest('.dish-item');
-            if (!card) return;
-            const dishId = card.dataset.dishId;
-            addDishToOrder(dishId, selectedTableId);
+            const combo = event.target.closest('.dish-combo');
+
+            if (card) {
+                const dishId = card.dataset.dishId;
+                addDishToOrder(dishId, selectedTableId);
+            }
+            if (combo) {
+                const comboId = combo.dataset.comboId;
+                addComboToOrder(comboId, selectedTableId);
+            }
         });
         document.querySelector('#notification-button').addEventListener('click', function(event) {
             notificationButton(selectedTableId);
@@ -482,32 +519,86 @@
         }
 
         function createOrder(tableId) {
-            Swal.fire({
-                title: "Nhận gọi món cho bàn này?",
-                showDenyButton: true,
-                confirmButtonText: "Đúng",
-                denyButtonText: `Hủy`
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    showNotification('Tạo đơn thành công');
-                    fetch('/create-order/' + tableId, {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                    .getAttribute('content'),
-                                'Content-Type': 'application/json'
+
+            fetch('/checkAvailableTables', {
+                    method: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector(
+                                'meta[name="csrf-token"]')
+                            .getAttribute('content'),
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error('Failed to fetch available tables');
+                    return response.json();
+                })
+                .then(data => {
+                    const availableTables = data.tables || [];
+                    Swal.fire({
+                        title: 'Nhận gọi món',
+                        html: `
+          <div class="container">
+            <div class="mb-3">
+              <label for="tableRoom" class="form-label">Phòng/Bàn</label><br>
+              <select id="tableRoom" class="form-select" multiple>
+${availableTables.map(table => `
+  <option value="${table.id}" ${table.id == tableId ? 'selected' : ''}>
+    Bàn ${table.table_number}
+  </option>
+`).join('')}
+                </select>
+            </div>
+          </div>
+        `,
+                        showCancelButton: true,
+                        confirmButtonText: 'Xác nhận',
+                        cancelButtonText: 'Hủy',
+                        didOpen: () => {
+                            const $tableRoom = $('#tableRoom');
+                            $tableRoom.select2({
+                                allowClear: true,
+                                dropdownParent: $('.swal2-container')
+                            });
+                        },
+                        preConfirm: () => {
+                            const tableRoom = $('#tableRoom').val();
+                            if (!tableRoom.length) {
+                                Swal.showValidationMessage('Vui lòng nhập đầy đủ thông tin');
+                                return false;
                             }
-                        })
-                        .then(response => {
-                            if (!response.ok) throw new Error('Network response was not ok');
-                            return response.json();
-                        })
-                        .then(data => showOrderDetails(tableId))
-                        .catch(() => showNotification('Lỗi khi tạo đơn', 'error'));
-                } else if (result.isDenied) {
-                    showNotification('Tạo đơn thất bại', 'error');
-                }
-            });
+
+                            return {
+                                tableRoom,
+                            };
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            showNotification('Tạo đơn thành công');
+                            fetch('/create-order', {
+                                    method: 'POST',
+                                    headers: {
+                                        'X-CSRF-TOKEN': document.querySelector(
+                                                'meta[name="csrf-token"]')
+                                            .getAttribute('content'),
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({
+                                        table_id: result.value.tableRoom,
+                                    })
+                                })
+                                .then(response => {
+                                    if (!response.ok) throw new Error(
+                                        'Network response was not ok');
+                                    return response.json();
+                                })
+                                .then(data => showOrderDetails(tableId))
+                                .catch(() => showNotification('Lỗi khi tạo đơn', 'error'));
+                        } else if (result.isDenied) {
+                            showNotification('Tạo đơn thất bại', 'error');
+                        }
+                    });
+                })
         }
         const orderDetails = document.getElementById('order-details');
         orderDetails.addEventListener("click", function(event) {
@@ -730,6 +821,36 @@
             }
         }
 
+        function addComboToOrder(comboId, selectedTableId) {
+            if (selectedTableId) {
+                fetch(`/add-combo-to-order`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                .getAttribute('content'),
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            table_id: selectedTableId,
+                            combo_id: comboId
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showNotification('Thêm món thành công')
+                        } else {
+                            console.log(data);
+                            
+                            showNotification('Món đã hết nguyên liệu', 'error')
+                        }
+                    })
+                    .catch(error => console.log('Error:', error));
+            } else {
+                showNotification('Hãy chọn bàn trước khi thêm món', 'error')
+            }
+        }
+
         function showOrderDetails(tableId) {
             fetch('/order-details/' + tableId, {
                     method: 'POST',
@@ -756,7 +877,6 @@
             const selectedTableIds = data.table.tables.map(table => String(table.table_number));
             tableCards.forEach(card => {
                 const isSelected = selectedTableIds.includes(card.getAttribute('data-table-id'));
-                console.log();
 
                 if (isSelected) {
                     card.style.backgroundColor = '#007bff';
@@ -1074,12 +1194,12 @@
         transform: translate3d(0, 0, 2em);
     }
 
-    .table-o{
+    .table-o {
         width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
 

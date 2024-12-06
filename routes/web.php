@@ -96,8 +96,13 @@ Route::post('/change-password', [MemberController::class, 'changePassword'])->na
 Route::post('/member/update-booking', [MemberController::class, 'updateBooking'])->name('member.updateBooking');
 
 
-Route::get('/admin/users', [UserController::class, 'index'])->name('admin.user.index');
-Route::get('/admin/employees', [UserController::class, 'employeeList'])->name('admin.user.employees');
+// web.php
+// web.php
+Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () {
+    Route::get('user', [UserController::class, 'index'])->name('user.index'); // Danh sách người dùng
+    Route::get('user/employees', [UserController::class, 'employeeList'])->name('user.employees'); // Danh sách nhân viên
+});
+
 
 
 // login
@@ -202,12 +207,13 @@ Route::patch('/refunds/{id}/updateStatus', [RefundController::class, 'updateStat
 
 Route::get('/admin/refunds', [RefundController::class, 'index'])->name('admin.refunds.index');
 Route::post('client/cancel-reservationpopup', [ReservationController::class, 'cancelReservationPopUp'])->name('client.cancel.reservationpopup');
-
+Route::post('/reservation/cancel', [ReservationController::class, 'cancel'])->name('client.cancel.reservation');
 
 Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
-Route::post('/create-order/{tableId}', [PosController::class, 'createOrder']);
+Route::post('/create-order', [PosController::class, 'createOrder']);
 Route::post('/order-details/{tableId}', [PosController::class, 'orderDetails'])->name('order-details');
 Route::post('/add-dish-to-order', [PosController::class, 'addDishToOrder']);
+Route::post('/add-combo-to-order', [PosController::class, 'addComboToOrder']);
 Route::post('/deleteItem', [PosController::class, 'deleteItem']);
 Route::post('/increaseQuantity', [PosController::class, 'increaseQuantity']);
 Route::post('/decreaseQuantity', [PosController::class, 'decreaseQuantity']);
@@ -216,6 +222,7 @@ Route::post('/canelItem', [PosController::class, 'canelItem']);
 Route::get('/Ppayment/{table_number}', [PosController::class, 'Ppayment'])->name('Ppayment');
 Route::get('/viewCheckOut/{table_number}', [PosController::class, 'viewCheckOut'])->name('viewCheckOut');
 Route::post('/check-payment-condition', [PosController::class, 'checkPaymentPondition'])->name('checkPaymentPondition');
+Route::get('/checkAvailableTables', [PosController::class, 'checkAvailableTables'])->name('checkPaymentPondition');
 
 ///
 Route::get('reserToOrder/{reservationId}', [PosController::class, 'reserToOrder'])->name('ReToOr');
@@ -233,7 +240,6 @@ Route::delete('/order/{order_id}/item/{item_id}', [PosController::class, 'delete
 
 
 Route::post('/reservation/check-table', [PosController::class, 'checkTable'])->name('reservation.checkTable');
-
 
 
 

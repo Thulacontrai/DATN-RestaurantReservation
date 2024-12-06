@@ -10,7 +10,8 @@
 
 
     <!-- Meta -->
-    <link rel="icon"     type="image/x-icon">    <!-- Common Css Files -->
+    <link rel="icon" href="{{asset('client/03_images/logo.png')}}" type="image/x-icon">
+
     <link rel="stylesheet" href="{{ asset('adminn/assets/css/animate.css') }}">
     <link rel="stylesheet" href="{{ asset('adminn/assets/fonts/bootstrap/bootstrap-icons.css') }}">
     <link rel="stylesheet" href="{{ asset('adminn/assets/css/main.min.css') }}">
