@@ -623,7 +623,7 @@
                 // Gửi thêm reservationId vào dữ liệu
                 const fullData = formData + `&reservationId=${reservationId}`;
 
-               
+
                 $.ajax({
                     url: `/member/reservation/update`, // Đường dẫn cập nhật
                     type: "POST",
@@ -642,19 +642,19 @@
                             //         // Thông báo thành công
                             // alert("Cập nhật thông tin thành công!");
                             Swal.fire({
-                               
+
                                 text: "Cập nhật thông tin thành công",
-                                
-                                
+
+
                             })
                         } else {
                             // Hiển thị lỗi nếu có
                             Swal.fire({
-                               
-                               text: "Có lỗi xảy ra vui lòng thử lại!",
-                               
-                               
-                           })
+
+                                text: "Có lỗi xảy ra vui lòng thử lại!",
+
+
+                            })
                         }
                     },
                     // error: function(xhr) {
