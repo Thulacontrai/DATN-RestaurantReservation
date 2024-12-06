@@ -411,7 +411,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Route::resource('recipes', RecipesController::class);
 
     Route::resource('ingredient', IngredientController::class);
+
+    // Route::get('/dashboard/revenue', [DashboardController::class, 'getRevenue'])->name('dashboard.revenue');
+
     Route::resource('dashboard', DashboardController::class);
+  
+
+
+
+
+
     Route::resource('report', ReportController::class);
 
     Route::resource('accountSetting', SettingController::class);

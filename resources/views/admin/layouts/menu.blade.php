@@ -23,7 +23,7 @@
                                 <a href="{{ route('admin.dashboard.index') }}">Phân tích</a>
                             </li>
                             <li>
-                                <a href="{{ route('admin.report.index') }}">Báo Cáo thống kê</a>
+                                <a href="{{ route('admin.report.index') }}">Báo Cáo TT</a>
                             </li>
 
                         </ul>
@@ -35,12 +35,12 @@
                     <li class="sidebar-dropdown">
                         <a href="#">
                             <i class="bi bi-window-split"></i>
-                            <span class="menu-text">Quản Lý Bàn</span>
+                            <span class="menu-text">QL Bàn</span>
                         </a>
                         <div class="sidebar-submenu">
                             <ul>
                                 <li>
-                                    <a href="{{ route('admin.table.index') }}">Danh sách bàn</a>
+                                    <a href="{{ route('admin.table.index') }}">DS bàn</a>
                                 </li>
                             </ul>
                         </div>
@@ -50,13 +50,13 @@
                     <li class="sidebar-dropdown">
                         <a href="#">
                             <i class="bi bi-layers-half"></i>
-                            <span class="menu-text">Quản Lý Đặt Bàn</span>
+                            <span class="menu-text">QL Đặt Bàn</span>
                         </a>
                         <div class="sidebar-submenu">
                             <ul>
                                 @can('Xem đặt bàn')
                                     <li>
-                                        <a href="{{ route('admin.reservation.index') }}">Danh sách đặt bàn</a>
+                                        <a href="{{ route('admin.reservation.index') }}">DS đặt bàn</a>
                                     </li>
                                 @endcan
                                 <li>
@@ -70,9 +70,9 @@
                                         <a href="{{ route('admin.reservationHistory.index') }}">Lịch sử đặt bàn</a>
                                     </li>
                                 @endcan --}}
-                                @can('Xem quản lý hoàn tiền')
+                                @can('Xem QL hoàn tiền')
                                     <li>
-                                        <a href="{{ route('admin.refunds.index') }}">Quản lý hoàn tiền</a>
+                                        <a href="{{ route('admin.refunds.index') }}">QL hoàn tiền</a>
                                     </li>
                                 @endcan
                             </ul>
@@ -80,28 +80,29 @@
                     </li>
                 @endcan
 
-                {{-- Quản lý danh mục --}}
+                {{-- QL danh mục --}}
                 @can('Xem danh mục')
 
                     <li class="sidebar-dropdown">
                         <a href="#">
-                            <i class="bi bi-folder"></i>
-                            <span class="menu-text">Quản lý Thực Đơn</span>
+                            <i class="bi bi-fire"></i>
+
+                            <span class="menu-text">QL Thực Đơn</span>
                         </a>
                         <div class="sidebar-submenu">
                             <ul>
                                 <li>
-                                    <a href="{{ route('admin.category.index') }}">Danh mục thực đơn</a>
+                                    <a href="{{ route('admin.category.index') }}">DS thực đơn</a>
                                 </li>
                                 @can('Xem món ăn')
                                     <li>
-                                        <a href="{{ route('admin.dishes.index') }}">Danh sách món</a>
+                                        <a href="{{ route('admin.dishes.index') }}">DS món ăn</a>
                                     </li>
                                 @endcan
 
                                 @can('Xem combo')
                                     <li>
-                                        <a href="{{ route('admin.combo.index') }}">Danh sách combo</a>
+                                        <a href="{{ route('admin.combo.index') }}">DS combo</a>
                                     </li>
                                 @endcan
                             </ul>
@@ -111,17 +112,17 @@
 
 
 
-                {{-- Quản lý hóa đơn --}}
+                {{-- QL hóa đơn --}}
                 @can('Xem order')
                     <li class="sidebar-dropdown">
                         <a href="#">
                             <i class="bi bi-clipboard-data"></i>
-                            <span class="menu-text">Quản lý Hoá đơn</span>
+                            <span class="menu-text">QL Hoá đơn</span>
                         </a>
                         <div class="sidebar-submenu">
                             <ul>
                                 <li>
-                                    <a href="{{ route('admin.order.index') }}">Danh sách Hoá Đơn</a>
+                                    <a href="{{ route('admin.order.index') }}">DS Hoá Đơn</a>
                                 </li>
 
                                 @can('Xem mã giảm giá')
@@ -131,7 +132,7 @@
                                 @endcan
                                 @can('Xem thanh toán')
                                     <li>
-                                        <a href="{{ route('admin.payment.index') }}">Phương thức thanh toán</a>
+                                        <a href="{{ route('admin.payment.index') }}">PT Thanh Toán</a>
                                     </li>
                                 @endcan
                             </ul>
@@ -140,56 +141,39 @@
                 @endcan
 
 
-         
-            <!-- Menu Quản lý Người Dùng -->
-            @can('Xem người dùng')
-                <li class="sidebar-dropdown">
-                    <a href="#">
-                        <i class="bi bi-person-lines-fill"></i>
-                        <span class="menu-text">Quản lý Người Dùng</span>
-                    </a>
-                    <div class="sidebar-submenu">
-                        <ul>
-                            <li>
-                                <a href="{{ route('admin.user.index') }}">Danh sách Người Dùng</a>
-                            </li>
-                            @can('Xem feedback')
-                                <li>
-                                    <a href="{{ route('admin.feedback.index') }}">Danh sách Phản Hồi</a>
-                                </li>
-                            @endcan
-                        </ul>
-                    </div>
-                </li>
-            @endcan
+                @can('Xem người dùng')
+                    <li class="sidebar-dropdown">
+                        <a href="#">
+                            <i class="bi bi-people-fill"></i>
+                            <span class="menu-text">QL người dùng</span>
+                        </a>
+                        <div class="sidebar-submenu">
+                            <ul>
+                                @can('Xem vai trò')
+                                    <li>
+                                        <a href="{{ route('admin.role.index') }}">DS vai trò</a>
+                                    </li>
+                                @endcan
+                                @can('Xem quyền hạn')
+                                    <li>
+                                        <a href="{{ route('admin.permissions.index') }}">DS quyền hạn</a>
+                                    </li>
+                                @endcan
+                                @can('Xem người dùng')
+                                    <li>
+                                        <a href="{{ route('admin.user.index') }}">DS người dùng</a>
+                                    </li>
+                                @endcan
+                                @can('Xem feedback')
+                                    <li>
+                                        <a href="{{ route('admin.feedback.index') }}">DS phản hồi</a>
+                                    </li>
+                                @endcan
 
-            <!-- Menu Quản lý Nhân Viên -->
-            @can('Xem nhân viên')
-            <li class="sidebar-dropdown">
-                <a href="#">
-                    <i class="bi bi-people-fill"></i>
-                    <span class="menu-text">Quản lý Nhân Viên</span>
-                </a>
-                <div class="sidebar-submenu">
-                    <ul>
-                        <li>
-                            <a href="{{ route('admin.user.employees') }}">Danh sách Nhân Viên</a>
-                        </li>
-                        @can('Xem vai trò')
-                            <li>
-                                <a href="{{ route('admin.role.index') }}">Danh sách Vai Trò</a>
-                            </li>
-                        @endcan
-                        @can('Xem quyền hạn')
-                            <li>
-                                <a href="{{ route('admin.permissions.index') }}">Danh sách Quyền Hạn</a>
-                            </li>
-                        @endcan
-                    </ul>
-                </div>
-            </li>
-          @endcan
-          
+                            </ul>
+                        </div>
+                    </li>
+                @endcan
 
 
 
@@ -197,7 +181,7 @@
                     <li class="sidebar-dropdown">
                         <a href="#">
                             <i class="bi bi-pci-card"></i>
-                            <span class="menu-text">Quản lý kho Nguyên Liệu</span>
+                            <span class="menu-text">QL kho NgLiệu</span>
                         </a>
                         <div class="sidebar-submenu">
                             <ul>
@@ -224,6 +208,7 @@
                                         <a href="{{ route('admin.inventory.index') }}">Hàng tồn kho</a>
                                     </li>
                                 @endcan
+
 
                                 {{-- <li>
                                     <a href="#">Xuất kho</a>

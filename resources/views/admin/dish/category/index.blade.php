@@ -3,6 +3,64 @@
 @section('title', 'Danh Mục Thực Đơn')
 
 @section('content')
+    <!-- SweetAlert -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+    <style>
+        @keyframes gradientMove {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .swal2-timer-progress-bar {
+            background: linear-gradient(90deg, #34eb4f, #00bcd4, #ffa726, #ffeb3b, #f44336);
+            /* Gradient màu */
+            background-size: 300% 300%;
+            /* Kích thước gradient lớn để tạo hiệu ứng động */
+            animation: gradientMove 2s ease infinite;
+            /* Hiệu ứng lăn tăn */
+        }
+    </style>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Hiển thị thông báo lỗi
+            @if ($errors->any())
+                Swal.fire({
+                    position: "top-end",
+                    icon: "error",
+                    toast: true,
+                    title: "{{ $errors->first() }}",
+                    showConfirmButton: false,
+                    timerProgressBar: true,
+                    timer: 3000
+                });
+            @endif
+
+            // Hiển thị thông báo thành công
+            @if (session('success'))
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    toast: true,
+                    title: "{{ session('success') }}",
+                    showConfirmButton: false,
+                    timerProgressBar: true,
+                    timer: 3000
+                });
+            @endif
+        });
+    </script>
     <div class="content-wrapper-scroll">
         <div class="content-wrapper">
             <div class="row">
@@ -34,6 +92,9 @@
                                     </div>
                                     <div class="col-auto">
                                         <button type="submit" class="btn btn-sm btn-primary">Tìm kiếm</button>
+                                        <a href="{{ route('admin.category.index') }}" class="btn btn-sm btn-success">
+                                            <i class="bi bi-arrow-repeat"></i>
+                                        </a>
                                     </div>
                                 </div>
                             </form>
@@ -43,7 +104,7 @@
                                 <table class="table v-middle m-0">
                                     <thead>
                                         <tr>
-                                            <th>Tên Category</th>
+                                            <th>Tên Thực Đơn</th>
                                             <th>Mô Tả</th>
                                             <th>Hành Động</th>
                                         </tr>
@@ -61,19 +122,21 @@
                                                             <i class="bi bi-pencil-square text-warning"
                                                                 style="font-size: 1.2rem;"></i>
                                                         </a>
-                                                        <a href="" data-bs-toggle="tooltip"
-                                                        data-bs-placement="top" title="Xoá">
-                                                        <form action="{{ route('admin.category.destroy', $category->id) }}"
-                                                            method="POST"
-                                                            onsubmit="return confirm('Bạn có chắc chắn muốn xóa?');"
-                                                            style="display:inline;">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit" class="btn btn-link p-0" style="margin-top: 15px;">
-                                                                <i class="bi bi-trash text-danger"
-                                                                    style="font-size: 1.2rem;"></i>
-                                                            </button>
-                                                        </form></a>
+                                                        <a href="" data-bs-toggle="tooltip" data-bs-placement="top"
+                                                            title="Xoá">
+                                                            <form
+                                                                action="{{ route('admin.category.destroy', $category->id) }}"
+                                                                method="POST"
+                                                                onsubmit="return confirm('Bạn có chắc chắn muốn xóa?');"
+                                                                style="display:inline;">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="btn btn-link p-0">
+                                                                    <i class="bi bi-trash text-danger"
+                                                                        style="font-size: 1.2rem;"></i>
+                                                                </button>
+                                                            </form>
+                                                        </a>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -98,137 +161,5 @@
         </div>
     </div>
 
-    <!-- Thông Báo -->
-    <div id="notification" class="notification d-none">
-        <div class="notification-icon">
-            <i class="bi"></i>
-        </div>
-        <div class="notification-content">
-            <strong id="notification-title"></strong>
-            <p id="notification-message"></p>
-        </div>
-    </div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            function showNotification(message, type = "success") {
-                const notification = document.getElementById("notification");
-                const notificationIcon = notification.querySelector(".notification-icon i");
-                const notificationTitle = document.getElementById("notification-title");
-                const notificationMessage = document.getElementById("notification-message");
-
-                // Cập nhật nội dung thông báo
-                notificationMessage.textContent = message;
-
-                // Đặt kiểu thông báo
-                if (type === "success") {
-                    notification.style.background = "linear-gradient(90deg, #58ade8, #48d1cc)";
-                    notification.style.color = "#ffffff";
-                    notificationIcon.className = "bi bi-check-circle-fill icon-animate";
-                    notificationTitle.textContent = "Thành công!";
-                } else if (type === "error") {
-                    notification.style.background = "linear-gradient(90deg, #f44336, #ff6347)";
-                    notification.style.color = "#ffffff";
-                    notificationIcon.className = "bi bi-x-circle-fill icon-animate";
-                    notificationTitle.textContent = "Lỗi!";
-                }
-
-                // Hiển thị thông báo
-                notification.classList.remove("d-none");
-                notification.classList.add("show");
-
-                // Ẩn thông báo sau 3 giây
-                setTimeout(() => {
-                    notification.classList.remove("show");
-                    notification.classList.add("hide");
-
-                    // Reset sau khi ẩn
-                    setTimeout(() => {
-                        notification.classList.add("d-none");
-                        notification.classList.remove("hide");
-                        notificationIcon.classList.remove("icon-animate");
-                    }, 300);
-                }, 3000);
-            }
-
-            // Hiển thị thông báo từ session
-            @if (session('success'))
-                showNotification("{{ session('success') }}", "success");
-            @endif
-
-            @if (session('error'))
-                showNotification("{{ session('error') }}", "error");
-            @endif
-        });
-    </script>
 @endsection
-<style>
-    .notification {
-        position: fixed;
-        top: 20px;
-        /* Điều chỉnh vị trí theo ý */
-        right: 20px;
-        /* Đẩy sang góc phải */
-        max-width: 300px;
-        background: #ffffff;
-        color: #333;
-        border-radius: 8px;
-        padding: 12px 16px;
-        display: flex;
-        /* Sử dụng flex để hiển thị ngang hàng */
-        align-items: center;
-        /* Căn giữa theo trục dọc */
-        gap: 10px;
-        /* Khoảng cách giữa icon và nội dung */
-        font-size: 14px;
-        font-weight: 500;
-        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-        opacity: 0;
-        pointer-events: none;
-        transform: translateY(-10px);
-        transition: opacity 0.3s ease, transform 0.3s ease;
-    }
-
-    /* Trạng thái */
-    .notification.success {
-        border-left: 4px solid #4caf50;
-        background: #e8f5e9;
-        color: #2e7d32;
-    }
-
-    .notification.error {
-        border-left: 4px solid #f44336;
-        background: #ffebee;
-        color: #c62828;
-    }
-
-    /* Icon */
-    .notification i {
-        font-size: 20px;
-        color: inherit;
-        /* Lấy màu theo trạng thái */
-    }
-
-    /* Hiệu ứng hiển thị */
-    .notification.show {
-        opacity: 1;
-        pointer-events: all;
-        transform: translateY(0);
-    }
-
-    .notification.hide {
-        opacity: 0;
-        pointer-events: none;
-        transform: translateY(-10px);
-    }
-
-    /* Nội dung */
-    .notification span {
-        margin: 0;
-        /* Xóa khoảng cách mặc định */
-        font-size: 14px;
-        /* Điều chỉnh kích thước chữ */
-        line-height: 1.5;
-        /* Tạo khoảng cách dễ đọc */
-    }
-</style>

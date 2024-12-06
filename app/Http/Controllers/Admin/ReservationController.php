@@ -53,8 +53,9 @@ class ReservationController extends Controller
     public function index(Request $request)
     {
 
-        // $this->updateOverdueReservations(); // Cập nhật các đơn quá hạn
 
+        // $this->updateOverdueReservations(); // Cập nhật các đơn quá hạn
+        $title = ' Đặt Bàn';
         $query = Reservation::query();
 
         // Lọc theo tên khách hàng
@@ -104,6 +105,7 @@ class ReservationController extends Controller
             'waitingReservations' => $this->getWaitingReservations(),
             'overdueReservations' => $this->getOverdueReservations(),
             'reservations' => $reservations,
+            'title' => $title,
         ]);
     }
     public function apiIndex()
@@ -265,48 +267,90 @@ class ReservationController extends Controller
 
     public function edit($id)
     {
+        $title = 'Chỉnh Sửa Đặt Bàn';
         $reservation = Reservation::findOrFail($id);
         $customers = User::all();
         $coupons = Coupon::all();
 
-        return view('admin.reservation.edit', compact('reservation', 'customers', 'coupons'));
+        // Tách ngày và giờ từ reservation_time
+        $reservationDate = \Carbon\Carbon::parse($reservation->reservation_date)->format('Y-m-d');
+        $reservationTime = \Carbon\Carbon::parse($reservation->reservation_time)->format('H:i');
+
+        return view('admin.reservation.edit', compact('reservation', 'customers', 'coupons', 'reservationDate', 'reservationTime','title'));
     }
+
+
+
 
     public function update(Request $request, $id)
     {
         DB::beginTransaction();
         try {
+            // Kiểm tra trạng thái trước khi cập nhật
+            $reservation = Reservation::findOrFail($id);
+            $currentStatus = $reservation->status;
+
+            // Kiểm tra nếu trạng thái là "Đã hủy" và không cho phép thay đổi thành "Chờ xử lý" hoặc "Đã xác nhận"
+            if ($currentStatus === 'Cancelled' && in_array($request->status, ['Pending', 'Confirmed'])) {
+                return back()->withErrors(['status' => 'Không thể thay đổi trạng thái bàn này từ Đã hủy về Chờ xử lý hoặc Đã xác nhận.']);
+            }
+
+
+            // Kiểm tra nếu trạng thái là "Đã xác nhận" và chỉ có thể chuyển thành "Đã hủy" hoặc "Chờ xử lý"
+            if ($currentStatus === 'Confirmed' && !in_array($request->status, ['Cancelled', 'Pending'])) {
+                return back()->withErrors(['status' => 'Không thể thay đổi trạng thái bàn này theo cách này.']);
+            }
+
+            // Kiểm tra nếu trạng thái là "Chờ xử lý" và không thể chuyển sang "Đã xác nhận"
+            if ($currentStatus === 'Pending' && $request->status === 'Confirmed') {
+                return back()->withErrors(['status' => 'Chờ xử lý không thể chuyển sang trạng thái Đã xác nhận.']);
+            }
+
+
+
             $validated = $request->validate([
                 'customer_name' => 'required|string|max:255',
-                'reservation_time' => 'required|date_format:Y-m-d\TH:i',
+                'reservation_date' => 'required|date',
+                'reservation_time' => 'required|date_format:H:i',
                 'guest_count' => 'required|integer|min:1',
                 'note' => 'nullable|string',
                 'status' => 'required|in:Confirmed,Pending,Cancelled',
                 'cancelled_reason' => 'nullable|string|max:255',
             ]);
 
+            // Kết hợp ngày và giờ thành một giá trị duy nhất
+            $reservationTime = Carbon::createFromFormat('Y-m-d', $request->reservation_date)
+                ->setTimeFromTimeString($request->reservation_time)
+                ->format('Y-m-d H:i:s');
+
+            // Kiểm tra nếu thời gian đã chọn là quá khứ
+            if (Carbon::parse($reservationTime)->isPast()) {
+                return back()->withErrors(['reservation_time' => 'Thời gian đặt bàn không được là quá khứ. Vui lòng chọn lại thời gian hợp lệ.']);
+            }
+
+            $validated['reservation_time'] = $reservationTime;
 
             $validated['deposit_amount'] = $request->input('guest_count') >= 6
                 ? $request->input('guest_count') * 100000
                 : 0;
 
-
-            $validated['reservation_time'] = Carbon::createFromFormat('Y-m-d\TH:i', $request->reservation_time)
-                ->format('Y-m-d H:i:s');
-
-            $reservation = Reservation::findOrFail($id);
+            // Cập nhật dữ liệu
             $reservation->update($validated);
 
             DB::commit();
-            return redirect()->route('admin.reservation.index')->with('success', 'Đặt bàn được cập nhật thành công !');
+            return redirect()->route('admin.reservation.index')->with('success', 'Đặt bàn được cập nhật thành công!');
         } catch (\Illuminate\Validation\ValidationException $e) {
             DB::rollBack();
             return back()->withErrors($e->errors());
         } catch (\Throwable $e) {
             DB::rollBack();
-            return back()->withErrors(['error' => "Đã xảy ra lỗi khi cập nhật đặt bàn: " . $e->getMessage()]);
+            return back()->withErrors(['error' => "Đã xảy ra lỗi khi cập nhật đặt bàn: " . $e->getMessage()]);
         }
     }
+
+
+
+
 
     public function cancel($id)
     {
@@ -324,8 +368,9 @@ class ReservationController extends Controller
 
     public function show($id)
     {
+        $title = 'Chi Tiết Đặt Bàn';
         $reservation = Reservation::with('customer')->findOrFail($id);
-        return view('admin.reservation.show', compact('reservation'));
+        return view('admin.reservation.show', compact('reservation','title'));
     }
 
 
@@ -1047,6 +1092,7 @@ class ReservationController extends Controller
             $id = $request->id;
             $reason = $request->reason; // Lấy lý do từ request
             $reservation = Reservation::findOrFail($id);
+
             if ($reservation->status != 'Completed') {
                 $reservation->status = 'Cancelled';
                 $reservation->save();
@@ -1064,7 +1110,6 @@ class ReservationController extends Controller
                     'message' => 'Cõ lỗi xảy ra, vui lòng thử lại!'
                 ]);
             }
-
         } catch (\Exception $e) {
             Log::error('Error cancelling reservation', [
                 'reservation_id' => $id,

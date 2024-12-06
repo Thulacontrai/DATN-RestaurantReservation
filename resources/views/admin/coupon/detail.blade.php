@@ -3,7 +3,64 @@
 @section('title', 'Chi Tiết Coupon')
 
 @section('content')
+    <!-- SweetAlert -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 
+    <style>
+        @keyframes gradientMove {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .swal2-timer-progress-bar {
+            background: linear-gradient(90deg, #34eb4f, #00bcd4, #ffa726, #ffeb3b, #f44336);
+            /* Gradient màu */
+            background-size: 300% 300%;
+            /* Kích thước gradient lớn để tạo hiệu ứng động */
+            animation: gradientMove 2s ease infinite;
+            /* Hiệu ứng lăn tăn */
+        }
+    </style>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Hiển thị thông báo lỗi
+            @if ($errors->any())
+                Swal.fire({
+                    position: "top-end",
+                    icon: "error",
+                    toast: true,
+                    title: "{{ $errors->first() }}",
+                    showConfirmButton: false,
+                    timerProgressBar: true,
+                    timer: 3000
+                });
+            @endif
+
+            // Hiển thị thông báo thành công
+            @if (session('success'))
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    toast: true,
+                    title: "{{ session('success') }}",
+                    showConfirmButton: false,
+                    timerProgressBar: true,
+                    timer: 3000
+                });
+            @endif
+        });
+    </script>
     <!-- Content wrapper scroll start -->
     <div class="content-wrapper-scroll">
 
@@ -12,26 +69,29 @@
             <div class="row">
                 <div class="col-sm-12 col-12">
                     <div class="card shadow-lg">
-                        <div class="card-header d-flex justify-content-between align-items-center bg-primary text-white">
-                            <h4 class="card-title mb-3 text-white">Chi Tiết Coupon</h4>
+                        <div class="card-header d-flex justify-content-between align-items-center text-white">
+                            <h4 class="card-title mb-3 text-secondary">Chi Tiết Phiếu Giảm Giá</h4>
                             <a href="{{ route('admin.coupon.index') }}" class="btn btn-sm btn-light  mb-3">Quay Lại</a>
                         </div>
                         <div class="card-body">
                             <div class="row mb-4">
                                 <div class="col-md-6">
-                                    <h5 class="text-primary">Thông Tin Coupon</h5>
+                                    <h5 class="text-primary">Thông Tin Phiếu Giảm Giá</h5>
                                     <ul class="list-group list-group-flush">
-                                        <li class="list-group-item"><strong>Mã Coupon:</strong> {{ $coupon->code }}</li>
+                                        <li class="list-group-item"><strong>Mã Giảm Giá:</strong> {{ $coupon->code }}</li>
                                         <li class="list-group-item"><strong>Mô Tả:</strong> {{ $coupon->description }}</li>
-                                        <li class="list-group-item"><strong>Số Lần Sử Dụng Tối Đa:</strong> {{ $coupon->max_uses }}</li>
+                                        <li class="list-group-item"><strong>Số Lần Sử Dụng Tối Đa:</strong>
+                                            {{ $coupon->max_uses }}</li>
                                     </ul>
                                 </div>
 
                                 <div class="col-md-6">
                                     <h5 class="text-primary">Chi Tiết Thời Gian</h5>
                                     <ul class="list-group list-group-flush">
-                                        <li class="list-group-item"><strong>Thời Gian Bắt Đầu:</strong> {{ $coupon->start_time }}</li>
-                                        <li class="list-group-item"><strong>Thời Gian Kết Thúc:</strong> {{ $coupon->end_time }}</li>
+                                        <li class="list-group-item"><strong>Thời Gian Bắt Đầu:</strong>
+                                            {{ $coupon->start_time }}</li>
+                                        <li class="list-group-item"><strong>Thời Gian Kết Thúc:</strong>
+                                            {{ $coupon->end_time }}</li>
                                     </ul>
                                 </div>
                             </div>
@@ -40,8 +100,10 @@
                                 <div class="col-md-6">
                                     <h5 class="text-primary">Chi Tiết Giảm Giá</h5>
                                     <ul class="list-group list-group-flush">
-                                        <li class="list-group-item"><strong>Loại Giảm Giá:</strong> {{ $coupon->discount_type }}</li>
-                                        <li class="list-group-item"><strong>Số Tiền Giảm Giá:</strong> {{ number_format($coupon->discount_amount, 0, ',', '.') }} VND</li>
+                                        <li class="list-group-item"><strong>Loại Giảm Giá:</strong>
+                                            {{ $coupon->discount_type }}</li>
+                                        <li class="list-group-item"><strong>Số Tiền Giảm Giá:</strong>
+                                            {{ number_format($coupon->discount_amount, 0, ',', '.') }} VND</li>
                                     </ul>
                                 </div>
 

@@ -12,8 +12,8 @@
             <div class="row">
                 <div class="col-sm-12 col-12">
                     <div class="card shadow-lg">
-                        <div class="card-header d-flex justify-content-between align-items-center bg-primary text-white">
-                            <h4 class="card-title mb-3 text-white">Chi Tiết Đặt Bàn</h4>
+                        <div class="card-header d-flex justify-content-between align-items-center  text-white">
+                            <h4 class="card-title mb-3 text-secondary">Chi Tiết Đặt Bàn</h4>
                             <a href="{{ route('admin.reservation.index') }}" class="btn btn-sm btn-light  mb-3">Quay Lại</a>
                         </div>
                         <div class="card-body">
@@ -32,7 +32,22 @@
                                     <ul class="list-group list-group-flush">
                                         <li class="list-group-item"><strong>Thời Gian Đặt Bàn:</strong> {{ $reservation->reservation_time }}</li>
                                         <li class="list-group-item"><strong>Số Khách:</strong> {{ $reservation->guest_count }}</li>
-                                        <li class="list-group-item"><strong>Trạng Thái:</strong> {{ $reservation->status }}</li>
+                                        <li class="list-group-item"><strong>Trạng Thái:</strong>
+                                                @if ($reservation->status === 'Confirmed')
+                                                    <span class="badge shade-green min-70">Đã xác nhận</span>
+                                                @elseif ($reservation->status === 'Pending')
+                                                    <span class="badge shade-yellow min-70">Chờ xử lý</span>
+                                                @elseif ($reservation->status === 'Cancelled')
+                                                    <span class="badge shade-red min-70">Đã hủy</span>
+                                                @elseif ($reservation->status === 'Refund')
+                                                    <span class="badge bg-info">Đã hoàn cọc</span>
+                                                @elseif($reservation->status === 'Completed')
+                                                    <span class="badge shade-primary min-70">Hoàn thành</span>
+                                                @else
+                                                    <span class="badge shade-gray min-70">Không rõ</span>
+                                                @endif
+                                        </li>
+
                                     </ul>
                                 </div>
                             </div>

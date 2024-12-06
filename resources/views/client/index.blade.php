@@ -158,7 +158,6 @@
                     <div class="col-lg-6">
                         <h5 class="uptitle wow fadeInUp">Khám phá</h5>
                         <h2 class="wow fadeInUp">Câu chuyện của chúng tôi</h2>
-<<<<<<< HEAD
                         <p class="lead wow fadeInUp">Tại "Steak House", chúng tôi tự hào mang đến trải nghiệm ẩm thực đỉnh
                             cao với món bò beefsteak tuyệt hảo. Hành trình của chúng tôi bắt đầu với mong muốn tạo nên một
                             không gian ấm cúng và sang trọng, nơi thực khách có thể thưởng thức những món ăn tinh tế, đậm đà
@@ -172,9 +171,6 @@
                             thành điểm đến lý tưởng cho những ai yêu thích hương vị bò beefsteak tuyệt hảo.
                         </p>
 
-=======
-
->>>>>>> 5b9649d8707f7e30ce48e31610a5e8e9fe8fe632
 
                     </div>
 

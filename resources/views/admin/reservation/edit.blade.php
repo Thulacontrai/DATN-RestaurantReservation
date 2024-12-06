@@ -3,6 +3,64 @@
 @section('title', 'Chỉnh Sửa Đặt Bàn')
 
 @section('content')
+ <!-- SweetAlert -->
+ <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+ <style>
+     @keyframes gradientMove {
+         0% {
+             background-position: 0% 50%;
+         }
+
+         50% {
+             background-position: 100% 50%;
+         }
+
+         100% {
+             background-position: 0% 50%;
+         }
+     }
+
+     .swal2-timer-progress-bar {
+         background: linear-gradient(90deg, #34eb4f, #00bcd4, #ffa726, #ffeb3b, #f44336);
+         /* Gradient màu */
+         background-size: 300% 300%;
+         /* Kích thước gradient lớn để tạo hiệu ứng động */
+         animation: gradientMove 2s ease infinite;
+         /* Hiệu ứng lăn tăn */
+     }
+ </style>
+
+ <script>
+     document.addEventListener("DOMContentLoaded", function() {
+         // Hiển thị thông báo lỗi
+         @if ($errors->any())
+             Swal.fire({
+                 position: "top-end",
+                 icon: "error",
+                 toast: true,
+                 title: "{{ $errors->first() }}",
+                 showConfirmButton: false,
+                 timerProgressBar: true,
+                 timer: 3000
+             });
+         @endif
+
+         // Hiển thị thông báo thành công
+         @if (session('success'))
+             Swal.fire({
+                 position: "top-end",
+                 icon: "success",
+                 toast: true,
+                 title: "{{ session('success') }}",
+                 showConfirmButton: false,
+                 timerProgressBar: true,
+                 timer: 3000
+             });
+         @endif
+     });
+ </script>
 
     <!-- Content wrapper scroll start -->
     <div class="content-wrapper-scroll">
@@ -15,76 +73,107 @@
                 <div class="col-sm-12 col-12">
                     <div class="card">
                         <div class="card-header">
-                            <div class="card-title">Chỉnh Sửa Đặt Bàn</div>
+                            <div class="card-title text-primary">Chỉnh Sửa Đặt Bàn</div>
                         </div>
                         <div class="card-body">
-                            <!-- Display validation errors -->
-                            @if($errors->any())
-                                <div class="alert alert-danger">
-                                    <ul>
-                                        @foreach ($errors->all() as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            @endif
 
-                            <form action="{{ route('admin.reservation.update', $reservation->id) }}" method="POST">
+                            <form action="{{ route('admin.reservation.update', $reservation->id) }}" method="POST"
+                                id="reservationForm">
                                 @csrf
                                 @method('PUT')
 
-                                <div class="mb-3">
-                                    <label for="customer_name" class="form-label">Khách hàng</label>
-                                    <input type="text" class="form-control" id="customer_name" name="customer_name"
-                                        value="{{ $reservation->customer->name ?? '' }}" required readonly>
+                                <div class="row">
+                                    <!-- Cột trái -->
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="customer_name" class="form-label">Khách hàng</label>
+                                            <input type="text" class="form-control text-primary" id="customer_name"
+                                                name="customer_name" value="{{ $reservation->customer->name ?? '' }}"
+                                                required readonly>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="reservation_date" class="form-label">Ngày Đặt</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-warning text-white">
+                                                    <i class="bi bi-calendar-date text-white"></i> <!-- Icon lịch từ Bootstrap Icons -->
+                                                </span>
+                                                <input type="date" class="form-control" id="reservation_date" name="reservation_date"
+                                                    value="{{ old('reservation_date', $reservationDate) }}" required>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="mb-3">
+                                            <label for="reservation_time" class="form-label">Giờ Đặt</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-danger text-white">
+                                                    <i class="bi bi-clock text-white"></i> <!-- Icon đồng hồ từ Bootstrap Icons -->
+                                                </span>
+                                                <input type="time" class="form-control" id="reservation_time" name="reservation_time"
+                                                    value="{{ old('reservation_time', $reservationTime) }}" required>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="mb-3">
+                                            <label for="guest_count" class="form-label">Số Lượng Khách</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-primary text-white">
+                                                    <i class="bi bi-people text-white"></i> <!-- Icon người từ Bootstrap Icons -->
+                                                </span>
+                                                <input type="number" class="form-control text-primary" id="guest_count" name="guest_count"
+                                                    value="{{ $reservation->guest_count }}" min="1" max="50" readonly>
+                                                <div class="invalid-feedback">Số lượng khách phải nằm trong khoảng từ 1 đến 50.</div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <!-- Cột phải -->
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="deposit_amount" class="form-label">Số Tiền Đặt Cọc</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-success text-white">₫</span>
+                                                <input type="text" class="form-control text-primary" id="deposit_amount" name="deposit_amount"
+                                                    value="{{ number_format($reservation->deposit_amount ?? 0, 0, ',', '.') }}"
+                                                    readonly data-raw-value="{{ $reservation->deposit_amount }}">
+                                            </div>
+                                        </div>
+
+
+                                        <div class="mb-3">
+                                            <label for="status" class="form-label">Trạng thái</label>
+                                            <select class="form-control" id="status" name="status" required>
+                                                <option value="Confirmed"
+                                                    {{ $reservation->status == 'Confirmed' ? 'selected' : '' }}>Đã xác nhận
+                                                </option>
+                                                <option value="Pending"
+                                                    {{ $reservation->status == 'Pending' ? 'selected' : '' }}>Chờ xử lý
+                                                </option>
+                                                <option value="Cancelled"
+                                                    {{ $reservation->status == 'Cancelled' ? 'selected' : '' }}>Đã hủy
+                                                </option>
+                                            </select>
+                                            <div class="text-danger" id="status-error" style="display: none;">
+                                                Bạn không thể thay đổi trạng thái từ "Đã hủy" sang trạng thái khác.
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="note" class="form-label">Ghi Chú</label>
+                                            <div class="input-group">
+
+                                                <textarea class="form-control" id="note" name="note" rows="3" placeholder="Nhập ghi chú...">{{ $reservation->note }}</textarea>
+                                            </div>
+                                        </div>
+
+                                    </div>
                                 </div>
-
-
-                                <div class="mb-3">
-                                    <label for="reservation_time" class="form-label">Thời gian đặt</label>
-                                    <input type="datetime-local" class="form-control" id="reservation_time"
-                                        name="reservation_time"
-                                        value="{{ date('Y-m-d\TH:i', strtotime($reservation->reservation_time)) }}"
-                                        required>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="guest_count" class="form-label">Số lượng khách</label>
-                                    <input type="number" class="form-control" id="guest_count" name="guest_count"
-                                        value="{{ $reservation->guest_count }}" min="1" max="50" required>
-                                    <div class="invalid-feedback">Số lượng khách phải nằm trong khoảng từ 1 đến 50.</div>
-                                </div>
-
-                                <div class="mb-3" id="deposit_section">
-                                    <label for="deposit_amount" class="form-label">Số tiền đặt cọc</label>
-                                    <input type="number" class="form-control" id="deposit_amount" name="deposit_amount"
-                                        value="{{ $reservation->deposit_amount }}" readonly>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="status" class="form-label">Trạng thái</label>
-                                    <select class="form-control" id="status" name="status" required>
-                                        <option value="Confirmed"
-                                            {{ $reservation->status == 'Confirmed' ? 'selected' : '' }}>Đã xác nhận</option>
-                                        <option value="Pending" {{ $reservation->status == 'Pending' ? 'selected' : '' }}>
-                                            Chờ xử lý</option>
-                                        <option value="Cancelled"
-                                            {{ $reservation->status == 'Cancelled' ? 'selected' : '' }}>Đã hủy</option>
-                                    </select>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="cancelled_reason" class="form-label">Lý do hủy (nếu có)</label>
-                                    <input type="text" class="form-control" id="cancelled_reason" name="cancelled_reason"
-                                        value="{{ $reservation->cancelled_reason }}">
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="note" class="form-label">Ghi chú</label>
-                                    <textarea class="form-control" id="note" name="note">{{ $reservation->note }}</textarea>
-                                </div>
-
-                                <button type="submit" class="btn btn-primary">Cập Nhật Đặt Bàn</button>
+                                 <div class="text-end">
+                                <button type="submit" class="btn btn-primary" id="updateButton">Cập Nhật</button>
+                                <a href="{{ route('admin.reservation.index') }}" class="btn btn-secondary">Quay lại</a></div>
                             </form>
 
                         </div>
@@ -98,45 +187,30 @@
     <!-- Content wrapper scroll end -->
 
     <script>
-        // Calculate deposit based on number of guests
-        document.addEventListener('DOMContentLoaded', function () {
-            const guestCountInput = document.getElementById('guest_count');
-            const depositInput = document.getElementById('deposit_amount');
-            const depositPerPerson = 100000; // 100.000 VND per person
+        document.addEventListener('DOMContentLoaded', function() {
+            const statusSelect = document.getElementById('status');
+            const updateButton = document.getElementById('updateButton');
+            const statusError = document.getElementById('status-error');
+            const currentStatus = "{{ $reservation->status }}";
 
-            function calculateDeposit() {
-                const guestCount = parseInt(guestCountInput.value);
-                if (guestCount >= 6) {
-                    depositInput.value = guestCount * depositPerPerson;
+            function validateStatus() {
+                const selectedStatus = statusSelect.value;
+
+                // Nếu trạng thái hiện tại là "Đã hủy" và cố gắng thay đổi sang trạng thái khác
+                if (currentStatus === 'Cancelled' && selectedStatus !== 'Cancelled') {
+                    statusError.style.display = 'block'; // Hiển thị lỗi
+                    updateButton.disabled = true; // Vô hiệu hóa nút cập nhật
                 } else {
-                    depositInput.value = 0;
+                    statusError.style.display = 'none'; // Ẩn lỗi
+                    updateButton.disabled = false; // Bật lại nút cập nhật
                 }
             }
 
-            guestCountInput.addEventListener('input', calculateDeposit);
+            // Kiểm tra trạng thái khi người dùng thay đổi lựa chọn
+            statusSelect.addEventListener('change', validateStatus);
 
-            // Call the function on page load to calculate deposit based on initial value
-            calculateDeposit();
-        });
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const guestCountInput = document.getElementById('guest_count');
-
-            guestCountInput.addEventListener('input', function() {
-                let value = parseInt(guestCountInput.value, 10);
-
-                // Kiểm tra nếu giá trị lớn hơn 50, thì giới hạn lại ở 50
-                if (value > 50) {
-                    guestCountInput.value = 50;
-                    guestCountInput.setCustomValidity('Số lượng khách không được lớn hơn 50.');
-                } else {
-                    guestCountInput.setCustomValidity('');
-                }
-
-                // Thêm lớp lỗi nếu không hợp lệ
-                guestCountInput.classList.toggle('is-invalid', !guestCountInput.checkValidity());
-            });
+            // Kiểm tra ngay khi trang tải xong
+            validateStatus();
         });
     </script>
 

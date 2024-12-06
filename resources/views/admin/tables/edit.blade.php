@@ -4,6 +4,64 @@
 
 @section('content')
 
+    <!-- SweetAlert -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+    <style>
+        @keyframes gradientMove {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .swal2-timer-progress-bar {
+            background: linear-gradient(90deg, #34eb4f, #00bcd4, #ffa726, #ffeb3b, #f44336);
+            /* Gradient màu */
+            background-size: 300% 300%;
+            /* Kích thước gradient lớn để tạo hiệu ứng động */
+            animation: gradientMove 2s ease infinite;
+            /* Hiệu ứng lăn tăn */
+        }
+    </style>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Hiển thị thông báo lỗi
+            @if ($errors->any())
+                Swal.fire({
+                    position: "top-end",
+                    icon: "error",
+                    toast: true,
+                    title: "{{ $errors->first() }}",
+                    showConfirmButton: false,
+                    timerProgressBar: true,
+                    timer: 3000
+                });
+            @endif
+
+            // Hiển thị thông báo thành công
+            @if (session('success'))
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    toast: true,
+                    title: "{{ session('success') }}",
+                    showConfirmButton: false,
+                    timerProgressBar: true,
+                    timer: 3000
+                });
+            @endif
+        });
+    </script>
     <!-- Content wrapper scroll start -->
     <div class="content-wrapper-scroll">
 
@@ -15,7 +73,7 @@
                 <div class="col-sm-12 col-12">
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
-                            <div class="card-title">Chỉnh Sửa Bàn</div>
+                            <div class="card-title text-primary">Chỉnh Sửa Bàn</div>
                         </div>
 
                         <div class="card-body">
@@ -24,72 +82,72 @@
                                 @csrf
                                 @method('PUT')
 
-                                <!-- Khu Vực -->
-                                <div class="mb-3">
-                                    <label for="area" class="form-label">Khu Vực</label>
-                                    <select name="area" id="area" class="form-select" required>
-                                        <option value="Tầng 1" {{ $table->area == 'Tầng 1' ? 'selected' : '' }}>Tầng 1
-                                        </option>
-                                        <option value="Tầng 2" {{ $table->area == 'Tầng 2' ? 'selected' : '' }}>Tầng 2
-                                        </option>
-                                    </select>
-                                    <div class="invalid-feedback">Vui lòng chọn khu vực.</div>
+                                <div class="row">
+                                    <!-- Khu Vực -->
+                                    <div class="col-md-6 mb-3">
+                                        <label for="area" class="form-label">Khu Vực</label>
+                                        <select name="area" id="area" class="form-select" required>
+                                            <option value="Tầng 1" {{ $table->area == 'Tầng 1' ? 'selected' : '' }}>Tầng 1
+                                            </option>
+                                            <option value="Tầng 2" {{ $table->area == 'Tầng 2' ? 'selected' : '' }}>Tầng 2
+                                            </option>
+                                        </select>
+                                        <div class="invalid-feedback">Vui lòng chọn khu vực.</div>
 
-                                    @error('area')
-                                        <div class="text-danger">{{ $message }}</div>
-                                    @enderror
-                                </div>
+                                        @error('area')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
 
-                                <div class="mb-3">
-                                    <label for="table_number" class="form-label">Số Bàn</label>
-                                    <input type="number" name="table_number" id="table_number"
-                                        class="form-control {{ $errors->has('table_number') ? 'is-invalid' : '' }}"
-                                        value="{{ old('table_number', $table->table_number) }}" required min="1"
-                                        max="100" placeholder="Nhập số bàn">
-                                    <div class="invalid-feedback">Vui lòng nhập số bàn từ 1 đến 100.</div>
-                                    @error('table_number')
-                                        <div class="text-danger">{{ $message }}</div>
-                                    @enderror
-                                </div>
+                                    <!-- Số Bàn -->
+                                    <div class="col-md-6 mb-3">
+                                        <label for="table_number" class="form-label">Số Bàn</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-primary text-white">
+                                                <i class="bi bi-door-open text-white"></i>
+                                            </span>
+                                            <input type="number" name="table_number" id="table_number"
+                                                class="form-control {{ $errors->has('table_number') ? 'is-invalid' : '' }}"
+                                                value="{{ old('table_number', $table->table_number) }}" required
+                                                min="1" max="100" placeholder="Nhập số bàn"
+                                                oninput="toggleErrorMessages()">
+                                        </div>
+                                        <div class="invalid-feedback" id="invalid-feedback-1">
+                                            Vui lòng nhập số bàn hợp lệ (từ 1 đến 100).
+                                        </div>
+                                        @error('table_number')
+                                            <div class="text-danger" id="invalid-feedback-2">Số bàn này đã tồn tại. Vui lòng
+                                                nhập số
+                                                khác.</div>
+                                        @enderror
+                                    </div>
 
+                                    <!-- Trạng Thái -->
+                                    <div class="col-md-6 mb-3">
+                                        <label for="status" class="form-label">Trạng Thái</label>
+                                        <select name="status" id="status" class="form-select" required
+                                            data-current-status="{{ $table->status }}">
+                                            <option value="Available" {{ $table->status == 'Available' ? 'selected' : '' }}>
+                                                Có
+                                                sẵn</option>
+                                            <option value="Reserved" {{ $table->status == 'Reserved' ? 'selected' : '' }}>
+                                                Đã
+                                                đặt trước</option>
+                                            <option value="Occupied" {{ $table->status == 'Occupied' ? 'selected' : '' }}>
+                                                Đang
+                                                sử dụng</option>
+                                        </select>
+                                        <div class="invalid-feedback">Trạng thái không hợp lệ. Vui lòng chọn lại.</div>
 
-                                <!-- Loại Bàn -->
-                                <div class="mb-3">
-                                    <label for="table_type" class="form-label">Loại Bàn</label>
-                                    <select name="table_type" id="table_type" class="form-select" required>
-                                        <option value="Thường" {{ $table->table_type == 'Thường' ? 'selected' : '' }}>Thường
-                                        </option>
-                                        <option value="VIP" {{ $table->table_type == 'VIP' ? 'selected' : '' }}>VIP
-                                        </option>
-                                    </select>
-                                    <div class="invalid-feedback">Vui lòng chọn loại bàn.</div>
-
-                                    @error('table_type')
-                                        <div class="text-danger">{{ $message }}</div>
-                                    @enderror
-                                </div>
-
-                                <!-- Trạng Thái -->
-                                <div class="mb-3">
-                                    <label for="status" class="form-label">Trạng Thái</label>
-                                    <select name="status" id="status" class="form-select" required>
-                                        <option value="Available" {{ $table->status == 'Available' ? 'selected' : '' }}>Có
-                                            sẵn</option>
-                                        <option value="Reserved" {{ $table->status == 'Reserved' ? 'selected' : '' }}>Đã
-                                            đặt trước</option>
-                                        <option value="Occupied" {{ $table->status == 'Occupied' ? 'selected' : '' }}>Đang
-                                            sử dụng</option>
-                                    </select>
-                                    <div class="invalid-feedback">Vui lòng chọn trạng thái bàn.</div>
-
-                                    @error('status')
-                                        <div class="text-danger">{{ $message }}</div>
-                                    @enderror
+                                        @error('status')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
                                 </div>
 
                                 <!-- Nút Lưu và Hủy -->
                                 <div class="mb-3 d-flex justify-content-end">
-                                    <button type="submit" class="btn btn-primary">Cập Nhật Bàn</button>
+                                    <button type="submit" class="btn btn-primary" id="updateButton">Cập Nhật Bàn</button>
                                     <a href="{{ route('admin.table.index') }}" class="btn btn-secondary ms-2">Hủy</a>
                                 </div>
                             </form>
@@ -108,37 +166,6 @@
 @endsection
 
 @section('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('editTableForm');
-            const inputs = form.querySelectorAll('input, select');
-
-            inputs.forEach(input => {
-                input.addEventListener('input', function() {
-                    if (input.checkValidity()) {
-                        input.classList.remove('is-invalid');
-                        input.classList.add('is-valid');
-                    } else {
-                        input.classList.remove('is-valid');
-                        input.classList.add('is-invalid');
-                    }
-                });
-            });
-
-            form.addEventListener('submit', function(event) {
-                inputs.forEach(input => {
-                    if (!input.checkValidity()) {
-                        input.classList.add('is-invalid');
-                    }
-                });
-
-                if (!form.checkValidity()) {
-                    event.preventDefault(); // Ngăn biểu mẫu gửi nếu không hợp lệ
-                    event.stopPropagation();
-                }
-            });
-        });
-    </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const tableNumberInput = document.getElementById('table_number');
@@ -164,4 +191,45 @@
             });
         });
     </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('editTableForm');
+            const statusSelect = document.getElementById('status');
+            const currentStatus = "{{ $table->status }}"; // Trạng thái hiện tại
+            const submitButton = document.getElementById('updateButton');
+
+            // Lắng nghe sự kiện change để kiểm tra trạng thái
+            statusSelect.addEventListener('change', function() {
+                const selectedStatus = statusSelect.value;
+
+                // Kiểm tra trạng thái hợp lệ
+                if (
+                    (currentStatus === "Đã hủy" && selectedStatus !== "Chờ xử lý") &&
+                    (currentStatus === "Đã xác nhận" && selectedStatus !== "Đã xác nhận")
+                ) {
+                    submitButton.disabled = true; // Vô hiệu hóa nút submit
+                    statusSelect.classList.add('is-invalid'); // Thêm lớp để báo lỗi
+                } else {
+                    submitButton.disabled = false; // Kích hoạt nút submit
+                    statusSelect.classList.remove('is-invalid'); // Xóa lớp lỗi
+                }
+            });
+
+            // Kiểm tra trước khi gửi form
+            form.addEventListener('submit', function(event) {
+                const selectedStatus = statusSelect.value;
+
+                // Nếu trạng thái không hợp lệ, ngừng gửi form
+                if (
+                    (currentStatus === "Đã hủy" && selectedStatus !== "Chờ xử lý") &&
+                    (currentStatus === "Đã xác nhận" && selectedStatus !== "Đã xác nhận")
+                ) {
+                    event.preventDefault(); // Ngừng gửi form
+                    alert("Không thể thay đổi trạng thái từ 'Đã hủy' sang 'Đã xác nhận' hoặc ngược lại.");
+                }
+            });
+        });
+    </script>
+
 @endsection

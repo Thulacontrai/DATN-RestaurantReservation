@@ -3,6 +3,66 @@
 @section('title', 'Danh Mục Bàn')
 
 @section('content')
+    <!-- SweetAlert -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+    <style>
+        @keyframes gradientMove {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .swal2-timer-progress-bar {
+            background: linear-gradient(90deg, #34eb4f, #00bcd4, #ffa726, #ffeb3b, #f44336);
+            /* Gradient màu */
+            background-size: 300% 300%;
+            /* Kích thước gradient lớn để tạo hiệu ứng động */
+            animation: gradientMove 2s ease infinite;
+            /* Hiệu ứng lăn tăn */
+        }
+    </style>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Hiển thị thông báo lỗi
+            @if ($errors->any())
+                Swal.fire({
+                    position: "top-end",
+                    icon: "error",
+                    toast: true,
+                    title: "{{ $errors->first() }}",
+                    showConfirmButton: false,
+                    timerProgressBar: true,
+                    timer: 3000
+                });
+            @endif
+
+            // Hiển thị thông báo thành công
+            @if (session('success'))
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    toast: true,
+                    title: "{{ session('success') }}",
+                    showConfirmButton: false,
+                    timerProgressBar: true,
+                    timer: 3000
+                });
+            @endif
+        });
+    </script>
+
+
 
     <!-- Content wrapper scroll start -->
     <div class="content-wrapper-scroll">
@@ -15,7 +75,7 @@
                 <div class="col-sm-12 col-12">
                     <div class="card shadow-sm">
                         <div class="card-header d-flex justify-content-between align-items-center">
-                            <div class="card-title">Danh Mục Bàn</div>
+                            <div class="card-title ">Danh Mục Bàn</div>
 
                             <!-- Thêm nút Thêm Mới -->
                             <div class="d-flex gap-2">
@@ -43,7 +103,7 @@
                                                 class="form-control form-control-sm" placeholder="Tìm kiếm bàn"
                                                 value="{{ request('name') }}">
                                         </div>
-                                        <div class="col-auto">
+                                        {{-- <div class="col-auto">
                                             <select name="table_type" id="search-table-type"
                                                 class="form-select form-select-sm">
                                                 <option value="">-- Loại bàn --</option>
@@ -53,7 +113,7 @@
                                                 <option value="VIP"
                                                     {{ request('table_type') == 'VIP' ? 'selected' : '' }}>VIP</option>
                                             </select>
-                                        </div>
+                                        </div> --}}
                                         <div class="col-auto">
                                             <select name="status" id="search-status" class="form-select form-select-sm">
                                                 <option value="">-- Trạng thái --</option>
@@ -69,9 +129,15 @@
                                         </div>
                                         <div class="col-auto">
                                             <button type="submit" class="btn btn-sm btn-primary">Tìm kiếm</button>
+                                            <a href="{{ route('admin.table.index') }}" class="btn btn-sm btn-success">
+                                                <i class="bi bi-arrow-repeat"></i>
+                                            </a>
                                         </div>
+
                                     </div>
                                 </form>
+
+
                             </div>
 
                             <div class="table-responsive">
@@ -80,7 +146,6 @@
                                         <tr>
                                             <th>Khu Vực</th>
                                             <th>Số Bàn</th>
-                                            <th>Loại Bàn</th>
                                             <th>Trạng Thái</th>
                                             <th>Hành Động</th>
                                         </tr>
@@ -90,7 +155,6 @@
                                             <tr>
                                                 <td>{{ $table->area }}</td>
                                                 <td>{{ $table->table_number }}</td>
-                                                <td>{{ $table->table_type }}</td>
                                                 <td>
                                                     <span
                                                         class="badge {{ $table->status == 'Available' ? 'bg-success' : ($table->status == 'Reserved' ? 'bg-warning' : 'bg-danger') }} min-70">
@@ -98,7 +162,7 @@
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    <div class="actions" >
+                                                    <div class="actions">
                                                         <a href="{{ route('admin.table.edit', $table->id) }}"
                                                             class="text-warning" data-bs-toggle="tooltip"
                                                             data-bs-placement="top" title="Sửa">

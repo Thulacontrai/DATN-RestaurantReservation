@@ -20,30 +20,33 @@ class PermissionController extends Controller
         $this->middleware('permission:Tạo mới quyền hạn', ['only' => ['create']]);
         $this->middleware('permission:Sửa quyền hạn', ['only' => ['edit']]);
         $this->middleware('permission:Xóa quyền hạn', ['only' => ['destroy']]);
-        
+
     }
 
 
     public function index(Request $request)
     {
+        $title = 'Quyền Hạn';
         $permissions = Permission::query();
-    
+
         // Tìm kiếm theo tên quyền hạn
         if ($search = $request->get('search')) {
             $permissions->where('name', 'like', '%' . $search . '%');
         }
-    
+
         // Phân trang kết quả
         $permissions = $permissions->orderBy('created_at', 'DESC')->paginate(10);
-    
+
         return view('admin.user.permissions.index', [
-            'permissions' => $permissions
+            'permissions' => $permissions,
+            'title' => $title,
         ]);
     }
-    
+
     public function create()
     {
-        return view('admin.user.permissions.create');
+        $title = 'Thêm Mới Quyền Hạn';
+        return view('admin.user.permissions.create', compact('title'));
     }
     public function store(Request $request)
     {

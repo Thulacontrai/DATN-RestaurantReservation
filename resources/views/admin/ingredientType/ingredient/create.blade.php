@@ -3,53 +3,152 @@
 @section('title', 'Thêm Nguyên Liệu Mới')
 
 @section('content')
+    <!-- SweetAlert -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+    <style>
+        @keyframes gradientMove {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .swal2-timer-progress-bar {
+            background: linear-gradient(90deg, #34eb4f, #00bcd4, #ffa726, #ffeb3b, #f44336);
+            /* Gradient màu */
+            background-size: 300% 300%;
+            /* Kích thước gradient lớn để tạo hiệu ứng động */
+            animation: gradientMove 2s ease infinite;
+            /* Hiệu ứng lăn tăn */
+        }
+    </style>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Hiển thị thông báo lỗi
+            @if ($errors->any())
+                Swal.fire({
+                    position: "top-end",
+                    icon: "error",
+                    toast: true,
+                    title: "{{ $errors->first() }}",
+                    showConfirmButton: false,
+                    timerProgressBar: true,
+                    timer: 3000
+                });
+            @endif
+
+            // Hiển thị thông báo thành công
+            @if (session('success'))
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    toast: true,
+                    title: "{{ session('success') }}",
+                    showConfirmButton: false,
+                    timerProgressBar: true,
+                    timer: 3000
+                });
+            @endif
+        });
+    </script>
     <div class="content-wrapper-scroll">
         <div class="content-wrapper">
             <div class="row">
                 <div class="col-sm-12 col-12">
                     <div class="card">
-                        <div class="card-header">Thêm Nguyên Liệu Mới</div>
+                        <div class="card-header">
+                            <div class="card-title text-primary">Thêm Nguyên Liệu Mới</div>
+                        </div>
                         <div class="card-body">
-                            <form id="ingredientForm" action="{{ route('admin.ingredient.store') }}" method="POST" novalidate>
+                            <form id="ingredientForm" action="{{ route('admin.ingredient.store') }}" method="POST"
+                                novalidate>
                                 @csrf
 
-                                <!-- Tên Nguyên Liệu -->
-                                <div class="mb-3">
-                                    <label for="name" class="form-label">Tên Nguyên Liệu</label>
-                                    <input type="text" name="name" class="form-control"
-                                        placeholder="Nhập tên nguyên liệu" required>
-                                    <div class="invalid-feedback">Vui lòng nhập tên nguyên liệu.</div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="name" class="form-label">Tên Nguyên Liệu <span
+                                                    class="text-danger required">*</span></label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-primary text-white"><i
+                                                        class="bi bi-apple text-white"></i></span>
+                                                <input type="text" name="name" class="form-control"
+                                                    placeholder="Nhập tên nguyên liệu" required>
+                                            </div>
+                                            <div class="invalid-feedback">Vui lòng nhập tên nguyên liệu.</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="price" class="form-label">Giá <span
+                                                    class="text-danger required">*</span></label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-success text-white">₫</span>
+                                                <input type="number" step="0.01" name="price" class="form-control"
+                                                    placeholder="Nhập giá" min="1" max="5000000" required>
+                                            </div>
+                                            <div class="invalid-feedback">Giá phải nằm trong khoảng từ 1 đến 5.000.000 VNĐ.
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div class="mb-3">
-                                    <label for="price" class="form-label">Giá</label>
-                                    <input type="number" step="0.01" name="price" class="form-control"
-                                        placeholder="Nhập giá" min="1" max="5000000" required>
-                                    <div class="invalid-feedback">Giá phải nằm trong khoảng từ 1 đến 1.000.000 VNĐ</div>
-                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="unit" class="form-label">Đơn Vị <span
+                                                    class="text-danger required">*</span></label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-warning"><i
+                                                        class="bi bi-modem text-white"></i></span>
+                                                <input type="text" name="unit" class="form-control"
+                                                    placeholder="Nhập đơn vị" required>
+                                            </div>
+                                            <div class="invalid-feedback">Vui lòng nhập đơn vị.</div>
+                                        </div>
+                                    </div>
 
-                                <!-- Đơn Vị -->
-                                <div class="mb-3">
-                                    <label for="unit" class="form-label">Đơn Vị</label>
-                                    <input type="text" name="unit" class="form-control" placeholder="Nhập đơn vị"
-                                        required>
-                                    <div class="invalid-feedback">Vui lòng nhập đơn vị.</div>
-                                </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Phân Loại <span
+                                                    class="text-danger required">*</span></label>
+                                            <div>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="category"
+                                                        id="categoryFresh" value="Đồ tươi" required>
+                                                    <label class="form-check-label" for="categoryFresh">
+                                                        Đồ tươi
+                                                    </label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="category"
+                                                        id="categoryCanned" value="Đồ đóng hộp" required>
+                                                    <label class="form-check-label" for="categoryCanned">
+                                                        Đồ đóng hộp
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="invalid-feedback">Vui lòng chọn phân loại.</div>
+                                        </div>
+                                    </div>
 
-                                <!-- Phân Loại -->
-                                <div class="mb-3">
-                                    <label for="category" class="form-label">Phân Loại</label>
-                                    <select name="category" class="form-select" required>
-                                        <option value="" disabled selected>Chọn phân loại</option>
-                                        <option value="Đồ tươi">Đồ tươi</option>
-                                        <option value="Đồ đóng hộp">Đồ đóng hộp</option>
-                                    </select>
-                                    <div class="invalid-feedback">Vui lòng chọn phân loại.</div>
                                 </div>
-
-                                <button type="submit" class="btn btn-success">Lưu</button>
-                                <a href="{{ route('admin.ingredient.index') }}" class="btn btn-sm btn-secondary">Quay
-                                    lại</a>
+                                <div class="text-end">
+                                    <button type="submit" class="btn btn-primary">Thêm mới</button>
+                                    <a href="{{ route('admin.ingredient.index') }}" class="btn btn-sm btn-secondary">Quay
+                                        lại</a>
+                                </div>
                             </form>
                         </div>
                     </div>
@@ -93,6 +192,7 @@
             });
         });
     </script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const priceInput = document.querySelector('input[name="price"]');

@@ -43,3 +43,57 @@ button.addEventListener('click', function () {
 
 </script>
 
+{{-- Thông báo --}}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Hàm hiển thị thông báo
+        function showNotification(message, type = "success") {
+            const notification = document.getElementById("notification");
+            const notificationIcon = notification.querySelector(".notification-icon i");
+            const notificationTitle = document.getElementById("notification-title");
+            const notificationMessage = document.getElementById("notification-message");
+
+            // Cập nhật nội dung thông báo
+            notificationMessage.textContent = message;
+
+            // Đặt kiểu thông báo
+            if (type === "success") {
+                notification.style.background = "linear-gradient(90deg, #58ade8, #48d1cc)";
+                notification.style.color = "#ffffff";
+                notificationIcon.className = "bi bi-check-circle-fill icon-animate";
+                notificationTitle.textContent = "Thành công!";
+            } else if (type === "error") {
+                notification.style.background = "linear-gradient(90deg, #f44336, #ff6347)";
+                notification.style.color = "#ffffff";
+                notificationIcon.className = "bi bi-x-circle-fill icon-animate";
+                notificationTitle.textContent = "Lỗi!";
+            }
+
+            // Hiển thị thông báo
+            notification.classList.remove("d-none");
+            notification.classList.add("show");
+
+            // Ẩn thông báo sau 3 giây
+            setTimeout(() => {
+                notification.classList.remove("show");
+                notification.classList.add("hide");
+
+                // Reset sau khi ẩn
+                setTimeout(() => {
+                    notification.classList.add("d-none");
+                    notification.classList.remove("hide");
+                    notificationIcon.classList.remove("icon-animate");
+                }, 300);
+            }, 3000);
+        }
+
+        // Hiển thị thông báo từ session
+        @if (session('success'))
+            showNotification("{{ session('success') }}", "success");
+        @endif
+
+        @if (session('error'))
+            showNotification("{{ session('error') }}", "error");
+        @endif
+    });
+</script>

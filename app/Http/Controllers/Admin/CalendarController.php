@@ -17,10 +17,11 @@ class CalendarController extends Controller
   protected $routePath = 'admin.calendar';
 
   public function index(){
+         $title = 'Lịch Đặt Bàn';
          // Lấy các bàn có trạng thái 'Available'
          $tables = Table::where('status', 'Available')->get();
          $reservations = Reservation::all(); // Lấy các đơn đặt bàn reservations
 
-     return view('admin.calendar.index');
+     return view('admin.calendar.index' , compact('title', 'tables', 'reservations'));
   }
 }

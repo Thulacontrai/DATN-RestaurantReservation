@@ -3,6 +3,64 @@
 @section('title', 'Danh Sách Lịch Sử Đặt Bàn')
 
 @section('content')
+    <!-- SweetAlert -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+    <style>
+        @keyframes gradientMove {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .swal2-timer-progress-bar {
+            background: linear-gradient(90deg, #34eb4f, #00bcd4, #ffa726, #ffeb3b, #f44336);
+            /* Gradient màu */
+            background-size: 300% 300%;
+            /* Kích thước gradient lớn để tạo hiệu ứng động */
+            animation: gradientMove 2s ease infinite;
+            /* Hiệu ứng lăn tăn */
+        }
+    </style>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Hiển thị thông báo lỗi
+            @if ($errors->any())
+                Swal.fire({
+                    position: "top-end",
+                    icon: "error",
+                    toast: true,
+                    title: "{{ $errors->first() }}",
+                    showConfirmButton: false,
+                    timerProgressBar: true,
+                    timer: 3000
+                });
+            @endif
+
+            // Hiển thị thông báo thành công
+            @if (session('success'))
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    toast: true,
+                    title: "{{ session('success') }}",
+                    showConfirmButton: false,
+                    timerProgressBar: true,
+                    timer: 3000
+                });
+            @endif
+        });
+    </script>
 
     <!-- Content wrapper scroll start -->
     <div class="content-wrapper-scroll">
@@ -53,10 +111,10 @@
                                                 <td>{{ optional($history->reservation)->id ?? 'Không rõ' }}</td>
                                                 <td>{{ optional(optional($history->reservation)->customer)->name ?? 'Không rõ' }}
                                                 </td>
-                                                <td >
+                                                <td>
 
-                                                        {{ \Carbon\Carbon::parse($history->reservation_date . ' ' . $history->change_time)->format('H:i:s') }}<br>
-                                                        {{ \Carbon\Carbon::parse($history->change_date)->format('d/m/Y') }}
+                                                    {{ \Carbon\Carbon::parse($history->reservation_date . ' ' . $history->change_time)->format('H:i:s') }}<br>
+                                                    {{ \Carbon\Carbon::parse($history->change_date)->format('d/m/Y') }}
                                                 </td>
                                                 <td>
                                                     @switch($history->status)
@@ -90,7 +148,7 @@
                                                             <i class="bi bi-list text-green"></i>
                                                         </a>
                                                         <a href="#" class="deleteRow" data-bs-toggle="tooltip"
-                                                        data-bs-placement="top" title="Xoá">
+                                                            data-bs-placement="top" title="Xoá">
                                                             <button type="submit" class="btn btn-link p-0">
                                                                 <i class="bi bi-trash text-red"></i>
                                                             </button>
