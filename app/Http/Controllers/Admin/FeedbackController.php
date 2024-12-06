@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Feedback;
 use App\Traits\TraitCRUD;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Http\Request;
 
 class FeedbackController extends Controller
@@ -19,7 +20,6 @@ class FeedbackController extends Controller
         $this->middleware('permission:Tạo mới feedback', ['only' => ['create']]);
         $this->middleware('permission:Sửa feedback', ['only' => ['edit']]);
         $this->middleware('permission:Xóa feedback', ['only' => ['destroy']]);
-
     }
 
 
@@ -34,15 +34,17 @@ class FeedbackController extends Controller
      */
     public function index()
     {
-            $feedbacks = Feedback::all();
-            $title = 'Phản Hồi';
-            return view('admin.feedback.index', compact('feedbacks', 'title'));
+        $feedbacks = Feedback::all();
+        $feedbacks = $query = Feedback::query()->paginate(10);
+        $feedbacks = Feedback::with('customer')->paginate(10);
+        $title = 'Phản Hồi';
+        return view('admin.feedback.index', compact('feedbacks', 'title'));
     }
 
 
     public function create()
     {
-        
+
         return view('admin.feedback.create');
     }
 
