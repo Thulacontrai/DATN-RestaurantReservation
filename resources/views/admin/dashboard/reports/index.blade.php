@@ -4,12 +4,140 @@
 
 @section('content')
     <div class="content-wrapper-scroll">
-
         <!-- Content wrapper start -->
         <div class="content-wrapper">
-
-            <!-- Doanh Thu Tháng -->
             <div class="row">
+
+
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">So sánh</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-xxl-2 col-lg-3 col-sm-12 col-12">
+                                <div class="card-border m-0 h-100">
+                                    <div class="monthly-stats">
+                                        <h5>Theo tuần</h5>
+                                        <div class="avg-block">
+                                            <h4 class="avg-total text-blue">9,500</h4>
+                                            <h6 class="avg-label">Đã nhận</h6>
+                                        </div>
+                                        <div class="avg-block">
+                                            <h4 class="avg-total text-red">7,200$</h4>
+                                            <h6 class="avg-label">Đã hết hạn</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xxl-8 col-lg-6 col-sm-12 col-12">
+                                <div id="graph4"></div>
+                            </div>
+                            <div class="col-xxl-2 col-lg-3 col-sm-12 col-12">
+                                <div class="card-border m-0 h-100">
+                                    <div class="monthly-stats">
+                                        <h5>Theo tháng</h5>
+                                        <div class="avg-block">
+                                            <h4 class="avg-total text-blue">32,100</h4>
+                                            <h6 class="avg-label">Đã nhận</h6>
+                                        </div>
+                                        <div class="avg-block">
+                                            <h4 class="avg-total text-red">48,700$</h4>
+                                            <h6 class="avg-label">Đã hết hạn</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                        var options = {
+                            chart: {
+                                height: 320,
+                                type: 'area',
+                                toolbar: {
+                                    show: false,
+                                },
+                                dropShadow: {
+                                    enabled: true,
+                                    opacity: 0.1,
+                                    blur: 5,
+                                    left: -10,
+                                    top: 10
+                                },
+                            },
+                            dataLabels: {
+                                enabled: false
+                            },
+                            stroke: {
+                                curve: 'smooth',
+                                width: 3
+                            },
+                            series: [{
+                                name: 'Đã nhận',
+                                data: [3000, 1000, 3000, 1000]
+                            }, {
+                                name: 'Đã hết hạn',
+                                data: [1500, 3500, 1500, 3500]
+                            }],
+                            grid: {
+                                borderColor: '#e1e1e1',
+                                strokeDashArray: 5,
+                                xaxis: {
+                                    lines: {
+                                        show: true
+                                    }
+                                },
+                                yaxis: {
+                                    lines: {
+                                        show: false,
+                                    }
+                                },
+                                padding: {
+                                    top: 0,
+                                    right: 30,
+                                    bottom: 0,
+                                    left: 30
+                                },
+                            },
+                            xaxis: {
+                                type: 'day',
+                                categories: ["Quý 1", "Quý 2", "Quý 3", "Quý 4"],
+                            },
+                            colors: ['#435EEF', '#59a2fb'],
+                            yaxis: {
+                                show: false,
+                            },
+                            markers: {
+                                size: 0,
+                                opacity: 0.2,
+                                colors: ['#435EEF', '#59a2fb'],
+                                strokeColor: "#fff",
+                                strokeWidth: 2,
+                                hover: {
+                                    size: 7,
+                                }
+                            },
+                            tooltip: {
+                                x: {
+                                    format: 'dd/MM/yy'
+                                },
+                            }
+                        }
+
+                        var chart = new ApexCharts(
+                            document.querySelector("#graph4"),
+                            options
+                        );
+
+                        chart.render();
+                    </script>
+                </div>
+
+
+
+
                 <!-- Biểu đồ Doanh Thu -->
                 <div class="col-xxl-6 col-sm-12 col-12">
                     <div class="card shadow-lg border-light rounded">
@@ -205,7 +333,7 @@
                                 var options = {
                                     chart: {
                                         type: 'donut',
-                                        height: 350,
+                                        height: 377,
                                     },
                                     series: [75, 25], // Giả sử 75% là món ăn, 25% là đồ uống
                                     labels: ['Món Ăn', 'Đồ Uống'],
@@ -231,109 +359,7 @@
                 </div>
             </div>
 
-            <!-- Doanh thu theo giờ đặt bàn -->
-            <div class="row">
-                <div class="col-xxl-6 col-sm-12 col-12">
-                    <div class="card shadow-lg border-light rounded">
-                        <div class="card-header text-white">
-                        </div>
-                        <div class="card-body">
-                            <div id="hourlyReservationsGraph"></div>
-                            <script>
-                                var options = {
-                                    chart: {
-                                        type: 'bar',
-                                        height: 350,
-                                    },
-                                    series: [{
-                                        name: 'Số Lượng Đặt Bàn',
-                                        data: [10, 12, 5, 8, 15, 25, 35, 40, 20, 15, 18, 12]
-                                    }],
-                                    xaxis: {
-                                        categories: ['0h', '1h', '2h', '3h', '4h', '5h', '6h', '7h', '8h', '9h', '10h', '11h'],
-                                    },
-                                    yaxis: {
-                                        title: {
-                                            text: 'Số Lượng Đặt Bàn',
-                                        },
-                                    },
-                                    tooltip: {
-                                        y: {
-                                            formatter: function(value) {
-                                                return value + ' đặt bàn';
-                                            }
-                                        }
-                                    },
-                                    legend: {
-                                        position: 'bottom',
-                                        horizontalAlign: 'center',
-                                    }
-                                };
 
-                                var chart = new ApexCharts(document.querySelector("#hourlyReservationsGraph"), options);
-                                chart.render();
-                            </script>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Biểu đồ chi tiêu theo nhóm khách -->
-                <div class="col-xxl-6 col-sm-12 col-12">
-                    <div class="card shadow-lg border-light rounded">
-                        <div class="card-header text-white">
-                        </div>
-                        <div class="card-body">
-                            <div id="spendingByGroupGraph"></div>
-                            <script>
-                                var options = {
-                                    chart: {
-                                        type: 'bar',
-                                        height: 350,
-                                    },
-                                    series: [{
-                                            name: 'Khách VIP',
-                                            data: [5000000, 7000000, 6000000, 6500000, 7000000, 7500000, 8000000, 9500000, 8000000,
-                                                10000000, 9000000, 11000000
-                                            ]
-                                        },
-                                        {
-                                            name: 'Khách Thường',
-                                            data: [2000000, 2500000, 2800000, 2300000, 2200000, 2700000, 3000000, 2900000, 3100000, 3300000,
-                                                3400000, 3500000
-                                            ]
-                                        }
-                                    ],
-                                    xaxis: {
-                                        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                                    },
-                                    yaxis: {
-                                        title: {
-                                            text: 'Tổng Chi Tiêu (VND)',
-                                        },
-                                    },
-                                    tooltip: {
-                                        y: {
-                                            formatter: function(value) {
-                                                return value.toLocaleString('vi-VN', {
-                                                    style: 'currency',
-                                                    currency: 'VND'
-                                                });
-                                            }
-                                        }
-                                    },
-                                    legend: {
-                                        position: 'bottom',
-                                        horizontalAlign: 'center',
-                                    }
-                                };
-
-                                var chart = new ApexCharts(document.querySelector("#spendingByGroupGraph"), options);
-                                chart.render();
-                            </script>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
         </div>
     </div>

@@ -136,7 +136,7 @@
                         </div>
 
                         <script>
-                            document.addEventListener('DOMContentLoaded', function () {
+                            document.addEventListener('DOMContentLoaded', function() {
                                 // Tùy chọn biểu đồ
                                 var options = {
                                     chart: {
@@ -146,7 +146,7 @@
                                             show: false, // Ẩn thanh công cụ
                                         },
                                         events: {
-                                            resize: function (chart) {
+                                            resize: function(chart) {
                                                 chart.updateOptions({
                                                     chart: {
                                                         height: 317, // Duy trì kích thước ổn định khi thay đổi kích thước
@@ -162,8 +162,7 @@
                                         curve: 'smooth',
                                         width: 3
                                     },
-                                    series: [
-                                        {
+                                    series: [{
                                             name: 'Số Lượng Đơn Đặt Bàn',
                                             data: [{{ implode(',', $bookingData) }}], // Dữ liệu đặt bàn
                                         },
@@ -177,7 +176,9 @@
                                         strokeDashArray: 5,
                                     },
                                     xaxis: {
-                                        categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], // Các tháng
+                                        categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov",
+                                            "Dec"
+                                        ], // Các tháng
                                         labels: {
                                             style: {
                                                 colors: '#6c757d',
@@ -185,8 +186,7 @@
                                             }
                                         }
                                     },
-                                    yaxis: [
-                                        {
+                                    yaxis: [{
                                             show: false // Ẩn trục Y "Số Lượng"
                                         },
                                         {
@@ -204,7 +204,7 @@
                                             format: 'dd-MM-yyyy' // Định dạng ngày tháng
                                         },
                                         y: {
-                                            formatter: function (value) {
+                                            formatter: function(value) {
                                                 return value.toLocaleString('vi-VN', {
                                                     style: 'currency',
                                                     currency: 'VND'
@@ -224,26 +224,26 @@
 
                                 // Xử lý sự kiện thay đổi khoảng thời gian
                                 document.querySelectorAll('.graph-day-selection .btn').forEach(button => {
-                                    button.addEventListener('click', function () {
-                                        document.querySelectorAll('.graph-day-selection .btn').forEach(btn => btn.classList.remove('active'));
+                                    button.addEventListener('click', function() {
+                                        document.querySelectorAll('.graph-day-selection .btn').forEach(btn => btn
+                                            .classList.remove('active'));
                                         this.classList.add('active');
 
                                         var period = this.getAttribute('data-period');
 
                                         // Fetch dữ liệu mới
                                         fetch('/getDataForPeriod', {
-                                            method: 'POST',
-                                            headers: {
-                                                'Content-Type': 'application/json'
-                                            },
-                                            body: JSON.stringify({
-                                                period: period
+                                                method: 'POST',
+                                                headers: {
+                                                    'Content-Type': 'application/json'
+                                                },
+                                                body: JSON.stringify({
+                                                    period: period
+                                                })
                                             })
-                                        })
                                             .then(response => response.json())
                                             .then(data => {
-                                                chart.updateSeries([
-                                                    {
+                                                chart.updateSeries([{
                                                         name: 'Số Lượng Đơn Đặt Bàn',
                                                         data: data.bookingData
                                                     },
@@ -267,15 +267,14 @@
                 <!-- Doanh Thu Tháng -->
                 <div class="col-xxl-3 col-sm-12 col-12">
                     <div class="card shadow-lg border-light rounded">
-                        <div class="card-header text-white">
-                            <h5 class="card-title text-success ">Doanh Thu Tháng</h5>
-                        </div>
+
                         <div class="card-body">
                             <div id="salesGraph" class="auto-align-graph"></div>
-                            <div class="num-stats text-center mt-3">
-                                <h5 id="totalRevenue" style="color: #94cff1; font-size: 22px; font-weight: 600;">0₫.00</h5>
+                            <div class="num-stats text-center">
+                                <h5 id="totalRevenue" style="color: #71ebed; font-size: 20px; font-weight: 600;">0₫.00</h5>
                                 <!-- Tổng doanh thu -->
                             </div>
+                            <p class="text-center mt-1" style="color: #555e5e">Các Tháng Trong Năm 2024</p>
                         </div>
                     </div>
                 </div>
@@ -309,7 +308,7 @@
                     function renderChart(months, revenues) {
                         const options = {
                             chart: {
-                                height: 262,
+                                height: 290,
                                 type: 'bar', // Sử dụng bar chart
                                 toolbar: {
                                     show: false
@@ -682,140 +681,267 @@
                     </div>
                 </div>
 
-                <div class="col-sm-6 col-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title">Thông Báo</div>
+
+                <div class="col-xxl-3 col-sm-6 col-12">
+                    <div class="card-body">
+                        <div id="tagscloud">
+                            <a href="reports.html" class="tagc1">Analytics</a>
+                            <a href="reports.html" class="tagc2">Tasks</a>
+                            <a href="index.html" class="tagc3">Sales</a>
+                            <a href="#" class="tagc4">Bootstrap</a>
+                            <a href="#" class="tagc1">Scss</a>
+                            <a href="#" class="tagc2">Bootstrap</a>
+                            <a href="index.html" class="tagc3">Admin</a>
+                            <a href="index.html" class="tagc4">Dashboard</a>
+                            <a href="#" class="tagc1">Creative</a>
+                            <a href="#" class="tagc2">Rising Stars</a>
+                            <a href="reports.html" class="tagc3">BS Admin</a>
+                            <a href="#" class="tagc4">Top Rated</a>
+                            <a href="#" class="tagc1">Admin</a>
+                            <a href="#" class="tagc2">Creative</a>
+                            <a href="#" class="tagc3">Best Selling</a>
+                            <a href="#" class="tagc4">Awesome</a>
+                            <a href="#" class="tagc1">jQuery</a>
+                            <a href="#" class="tagc2">Hot Under $19</a>
+                            <a href="reports.html" class="tagc3">High</a>
+                            <a href="#" class="tagc4">Low Price</a>
+                            <a href="#" class="tagc1">Top Selling</a>
+                            <a href="index.html" class="tagc2">Best Admin</a>
+                            <a href="#" class="tagc3">Popular</a>
+                            <a href="#" class="tagc1">Best Sellers</a>
+                            <a href="index.html" class="tagc2">eCommerce</a>
+                            <a href="reports.html" class="tagc3">Analytics</a>
+                            <a href="#" class="tagc4">Rising Stars</a>
+                            <a href="tasks.html" class="tagc1">Crm</a>
+                            <a href="#" class="tagc2">Sass</a>
+                            <a href="#" class="tagc3">Template Monster</a>
+                            <a href="index.html" class="tagc4">Dashboard</a>
+                            <a href="#" class="tagc1">Admin</a>
+                            <a href="reports.html" class="tagc2">Creative</a>
+                            <a href="#" class="tagc3">Template Monster</a>
+                            <a href="#" class="tagc4">Theme</a>
+                            <a href="#" class="tagc1">Dashboard</a>
+                            <a href="#" class="tagc2">Rising stars</a>
+                            <a href="#" class="tagc3">Template</a>
+                            <a href="index.html" class="tagc4">Top Rated</a>
+
                         </div>
-                        <div class="card-body">
-                            <div class="scroll370">
-                                <ul class="user-messages">
-                                    <li>
-                                        <div class="customer shade-blue">MK</div>
-                                        <div class="delivery-details">
-                                            <span class="badge shade-blue">Bán Hàng</span>
-                                            <h5>Marie Kieffer</h5>
-                                            <p>Cảm ơn bạn đã chọn sản phẩm Apple. Nếu có thắc mắc, vui lòng liên hệ đội ngũ
-                                                bán hàng.</p>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="customer shade-blue">ES</div>
-                                        <div class="delivery-details">
-                                            <span class="badge shade-blue">Marketing</span>
-                                            <h5>Ewelina Sikora</h5>
-                                            <p>Tăng doanh số của bạn lên 50% với công cụ marketing đơn giản và hiệu quả.</p>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="customer shade-blue">TN</div>
-                                        <div class="delivery-details">
-                                            <span class="badge shade-blue">Kinh Doanh</span>
-                                            <h5>Teboho Ncube</h5>
-                                            <p>Sử dụng mã khuyến mãi HKYMM50 để được giảm giá 50% đơn hàng đầu tiên.</p>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="customer shade-blue">CJ</div>
-                                        <div class="delivery-details">
-                                            <span class="badge shade-blue">Quản Trị</span>
-                                            <h5>Carla Jackson</h5>
-                                            <p>Trước khi mời quản trị viên, bạn cần tạo một vai trò để gán cho họ.</p>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="customer shade-red">JK</div>
-                                        <div class="delivery-details">
-                                            <span class="badge shade-red">Bảo Mật</span>
-                                            <h5>Julie Kemp</h5>
-                                            <p>Gói bảo mật của bạn đã hết hạn. Vui lòng gia hạn gói.</p>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
+
                     </div>
+                    <script>
+                        var radius = 90;
+                        var d = 200;
+                        var dtr = Math.PI / 180;
+                        var mcList = [];
+                        var lasta = 1;
+                        var lastb = 1;
+                        var distr = true;
+                        var tspeed = 11;
+                        var size = 200;
+                        var mouseX = 0;
+                        var mouseY = 10;
+                        var howElliptical = 1;
+                        var aA = null;
+                        var oDiv = null;
+                        window.onload = function() {
+                            var i = 0;
+                            var oTag = null;
+                            oDiv = document.getElementById('tagscloud');
+                            aA = oDiv.getElementsByTagName('a');
+                            for (i = 0; i < aA.length; i++) {
+                                oTag = {};
+                                aA[i].onmouseover = (function(obj) {
+                                    return function() {
+                                        obj.on = true;
+                                        this.style.zIndex = 9999;
+                                        this.style.color = '#fff';
+                                        this.style.padding = '5px 12px';
+                                        this.style.filter = "alpha(opacity=100)";
+                                        this.style.opacity = 1;
+                                    }
+                                })(oTag)
+                                aA[i].onmouseout = (function(obj) {
+                                    return function() {
+                                        obj.on = false;
+                                        this.style.zIndex = obj.zIndex;
+                                        this.style.color = '#fff';
+                                        this.style.padding = '5px 12px';
+                                        this.style.filter = "alpha(opacity=" + 100 * obj.alpha + ")";
+                                        this.style.opacity = obj.alpha;
+                                        this.style.zIndex = obj.zIndex;
+                                    }
+                                })(oTag)
+                                oTag.offsetWidth = aA[i].offsetWidth;
+                                oTag.offsetHeight = aA[i].offsetHeight;
+                                mcList.push(oTag);
+                            }
+                            sineCosine(0, 0, 0);
+                            positionAll();
+                            (function() {
+                                update();
+                                setTimeout(arguments.callee, 40);
+                            })();
+                        };
+
+                        function update() {
+                            var a, b, c = 0;
+                            a = (Math.min(Math.max(-mouseY, -size), size) / radius) * tspeed;
+                            b = (-Math.min(Math.max(-mouseX, -size), size) / radius) * tspeed;
+                            lasta = a;
+                            lastb = b;
+                            if (Math.abs(a) <= 0.01 && Math.abs(b) <= 0.01) {
+                                return;
+                            }
+                            sineCosine(a, b, c);
+                            for (var i = 0; i < mcList.length; i++) {
+                                if (mcList[i].on) {
+                                    continue;
+                                }
+                                var rx1 = mcList[i].cx;
+                                var ry1 = mcList[i].cy * ca + mcList[i].cz * (-sa);
+                                var rz1 = mcList[i].cy * sa + mcList[i].cz * ca;
+
+                                var rx2 = rx1 * cb + rz1 * sb;
+                                var ry2 = ry1;
+                                var rz2 = rx1 * (-sb) + rz1 * cb;
+
+                                var rx3 = rx2 * cc + ry2 * (-sc);
+                                var ry3 = rx2 * sc + ry2 * cc;
+                                var rz3 = rz2;
+
+                                mcList[i].cx = rx3;
+                                mcList[i].cy = ry3;
+                                mcList[i].cz = rz3;
+
+                                per = d / (d + rz3);
+
+                                mcList[i].x = (howElliptical * rx3 * per) - (howElliptical * 2);
+                                mcList[i].y = ry3 * per;
+                                mcList[i].scale = per;
+                                var alpha = per;
+                                alpha = (alpha - 0.6) * (10 / 6);
+                                mcList[i].alpha = alpha * alpha * alpha - 0.2;
+                                mcList[i].zIndex = Math.ceil(100 - Math.floor(mcList[i].cz));
+                            }
+                            doPosition();
+                        }
+
+                        function positionAll() {
+                            var phi = 0;
+                            var theta = 0;
+                            var max = mcList.length;
+                            for (var i = 0; i < max; i++) {
+                                if (distr) {
+                                    phi = Math.acos(-1 + (2 * (i + 1) - 1) / max);
+                                    theta = Math.sqrt(max * Math.PI) * phi;
+                                } else {
+                                    phi = Math.random() * (Math.PI);
+                                    theta = Math.random() * (2 * Math.PI);
+                                }
+                                //åæ ‡å˜æ¢
+                                mcList[i].cx = radius * Math.cos(theta) * Math.sin(phi);
+                                mcList[i].cy = radius * Math.sin(theta) * Math.sin(phi);
+                                mcList[i].cz = radius * Math.cos(phi);
+
+                                aA[i].style.left = mcList[i].cx + oDiv.offsetWidth / 2 - mcList[i].offsetWidth / 2 + 'px';
+                                aA[i].style.top = mcList[i].cy + oDiv.offsetHeight / 2 - mcList[i].offsetHeight / 2 + 'px';
+                            }
+                        }
+
+                        function doPosition() {
+                            var l = oDiv.offsetWidth / 2;
+                            var t = oDiv.offsetHeight / 2;
+                            for (var i = 0; i < mcList.length; i++) {
+                                if (mcList[i].on) {
+                                    continue;
+                                }
+                                var aAs = aA[i].style;
+                                if (mcList[i].alpha > 0.1) {
+                                    if (aAs.display != '')
+                                        aAs.display = '';
+                                } else {
+                                    if (aAs.display != 'none')
+                                        aAs.display = 'none';
+                                    continue;
+                                }
+                                aAs.left = mcList[i].cx + l - mcList[i].offsetWidth / 2 + 'px';
+                                aAs.top = mcList[i].cy + t - mcList[i].offsetHeight / 2 + 'px';
+                                //aAs.fontSize=Math.ceil(12*mcList[i].scale/2)+8+'px';
+                                //aAs.filter="progid:DXImageTransform.Microsoft.Alpha(opacity="+100*mcList[i].alpha+")";
+                                aAs.filter = "alpha(opacity=" + 100 * mcList[i].alpha + ")";
+                                aAs.zIndex = mcList[i].zIndex;
+                                aAs.opacity = mcList[i].alpha;
+                            }
+                        }
+
+                        function sineCosine(a, b, c) {
+                            sa = Math.sin(a * dtr);
+                            ca = Math.cos(a * dtr);
+                            sb = Math.sin(b * dtr);
+                            cb = Math.cos(b * dtr);
+                            sc = Math.sin(c * dtr);
+                            cc = Math.cos(c * dtr);
+                        }
+                    </script>
+                    <style>
+                        /* Đặt chiều rộng của container để kéo dài giao diện */
+                        #tagscloud {
+                            display: flex;
+                            flex-wrap: wrap;
+                            /* Cho phép các thẻ xếp chồng lên nhau */
+                            justify-content: center;
+                            align-items: center;
+                            gap: 10px;
+                            /* Khoảng cách giữa các thẻ */
+                            position: relative;
+                        }
+
+                        /* Định dạng cho các thẻ tag */
+                        .tagc1,
+                        .tagc2,
+                        .tagc3,
+                        .tagc4 {
+                            display: inline-block;
+                            padding: 5px 12px;
+                            border-radius: 15px;
+                            color: white;
+                            text-decoration: none;
+                            font-size: 14px;
+                            position: absolute;
+                            /* Các thẻ sẽ chồng lên nhau */
+                            transition: all 0.3s ease;
+                        }
+
+                        /* Các màu sắc khác nhau cho từng lớp */
+                        .tagc1 {
+                            background-color: #007bff;
+                        }
+
+                        .tagc2 {
+                            background-color: #28a745;
+                        }
+
+                        .tagc3 {
+                            background-color: #ffc107;
+                        }
+
+                        .tagc4 {
+                            background-color: #dc3545;
+                        }
+
+                        /* Khi hover thì thẻ sẽ di chuyển ra ngoài một chút */
+                        .tagc1:hover,
+                        .tagc2:hover,
+                        .tagc3:hover,
+                        .tagc4:hover {
+                            opacity: 0.8;
+                            transform: translate(5px, -5px);
+                            /* Đẩy thẻ lên một chút khi hover */
+                        }
+                    </style>
+
                 </div>
 
-                <div class="col-sm-6 col-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title">Hoạt Động</div>
-                        </div>
-                        <div class="card-body">
-                            <div class="scroll370">
-                                <div class="activity-container">
-                                    <div class="activity-block">
-                                        <div class="activity-user">
-                                            <img src="../adminn/assets/images/user.png" alt="Người Dùng Hoạt Động">
-                                        </div>
-                                        <div class="activity-details">
-                                            <h4>Lilly Desmet</h4>
-                                            <h5>3 giờ trước</h5>
-                                            <p>Gửi hóa đơn mã #23457</p>
-                                            <span class="badge shade-green">Đã Gửi</span>
-                                        </div>
-                                    </div>
-                                    <div class="activity-block">
-                                        <div class="activity-user">
-                                            <img src="../adminn/assets/images/user3.png" alt="Người Dùng Hoạt Động">
-                                        </div>
-                                        <div class="activity-details">
-                                            <h4>Jennifer Wilson</h4>
-                                            <h5>7 giờ trước</h5>
-                                            <p>Thanh toán hóa đơn mã #23459</p>
-                                            <span class="badge shade-red">Thanh Toán</span>
-                                        </div>
-                                    </div>
-                                    <div class="activity-block">
-                                        <div class="activity-user">
-                                            <img src="../adminn/assets/images/user4.png" alt="Người Dùng Hoạt Động">
-                                        </div>
-                                        <div class="activity-details">
-                                            <h4>Elliott Hermans</h4>
-                                            <h5>1 ngày trước</h5>
-                                            <p>Thanh toán hóa đơn mã #23473</p>
-                                            <span class="badge shade-green">Đã Thanh Toán</span>
-                                        </div>
-                                    </div>
-                                    <div class="activity-block">
-                                        <div class="activity-user">
-                                            <img src="../adminn/assets/images/user5.png" alt="Người Dùng Hoạt Động">
-                                        </div>
-                                        <div class="activity-details">
-                                            <h4>Sophie Michiels</h4>
-                                            <h5>3 ngày trước</h5>
-                                            <p>Thanh toán hóa đơn mã #23456</p>
-                                            <span class="badge shade-green">Đã Thanh Toán</span>
-                                        </div>
-                                    </div>
-                                    <div class="activity-block">
-                                        <div class="activity-user">
-                                            <img src="../adminn/assets/images/user6.png" alt="Người Dùng Hoạt Động">
-                                        </div>
-                                        <div class="activity-details">
-                                            <h4>Christopher Smith</h4>
-                                            <h5>7 ngày trước</h5>
-                                            <p>Gửi hóa đơn mã #23487</p>
-                                            <span class="badge shade-red">Đã Gửi</span>
-                                        </div>
-                                    </div>
-                                    <div class="activity-block">
-                                        <div class="activity-user">
-                                            <img src="../adminn/assets/images/user.png" alt="Người Dùng Hoạt Động">
-                                        </div>
-                                        <div class="activity-details">
-                                            <h4>Lilly Desmet</h4>
-                                            <h5>3 giờ trước</h5>
-                                            <p>Gửi hóa đơn mã #23457</p>
-                                            <span class="badge shade-green">Đã Gửi</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <!-- Row end -->
