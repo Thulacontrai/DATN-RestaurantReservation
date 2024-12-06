@@ -71,8 +71,8 @@
                                         <div class="reports-summary-block">
                                             <i class="bi bi-circle-fill text-primary me-2"></i>
                                             <div class="d-flex flex-column">
-                                                <h6>Số Lượng Đặt Bàn</h6>
-                                                <h5>{{ number_format($totalBookings ?? 0, 0, '.', ',') }} Bàn</h5>
+                                                <h6>Số Lượng Đơn Đặt Bàn</h6>
+                                                <h5>{{ number_format($reservationCount) }} Đơn</h5>
 
                                                 <!-- Hiển thị doanh thu -->
                                             </div>
@@ -164,7 +164,7 @@
                                     },
                                     series: [
                                         {
-                                            name: 'Số Lượng Đặt Bàn',
+                                            name: 'Số Lượng Đơn Đặt Bàn',
                                             data: [{{ implode(',', $bookingData) }}], // Dữ liệu đặt bàn
                                         },
                                         {
@@ -244,7 +244,7 @@
                                             .then(data => {
                                                 chart.updateSeries([
                                                     {
-                                                        name: 'Số Lượng Đặt Bàn',
+                                                        name: 'Số Lượng Đơn Đặt Bàn',
                                                         data: data.bookingData
                                                     },
                                                     {
@@ -443,7 +443,7 @@
                 <div class="col-12">
                     <div class="card shadow">
                         <div class="card-header">
-                            <h5 class="card-title text-center text-primary">Thống Kê Đặt Bàn</h5>
+                            {{-- <h5 class="card-title text-center text-secondary">Thống Kê Đặt Bàn</h5> --}}
                         </div>
                         <div class="card-body">
                             <div class="row text-center">

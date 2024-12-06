@@ -157,7 +157,7 @@
                                                                 @method('DELETE')
 
                                                                 <button type="submit" class="btn btn-link p-0"
-                                                                    style="margin-top: 15px;">
+                                                                    >
                                                                     <i class="bi bi-trash text-danger"
                                                                         style="font-size: 1.2rem;"></i>
                                                                 </button>
@@ -178,7 +178,7 @@
                             </div>
                             <!-- Pagination -->
                             <div class="pagination justify-content-center mt-3">
-                                {{-- {{ $coupon->links() }} --}}
+                                {{ $coupons->links() }}
                             </div>
 
                         </div>

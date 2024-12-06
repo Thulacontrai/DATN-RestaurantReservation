@@ -25,13 +25,19 @@ class CouponController extends Controller
     protected $viewPath = 'admin.coupon';
     protected $routePath = 'admin.coupon';
 
-    public function index()
+    public function index(Request $request)
     {
-
-        $coupons = Coupon::all();
         $title = 'Phiếu giảm giá';
-        return view('admin.coupon.index', compact('coupons', 'title'));
+        $query = Coupon::query();
+
+        if ($request->has('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        $coupons = $query->paginate(10); // Sử dụng paginate để phân trang
+        return view('admin.coupon.index', compact('coupons','title'));
     }
+
 
     public function create()
     {
