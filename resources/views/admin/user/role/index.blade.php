@@ -3,65 +3,7 @@
 @section('title', 'Danh Sách Vai Trò')
 
 @section('content')
- <!-- SweetAlert -->
- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
-
- <style>
-     @keyframes gradientMove {
-         0% {
-             background-position: 0% 50%;
-         }
-
-         50% {
-             background-position: 100% 50%;
-         }
-
-         100% {
-             background-position: 0% 50%;
-         }
-     }
-
-     .swal2-timer-progress-bar {
-         background: linear-gradient(90deg, #34eb4f, #00bcd4, #ffa726, #ffeb3b, #f44336);
-         /* Gradient màu */
-         background-size: 300% 300%;
-         /* Kích thước gradient lớn để tạo hiệu ứng động */
-         animation: gradientMove 2s ease infinite;
-         /* Hiệu ứng lăn tăn */
-     }
- </style>
-
- <script>
-     document.addEventListener("DOMContentLoaded", function() {
-         // Hiển thị thông báo lỗi
-         @if ($errors->any())
-             Swal.fire({
-                 position: "top-end",
-                 icon: "error",
-                 toast: true,
-                 title: "{{ $errors->first() }}",
-                 showConfirmButton: false,
-                 timerProgressBar: true,
-                 timer: 3000
-             });
-         @endif
-
-         // Hiển thị thông báo thành công
-         @if (session('success'))
-             Swal.fire({
-                 position: "top-end",
-                 icon: "success",
-                 toast: true,
-                 title: "{{ session('success') }}",
-                 showConfirmButton: false,
-                 timerProgressBar: true,
-                 timer: 3000
-             });
-         @endif
-     });
- </script>
-
+    @include('admin.layouts.messages')
     <div class="content-wrapper-scroll">
         <div class="content-wrapper">
             <div class="row">
@@ -101,7 +43,7 @@
                                                 <td>{{ $role->id }}</td>
                                                 <td>{{ $role->name }}</td>
                                                 <td>{{ $role->permissions->pluck('name')->implode(' , ') }}</td>
-                                                 <td>
+                                                <td>
 
                                                     {{ \Carbon\Carbon::parse($role->change_date . ' ' . $role->change_time)->format('H:i:s') }}<br>
                                                     {{ \Carbon\Carbon::parse($role->change_date)->format('d/m/Y') }}
@@ -111,14 +53,14 @@
 
                                                     <div class="actions">
                                                         @can('Sửa vai trò')
-                                                            <a href="{{ route('admin.role.edit', $role->id) }}" data-bs-toggle="tooltip"
-                                                                data-bs-placement="top" title="Sửa">
+                                                            <a href="{{ route('admin.role.edit', $role->id) }}"
+                                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Sửa">
                                                                 <i class="bi bi-pencil-square text-warning"></i>
                                                             </a>
                                                         @endcan
 
-                                                        <a href="#" data-bs-toggle="tooltip"
-                                                        data-bs-placement="top" title="Xoá">
+                                                        <a href="#" data-bs-toggle="tooltip" data-bs-placement="top"
+                                                            title="Xoá">
                                                             <form action="{{ route('admin.role.destroy', $role->id) }}"
                                                                 method="POST" style="display: inline-block;">
                                                                 @csrf
@@ -183,5 +125,3 @@
 
 
 @endsection
-
-

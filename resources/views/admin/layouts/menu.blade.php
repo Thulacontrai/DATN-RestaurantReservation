@@ -40,7 +40,7 @@
                         <div class="sidebar-submenu">
                             <ul>
                                 <li>
-                                    <a href="{{ route('admin.table.index') }}">DS bàn</a>
+                                    <a href="{{ route('admin.table.index') }}"> DS bàn</a>
                                 </li>
                             </ul>
                         </div>
@@ -61,7 +61,7 @@
                                 @endcan
                                 <li>
 
-                                <a href="{{ route('admin.calendar.index') }}">Lịch đặt bàn</a>
+                                    {{-- <a href="{{ route('admin.calendar.index') }}">Lịch đặt bàn</a> --}}
 
                                     {{-- <a href="{{ route('admin.reservationTable.index') }}">Bàn đặt trước</a> --}}
                                 </li>

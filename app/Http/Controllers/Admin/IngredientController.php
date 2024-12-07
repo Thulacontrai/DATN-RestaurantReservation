@@ -84,6 +84,7 @@ class IngredientController extends Controller
                 'price' => $request->price,
                 'unit' => $request->unit,
                 'category' => $request->category,
+                'name.max' => 'Tên nguyên liệu không được vượt quá 50 ký tự.',
             ]);
         });
 
@@ -106,6 +107,7 @@ class IngredientController extends Controller
             'price' => 'required|numeric',
             'unit' => 'required|string|max:50',
             'category' => 'required|in:Đồ tươi,Đồ đóng hộp',
+            'name.max' => 'Tên nguyên liệu không được vượt quá 50 ký tự.',
         ]);
 
         DB::transaction(function () use ($request, $id) {

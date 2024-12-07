@@ -3,65 +3,7 @@
 @section('title', 'Chỉnh Sửa Đặt Bàn')
 
 @section('content')
- <!-- SweetAlert -->
- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
-
- <style>
-     @keyframes gradientMove {
-         0% {
-             background-position: 0% 50%;
-         }
-
-         50% {
-             background-position: 100% 50%;
-         }
-
-         100% {
-             background-position: 0% 50%;
-         }
-     }
-
-     .swal2-timer-progress-bar {
-         background: linear-gradient(90deg, #34eb4f, #00bcd4, #ffa726, #ffeb3b, #f44336);
-         /* Gradient màu */
-         background-size: 300% 300%;
-         /* Kích thước gradient lớn để tạo hiệu ứng động */
-         animation: gradientMove 2s ease infinite;
-         /* Hiệu ứng lăn tăn */
-     }
- </style>
-
- <script>
-     document.addEventListener("DOMContentLoaded", function() {
-         // Hiển thị thông báo lỗi
-         @if ($errors->any())
-             Swal.fire({
-                 position: "top-end",
-                 icon: "error",
-                 toast: true,
-                 title: "{{ $errors->first() }}",
-                 showConfirmButton: false,
-                 timerProgressBar: true,
-                 timer: 3000
-             });
-         @endif
-
-         // Hiển thị thông báo thành công
-         @if (session('success'))
-             Swal.fire({
-                 position: "top-end",
-                 icon: "success",
-                 toast: true,
-                 title: "{{ session('success') }}",
-                 showConfirmButton: false,
-                 timerProgressBar: true,
-                 timer: 3000
-             });
-         @endif
-     });
- </script>
-
+    @include('admin.layouts.messages')
     <!-- Content wrapper scroll start -->
     <div class="content-wrapper-scroll">
 
@@ -96,9 +38,11 @@
                                             <label for="reservation_date" class="form-label">Ngày Đặt</label>
                                             <div class="input-group">
                                                 <span class="input-group-text bg-warning text-white">
-                                                    <i class="bi bi-calendar-date text-white"></i> <!-- Icon lịch từ Bootstrap Icons -->
+                                                    <i class="bi bi-calendar-date text-white"></i>
+                                                    <!-- Icon lịch từ Bootstrap Icons -->
                                                 </span>
-                                                <input type="date" class="form-control" id="reservation_date" name="reservation_date"
+                                                <input type="date" class="form-control" id="reservation_date"
+                                                    name="reservation_date"
                                                     value="{{ old('reservation_date', $reservationDate) }}" required>
                                             </div>
                                         </div>
@@ -108,9 +52,11 @@
                                             <label for="reservation_time" class="form-label">Giờ Đặt</label>
                                             <div class="input-group">
                                                 <span class="input-group-text bg-danger text-white">
-                                                    <i class="bi bi-clock text-white"></i> <!-- Icon đồng hồ từ Bootstrap Icons -->
+                                                    <i class="bi bi-clock text-white"></i>
+                                                    <!-- Icon đồng hồ từ Bootstrap Icons -->
                                                 </span>
-                                                <input type="time" class="form-control" id="reservation_time" name="reservation_time"
+                                                <input type="time" class="form-control" id="reservation_time"
+                                                    name="reservation_time"
                                                     value="{{ old('reservation_time', $reservationTime) }}" required>
                                             </div>
                                         </div>
@@ -120,11 +66,14 @@
                                             <label for="guest_count" class="form-label">Số Lượng Khách</label>
                                             <div class="input-group">
                                                 <span class="input-group-text bg-primary text-white">
-                                                    <i class="bi bi-people text-white"></i> <!-- Icon người từ Bootstrap Icons -->
+                                                    <i class="bi bi-people text-white"></i>
+                                                    <!-- Icon người từ Bootstrap Icons -->
                                                 </span>
-                                                <input type="number" class="form-control text-primary" id="guest_count" name="guest_count"
-                                                    value="{{ $reservation->guest_count }}" min="1" max="50" readonly>
-                                                <div class="invalid-feedback">Số lượng khách phải nằm trong khoảng từ 1 đến 50.</div>
+                                                <input type="number" class="form-control text-primary" id="guest_count"
+                                                    name="guest_count" value="{{ $reservation->guest_count }}"
+                                                    min="1" max="50" readonly>
+                                                <div class="invalid-feedback">Số lượng khách phải nằm trong khoảng từ 1 đến
+                                                    50.</div>
                                             </div>
                                         </div>
 
@@ -136,7 +85,8 @@
                                             <label for="deposit_amount" class="form-label">Số Tiền Đặt Cọc</label>
                                             <div class="input-group">
                                                 <span class="input-group-text bg-success text-white">₫</span>
-                                                <input type="text" class="form-control text-primary" id="deposit_amount" name="deposit_amount"
+                                                <input type="text" class="form-control text-primary" id="deposit_amount"
+                                                    name="deposit_amount"
                                                     value="{{ number_format($reservation->deposit_amount ?? 0, 0, ',', '.') }}"
                                                     readonly data-raw-value="{{ $reservation->deposit_amount }}">
                                             </div>
@@ -171,9 +121,11 @@
 
                                     </div>
                                 </div>
-                                 <div class="text-end">
-                                <button type="submit" class="btn btn-primary" id="updateButton">Cập Nhật</button>
-                                <a href="{{ route('admin.reservation.index') }}" class="btn btn-secondary">Quay lại</a></div>
+                                <div class="text-end">
+                                    <button type="submit" class="btn btn-primary" id="updateButton">Cập Nhật</button>
+                                    <a href="{{ route('admin.reservation.index') }}" class="btn btn-secondary">Quay
+                                        lại</a>
+                                </div>
                             </form>
 
                         </div>

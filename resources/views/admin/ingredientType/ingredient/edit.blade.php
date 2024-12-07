@@ -3,64 +3,7 @@
 @section('title', 'Chỉnh Sửa Nguyên Liệu')
 
 @section('content')
-    <!-- SweetAlert -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
-
-    <style>
-        @keyframes gradientMove {
-            0% {
-                background-position: 0% 50%;
-            }
-
-            50% {
-                background-position: 100% 50%;
-            }
-
-            100% {
-                background-position: 0% 50%;
-            }
-        }
-
-        .swal2-timer-progress-bar {
-            background: linear-gradient(90deg, #34eb4f, #00bcd4, #ffa726, #ffeb3b, #f44336);
-            /* Gradient màu */
-            background-size: 300% 300%;
-            /* Kích thước gradient lớn để tạo hiệu ứng động */
-            animation: gradientMove 2s ease infinite;
-            /* Hiệu ứng lăn tăn */
-        }
-    </style>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // Hiển thị thông báo lỗi
-            @if ($errors->any())
-                Swal.fire({
-                    position: "top-end",
-                    icon: "error",
-                    toast: true,
-                    title: "{{ $errors->first() }}",
-                    showConfirmButton: false,
-                    timerProgressBar: true,
-                    timer: 3000
-                });
-            @endif
-
-            // Hiển thị thông báo thành công
-            @if (session('success'))
-                Swal.fire({
-                    position: "top-end",
-                    icon: "success",
-                    toast: true,
-                    title: "{{ session('success') }}",
-                    showConfirmButton: false,
-                    timerProgressBar: true,
-                    timer: 3000
-                });
-            @endif
-        });
-    </script>
+    @include('admin.layouts.messages')
     <div class="content-wrapper-scroll">
         <div class="content-wrapper">
             <div class="row">
@@ -84,9 +27,12 @@
                                                 <span class="input-group-text bg-primary text-white"><i
                                                         class="bi bi-apple text-white"></i></span>
                                                 <input type="text" name="name" class="form-control"
-                                                    value="{{ old('name', $ingredient->name) }}" required>
+                                                    id="ingredientName" placeholder="Nhập tên nguyên liệu" required
+                                                    maxlength="50" value="{{ old('name', $ingredient->name) }}" required>
                                             </div>
-                                            <div class="invalid-feedback">Vui lòng nhập tên nguyên liệu.</div>
+                                            <small id="charCount" class="form-text text-muted"></small>
+                                            <div class="invalid-feedback">Vui lòng nhập tên nguyên liệu (tối đa 50 ký tự).
+                                            </div>
                                         </div>
                                     </div>
 
@@ -98,7 +44,8 @@
                                                 <span class="input-group-text bg-success text-white">₫</span>
                                                 <input type="number" step="0.01" name="price" class="form-control"
                                                     placeholder="Nhập giá" min="1" max="5000000"
-                                                    value="{{ old('price', $ingredient->price) }}" required>
+                                                    value="{{ number_format(old('price', $ingredient->price) ?? 0, 0, ',', '.') }}"
+                                                    required>
                                             </div>
                                             <div class="invalid-feedback">Giá phải nằm trong khoảng từ 1 đến 5.000.000 VNĐ
                                             </div>
@@ -220,6 +167,25 @@
                 // Giới hạn không cho phép nhập giá trị lớn hơn 100.000.000
                 if (value > 1000000) {
                     priceInput.value = 1000000; // Đặt lại giá trị về 100.000.000 nếu lớn hơn 100.000.000
+                }
+            });
+            const ingredientInput = document.getElementById('ingredientName');
+            const charCount = document.getElementById('charCount');
+
+            ingredientInput.addEventListener('input', function() {
+                const maxLength = 50;
+                const currentLength = this.value.length;
+
+                if (currentLength >= 40 && currentLength < 49) {
+                    charCount.textContent =
+                        `Bạn đã nhập ${currentLength}/${maxLength} ký tự. Tối đa 50 ký tự.`;
+                    charCount.style.color = 'rgb(255, 193, 7)'; // Màu vàng
+                    charCount.style.fontWeight = 'bold'; // Làm đậm chữ
+                } else if (currentLength >= 49) {
+                    charCount.textContent =
+                        `Bạn đã nhập ${currentLength}/${maxLength} ký tự. Tối đa 50 ký tự.`;
+                    charCount.style.color = 'rgb(220, 53, 69)'; // Màu đỏ
+                    charCount.style.fontWeight = 'bold';
                 }
             });
         });
