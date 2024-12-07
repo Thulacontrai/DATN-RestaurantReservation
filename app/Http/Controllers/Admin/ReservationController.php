@@ -708,6 +708,7 @@ class ReservationController extends Controller
                     $customer_id = null;
                     if (auth()->check()) {
                         $customer_id = auth()->id();
+                        $user = null;
                     } else {
                         $user = User::where('phone', $reservation['user_phone'])->first();
                         if (!isset($user) && $user == null) {
@@ -743,6 +744,7 @@ class ReservationController extends Controller
                 $customer_id = null;
                 if (auth()->check()) {
                     $customer_id = auth()->id();
+                    $user = null;
                 } else {
                     $user = User::where('phone', $request->user_phone)->first();
                     if (!isset($user) && $user == null) {
@@ -805,7 +807,13 @@ class ReservationController extends Controller
             }
             $tables = Table::with([
                 'orders' => function ($query) {
-                    $query->where('orders.status', '!=', 'completed');
+                    $query->where('orders.status', '!=', 'completed')
+                        ->where('orders.status', '!=', 'waiting')
+                        ->with([
+                            'reservation' => function ($query) {
+                                $query->select('id', 'user_name');
+                            }
+                        ]);
                 }
             ])->get();
             broadcast(new MessageSent($tables))->toOthers();
@@ -831,7 +839,13 @@ class ReservationController extends Controller
             }
             $tables = Table::with([
                 'orders' => function ($query) {
-                    $query->where('orders.status', '!=', 'completed');
+                    $query->where('orders.status', '!=', 'completed')
+                        ->where('orders.status', '!=', 'waiting')
+                        ->with([
+                            'reservation' => function ($query) {
+                                $query->select('id', 'user_name');
+                            }
+                        ]);
                 }
             ])->get();
             broadcast(new MessageSentt($tables))->toOthers();
@@ -1102,12 +1116,14 @@ class ReservationController extends Controller
         $reservation_table = OrdersTable::where('order_id', $orderId)
             ->where('table_id', $table->id)
             ->first();
-        $items = OrderItem::where('order_id', $orderId)->get();
+        $items = OrderItem::where('order_id', $orderId)
+            ->where('status', '!=', 'hủy')
+            ->get();
         $item = $items->all();
         $dishIds = $items->pluck('item_id')->toArray();
         $dishes = Dishes::whereIn('id', $dishIds)->get();
         $staff = User::find($order->staff_id);
-        return view('pos.receipt', compact('dishes', 'data', 'order', 'table', 'staff', 'reservation_table', 'item'))->render();
+        return view('pos.receipt', compact('dishes', 'data', 'order', 'table', 'staff', 'reservation_table', 'items'))->render();
     }
 
     // Hàm chuẩn hóa số điện thoại
