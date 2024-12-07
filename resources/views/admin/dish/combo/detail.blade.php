@@ -13,7 +13,7 @@
                 <div class="col-md-10 col-12 mx-auto">
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5 class="card-title">Chi Tiết Combo</h5>
+                            <h5 class="card-title text-primary">Chi Tiết Combo</h5>
                             <div>
                                 <a href="{{ route('admin.combo.edit', $combo->id) }}" class="btn btn-sm btn-primary me-2">
                                     <i class="bi bi-pencil-square"></i> Chỉnh Sửa

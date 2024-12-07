@@ -1,3 +1,3 @@
 <div class="app-footer">
-    <span>© Arise admin 2023</span>
+    <span>© Steak House 2024</span>
 </div>

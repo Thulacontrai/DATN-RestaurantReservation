@@ -4,6 +4,52 @@
 
 @section('content')
 
+    <!-- SweetAlert -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Kiểm tra lỗi từ session
+            @if ($errors->any())
+                Swal.fire({
+                    position: "top-end", // Góc trên bên phải
+                    icon: "error",
+                    toast: true, // Hiển thị nhỏ gọn
+                    title: "{{ $errors->first() }}", // Lấy thông báo lỗi đầu tiên
+                    showConfirmButton: false, // Không hiển thị nút xác nhận
+                    timerProgressBar: true, // Hiển thị thanh tiến trình
+                    timer: 3500 // Tự động đóng sau 3.5 giây
+                });
+            @endif
+
+            // Kiểm tra thông báo lỗi từ session
+            @if (session('error'))
+                Swal.fire({
+                    position: "top-end",
+                    icon: "error",
+                    toast: true,
+                    title: "{{ session('error') }}",
+                    showConfirmButton: false,
+                    timerProgressBar: true,
+                    timer: 3500
+                });
+            @endif
+
+            // Kiểm tra thông báo thành công từ session
+            @if (session('success'))
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    toast: true,
+                    title: "{{ session('success') }}",
+                    showConfirmButton: false,
+                    timerProgressBar: true,
+                    timer: 3500
+                });
+            @endif
+        });
+    </script>
 
     <div class="content-wrapper-scroll">
         <div class="content-wrapper">

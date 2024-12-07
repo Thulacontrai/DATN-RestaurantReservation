@@ -3,104 +3,227 @@
 @section('title', 'Chỉnh Sửa Thanh Toán')
 
 @section('content')
+    <!-- SweetAlert -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 
-    <!-- Content wrapper scroll start -->
+    <style>
+        @keyframes gradientMove {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .swal2-timer-progress-bar {
+            background: linear-gradient(90deg, #34eb4f, #00bcd4, #ffa726, #ffeb3b, #f44336);
+            /* Gradient màu */
+            background-size: 300% 300%;
+            /* Kích thước gradient lớn để tạo hiệu ứng động */
+            animation: gradientMove 2s ease infinite;
+            /* Hiệu ứng lăn tăn */
+        }
+    </style>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Hiển thị thông báo lỗi
+            @if ($errors->any())
+                Swal.fire({
+                    position: "top-end",
+                    icon: "error",
+                    toast: true,
+                    title: "{{ $errors->first() }}",
+                    showConfirmButton: false,
+                    timerProgressBar: true,
+                    timer: 3000
+                });
+            @endif
+
+            // Hiển thị thông báo thành công
+            @if (session('success'))
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    toast: true,
+                    title: "{{ session('success') }}",
+                    showConfirmButton: false,
+                    timerProgressBar: true,
+                    timer: 3000
+                });
+            @endif
+        });
+    </script>
     <div class="content-wrapper-scroll">
-
-        <!-- Content wrapper start -->
         <div class="content-wrapper">
-
-            <!-- Row start -->
             <div class="row">
                 <div class="col-sm-12 col-12">
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
-                            <div class="card-title">Chỉnh Sửa Thanh Toán</div>
+                            <div class="card-title text-primary">Chỉnh Sửa Thanh Toán</div>
                         </div>
                         <div class="card-body">
-                            <form action="{{ route('admin.payment.update', $payment->id) }}" method="POST">
+                            <form id="payment-form" action="{{ route('admin.payment.update', $payment->id) }}"
+                                method="POST">
                                 @csrf
                                 @method('PUT')
 
-                                <div class="mb-3">
-                                    <label class="form-label">Mã Đặt Chỗ (Reservation ID)</label>
-                                    <input type="text" name="reservation_id" class="form-control"
-                                        value="{{ $payment->reservation_id }}" readonly>
+                                <!-- Thông tin thanh toán -->
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Mã Đặt Bàn (Reservation ID)</label>
+                                        <input type="text" name="reservation_id" class="form-control text-primary"
+                                            value="{{ $payment->reservation_id }}" readonly>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Mã Hóa Đơn (Bill ID)</label>
+                                        <input type="text" name="bill_id" class="form-control text-primary"
+                                            value="{{ $payment->bill_id }}" readonly>
+                                    </div>
                                 </div>
 
-                                <div class="mb-3">
-                                    <label class="form-label">Mã Hóa Đơn (Bill ID)</label>
-                                    <input type="text" name="bill_id" class="form-control"
-                                        value="{{ $payment->bill_id }}" readonly>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Số Tiền (Amount)</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-success text-white">₫</span>
+                                            <input type="number" name="amount" class="form-control text-primary"
+                                                id="amount"
+                                                value="{{ number_format($payment->transaction_amount, 0, ',', '.') }}"
+                                                readonly>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Phương Thức Thanh Toán (Payment Method)</label>
+                                        <div class="d-flex justify-content-start">
+                                            <div class="form-check me-3">
+                                                <input class="form-check-input" type="radio" name="payment_method"
+                                                    value="Cash" id="cash"
+                                                    {{ $payment->payment_method == 'Cash' ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="cash">
+                                                    Tiền mặt
+                                                </label>
+                                            </div>
+                                            <div class="form-check me-3">
+                                                <input class="form-check-input" type="radio" name="payment_method"
+                                                    value="Credit Card" id="credit-card"
+                                                    {{ $payment->payment_method == 'Credit Card' ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="credit-card">
+                                                    Thẻ tín dụng
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="payment_method"
+                                                    value="Online" id="online"
+                                                    {{ $payment->payment_method == 'Online' ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="online">
+                                                    Thanh toán trực tuyến
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </div>
 
-                                <div class="mb-3">
-                                    <label class="form-label">Số Tiền (Amount)</label>
-                                    <input type="number" name="amount" class="form-control"
-                                        value="{{ $payment->transaction_amount }}" readonly>
+                                <!-- Trạng thái giao dịch -->
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Trạng Thái Giao Dịch (Transaction Status)</label>
+                                        <select name="transaction_status" id="transaction-status" class="form-select"
+                                            required>
+                                            <option value="pending"
+                                                {{ $payment->transaction_status == 'pending' ? 'selected' : '' }}>
+                                                Đang xử lý
+                                            </option>
+                                            <option value="completed"
+                                                {{ $payment->transaction_status == 'completed' ? 'selected' : '' }}>
+                                                Hoàn thành
+                                            </option>
+                                            <option value="failed"
+                                                {{ $payment->transaction_status == 'failed' ? 'selected' : '' }}>
+                                                Thất bại
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Trạng Thái (Status)</label>
+                                        <select name="status" id="status" class="form-select" required>
+                                            <option value="Completed"
+                                                {{ $payment->status == 'Completed' ? 'selected' : '' }}>
+                                                Hoàn thành
+                                            </option>
+                                            <option value="Pending" {{ $payment->status == 'Pending' ? 'selected' : '' }}>
+                                                Đang xử lý
+                                            </option>
+                                            <option value="Failed" {{ $payment->status == 'Failed' ? 'selected' : '' }}>
+                                                Thất bại
+                                            </option>
+                                        </select>
+                                        <!-- Cảnh báo -->
+                                        <span id="warning-message" class="text-danger d-none">
+                                            Trạng thái không hợp lệ. Vui lòng chọn lại.
+                                        </span>
+                                    </div>
                                 </div>
 
-                                <div class="mb-3">
-                                    <label class="form-label">Số Tiền Hoàn Lại (Refund Amount)</label>
-                                    <input type="number" name="refund_amount" class="form-control"
-                                        value="{{ $payment->refund_amount }}" readonly>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label">Phương Thức Thanh Toán (Payment Method)</label>
-                                    <select name="payment_method" class="form-select" required>
-                                        <option value="Cash" {{ $payment->payment_method == 'Cash' ? 'selected' : '' }}>
-                                            Tiền mặt</option>
-                                        <option value="Credit Card"
-                                            {{ $payment->payment_method == 'Credit Card' ? 'selected' : '' }}>Thẻ tín dụng
-                                        </option>
-                                        <option value="Online" {{ $payment->payment_method == 'Online' ? 'selected' : '' }}>
-                                            Thanh toán trực tuyến</option>
-                                    </select>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label">Trạng Thái Giao Dịch (Transaction Status)</label>
-                                    <select name="transaction_status" class="form-select" required>
-                                        <option value="pending"
-                                            {{ $payment->transaction_status == 'pending' ? 'selected' : '' }}>Đang xử lý
-                                        </option>
-                                        <option value="completed"
-                                            {{ $payment->transaction_status == 'completed' ? 'selected' : '' }}>Hoàn thành
-                                        </option>
-                                        <option value="failed"
-                                            {{ $payment->transaction_status == 'failed' ? 'selected' : '' }}>Thất bại
-                                        </option>
-                                    </select>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label">Trạng Thái (Status)</label>
-                                    <select name="status" class="form-select" required>
-                                        <option value="Completed" {{ $payment->status == 'Completed' ? 'selected' : '' }}>
-                                            Hoàn thành</option>
-                                        <option value="Pending" {{ $payment->status == 'Pending' ? 'selected' : '' }}>Đang
-                                            xử lý</option>
-                                        <option value="Failed" {{ $payment->status == 'Failed' ? 'selected' : '' }}>Thất
-                                            bại</option>
-                                    </select>
-                                </div>
-
-                                <div class="mt-3">
-                                    <button type="submit" class="btn btn-primary">Cập nhật thanh toán</button>
-                                    <a href="{{route('admin.payment.index')}}"  class="btn btn-sm btn-secondary">Quay lại</a>
+                                <!-- Nút hành động -->
+                                <div class="text-end">
+                                    <button type="submit" id="submit-btn" class="btn btn-primary">Cập nhật</button>
+                                    <a href="{{ route('admin.payment.index') }}" class="btn btn-secondary">Quay lại</a>
                                 </div>
                             </form>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- Row end -->
-
         </div>
-        <!-- Content wrapper end -->
-
     </div>
-    <!-- Content wrapper scroll end -->
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const statusField = document.getElementById("status");
+            const transactionStatusField = document.getElementById("transaction-status");
+            const submitButton = document.getElementById("submit-btn");
+            const warningMessage = document.getElementById("warning-message");
+
+            // Trạng thái ban đầu
+            const initialStatus = "{{ $payment->status }}";
+            const initialTransactionStatus = "{{ $payment->transaction_status }}";
+
+            // Kiểm tra và xử lý trạng thái khi thay đổi
+            function checkStatus() {
+                const selectedStatus = statusField.value;
+                const selectedTransactionStatus = transactionStatusField.value;
+
+                // Kiểm tra điều kiện hợp lệ
+                if (selectedTransactionStatus === "completed" && selectedStatus !== "Completed") {
+                    warningMessage.classList.remove("d-none");
+                    submitButton.disabled = true; // Disable nút cập nhật
+                } else if (selectedTransactionStatus === "failed" && selectedStatus !== "Failed") {
+                    warningMessage.classList.remove("d-none");
+                    submitButton.disabled = true; // Disable nút cập nhật
+                } else {
+                    warningMessage.classList.add("d-none");
+                    submitButton.disabled = false; // Kích hoạt lại nút cập nhật
+                }
+            }
+
+            // Xử lý khi thay đổi trạng thái
+            statusField.addEventListener("change", checkStatus);
+            transactionStatusField.addEventListener("change", checkStatus);
+
+            // Khởi động kiểm tra trạng thái ngay khi trang load
+            checkStatus();
+        });
+    </script>
 
 @endsection

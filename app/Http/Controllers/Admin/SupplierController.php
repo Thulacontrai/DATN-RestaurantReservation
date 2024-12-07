@@ -23,7 +23,7 @@ class SupplierController extends Controller
         $this->middleware('permission:Tạo mới nhà cung cấp', ['only' => ['create']]);
         $this->middleware('permission:Sửa nhà cung cấp', ['only' => ['edit']]);
         $this->middleware('permission:Xóa nhà cung cấp', ['only' => ['destroy']]);
-        
+
     }
     use TraitCRUD;
 
@@ -34,11 +34,12 @@ class SupplierController extends Controller
 
     public function index(Request $request)
     {
+        $title = 'Nhà Cung Cấp';
         $suppliers = Supplier::when($request->name, function ($query) use ($request) {
             $query->where('name', 'like', '%' . $request->name . '%');
         })->paginate(10);
 
-        return view('admin.ingredientType.supplier.index', compact('suppliers'));
+        return view('admin.ingredientType.supplier.index', compact('suppliers', 'title'));
     }
 
 
@@ -48,7 +49,8 @@ class SupplierController extends Controller
      */
     public function create()
     {
-        return view('admin.ingredientType.supplier.create');
+        $title = 'Thêm Mới Nhà Cung Cấp';
+        return view('admin.ingredientType.supplier.create', compact('title'));
     }
 
 
@@ -75,12 +77,14 @@ class SupplierController extends Controller
 
     public function edit($id)
     {
+        $title = 'Chỉnh Sửa Nhà Cung Cấp';
         $supplier = Supplier::findOrFail($id);
-        return view('admin.ingredientType.supplier.edit', compact('supplier'));
+        return view('admin.ingredientType.supplier.edit', compact('supplier','title'));
     }
 
     public function update(Request $request, $id)
     {
+
         $request->validate([
             'name' => 'required|string|max:255',
             'phone' => 'required|string|max:20',
@@ -98,7 +102,7 @@ class SupplierController extends Controller
 
         return redirect()->route('admin.supplier.index')->with('success', 'Cập nhật nhà cung cấp thành công.');
     }
-    
+
 
     public function destroy($id)
     {

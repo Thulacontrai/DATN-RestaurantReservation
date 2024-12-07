@@ -77,7 +77,7 @@
                         <div id="recaptcha-container" class="mt-3"></div>
 
 
-                        <div class="row m-4 d-flex justify-content-center">                  
+                        <div class="row m-4 d-flex justify-content-center">
                             <div class="col-2">
                                 <a href="{{ route('booking.client') }}" class="text-secondary">Quay lại</a>
                             </div>
@@ -192,7 +192,7 @@
         .shake-element {
             animation: shake 0.5s;
         }
-        
+
         #recaptcha-container {
             display: flex;
             justify-content: center;
@@ -391,6 +391,7 @@
             }
         }
 
+
         // Validation số lượng khách
         function validateGuestCount() {
             const guestCount = parseInt(guestCountInput.value, 10);
@@ -457,7 +458,7 @@ window.sendOTP = function() {
         errorElement.id = 'recaptcha-error-message';
         errorElement.classList.add('text-danger', 'text-center', 'mb-2', 'shake-element');
         errorElement.textContent = 'Vui lòng xác thực reCAPTCHA trước khi tiếp tục.';
-        
+
         // Chèn thông báo lỗi ngay trước hoặc sau container reCAPTCHA
         recaptchaContainer.parentNode.insertBefore(errorElement, recaptchaContainer);
 
@@ -465,15 +466,15 @@ window.sendOTP = function() {
         setTimeout(() => {
             errorElement.classList.remove('shake-element');
         }, 500);
-        
+
         return;
     }
 
-    // Tiếp tục logic gửi OTP
-    let phoneNumber = userPhoneInput.value.trim();
-    phoneNumber = phoneNumber.startsWith('0') ? '+84' + phoneNumber.slice(1) : phoneNumber;
-    
-    const appVerifier = window.recaptchaVerifier;
+        // Tiếp tục logic gửi OTP
+        let phoneNumber = userPhoneInput.value.trim();
+        phoneNumber = phoneNumber.startsWith('0') ? '+84' + phoneNumber.slice(1) : phoneNumber;
+
+        const appVerifier = window.recaptchaVerifier;
 
     signInWithPhoneNumber(auth, phoneNumber, appVerifier)
         .then((confirmationResult) => {
@@ -524,8 +525,8 @@ window.sendOTP = function() {
     };
 
     // Khởi động bộ đếm thời gian OTP
-    
-    let otpStartTime; 
+
+    let otpStartTime;
 
 function startOTPTimer() {
     // Lưu thời điểm bắt đầu
