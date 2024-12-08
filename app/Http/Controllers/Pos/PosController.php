@@ -8,6 +8,7 @@ use App\Events\PosTableUpdated;
 use App\Events\ProvideDishes;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\Combo;
 use App\Models\Dishes;
 use App\Models\InventoryItem;
 use App\Models\InventoryStock;
@@ -26,6 +27,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Response;
 
 class PosController extends Controller
 {
@@ -107,15 +109,18 @@ class PosController extends Controller
         // Lấy danh sách các bàn
         $tables = Table::with([
             'orders' => function ($query) {
-                $query->where('orders.status', '!=', 'completed');
+                $query->where('orders.status', '!=', 'completed')
+                ->where('orders.status', '!=', 'waiting');
             }
         ])->get();
         $cate = Category::all();
         $orders = Order::with(['reservation', 'staff', 'tables', 'orderItems', 'customer'])->get();
         $dishes = Dishes::where('status', '!=', 'inactive')
             ->where('status', '!=', 'out_of_stock')
+            ->where('is_active', '!=', '0')
             ->get();
-
+        $combo = Combo::where('is_active', '!=', '0')
+            ->get();
         // Lấy các đơn đặt bàn sắp đến trong 30 phút tới
         $upcomingReservations = Reservation::where('reservation_date', '=', today())
             ->where('reservation_time', '>=', $now->toTimeString())
@@ -147,6 +152,7 @@ class PosController extends Controller
             'occupiedTablesCount' => Table::query()->where('status', 'occupied')->count(),
             'totalTablesCount' => $tables->count(),
             'reservations' => $reservations,
+            'combo' => $combo
         ]);
     }
 
@@ -178,28 +184,29 @@ class PosController extends Controller
 
 
     // Tạo đơn hàng
-    public function createOrder($id)
+    public function createOrder(Request $request)
     {
-        $table = Table::findOrFail($id);
         $order = Order::create([
-            'table_id' => $id,
             'staff_id' => Auth::user()->id,
             'status' => 'pending',
             'total_amount' => 0,
             'discount_amount' => 0,
             'final_amount' => 0,
         ]);
-        $order->tables()->attach(
-            $id,
-            ['start_time' => now()]
-        );
-        $table->update(['status' => 'Occupied']);
+        foreach ($request->table_id as $id) {
+            $table = Table::findOrFail($id);
+            $order->tables()->attach(
+                $id,
+                ['start_time' => now()]
+            );
+            $table->update(['status' => 'Occupied']);
+        }
         $tables = Table::with([
             'orders' => function ($query) {
                 $query->where('orders.status', '!=', 'completed');
-            }
+            },
+            'orders.reservation.customer'
         ])->get();
-
         broadcast(new MessageSent($tables))->toOthers();
         return response()->json([
             'success' => 'success',
@@ -273,7 +280,19 @@ class PosController extends Controller
                 'orderItems' => function ($query) {
                     $query->where('status', '!=', 'hủy');
                 },
-                'orderItems.dish'
+                'orderItems.dish' => function ($query) {
+                    $query->whereHas('orderItems', function ($q) {
+                        $q->where('item_type', 1);
+                    });
+                },
+                'orderItems.combo' => function ($query) {
+                    $query->whereHas('orderItems', function ($q) {
+                        $q->where('item_type', 2);
+                    });
+                },
+                'reservation',
+                'tables',
+                'customer'
             ])->findOrFail($orderId);
             $tableId = Table::with('orders')->findOrFail($request->table_id);
             $orderItem = OrderItem::where('order_id', $orderId)
@@ -295,8 +314,121 @@ class PosController extends Controller
                     $notiBtn = false;
                 }
             }
-            $order = Order::with(['reservation', 'tables', 'customer'])->findOrFail($orderId);
-            broadcast(new PosTableUpdated($order, $orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
+            broadcast(new PosTableUpdated($orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
+            DB::commit();
+            return response()->json([
+                'success' => true,
+            ]);
+        } catch (Exception $e) {
+            // Rollback nếu có lỗi xảy ra
+            DB::rollBack();
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+    public function addComboToOrder(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $combos = Combo::findOrFail($request->combo_id)->dishes;
+            foreach ($combos as $combo) {
+                $reciep = $combo->recipe;
+                foreach ($reciep as $recipe) {
+                    $inventoryStock = InventoryStock::where('ingredient_id', $recipe->ingredient_id)->first();
+                    $inventoryStock->quantity_reserved += $recipe->quantity_need;
+                    if ($inventoryStock->quantity_reserved > $inventoryStock->quantity_stock) {
+                        return response()->json([
+                            'success' => false,
+                        ]);
+                    }
+                    $inventoryStock->save();
+                }
+            }
+            $orderId = Table::findOrFail($request->table_id)
+                ->orders
+                ->where('status', 'pending')
+                ->firstOrFail()
+                ->id;
+            $order = Order::findOrFail($orderId);
+            $combo = Combo::findOrFail($request->combo_id);
+            // Kiểm tra món đã có trong đơn hàng chưa
+            $existingOrderItem = OrderItem::where('order_id', $orderId)
+                ->where('item_id', $request->combo_id)
+                ->where('item_type', '2')
+                ->where('status', '!=', 'hủy')
+                ->first();
+
+            // Cập nhật hoặc thêm món vào đơn hàng
+            if ($existingOrderItem && $existingOrderItem->status != 'hủy') {
+                if ($existingOrderItem->status == 'hoàn thành') {
+                    $existingOrderItem->status = 'đang xử lý';
+                }
+                $existingOrderItem->quantity += 1; // Cộng dồn số lượng
+                $existingOrderItem->total_price = $existingOrderItem->quantity * $existingOrderItem->price; // Cập nhật tổng giá
+                $existingOrderItem->save();  // Lưu cập nhật vào cơ sở dữ liệu
+                $order->total_amount += $existingOrderItem->price;
+                $order->save();
+            } else {
+                // Nếu món chưa có trong đơn hàng, thêm món mới vào
+                $existingOrderItem = OrderItem::create([
+                    'order_id' => $orderId,
+                    'item_id' => $request->combo_id,
+                    'item_type' => '2',
+                    'quantity' => 1,
+                    'price' => $combo->price,
+                    'total_price' => $combo->price,
+                    'status' => 'chờ xử lý',
+                ]);
+                $order->total_amount += $existingOrderItem->price;
+                $order->save();
+            }
+
+            // Cập nhật tổng số tiền của đơn hàng
+            $order->final_amount = $order->total_amount; // Cập nhật tổng tiền cuối cùng
+            $order->save();  // Lưu đơn hàng vào cơ sở dữ liệu
+            $order = Order::findOrFail($orderId);
+            $orderItems = Order::with([
+                'orderItems' => function ($query) {
+                    $query->where('status', '!=', 'hủy');
+                },
+                'orderItems.dish' => function ($query) {
+                    $query->whereHas('orderItems', function ($q) {
+                        $q->where('item_type', 1);
+                    });
+                },
+                'orderItems.combo' => function ($query) {
+                    $query->whereHas('orderItems', function ($q) {
+                        $q->where('item_type', 2);
+                    });
+                },
+                'reservation',
+                'tables',
+                'customer'
+            ])->findOrFail($orderId);
+            $tableId = Table::with('orders')->findOrFail($request->table_id);
+            $orderItem = OrderItem::where('order_id', $orderId)
+                ->where(function ($query) {
+                    $query->where('status', '!=', 'hủy');
+                })
+                ->get();
+            $checkoutBtn = false;
+            $countItems = $orderItem->count();
+            if ($countItems > 0) {
+                $checkoutBtn = true;
+            }
+            $notiBtn = false;
+            foreach ($orderItem as $item) {
+                if ($item->quantity > $item->informed) {
+                    $notiBtn = true;
+                    break;
+                } else {
+                    $notiBtn = false;
+                }
+            }
+            broadcast(new PosTableUpdated($orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
             DB::commit();
             return response()->json([
                 'success' => true,
@@ -688,12 +820,23 @@ class PosController extends Controller
         $order = $table->orders->where('status', 'pending')->first();
         $table = Table::find($id)->orders;
         $orderId = Table::find($id)->orders->where('status', 'pending')->first()->id;
-        $order = Order::with('tables')->findOrFail($orderId);
         $orderItems = Order::with([
             'orderItems' => function ($query) {
                 $query->where('status', '!=', 'hủy');
             },
-            'orderItems.dish'
+            'orderItems.dish' => function ($query) {
+                $query->whereHas('orderItems', function ($q) {
+                    $q->where('item_type', 1);
+                });
+            },
+            'orderItems.combo' => function ($query) {
+                $query->whereHas('orderItems', function ($q) {
+                    $q->where('item_type', 2);
+                });
+            },
+            'reservation',
+            'tables',
+            'customer'
         ])->findOrFail($orderId);
         $tableId = Table::with('orders')->findOrFail($id);
         $orderItem = OrderItem::where('order_id', $orderId)
@@ -716,7 +859,10 @@ class PosController extends Controller
             }
         }
         $order = Order::with(['reservation', 'tables', 'customer'])->findOrFail($orderId);
-        broadcast(new PosTableUpdated($order, $orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
+        // $response = Response::json($notiBtn);
+        // $sizeInBytes = strlen($response->getContent());
+        // dd($sizeInBytes);
+        broadcast(new PosTableUpdated($orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
         return response()->json([
             'success' => true,
             'order' => $table,
@@ -772,7 +918,19 @@ class PosController extends Controller
                 'orderItems' => function ($query) {
                     $query->where('status', '!=', 'hủy');
                 },
-                'orderItems.dish'
+                'orderItems.dish' => function ($query) {
+                    $query->whereHas('orderItems', function ($q) {
+                        $q->where('item_type', 1);
+                    });
+                },
+                'orderItems.combo' => function ($query) {
+                    $query->whereHas('orderItems', function ($q) {
+                        $q->where('item_type', 2);
+                    });
+                },
+                'reservation',
+                'tables',
+                'customer'
             ])->findOrFail($orderId);
             $tableId = Table::with('orders')->findOrFail($request->table_id);
             $orderItem = OrderItem::where('order_id', $orderId)
@@ -795,8 +953,7 @@ class PosController extends Controller
                     $notiBtn = false;
                 }
             }
-            $order = Order::with(['reservation', 'tables', 'customer'])->findOrFail($orderId);
-            broadcast(new PosTableUpdated($order, $orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
+            broadcast(new PosTableUpdated($orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
             DB::commit();
             return response()->json([
                 'success' => true,
@@ -855,12 +1012,23 @@ class PosController extends Controller
         // Cập nhật tổng số tiền
         $order->final_amount = $order->total_amount; // Cập nhật tổng tiền cuối cùng
         $order->save();  // Lưu đơn hàng vào cơ sở dữ liệu
-        $order = Order::findOrFail($orderId);
         $orderItems = Order::with([
             'orderItems' => function ($query) {
                 $query->where('status', '!=', 'hủy');
             },
-            'orderItems.dish'
+            'orderItems.dish' => function ($query) {
+                $query->whereHas('orderItems', function ($q) {
+                    $q->where('item_type', 1);
+                });
+            },
+            'orderItems.combo' => function ($query) {
+                $query->whereHas('orderItems', function ($q) {
+                    $q->where('item_type', 2);
+                });
+            },
+            'reservation',
+            'tables',
+            'customer'
         ])->findOrFail($orderId);
         $tableId = Table::with('orders')->findOrFail($request->table_id);
         $orderItem = OrderItem::where('order_id', $orderId)
@@ -884,8 +1052,7 @@ class PosController extends Controller
                 $notiBtn = false;
             }
         }
-        $order = Order::with(['reservation', 'tables', 'customer'])->findOrFail($orderId);
-        broadcast(new PosTableUpdated($order, $orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
+        broadcast(new PosTableUpdated($orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
         $items = Kitchen::where('status', 'đang chế biến')
             ->with(['dish', 'order.tables'])
             ->get();
@@ -960,12 +1127,23 @@ class PosController extends Controller
             // Cập nhật tổng số tiền
             $order->final_amount = $order->total_amount; // Cập nhật tổng tiền cuối cùng
             $order->save();  // Lưu đơn hàng vào cơ sở dữ liệu
-            $order = Order::findOrFail($orderId);
             $orderItems = Order::with([
                 'orderItems' => function ($query) {
                     $query->where('status', '!=', 'hủy');
                 },
-                'orderItems.dish'
+                'orderItems.dish' => function ($query) {
+                    $query->whereHas('orderItems', function ($q) {
+                        $q->where('item_type', 1);
+                    });
+                },
+                'orderItems.combo' => function ($query) {
+                    $query->whereHas('orderItems', function ($q) {
+                        $q->where('item_type', 2);
+                    });
+                },
+                'reservation',
+                'tables',
+                'customer'
             ])->findOrFail($orderId);
             $tableId = Table::with('orders')->findOrFail($request->table_id);
             $orderItem = OrderItem::where('order_id', $orderId)
@@ -989,8 +1167,7 @@ class PosController extends Controller
                     $notiBtn = false;
                 }
             }
-            $order = Order::with(['reservation', 'tables', 'customer'])->findOrFail($orderId);
-            broadcast(new PosTableUpdated($order, $orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
+            broadcast(new PosTableUpdated($orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
             $items = Kitchen::where('status', 'đang chế biến')
                 ->with(['dish', 'order.tables'])
                 ->get();
@@ -1048,7 +1225,19 @@ class PosController extends Controller
                 'orderItems' => function ($query) {
                     $query->where('status', '!=', 'hủy');
                 },
-                'orderItems.dish'
+                'orderItems.dish' => function ($query) {
+                    $query->whereHas('orderItems', function ($q) {
+                        $q->where('item_type', 1);
+                    });
+                },
+                'orderItems.combo' => function ($query) {
+                    $query->whereHas('orderItems', function ($q) {
+                        $q->where('item_type', 2);
+                    });
+                },
+                'reservation',
+                'tables',
+                'customer'
             ])->findOrFail($orderId);
             $tableId = Table::with('orders')->findOrFail($request->table_id);
             $orderItem = OrderItem::where('order_id', $orderId)
@@ -1070,8 +1259,7 @@ class PosController extends Controller
                     $notiBtn = false;
                 }
             }
-            $order = Order::with(['reservation', 'tables', 'customer'])->findOrFail($orderId);
-            broadcast(new PosTableUpdated($order, $orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
+            broadcast(new PosTableUpdated($orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
             $items = Kitchen::where('status', 'đang chế biến')
                 ->with(['dish', 'order.tables'])
                 ->get();
@@ -1140,7 +1328,19 @@ class PosController extends Controller
                 'orderItems' => function ($query) {
                     $query->where('status', '!=', 'hủy');
                 },
-                'orderItems.dish'
+                'orderItems.dish' => function ($query) {
+                    $query->whereHas('orderItems', function ($q) {
+                        $q->where('item_type', 1);
+                    });
+                },
+                'orderItems.combo' => function ($query) {
+                    $query->whereHas('orderItems', function ($q) {
+                        $q->where('item_type', 2);
+                    });
+                },
+                'reservation',
+                'tables',
+                'customer'
             ])->findOrFail($orderId);
             $tableId = Table::with('orders')->findOrFail($table_id);
             $orderItem = OrderItem::where('order_id', $orderId)
@@ -1162,8 +1362,7 @@ class PosController extends Controller
                     $notiBtn = false;
                 }
             }
-            $order = Order::with(['reservation', 'tables', 'customer'])->findOrFail($orderId);
-            broadcast(new PosTableUpdated($order, $orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
+            broadcast(new PosTableUpdated($orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
             $items = Kitchen::where('status', 'đang chế biến')
                 ->with(['dish', 'order.tables'])
                 ->get();
@@ -1193,5 +1392,10 @@ class PosController extends Controller
         } else {
             return response()->json(['success' => 'success']);
         }
+    }
+    public function checkAvailableTables()
+    {
+        $availableTables = Table::where('status', 'Available')->get(['id', 'table_number']);
+        return response()->json(['tables' => $availableTables]);
     }
 }

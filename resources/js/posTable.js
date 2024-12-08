@@ -7,7 +7,8 @@ window.Echo.channel('table')
             if (selectedTableId != item.id) {
                 return `
             <div class="table-card ${item.status}"
-            data-table-id="${item.id}" data-status="${item.status}">
+            data-table-id="${item.id}" data-status="${item.status}"
+            data-order-id="${item.orders.map(order => order.reservation?.user_name)}">
             <span class="table-number">Bàn ${item.table_number}</span>
                 <div class="table-o" style="width: 100%;
     height: 100%;
@@ -16,8 +17,8 @@ window.Echo.channel('table')
     align-items: center;">
                     <span>
                         ${item.orders && item.orders.length > 0 ?
-                                '<i class="fa-solid fa-id-card"></i> ' + item.orders.map(order => order.id).join(", ") :
-                                ''}
+                        '<i class="fa-solid fa-id-card"></i> ' + item.orders.map(order => order.reservation?.id ?? order.id).join(", ") :
+                        ''}
                     </span>
                 </div>
             </div>
@@ -25,7 +26,8 @@ window.Echo.channel('table')
             } else {
                 return `
                 <div class="table-card ${item.status}" style="background-color: rgb(0, 123, 255);"
-     data-table-id="${item.id}" data-status="${item.status}">
+     data-table-id="${item.id}" data-status="${item.status}"
+     data-order-id="${item.orders.map(order => order.reservation?.user_name ?? null)}">
     <span class="table-number" style="color:white">Bàn ${item.table_number}</span>
     <div class="table-o" style="color:white" style="width: 100%;
     height: 100%;
@@ -34,7 +36,7 @@ window.Echo.channel('table')
     align-items: center;">
     <span>
          ${item.orders && item.orders.length > 0 ?
-                        '<i class="fa-solid fa-id-card"></i> ' + item.orders.map(order => order.id).join(", ") :
+                        '<i class="fa-solid fa-id-card"></i> ' + item.orders.map(order => order.reservation?.id ?? order.id).join(", ") :
                         ''}
     </span>
 
@@ -62,7 +64,8 @@ window.Echo.channel('tablee')
         layoutTable.innerHTML = e.tables.map(item => {
             return `
             <div class="table-card ${item.status}"
-            data-table-id="${item.id}" data-status="${item.status}">
+            data-table-id="${item.id}" data-status="${item.status}"
+            data-order-id="${item.orders.map(order => order.reservation?.user_name ?? null)}">
             <span class="table-number">Bàn ${item.table_number}</span>
             <div class="table-o" style="width: 100%;
     height: 100%;
@@ -71,7 +74,7 @@ window.Echo.channel('tablee')
     align-items: center;">
             <span>
                  ${item.orders && item.orders.length > 0 ?
-                    '<i class="fa-solid fa-id-card"></i> ' + item.orders.map(order => order.id).join(", ") :
+                    '<i class="fa-solid fa-id-card"></i> ' + item.orders.map(order => order.reservation?.id ?? order.id).join(", ") :
                     ''}
             </span>
             </div>
