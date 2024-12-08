@@ -22,7 +22,6 @@ return new class extends Migration {
             $table->string('count_cancel')->default(0);
             $table->timestamps();
             $table->foreign('item_id')->references('id')->on('dishes')->onDelete('cascade');
-            $table->foreign('item_id')->references('id')->on('combos')->onDelete('cascade');
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
             $table->foreign('canceler')->references('id')->on('users')->onDelete('set null');
         });

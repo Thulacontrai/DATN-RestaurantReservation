@@ -30,7 +30,6 @@ class CreateOrderItemsTable extends Migration
             // Thiết lập khóa ngoại cho order_id
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
             $table->foreign('item_id')->references('id')->on('dishes')->onDelete('cascade');
-            $table->foreign('item_id')->references('id')->on('combos')->onDelete('cascade');
         });
     }
 

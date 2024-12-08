@@ -55,6 +55,7 @@
                             @foreach ($items as $item)
                                 @if ($item->item_type == 1)
                                     <div class="order-card row" data-item-id="{{ $item->id }}"
+                                        data-item-type="{{ $item->item_type }}"
                                         data-table-id="{{ $item->order->tables['0']->id }}">
                                         <div class="col-md-6">
                                             <strong>{{ $item->dish->name }}</strong>
@@ -94,6 +95,7 @@
                                     </div>
                                 @else
                                     <div class="order-card row" data-item-id="{{ $item->id }}"
+                                        data-item-type="{{ $item->item_type }}"
                                         data-table-id="{{ $item->order->tables['0']->id }}">
                                         <div class="col-md-6">
                                             <strong>{{ $item->combo->name }}</strong>
@@ -139,9 +141,14 @@
                         <div class="bg-white m-2 p-2 rounded flex-grow-1 d-flex flex-column">
                             @foreach ($items as $item)
                                 <div class="order-card row" data-item-id="{{ $item->id }}"
+                                    data-item-type="{{ $item->item_type }}"
                                     data-table-id="{{ $item->order->tables['0']->id }}">
                                     <div class="col-md-6">
-                                        <strong>{{ $item->dish->name }}</strong>
+                                        @if ($item->item_type == 1)
+                                            <strong>{{ $item->dish->name }}</strong>
+                                        @else
+                                            <strong>{{ $item->combo->name }}</strong>
+                                        @endif
                                         <p>{{ $item->created_at->format('d-m-Y H:i') }}</p>
                                     </div>
                                     <div class="col-md-6">
@@ -219,7 +226,11 @@
                                     <div class="order-card row" data-item-id="{{ $item->id }}"
                                         data-table-id="{{ $item->order->tables['0']->id }}">
                                         <div class="col-md-6">
-                                            <strong>{{ $item->dish->name }}</strong>
+                                            @if ($item->item_type == 1)
+                                                <strong>{{ $item->dish->name }}</strong>
+                                            @else
+                                                <strong>{{ $item->combo->name }}</strong>
+                                            @endif
                                             <p>{{ $item->created_at->format('d-m-Y H:i') }}</p>
                                         </div>
                                         <div class="col-md-6">
@@ -269,6 +280,7 @@
                 if (!orderCard) return;
 
                 const itemId = orderCard.dataset.itemId;
+                const itemType = orderCard.dataset.itemType;
                 const tableId = orderCard.dataset.tableId;
 
                 if (event.target.closest(".cook-all")) {
@@ -282,20 +294,19 @@
                     if (choCungUngContainer) {
                         choCungUngContainer.appendChild(orderCard);
                     }
-
-                    handleCookAll(itemId, tableId);
+                    handleCookAll(itemId, tableId, itemType);
                 } else if (event.target.closest(".delete")) {
                     orderCard.remove();
-                    handleDelete(itemId);
+                    handleDelete(itemId, itemType);
                 } else if (event.target.closest(".done-all")) {
                     orderCard.remove();
-                    handleDoneAll(itemId, tableId);
+                    handleDoneAll(itemId, tableId, itemType);
                 }
             });
         });
 
         // Hàm xử lý cook-all
-        function handleCookAll(itemId, tableId) {
+        function handleCookAll(itemId, tableId, itemType) {
             fetch(`/kitchen/${itemId}/cook-all`, {
                     method: 'POST',
                     headers: {
@@ -304,7 +315,8 @@
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        tableId: tableId
+                        tableId: tableId,
+                        itemType: itemType
                     }),
                 })
                 .then(response => response.json())
@@ -317,7 +329,7 @@
         }
 
         // Hàm xử lý delete
-        function handleDelete(itemId) {
+        function handleDelete(itemId, itemType) {
             fetch(`/kitchen/${itemId}/delete`, {
                     method: 'POST',
                     headers: {
@@ -325,7 +337,9 @@
                             'content'),
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({}),
+                    body: JSON.stringify({
+                        itemType: itemType
+                    }),
                 })
                 .then(response => response.json())
                 .then(data => {
@@ -337,7 +351,7 @@
         }
 
         // Hàm xử lý done-all
-        function handleDoneAll(itemId, tableId) {
+        function handleDoneAll(itemId, tableId, itemType) {
             fetch(`/kitchen/${itemId}/done-all`, {
                     method: 'POST',
                     headers: {
@@ -346,7 +360,8 @@
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        tableId: tableId
+                        tableId: tableId,
+                        itemType: itemType
                     }),
                 })
                 .then(response => response.json())

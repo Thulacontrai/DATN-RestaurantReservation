@@ -55,7 +55,7 @@ window.Echo.channel('order')
                 }).format(item.total_price)
                 if (item.status == 'chờ xử lý') {
                     layoutTable.innerHTML += `
-                    <div class="item-list" data-dish-id="${item.item_id}" data-dish-order="${item.order_id}" data-dish-status="${item.status}">
+                    <div class="item-list" data-dish-id="${item.item_id}" data-dish-order="${item.order_id}" data-dish-status="${item.status}" data-dish-type="${item.item_type}">
                         <div class="item-name d-flex justify-content-around">
                             <span class="text-dark" title="${item.status}">${item.item_type == 1 ? item.dish.name : item.combo.name}</span>
                             <div>
@@ -85,7 +85,7 @@ window.Echo.channel('order')
             `;
                 } else if (item.status == 'đang xử lý') {
                     layoutTable.innerHTML += `
-                    <div class="item-list" data-dish-id="${item.item_id}" data-dish-order="${item.order_id}" data-dish-status="${item.status}" data-dish-informed="${item.informed}" data-dish-processing="${item.processing}" data-dish-quantity="${item.quantity}">
+                    <div class="item-list" data-dish-id="${item.item_id}" data-dish-order="${item.order_id}" data-dish-status="${item.status}" data-dish-informed="${item.informed}" data-dish-processing="${item.processing}" data-dish-quantity="${item.quantity}" data-dish-type="${item.item_type}">
                         <div class="item-name">
                             <div class="item-name d-flex justify-content-around">
                                 <span class="text-danger" title="${item.status}">${item.item_type == 1 ? item.dish.name : item.combo.name}</span>
@@ -116,7 +116,7 @@ window.Echo.channel('order')
             `;
                 } else if (item.status == 'hoàn thành') {
                     layoutTable.innerHTML += `
-                    <div class="item-list" data-dish-id="${item.item_id}" data-dish-order="${item.order_id}" data-dish-status="${item.status}">
+                    <div class="item-list" data-dish-id="${item.item_id}" data-dish-order="${item.order_id}" data-dish-status="${item.status}" data-dish-type="${item.item_type}">
                         <div class="item-name">
                             <div class="item-name d-flex justify-content-around">
                                 <span class="text-success" title="${item.status}">${item.item_type == 1 ? item.dish.name : item.combo.name}</span>  
@@ -213,7 +213,7 @@ window.Echo.channel('orders')
                 }).format(item.total_price)
                 if (item.status == 'chờ xử lý') {
                     layoutTable.innerHTML += `
-                <div class="item-list" data-dish-id="${item.item_id}" data-dish-order="${item.order_id}" data-dish-status="${item.status}">
+                <div class="item-list" data-dish-id="${item.item_id}" data-dish-order="${item.order_id}" data-dish-status="${item.status}" data-dish-type="${item.item_type}">
                     <div class="item-name d-flex justify-content-around">
                         <span class="text-dark" title="${item.status}">${item.item_type == 1 ? item.dish.name : item.combo.name}</span>
                         <div>
@@ -243,7 +243,7 @@ window.Echo.channel('orders')
         `;
                 } else if (item.status == 'đang xử lý') {
                     layoutTable.innerHTML += `
-                <div class="item-list" data-dish-id="${item.item_id}" data-dish-order="${item.order_id}" data-dish-status="${item.status}" data-dish-informed="${item.informed}" data-dish-processing="${item.processing}" data-dish-quantity="${item.quantity}">
+                <div class="item-list" data-dish-id="${item.item_id}" data-dish-order="${item.order_id}" data-dish-status="${item.status}" data-dish-informed="${item.informed}" data-dish-processing="${item.processing}" data-dish-quantity="${item.quantity}" data-dish-type="${item.item_type}">
                     <div class="item-name">
                         <div class="item-name d-flex justify-content-around">
                             <span class="text-danger" title="${item.status}">${item.item_type == 1 ? item.dish.name : item.combo.name}</span>

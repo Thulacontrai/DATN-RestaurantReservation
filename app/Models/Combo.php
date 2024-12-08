@@ -24,12 +24,19 @@ class Combo extends Model
 
     public function dishes()
     {
-        return $this->belongsToMany(Dishes::class, 'combo_dish', 'combo_id', 'dish_id')->withPivot('quantity')->withTimestamps();
+        return $this->belongsToMany(Dishes::class, 'combo_dish', 'combo_id', 'dish_id')
+            ->withPivot('quantity')
+            ->withTimestamps();
     }
+
 
     public function orderItems()
     {
         return $this->hasMany(OrderItem::class, 'item_id');
+    }
+    public function kitchen()
+    {
+        return $this->hasMany(Kitchen::class, 'item_id');
     }
 }
 
