@@ -4,7 +4,7 @@
 
 @section('content')
 
-
+    @include('admin.layouts.messages')
 
     <!-- Content wrapper scroll start -->
     <div class="content-wrapper-scroll">
@@ -68,11 +68,11 @@
 
                                                 <td>
                                                     @if ($payment->transaction_status === 'completed')
-                                                        Hoàn thành
+                                                        <span class="badge rounded-pill shade-primary">Hoàn thành</span>
                                                     @elseif ($payment->transaction_status === 'pending')
-                                                        Đang xử lý
+                                                        <span class="badge rounded-pill shade-yellow">Đang xử lý</span>
                                                     @elseif ($payment->transaction_status === 'failed')
-                                                        Thất bại
+                                                        <span class="badge rounded-pill shade-red">Thất bại</span>
                                                     @else
                                                         Không rõ
                                                     @endif
@@ -80,11 +80,12 @@
 
                                                 <td>
                                                     @if ($payment->payment_method === 'Cash')
-                                                        Tiền mặt
+                                                        <span class="badge rounded-pill shade-primary">Tiền mặt</span>
                                                     @elseif ($payment->payment_method === 'Credit Card')
-                                                        Thẻ tín dụng
+                                                        <span class="badge rounded-pill shade-secondary">Thẻ tín dụng</span>
                                                     @elseif ($payment->payment_method === 'Online')
-                                                        Thanh toán trực tuyến
+                                                        <span class="badge rounded-pill shade-red">Thanh toán trực
+                                                            tuyến</span>
                                                     @else
                                                         Không rõ
                                                     @endif
@@ -110,18 +111,19 @@
                                                 <td>
                                                     <div class="actions">
                                                         <a href="{{ route('admin.payment.show', $payment->id) }}"
-                                                            class="viewRow" data-bs-toggle="tooltip"
-                                                            data-bs-placement="top" title="Chi tiết">
+                                                            class="viewRow" data-bs-toggle="tooltip" data-bs-placement="top"
+                                                            title="Chi tiết">
                                                             <i class="bi bi-list text-green"></i>
                                                         </a>
                                                         <a href="{{ route('admin.payment.edit', $payment->id) }}"
-                                                            class="editRow" data-bs-toggle="tooltip"
-                                                            data-bs-placement="top" title="Sửa">
+                                                            class="editRow" data-bs-toggle="tooltip" data-bs-placement="top"
+                                                            title="Sửa">
                                                             <i class="bi bi-pencil-square text-warning"></i>
                                                         </a>
 
-                                                        <form action="{{ route('admin.payment.destroy', $payment->id) }} " style="margin-top: 15px;"
-                                                            method="POST" style="display:inline-block; " data-bs-toggle="tooltip"
+                                                        <form action="{{ route('admin.payment.destroy', $payment->id) }} "
+                                                            style="margin-top: 15px;" method="POST"
+                                                            style="display:inline-block; " data-bs-toggle="tooltip"
                                                             data-bs-placement="top" title="xoá">
                                                             @csrf
                                                             @method('DELETE') <a href="#">
@@ -142,11 +144,60 @@
                                 </table>
                             </div>
 
-                            <!-- Pagination -->
-                            <div class="pagination justify-content-center mt-3">
-                                {{-- {{ $payments->links() }} --}}
+
+
+                        </div>
+                        <!-- Pagination -->
+                        <div class="d-flex justify-content-between align-items-center bg-white p-4">
+                            <!-- Phần hiển thị phân trang bên trái -->
+                            <div class="mb-4 flex sm:mb-0 text-center">
+                                <span style="font-size: 15px">
+                                    <i class="bi bi-chevron-compact-left"></i>
+
+                                    <span class="text-sm font-normal text-gray-500 dark:text-gray-400">
+                                        Hiển thị <strong
+                                            class="font-semibold text-secondary ">{{ $payments->firstItem() }}-{{ $payments->lastItem() }}</strong>
+                                        trong tổng số <strong
+                                            class="font-semibold text-secondary ">{{ $payments->total() }}</strong>
+                                    </span> <i class="bi bi-chevron-compact-right"></i>
+                                </span>
                             </div>
-                            <!-- Kết thúc Pagination -->
+
+                            <!-- Phần hiển thị phân trang bên phải -->
+                            <div class="flex items-center space-x-3">
+                                <!-- Nút Previous -->
+                                @if ($payments->onFirstPage())
+                                    <button class="inline-flex  p-1 pl-2 bg-success text-white  cursor-not-allowed"
+                                        style="border-radius: 5px; border: 2px solid rgb(136, 243, 136);">
+                                        <span style="font-size: 15px"><i class="bi bi-chevron-compact-left"></i>Trước</span>
+                                    </button>
+                                @else
+                                    <a href="{{ $payments->previousPageUrl() }}">
+                                        <button class="inline-flex  p-1 pl-2  bg-success text-white "
+                                            style="border-radius: 5px;    border: 2px solid rgb(136, 243, 136);">
+                                            <span style="font-size: 15px"><i class="bi bi-chevron-double-left"></i>
+                                                Trước</span>
+                                        </button>
+                                    </a>
+                                @endif
+
+                                <!-- Nút Next -->
+                                @if ($payments->hasMorePages())
+                                    <a href="{{ $payments->nextPageUrl() }}">
+                                        <button class="inline-flex  p-1 pl-2 bg-success text-white"
+                                            style="border-radius: 5px;    border: 2px solid rgb(136, 243, 136);">
+                                            <span style="font-size: 15px"> Sau <i
+                                                    class="bi bi-chevron-compact-right"></i></span>
+                                        </button>
+                                    </a>
+                                @else
+                                    <button class="inline-flex  p-1 pl-2 bg-primary text-white cursor-not-allowed"
+                                        style="border-radius: 5px;    border: 2px solid rgb(83, 150, 216);">
+                                        <span style="font-size: 15px">
+                                            Trang Cuối</i></span>
+                                    </button>
+                                @endif
+                            </div>
 
                         </div>
                     </div>
@@ -158,107 +209,6 @@
 
     </div>
 
-    <div id="notification" class="notification d-none">
-        <div class="notification-icon">
-            <i class="bi"></i>
-        </div>
-        <div class="notification-content">
-            <strong id="notification-title"></strong>
-            <p id="notification-message"></p>
-        </div>
-    </div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // Hàm hiển thị thông báo
-            function showNotification(message, type = "success") {
-                const notification = document.getElementById("notification");
-                const notificationIcon = notification.querySelector(".notification-icon i");
-                const notificationTitle = document.getElementById("notification-title");
-                const notificationMessage = document.getElementById("notification-message");
-
-                // Cập nhật nội dung thông báo
-                notificationMessage.textContent = message;
-
-                // Đặt kiểu thông báo
-                if (type === "success") {
-                    notification.style.background = "linear-gradient(90deg, #58ade8, #48d1cc)";
-                    notification.style.color = "#ffffff";
-                    notificationIcon.className = "bi bi-check-circle-fill icon-animate";
-                    notificationTitle.textContent = "Thành công!";
-                } else if (type === "error") {
-                    notification.style.background = "linear-gradient(90deg, #f44336, #ff6347)";
-                    notification.style.color = "#ffffff";
-                    notificationIcon.className = "bi bi-x-circle-fill icon-animate";
-                    notificationTitle.textContent = "Lỗi!";
-                }
-
-                // Hiển thị thông báo
-                notification.classList.remove("d-none");
-                notification.classList.add("show");
-
-                // Ẩn thông báo sau 3 giây
-                setTimeout(() => {
-                    notification.classList.remove("show");
-                    notification.classList.add("hide");
-
-                    // Reset sau khi ẩn
-                    setTimeout(() => {
-                        notification.classList.add("d-none");
-                        notification.classList.remove("hide");
-                        notificationIcon.classList.remove("icon-animate");
-                    }, 300);
-                }, 3000);
-            }
-
-            // Hiển thị thông báo từ session
-            @if (session('success'))
-                showNotification("{{ session('success') }}", "success");
-            @endif
-
-            @if (session('error'))
-                showNotification("{{ session('error') }}", "error");
-            @endif
-        });
-    </script>
 
 @endsection
-<style>
-    .notification {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        max-width: 300px;
-        background: #ffffff;
-        color: #333;
-        bpayment-radius: 8px;
-        padding: 12px 16px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-size: 14px;
-        font-weight: 500;
-        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-        opacity: 0;
-        pointer-events: none;
-        transform: translateY(-10px);
-        transition: opacity 0.3s ease, transform 0.3s ease;
-    }
-
-    .notification.show {
-        opacity: 1;
-        pointer-events: all;
-        transform: translateY(0);
-    }
-
-    .notification.hide {
-        opacity: 0;
-        pointer-events: none;
-        transform: translateY(-10px);
-    }
-
-    .notification i {
-        font-size: 20px;
-        color: inherit;
-    }
-</style>

@@ -3,7 +3,7 @@
 @section('title', 'Chi Tiết Món Ăn')
 
 @section('content')
-
+    @include('admin.layouts.messages')
     <!-- Content wrapper scroll start -->
     <div class="content-wrapper-scroll">
 
@@ -53,17 +53,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
                             <div class="row mb-4">
                                 <div class="col-md-12">
                                     <div class="detail-box p-4 shadow-sm rounded bg-white">
@@ -77,10 +66,10 @@
                                                     </li>
                                                 @endforeach
                                             </ul>
-                                            <button class="btn btn-primary" onclick="window.location='{{ route('admin.dishes.updateIngredients', $dish->id) }}'">
+                                            <button class="btn btn-primary"
+                                                onclick="window.location='{{ route('admin.dishes.updateIngredients', $dish->id) }}'">
                                                 <i class="bi bi-pencil-square me-1"></i> Cập Nhật
                                             </button>
-
                                         @else
                                             <p>Không có nguyên liệu cho món ăn này.</p>
                                         @endif

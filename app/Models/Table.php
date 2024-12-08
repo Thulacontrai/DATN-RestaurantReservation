@@ -15,7 +15,7 @@ class Table extends Model
     protected $fillable = [
         'area',
         'table_number',
-        'table_type',
+        // 'table_type',
         'status',
         'parent_id',
     ];

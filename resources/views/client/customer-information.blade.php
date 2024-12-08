@@ -49,13 +49,15 @@
                             <div class="col position-relative">
                                 <label for="guest_count">Số người đặt bàn*</label>
                                 <input type="number" class="form-control" id="guest_count" name="guest_count"
-                                    value="{{ old('guest_count') ?? ($data['guest_count'] ?? 1) }}" min="1" max="50" required>
-                                <div class="invalid-feedback position-absolute">Số người đặt bàn phải nằm trong khoảng từ 1 đến 50 và không được âm.</div>
+                                    value="{{ old('guest_count') ?? ($data['guest_count'] ?? 1) }}" min="1"
+                                    max="50" required>
+                                <div class="invalid-feedback position-absolute">Số người đặt bàn phải nằm trong khoảng từ 1
+                                    đến 50 và không được âm.</div>
                                 @error('guest_count')
                                     <div class="text-danger position-absolute">{{ $message }}</div>
                                 @enderror
                             </div>
-                            
+
                         </div>
                         <div class="row m-4 d-flex justify-content-center">
                             <div>
@@ -75,7 +77,7 @@
                         <div id="recaptcha-container" class="mt-3"></div>
 
 
-                        <div class="row m-4 d-flex justify-content-center">                  
+                        <div class="row m-4 d-flex justify-content-center">
                             <div class="col-2">
                                 <a href="{{ route('booking.client') }}" class="text-secondary">Quay lại</a>
                             </div>
@@ -190,7 +192,7 @@
         .shake-element {
             animation: shake 0.5s;
         }
-        
+
         #recaptcha-container {
             display: flex;
             justify-content: center;
@@ -316,91 +318,109 @@
             errorDiv.style.display = 'none';
         }, 3000);
     }
-    
+
     document.addEventListener('DOMContentLoaded', function() {
-    const userNameInput = document.getElementById('user_name');
-    const userPhoneInput = document.getElementById('user_phone');
-    const guestCountInput = document.getElementById('guest_count');
-    const confirmButton = document.querySelector('button[type="button"][onclick="sendOTP()"]');
+        const userNameInput = document.getElementById('user_name');
+        const userPhoneInput = document.getElementById('user_phone');
+        const guestCountInput = document.getElementById('guest_count');
+        const confirmButton = document.querySelector('button[type="button"][onclick="sendOTP()"]');
 
-    // Validation cho tên
-    function validateName() {
-        const nameValue = userNameInput.value.trim();
-        let errorMessage = '';
+        // Validation cho tên
+        function validateName() {
+            const nameValue = userNameInput.value.trim();
+            let errorMessage = '';
 
-        if (nameValue === '') {
-            errorMessage = 'Tên khách hàng không được để trống.';
-        } else if (nameValue.length < 2) {
-            errorMessage = 'Tên khách hàng phải có ít nhất 2 ký tự.';
-        } else if (nameValue.length > 50) {
-            errorMessage = 'Tên khách hàng không được vượt quá 50 ký tự.';
-        } else if (!/^[a-zA-ZÀ-ỹ\s]+$/.test(nameValue)) {
-            errorMessage = 'Tên khách hàng chỉ được chứa chữ cái và khoảng trắng.';
+            if (nameValue === '') {
+                errorMessage = 'Tên khách hàng không được để trống.';
+            } else if (nameValue.length < 2) {
+                errorMessage = 'Tên khách hàng phải có ít nhất 2 ký tự.';
+            } else if (nameValue.length > 50) {
+                errorMessage = 'Tên khách hàng không được vượt quá 50 ký tự.';
+            } else if (!/^[a-zA-ZÀ-ỹ\s]+$/.test(nameValue)) {
+                errorMessage = 'Tên khách hàng chỉ được chứa chữ cái và khoảng trắng.';
+            }
+
+            // Tạo hoặc cập nhật thông báo lỗi
+            let errorElement = userNameInput.nextElementSibling;
+            if (!errorElement || !errorElement.classList.contains('invalid-feedback')) {
+                errorElement = document.createElement('div');
+                errorElement.classList.add('invalid-feedback', 'position-absolute');
+                userNameInput.parentNode.insertBefore(errorElement, userNameInput.nextSibling);
+            }
+
+            if (errorMessage) {
+                userNameInput.classList.add('is-invalid', 'shake-input');
+                errorElement.textContent = errorMessage;
+                errorElement.style.display = 'block';
+                return false;
+            } else {
+                userNameInput.classList.remove('is-invalid', 'shake-input');
+                errorElement.style.display = 'none';
+                return true;
+            }
         }
 
-        // Tạo hoặc cập nhật thông báo lỗi
-        let errorElement = userNameInput.nextElementSibling;
-        if (!errorElement || !errorElement.classList.contains('invalid-feedback')) {
-            errorElement = document.createElement('div');
-            errorElement.classList.add('invalid-feedback', 'position-absolute');
-            userNameInput.parentNode.insertBefore(errorElement, userNameInput.nextSibling);
+        // Validation cho số điện thoại
+        function validatePhone() {
+            const phoneValue = userPhoneInput.value.trim();
+            let errorMessage = '';
+
+            if (phoneValue === '') {
+                errorMessage = 'Số điện thoại không được để trống.';
+            } else if (!/^(0[1-9][0-9]{8})$/.test(phoneValue)) {
+                errorMessage = 'Số điện thoại không hợp lệ. Phải là 10 chữ số và bắt đầu bằng 0.';
+            }
+
+            // Tạo hoặc cập nhật thông báo lỗi
+            let errorElement = userPhoneInput.nextElementSibling;
+            if (!errorElement || !errorElement.classList.contains('invalid-feedback')) {
+                errorElement = document.createElement('div');
+                errorElement.classList.add('invalid-feedback', 'position-absolute');
+                userPhoneInput.parentNode.insertBefore(errorElement, userPhoneInput.nextSibling);
+            }
+
+            if (errorMessage) {
+                userPhoneInput.classList.add('is-invalid', 'shake-input');
+                errorElement.textContent = errorMessage;
+                errorElement.style.display = 'block';
+                return false;
+            } else {
+                userPhoneInput.classList.remove('is-invalid', 'shake-input');
+                errorElement.style.display = 'none';
+                return true;
+            }
         }
 
-        if (errorMessage) {
-            userNameInput.classList.add('is-invalid', 'shake-input');
-            errorElement.textContent = errorMessage;
-            errorElement.style.display = 'block';
-            return false;
-        } else {
-            userNameInput.classList.remove('is-invalid', 'shake-input');
-            errorElement.style.display = 'none';
-            return true;
-        }
-    }
 
-    // Validation cho số điện thoại
-    function validatePhone() {
-        const phoneValue = userPhoneInput.value.trim();
-        let errorMessage = '';
+        // Validation số lượng khách
+        function validateGuestCount() {
+            const guestCount = parseInt(guestCountInput.value, 10);
 
-        if (phoneValue === '') {
-            errorMessage = 'Số điện thoại không được để trống.';
-        } else if (!/^(0[1-9][0-9]{8})$/.test(phoneValue)) {
-            errorMessage = 'Số điện thoại không hợp lệ. Phải là 10 chữ số và bắt đầu bằng 0.';
+            if (guestCount < 1 || guestCount > 50) {
+                guestCountInput.classList.add('is-invalid', 'shake-input');
+                return false;
+            } else {
+                guestCountInput.classList.remove('is-invalid', 'shake-input');
+                return true;
+            }
         }
 
-        // Tạo hoặc cập nhật thông báo lỗi
-        let errorElement = userPhoneInput.nextElementSibling;
-        if (!errorElement || !errorElement.classList.contains('invalid-feedback')) {
-            errorElement = document.createElement('div');
-            errorElement.classList.add('invalid-feedback', 'position-absolute');
-            userPhoneInput.parentNode.insertBefore(errorElement, userPhoneInput.nextSibling);
-        }
+        // Validation khi nhấn nút Xác nhận
+        window.sendOTP = function() {
+            const isNameValid = validateName();
+            const isPhoneValid = validatePhone();
+            const isGuestCountValid = validateGuestCount();
 
-        if (errorMessage) {
-            userPhoneInput.classList.add('is-invalid', 'shake-input');
-            errorElement.textContent = errorMessage;
-            errorElement.style.display = 'block';
-            return false;
-        } else {
-            userPhoneInput.classList.remove('is-invalid', 'shake-input');
-            errorElement.style.display = 'none';
-            return true;
-        }
-    }
+            // Nếu có bất kỳ trường nào không hợp lệ
+            if (!isNameValid) {
+                userNameInput.focus();
+                return;
+            }
 
-    // Validation số lượng khách
-    function validateGuestCount() {
-        const guestCount = parseInt(guestCountInput.value, 10);
-        
-        if (guestCount < 1 || guestCount > 50) {
-            guestCountInput.classList.add('is-invalid', 'shake-input');
-            return false;
-        } else {
-            guestCountInput.classList.remove('is-invalid', 'shake-input');
-            return true;
-        }
-    }
+            if (!isPhoneValid) {
+                userPhoneInput.focus();
+                return;
+            }
 
     // Validation khi nhấn nút Xác nhận
 window.sendOTP = function() {
@@ -438,7 +458,7 @@ window.sendOTP = function() {
         errorElement.id = 'recaptcha-error-message';
         errorElement.classList.add('text-danger', 'text-center', 'mb-2', 'shake-element');
         errorElement.textContent = 'Vui lòng xác thực reCAPTCHA trước khi tiếp tục.';
-        
+
         // Chèn thông báo lỗi ngay trước hoặc sau container reCAPTCHA
         recaptchaContainer.parentNode.insertBefore(errorElement, recaptchaContainer);
 
@@ -446,15 +466,15 @@ window.sendOTP = function() {
         setTimeout(() => {
             errorElement.classList.remove('shake-element');
         }, 500);
-        
+
         return;
     }
 
-    // Tiếp tục logic gửi OTP
-    let phoneNumber = userPhoneInput.value.trim();
-    phoneNumber = phoneNumber.startsWith('0') ? '+84' + phoneNumber.slice(1) : phoneNumber;
-    
-    const appVerifier = window.recaptchaVerifier;
+        // Tiếp tục logic gửi OTP
+        let phoneNumber = userPhoneInput.value.trim();
+        phoneNumber = phoneNumber.startsWith('0') ? '+84' + phoneNumber.slice(1) : phoneNumber;
+
+        const appVerifier = window.recaptchaVerifier;
 
     signInWithPhoneNumber(auth, phoneNumber, appVerifier)
         .then((confirmationResult) => {
@@ -505,8 +525,8 @@ window.sendOTP = function() {
     };
 
     // Khởi động bộ đếm thời gian OTP
-    
-    let otpStartTime; 
+
+    let otpStartTime;
 
 function startOTPTimer() {
     // Lưu thời điểm bắt đầu

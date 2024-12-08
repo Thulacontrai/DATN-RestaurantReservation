@@ -53,42 +53,87 @@
                         aria-labelledby="priority-tab">
                         <div class="bg-white m-2 p-2 rounded flex-grow-1 d-flex flex-column" id="DangCheBien">
                             @foreach ($items as $item)
-                                <div class="order-card row" data-item-id="{{ $item->id }}"
-                                    data-table-id="{{ $item->order->tables['0']->id }}">
-                                    <div class="col-md-6">
-                                        <strong>{{ $item->dish->name }}</strong>
-                                        <p>{{ $item->created_at->format('d-m-Y H:i') }}</p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <strong>Số lượng</strong>
-                                                <p>{{ $item->quantity }}</p>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <strong>Bàn</strong>
-                                                <p>{{ $item->order->tables['0']->table_number }}</p>
-                                            </div>
-                                            @if ($item->quantity != 0)
-                                                <div class="col-md-4 btn-group-custom">
-                                                    <button class="btn btn-danger cook-all" title="Chế biến toàn bộ"><i
-                                                            class="fa-solid fa-forward"></i></button>
+                                @if ($item->item_type == 1)
+                                    <div class="order-card row" data-item-id="{{ $item->id }}"
+                                        data-item-type="{{ $item->item_type }}"
+                                        data-table-id="{{ $item->order->tables['0']->id }}">
+                                        <div class="col-md-6">
+                                            <strong>{{ $item->dish->name }}</strong>
+                                            <p>{{ $item->created_at->format('d-m-Y H:i') }}</p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <strong>Số lượng</strong>
+                                                    <p>{{ $item->quantity }}</p>
                                                 </div>
-                                            @else
-                                                <div class="col-md-4 btn-group-custom">
-                                                    <button class="btn btn-secondary delete" title="Xóa"><i
-                                                            class="fa-solid fa-trash"></i></button>
+                                                <div class="col-md-4">
+                                                    <strong>Bàn</strong>
+                                                    <p>{{ $item->order->tables['0']->table_number }}</p>
+                                                </div>
+                                                @if ($item->quantity != 0)
+                                                    <div class="col-md-4 btn-group-custom">
+                                                        <button class="btn btn-danger cook-all"
+                                                            title="Chế biến toàn bộ"><i
+                                                                class="fa-solid fa-forward"></i></button>
+                                                    </div>
+                                                @else
+                                                    <div class="col-md-4 btn-group-custom">
+                                                        <button class="btn btn-secondary delete" title="Xóa"><i
+                                                                class="fa-solid fa-trash"></i></button>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                            @if ($item->count_cancel != 0)
+                                                <div class="row">
+                                                    <p>Hủy <span class="text-danger">{{ $item->count_cancel }}</span>
+                                                        vào
+                                                        lúc {{ $item->updated_at }}</p>
                                                 </div>
                                             @endif
                                         </div>
-                                        @if ($item->count_cancel != 0)
-                                            <div class="row">
-                                                <p>Hủy <span class="text-danger">{{ $item->count_cancel }}</span> vào
-                                                    lúc {{ $item->updated_at }}</p>
-                                            </div>
-                                        @endif
                                     </div>
-                                </div>
+                                @else
+                                    <div class="order-card row" data-item-id="{{ $item->id }}"
+                                        data-item-type="{{ $item->item_type }}"
+                                        data-table-id="{{ $item->order->tables['0']->id }}">
+                                        <div class="col-md-6">
+                                            <strong>{{ $item->combo->name }}</strong>
+                                            <p>{{ $item->created_at->format('d-m-Y H:i') }}</p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <strong>Số lượng</strong>
+                                                    <p>{{ $item->quantity }}</p>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <strong>Bàn</strong>
+                                                    <p>{{ $item->order->tables['0']->table_number }}</p>
+                                                </div>
+                                                @if ($item->quantity != 0)
+                                                    <div class="col-md-4 btn-group-custom">
+                                                        <button class="btn btn-danger cook-all"
+                                                            title="Chế biến toàn bộ"><i
+                                                                class="fa-solid fa-forward"></i></button>
+                                                    </div>
+                                                @else
+                                                    <div class="col-md-4 btn-group-custom">
+                                                        <button class="btn btn-secondary delete" title="Xóa"><i
+                                                                class="fa-solid fa-trash"></i></button>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                            @if ($item->count_cancel != 0)
+                                                <div class="row">
+                                                    <p>Hủy <span class="text-danger">{{ $item->count_cancel }}</span>
+                                                        vào
+                                                        lúc {{ $item->updated_at }}</p>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @endif
                             @endforeach
                         </div>
                     </div>
@@ -96,9 +141,14 @@
                         <div class="bg-white m-2 p-2 rounded flex-grow-1 d-flex flex-column">
                             @foreach ($items as $item)
                                 <div class="order-card row" data-item-id="{{ $item->id }}"
+                                    data-item-type="{{ $item->item_type }}"
                                     data-table-id="{{ $item->order->tables['0']->id }}">
                                     <div class="col-md-6">
-                                        <strong>{{ $item->dish->name }}</strong>
+                                        @if ($item->item_type == 1)
+                                            <strong>{{ $item->dish->name }}</strong>
+                                        @else
+                                            <strong>{{ $item->combo->name }}</strong>
+                                        @endif
                                         <p>{{ $item->created_at->format('d-m-Y H:i') }}</p>
                                     </div>
                                     <div class="col-md-6">
@@ -113,7 +163,8 @@
                                             </div>
                                             @if ($item->quantity != 0)
                                                 <div class="col-md-4 btn-group-custom">
-                                                    <button class="btn btn-danger cook-all" title="Chế biến toàn bộ"><i
+                                                    <button class="btn btn-danger cook-all"
+                                                        title="Chế biến toàn bộ"><i
                                                             class="fa-solid fa-forward"></i></button>
                                                 </div>
                                             @else
@@ -175,7 +226,11 @@
                                     <div class="order-card row" data-item-id="{{ $item->id }}"
                                         data-table-id="{{ $item->order->tables['0']->id }}">
                                         <div class="col-md-6">
-                                            <strong>{{ $item->dish->name }}</strong>
+                                            @if ($item->item_type == 1)
+                                                <strong>{{ $item->dish->name }}</strong>
+                                            @else
+                                                <strong>{{ $item->combo->name }}</strong>
+                                            @endif
                                             <p>{{ $item->created_at->format('d-m-Y H:i') }}</p>
                                         </div>
                                         <div class="col-md-6">
@@ -225,39 +280,33 @@
                 if (!orderCard) return;
 
                 const itemId = orderCard.dataset.itemId;
+                const itemType = orderCard.dataset.itemType;
                 const tableId = orderCard.dataset.tableId;
 
                 if (event.target.closest(".cook-all")) {
-                    console.log("Chế biến toàn bộ:", itemId, tableId);
-                    // Thay đổi giao diện
                     const btnGroup = orderCard.querySelector(".btn-group-custom");
                     const button = btnGroup.querySelector("button");
                     button.classList.remove("btn-danger", "cook-all");
                     button.classList.add("btn-success", "done-all");
                     button.title = "Cung ứng toàn bộ";
 
-                    // Di chuyển sang ChoCungUng
                     const choCungUngContainer = document.getElementById("ChoCungUng");
                     if (choCungUngContainer) {
                         choCungUngContainer.appendChild(orderCard);
                     }
-
-                    // Gọi API
-                    handleCookAll(itemId, tableId);
+                    handleCookAll(itemId, tableId, itemType);
                 } else if (event.target.closest(".delete")) {
-                    console.log("Xóa phần tử:", itemId);
                     orderCard.remove();
-                    handleDelete(itemId);
+                    handleDelete(itemId, itemType);
                 } else if (event.target.closest(".done-all")) {
-                    console.log("Hoàn tất cung ứng:", itemId, tableId);
                     orderCard.remove();
-                    handleDoneAll(itemId, tableId);
+                    handleDoneAll(itemId, tableId, itemType);
                 }
             });
         });
 
         // Hàm xử lý cook-all
-        function handleCookAll(itemId, tableId) {
+        function handleCookAll(itemId, tableId, itemType) {
             fetch(`/kitchen/${itemId}/cook-all`, {
                     method: 'POST',
                     headers: {
@@ -266,7 +315,8 @@
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        tableId: tableId
+                        tableId: tableId,
+                        itemType: itemType
                     }),
                 })
                 .then(response => response.json())
@@ -279,7 +329,7 @@
         }
 
         // Hàm xử lý delete
-        function handleDelete(itemId) {
+        function handleDelete(itemId, itemType) {
             fetch(`/kitchen/${itemId}/delete`, {
                     method: 'POST',
                     headers: {
@@ -287,7 +337,9 @@
                             'content'),
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({}),
+                    body: JSON.stringify({
+                        itemType: itemType
+                    }),
                 })
                 .then(response => response.json())
                 .then(data => {
@@ -299,7 +351,7 @@
         }
 
         // Hàm xử lý done-all
-        function handleDoneAll(itemId, tableId) {
+        function handleDoneAll(itemId, tableId, itemType) {
             fetch(`/kitchen/${itemId}/done-all`, {
                     method: 'POST',
                     headers: {
@@ -308,7 +360,8 @@
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        tableId: tableId
+                        tableId: tableId,
+                        itemType: itemType
                     }),
                 })
                 .then(response => response.json())

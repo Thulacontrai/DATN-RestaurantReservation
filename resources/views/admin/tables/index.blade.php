@@ -3,6 +3,7 @@
 @section('title', 'Danh Mục Bàn')
 
 @section('content')
+    @include('admin.layouts.messages')
 
     <!-- Content wrapper scroll start -->
     <div class="content-wrapper-scroll">
@@ -15,7 +16,7 @@
                 <div class="col-sm-12 col-12">
                     <div class="card shadow-sm">
                         <div class="card-header d-flex justify-content-between align-items-center">
-                            <div class="card-title">Danh Mục Bàn</div>
+                            <div class="card-title ">Danh Mục Bàn</div>
 
                             <!-- Thêm nút Thêm Mới -->
                             <div class="d-flex gap-2">
@@ -43,7 +44,7 @@
                                                 class="form-control form-control-sm" placeholder="Tìm kiếm bàn"
                                                 value="{{ request('name') }}">
                                         </div>
-                                        <div class="col-auto">
+                                        {{-- <div class="col-auto">
                                             <select name="table_type" id="search-table-type"
                                                 class="form-select form-select-sm">
                                                 <option value="">-- Loại bàn --</option>
@@ -53,7 +54,7 @@
                                                 <option value="VIP"
                                                     {{ request('table_type') == 'VIP' ? 'selected' : '' }}>VIP</option>
                                             </select>
-                                        </div>
+                                        </div> --}}
                                         <div class="col-auto">
                                             <select name="status" id="search-status" class="form-select form-select-sm">
                                                 <option value="">-- Trạng thái --</option>
@@ -69,9 +70,15 @@
                                         </div>
                                         <div class="col-auto">
                                             <button type="submit" class="btn btn-sm btn-primary">Tìm kiếm</button>
+                                            <a href="{{ route('admin.table.index') }}" class="btn btn-sm btn-success">
+                                                <i class="bi bi-arrow-repeat"></i>
+                                            </a>
                                         </div>
+
                                     </div>
                                 </form>
+
+
                             </div>
 
                             <div class="table-responsive">
@@ -80,7 +87,6 @@
                                         <tr>
                                             <th>Khu Vực</th>
                                             <th>Số Bàn</th>
-                                            <th>Loại Bàn</th>
                                             <th>Trạng Thái</th>
                                             <th>Hành Động</th>
                                         </tr>
@@ -90,7 +96,6 @@
                                             <tr>
                                                 <td>{{ $table->area }}</td>
                                                 <td>{{ $table->table_number }}</td>
-                                                <td>{{ $table->table_type }}</td>
                                                 <td>
                                                     <span
                                                         class="badge {{ $table->status == 'Available' ? 'bg-success' : ($table->status == 'Reserved' ? 'bg-warning' : 'bg-danger') }} min-70">
@@ -98,7 +103,7 @@
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    <div class="actions" >
+                                                    <div class="actions">
                                                         <a href="{{ route('admin.table.edit', $table->id) }}"
                                                             class="text-warning" data-bs-toggle="tooltip"
                                                             data-bs-placement="top" title="Sửa">
@@ -127,20 +132,72 @@
                                     </tbody>
                                 </table>
                             </div>
+                        </div>
 
-                            <!-- Pagination -->
-                            <div class="pagination justify-content-center mt-3">
-                                {{ $tables->links() }}
+
+                        <!-- Pagination -->
+                        <div class="d-flex justify-content-between align-items-center bg-white p-4">
+                            <!-- Phần hiển thị phân trang bên trái -->
+                            <div class="mb-4 flex sm:mb-0 text-center">
+                                <span style="font-size: 15px">
+                                    <i class="bi bi-chevron-compact-left"></i>
+
+                                    <span class="text-sm font-normal text-gray-500 dark:text-gray-400">
+                                        Hiển thị <strong
+                                            class="font-semibold text-secondary ">{{ $tables->firstItem() }}-{{ $tables->lastItem() }}</strong>
+                                        trong tổng số <strong
+                                            class="font-semibold text-secondary ">{{ $tables->total() }}</strong>
+                                    </span>
+                                    <i class="bi bi-chevron-compact-right"></i>
+                                </span>
                             </div>
-                            <!-- End Pagination -->
+
+                            <!-- Phần hiển thị phân trang bên phải -->
+                            <div class="flex items-center space-x-3">
+                                <!-- Nút Previous -->
+                                @if ($tables->onFirstPage())
+                                    <button class="inline-flex  p-1 pl-2 bg-success text-white  cursor-not-allowed"
+                                        style="border-radius: 5px; border: 2px solid rgb(136, 243, 136);">
+                                        <span style="font-size: 15px"><i class="bi bi-chevron-compact-left"></i>Trước</span>
+                                    </button>
+                                @else
+                                    <a href="{{ $tables->previousPageUrl() }}">
+                                        <button class="inline-flex  p-1 pl-2  bg-success text-white "
+                                            style="border-radius: 5px;    border: 2px solid rgb(136, 243, 136);">
+                                            <span style="font-size: 15px"><i class="bi bi-chevron-double-left"></i>
+                                                Trước</span>
+                                        </button>
+                                    </a>
+                                @endif
+
+                                <!-- Nút Next -->
+                                @if ($tables->hasMorePages())
+                                    <a href="{{ $tables->nextPageUrl() }}">
+                                        <button class="inline-flex  p-1 pl-2 bg-success text-white"
+                                            style="border-radius: 5px;    border: 2px solid rgb(136, 243, 136);">
+                                            <span style="font-size: 15px"> Sau <i
+                                                    class="bi bi-chevron-compact-right"></i></span>
+                                        </button>
+                                    </a>
+                                @else
+                                    <button class="inline-flex  p-1 pl-2 bg-primary text-white cursor-not-allowed"
+                                        style="border-radius: 5px;    border: 2px solid rgb(83, 150, 216);">
+                                        <span style="font-size: 15px">
+                                            Trang Cuối</i></span>
+                                    </button>
+                                @endif
+                            </div>
 
                         </div>
 
                     </div>
 
+
                 </div>
+
             </div>
             <!-- Row end -->
+
 
         </div>
         <!-- Content wrapper end -->
@@ -148,31 +205,4 @@
     </div>
     <!-- Content wrapper scroll end -->
 
-@endsection
-
-@section('scripts')
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
-
-    <script>
-        // Function to display alerts based on session messages
-        function showAlert(title, icon) {
-            Swal.fire({
-                position: "top",
-                title: title,
-                icon: icon,
-                showConfirmButton: false,
-                timerProgressBar: true,
-                timer: 1500
-            });
-        }
-
-        @if (session('success'))
-            showAlert("{{ session('success') }}", "success");
-        @endif
-
-        @if (session('error'))
-            showAlert("{{ session('error') }}", "error");
-        @endif
-    </script>
 @endsection

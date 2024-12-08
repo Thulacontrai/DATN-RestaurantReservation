@@ -19,11 +19,12 @@ class RefundController extends Controller
         $this->middleware('permission:Tạo mới hoàn tiền', ['only' => ['create']]);
         $this->middleware('permission:Sửa hoàn tiền', ['only' => ['edit']]);
         $this->middleware('permission:Xóa hoàn tiền', ['only' => ['destroy']]);
-        
+
     }
 
     public function index()
     {
+        $title = 'Hoàn Tiền';
         $refunds = Refund::with('reservation')
             ->whereIn('refunds.status', ['Request_Refund', 'Refund'])
             ->orWhereHas('reservation', function ($query) {
@@ -36,7 +37,7 @@ class RefundController extends Controller
             ->paginate(10);
 
 
-        return view('admin.refunds.index', compact('refunds'));
+        return view('admin.refunds.index', compact('refunds', 'title'));
     }
 
     public function showRefundForm($reservationId)

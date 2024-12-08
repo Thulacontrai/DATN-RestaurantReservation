@@ -29,15 +29,17 @@ class ReservationHistoryController extends Controller
 
     public function index()
 {
+    $title = ' Lịch Sử Đặt Bàn';
     $reservationHistories = ReservationHistory::all();
-    return view('admin.reservation.reservationHistory.index', compact('reservationHistories'));
+    return view('admin.reservation.reservationHistory.index', compact('reservationHistories', 'title'));
 }
 
 
 
     public function create()
     {
-        return view('admin.reservation.reservationHistory.create');
+        $title = 'Thêm Mới Lịch Sử Đặt Bàn';
+        return view('admin.reservation.reservationHistory.create', compact('title'));
     }
 
     public function store(Request $request)
@@ -56,15 +58,17 @@ class ReservationHistoryController extends Controller
 
     public function show($id)
     {
+        $title = 'Chi Tiết Lịch Sử Đặt Bàn';
         $reservationsHistory = ReservationHistory::findOrFail($id);
-        return view('admin.reservation.reservationHistory.show', compact('reservationsHistory')); // Sửa tên biến
+        return view('admin.reservation.reservationHistory.show', compact('reservationsHistory','title')); // Sửa tên biến
     }
 
 
     public function edit($id)
     {
+        $title = 'Chỉnh Sửa Lịch Sử Đặt Bàn';
         $reservationsHistory = ReservationHistory::findOrFail($id);
-        return view('admin.reservation.reservationHistory.edit', compact('reservationsHistory')); // Sửa tên biến
+        return view('admin.reservation.reservationHistory.edit', compact('reservationsHistory','title')); // Sửa tên biến
     }
 
 

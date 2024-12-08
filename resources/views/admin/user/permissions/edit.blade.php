@@ -3,7 +3,7 @@
 @section('title', 'Chỉnh Sửa Quyền Hạn')
 
 @section('content')
-
+@include('admin.layouts.messages')
     <div class="content-wrapper-scroll">
         <div class="content-wrapper">
             <div class="row">
@@ -15,7 +15,7 @@
                         <div class="card-body">
                             <form action="{{ route('admin.permissions.update', $permission->id) }}" method="POST">
                                 @csrf
-                               
+
                                 @method('PUT')
                                 <div class="mb-3">
                                     <label class="form-label">Tên Quyền Hạn</label>
@@ -23,7 +23,7 @@
 
                                 </div>
 
-                               
+
                                 <button type="submit" class="btn btn-success">Cập Nhật Quyền Hạn</button>
                             </form>
                         </div>

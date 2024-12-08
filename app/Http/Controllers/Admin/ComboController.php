@@ -45,6 +45,7 @@ class ComboController extends Controller
         try {
             // Khởi tạo truy vấn
             $query = $this->model::query();
+            $title = 'Combo';
 
             // Tìm kiếm theo tên nếu có
             if ($request->filled('name')) {
@@ -61,10 +62,10 @@ class ComboController extends Controller
             }
 
             // Phân trang kết quả
-            $combos = $query->paginate(10);
+            $combos = Combo::latest()->paginate(10);
 
             // Trả về view
-            return view($this->viewPath . '.index', compact('combos'));
+            return view($this->viewPath . '.index', compact('combos', 'title'));
         } catch (\Exception $e) {
             // Ghi log và trả về lỗi
             Log::error($e->getMessage());
@@ -77,9 +78,10 @@ class ComboController extends Controller
 
     public function create()
     {
+        $title = 'Thêm Mới Combo';
         $categories = Category::all();
         $dishes = Dishes::all();
-        return view($this->viewPath . '.create', compact('categories', 'dishes'));
+        return view($this->viewPath . '.create', compact('categories', 'dishes', 'title'));
     }
 
 
@@ -126,23 +128,25 @@ class ComboController extends Controller
 
     public function edit($id)
     {
+        $title = 'Chỉnh Sửa Combo';
         $combo = $this->model::findOrFail($id);
         $categories = Category::all();
         $dishes = Dishes::all();
 
-        return view($this->viewPath . '.edit', compact('combo', 'categories', 'dishes'));
+        return view($this->viewPath . '.edit', compact('combo', 'categories', 'dishes','title'));
     }
 
 
     public function update(Request $request, $id)
     {
         $request->validate([
-            'name'             => 'required|string|max:255',
-            'price'            => 'required|numeric',
-            'description'      => 'nullable|string',
-            'image'            => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'quantity_dishes'  => 'required|integer|min:1',
+            'name'             => 'required|string|max:255', // Tên combo là bắt buộc
+            'price'            => 'required|numeric|min:1', // Giá combo là bắt buộc và phải là số
+            'description'      => 'nullable|string', // Mô tả món ăn không bắt buộc
+            'image'            => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Ảnh combo là không bắt buộc
+            'quantity_dishes'  => 'required|integer|min:1', // Số lượng món ăn là bắt buộc và phải là số nguyên
         ]);
+
 
         // Kiểm tra tên combo đã tồn tại nhưng loại trừ combo hiện tại
         $existingCombo = Combo::where('name', $request->name)->where('id', '!=', $id)->first();
@@ -150,37 +154,46 @@ class ComboController extends Controller
             return redirect()->back()->withInput()->with('error', 'Tên combo đã tồn tại. Vui lòng đặt tên khác.');
         }
 
+        // Cập nhật thông tin combo trong một transaction
         DB::transaction(function () use ($request, $id) {
             $combo = $this->model::findOrFail($id);
 
+            // Nếu có ảnh mới, xử lý lưu ảnh và xóa ảnh cũ nếu cần
             if ($request->hasFile('image')) {
                 if ($combo->image) {
+                    // Xóa ảnh cũ khỏi storage
                     Storage::delete('public/' . $combo->image);
                 }
+                // Lưu ảnh mới vào thư mục combo_images
                 $imagePath = $request->file('image')->store('combo_images', 'public');
-                $combo->image = $imagePath;
+                $combo->image = $imagePath; // Cập nhật đường dẫn ảnh mới
             }
 
-            $combo->update($request->except('image'));
-            $combo->dishes()->sync($request->dishes);
+            // Cập nhật các thông tin còn lại
+            $combo->update($request->except('image')); // Cập nhật tất cả trường, ngoại trừ ảnh
+            $combo->dishes()->sync($request->dishes); // Cập nhật mối quan hệ món ăn với combo
         });
 
+        // Trả về thông báo thành công
         return redirect()->route($this->routePath . '.index')->with('success', 'Combo đã được cập nhật thành công!');
     }
 
+
     public function show($id)
     {
+        $title = 'Chi Tiết Combo';
         $combo = $this->model::findOrFail($id);
         $dishes = $combo->dishes;
 
-        return view($this->viewPath . '.detail', compact('combo', 'dishes'));
+        return view($this->viewPath . '.detail', compact('combo', 'dishes' ,'title'));
     }
 
 
     public function trash()
     {
+        $title = 'Khôi Phục Danh Sách Combo';
         $combos = Combo::onlyTrashed()->paginate(10);
-        return view($this->viewPath . '.trash', compact('combos'));
+        return view($this->viewPath . '.trash', compact('combos' ,'title'));
     }
 
     public function restore($id)
@@ -205,7 +218,7 @@ class ComboController extends Controller
     }
 
 
-   
+
     public function toggleStatus(Request $request, $id)
     {
         try {

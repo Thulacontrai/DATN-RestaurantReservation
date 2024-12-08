@@ -3,7 +3,7 @@
 @section('title', 'Chi Tiết Đơn Hàng')
 
 @section('content')
-
+@include('admin.layouts.messages')
 <!-- Content wrapper scroll start -->
 <div class="content-wrapper-scroll">
     <!-- Content wrapper start -->
@@ -12,20 +12,20 @@
             <div class="col-12">
                 <div class="card shadow-lg rounded-4">
                     <div class="card-header d-flex justify-content-between align-items-center bg-gradient-primary text-white rounded-top-4">
-                        <h4 class="card-title mb-0 ">Chi Tiết Đơn Hàng </h4>
-                        <a href="{{ route('admin.order.index') }}" class="btn btn-sm btn-light text-dark mb-0">Quay Lại</a>
+                        <h4 class="card-title mb-0 ">Chi Tiết Hoá Đơn  </h4>
+                        <a href="{{ route('admin.order.index') }}" class="btn btn-sm btn-secondary text-dark mb-0">Quay Lại</a>
                     </div>
                     <div class="card-body">
                         <div class="row mb-4">
                             <!-- Thông Tin Đơn Hàng -->
                             <div class="col-md-6">
-                                <h5 class="text-blue font-weight-bold">Thông Tin Đơn Hàng</h5>
+                                <h5 class="text-blue font-weight-bold">Thông Tin Hoá Đơn</h5>
                                 <ul class="list-group list-group-flush">
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        <strong>Mã Đơn Hàng:</strong> <span class="font-weight-bold text-primary">{{ $order->id }}</span>
+                                        <strong>Mã Hoá Đơn:</strong> <span class="font-weight-bold text-primary">{{ $order->id }}</span>
                                     </li>
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        <strong>Mã Đặt Chỗ:</strong> <span>{{ $order->reservation->id ?? 'Không rõ' }}</span>
+                                        <strong>Mã Đặt Bàn:</strong> <span>{{ $order->reservation->id ?? 'Không rõ' }}</span>
                                     </li>
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
                                         <strong>Nhân Viên:</strong> <span>{{ $order->staff->name ?? 'Không rõ' }}</span>

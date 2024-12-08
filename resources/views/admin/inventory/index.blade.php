@@ -3,6 +3,7 @@
 @section('title', 'Danh Sách Kho')
 
 @section('content')
+    @include('admin.layouts.messages')
     <!-- Content wrapper scroll start -->
     <div class="content-wrapper-scroll">
         <!-- Content wrapper start -->
@@ -10,8 +11,8 @@
             <!-- Toast notifications container -->
             <div id="toastContainer" class="toast-container position-fixed top-0 end-0 p-3">
                 @foreach ($outOfStock as $item)
-                    <div class="toast inventory-alert" data-id="{{ $item->id }}"
-                        role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+                    <div class="toast inventory-alert" data-id="{{ $item->id }}" role="alert" aria-live="assertive"
+                        aria-atomic="true" data-bs-delay="5000">
                         <div class="toast-header bg-danger text-white">
                             <strong class="me-auto">Cảnh báo tồn kho</strong>
                             <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
@@ -23,27 +24,30 @@
                 @endforeach
 
                 @foreach ($lowStock as $item)
-                    <div class="toast inventory-alert" data-id="{{ $item->id }}"
-                        role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+                    <div class="toast inventory-alert" data-id="{{ $item->id }}" role="alert" aria-live="assertive"
+                        aria-atomic="true" data-bs-delay="5000">
                         <div class="toast-header bg-warning text-white">
                             <strong class="me-auto">Cảnh báo tồn kho</strong>
                             <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
                         </div>
                         <div class="toast-body">
-                            Mặt hàng: {{ $item->ingredient->name }}, với ID: {{ $item->id }} có số lượng thấp ({{ $item->quantity_stock }}).
+                            Mặt hàng: {{ $item->ingredient->name }}, với ID: {{ $item->id }} có số lượng thấp
+                            ({{ $item->quantity_stock }})
+                            .
                         </div>
                     </div>
                 @endforeach
 
                 @foreach ($highStock as $item)
-                    <div class="toast inventory-alert" data-id="{{ $item->id }}"
-                        role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+                    <div class="toast inventory-alert" data-id="{{ $item->id }}" role="alert" aria-live="assertive"
+                        aria-atomic="true" data-bs-delay="5000">
                         <div class="toast-header bg-success text-white">
                             <strong class="me-auto">Thông báo tồn kho</strong>
                             <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
                         </div>
                         <div class="toast-body">
-                            Mặt hàng: {{ $item->ingredient->name }}, với ID: {{ $item->id }} có số lượng lớn cần ưu tiên sử dụng ({{ $item->quantity_stock }}).
+                            Mặt hàng: {{ $item->ingredient->name }}, với ID: {{ $item->id }} có số lượng lớn cần ưu
+                            tiên sử dụng ({{ $item->quantity_stock }}).
                         </div>
                     </div>
                 @endforeach
@@ -72,14 +76,20 @@
                             <form method="GET" action="{{ route('admin.inventory.index') }}" class="mb-3">
                                 <div class="row g-3 align-items-center">
                                     <div class="col-auto">
-                                        <input type="text" name="search" class="form-control form-control-sm" placeholder="Tìm kiếm theo ID hoặc tên" value="{{ request('search') }}">
+                                        <input type="text" name="search" class="form-control form-control-sm"
+                                            placeholder="Tìm kiếm theo ID hoặc tên" value="{{ request('search') }}">
                                     </div>
                                     <div class="col-auto">
                                         <select name="status" class="form-select form-select-sm" id="statusFilter">
                                             <option value="">Chọn trạng thái tồn kho</option>
-                                            <option value="out_of_stock" {{ request('status') == 'out_of_stock' ? 'selected' : '' }}>Hết hàng</option>
-                                            <option value="low_stock" {{ request('status') == 'low_stock' ? 'selected' : '' }}>Sắp hết</option>
-                                            <option value="high_stock" {{ request('status') == 'high_stock' ? 'selected' : '' }}>Nhiều hàng tồn</option>
+                                            <option value="out_of_stock"
+                                                {{ request('status') == 'out_of_stock' ? 'selected' : '' }}>Hết hàng
+                                            </option>
+                                            <option value="low_stock"
+                                                {{ request('status') == 'low_stock' ? 'selected' : '' }}>Sắp hết</option>
+                                            <option value="high_stock"
+                                                {{ request('status') == 'high_stock' ? 'selected' : '' }}>Nhiều hàng tồn
+                                            </option>
                                         </select>
                                     </div>
                                     <div class="col-auto">
@@ -104,21 +114,25 @@
                                         @forelse ($inventoryStocks as $stock)
                                             <tr id="inventory-stock-{{ $stock->id }}">
                                                 <td>{{ $stock->id }}</td>
-                                                <td>{{ $stock->ingredient->name   ?? 'Không rõ' }}</td>
+                                                <td>{{ $stock->ingredient->name ?? 'Không rõ' }}</td>
                                                 <td>{{ $stock->ingredient->unit }}</td>
                                                 <td>{{ $stock->quantity_stock }}</td>
                                                 <td>
                                                     <div class="actions">
-                                                        <a href="{{ route('admin.inventory.edit', $stock->id) }}" class="editRow" data-id="{{ $stock->id }}" data-bs-toggle="tooltip"
-                                                            data-bs-placement="top" title="Sửa">
+                                                        <a href="{{ route('admin.inventory.edit', $stock->id) }}"
+                                                            class="editRow" data-id="{{ $stock->id }}"
+                                                            data-bs-toggle="tooltip" data-bs-placement="top" title="Sửa">
                                                             <i class="bi bi-pencil-square text-warning"></i>
                                                         </a>
-                                                        <form action="{{ route('admin.inventory.destroy', $stock->id) }}" method="POST" style="display:inline-block;">
+                                                        <form action="{{ route('admin.inventory.destroy', $stock->id) }}"
+                                                            method="POST" style="display:inline-block;">
                                                             @csrf
                                                             @method('DELETE')
-                                                            <a href="#" style="margin-top: 15px;" data-bs-toggle="tooltip"
-                                                            data-bs-placement="top" title="Xoá">
-                                                                <button type="submit" class="btn btn-link p-0" onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
+                                                            <a href="#" style="margin-top: 15px;"
+                                                                data-bs-toggle="tooltip" data-bs-placement="top"
+                                                                title="Xoá">
+                                                                <button type="submit" class="btn btn-link p-0"
+                                                                    onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
                                                                     <i class="bi bi-trash text-red"></i>
                                                                 </button>
                                                             </a>
@@ -135,10 +149,60 @@
                                 </table>
                             </div>
 
-                            <!-- Pagination -->
-                            <div class="pagination justify-content-center mt-3">
-                                {{ $inventoryStocks->links() }}
-                            </div>
+
+                        </div>
+
+                    </div>
+                    <!-- Pagination -->
+                    <div class="d-flex justify-content-between align-items-center bg-white p-4">
+                        <!-- Phần hiển thị phân trang bên trái -->
+                        <div class="mb-4 flex sm:mb-0 text-center">
+                            <span style="font-size: 15px">
+                                <i class="bi bi-chevron-compact-left"></i>
+
+                                <span class="text-sm font-normal text-gray-500 dark:text-gray-400">
+                                    Hiển thị <strong
+                                        class="font-semibold text-secondary ">{{ $inventoryStocks->firstItem() }}-{{ $inventoryStocks->lastItem() }}</strong>
+                                    trong tổng số <strong
+                                        class="font-semibold text-secondary ">{{ $inventoryStocks->total() }}</strong>
+                                </span> <i class="bi bi-chevron-compact-right"></i>
+                            </span>
+                        </div>
+
+                        <!-- Phần hiển thị phân trang bên phải -->
+                        <div class="flex items-center space-x-3">
+                            <!-- Nút Previous -->
+                            @if ($inventoryStocks->onFirstPage())
+                                <button class="inline-flex  p-1 pl-2 bg-success text-white  cursor-not-allowed"
+                                    style="border-radius: 5px; border: 2px solid rgb(136, 243, 136);">
+                                    <span style="font-size: 15px"><i class="bi bi-chevron-compact-left"></i>Trước</span>
+                                </button>
+                            @else
+                                <a href="{{ $inventoryStocks->previousPageUrl() }}">
+                                    <button class="inline-flex  p-1 pl-2  bg-success text-white "
+                                        style="border-radius: 5px;    border: 2px solid rgb(136, 243, 136);">
+                                        <span style="font-size: 15px"><i class="bi bi-chevron-double-left"></i>
+                                            Trước</span>
+                                    </button>
+                                </a>
+                            @endif
+
+                            <!-- Nút Next -->
+                            @if ($inventoryStocks->hasMorePages())
+                                <a href="{{ $inventoryStocks->nextPageUrl() }}">
+                                    <button class="inline-flex  p-1 pl-2 bg-success text-white"
+                                        style="border-radius: 5px;    border: 2px solid rgb(136, 243, 136);">
+                                        <span style="font-size: 15px"> Sau <i
+                                                class="bi bi-chevron-compact-right"></i></span>
+                                    </button>
+                                </a>
+                            @else
+                                <button class="inline-flex  p-1 pl-2 bg-primary text-white cursor-not-allowed"
+                                    style="border-radius: 5px;    border: 2px solid rgb(83, 150, 216);">
+                                    <span style="font-size: 15px">
+                                        Trang Cuối</i></span>
+                                </button>
+                            @endif
                         </div>
 
                     </div>
@@ -190,9 +254,9 @@
 </style>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         const toastElements = document.querySelectorAll('.toast');
-        toastElements.forEach(function (toastElement) {
+        toastElements.forEach(function(toastElement) {
             const toast = new bootstrap.Toast(toastElement);
             toast.show();
         });

@@ -21,62 +21,60 @@ class UserController extends Controller
         $this->middleware('permission:Tạo mới người dùng', ['only' => ['create']]);
         $this->middleware('permission:Sửa người dùng', ['only' => ['edit']]);
         $this->middleware('permission:Xóa người dùng', ['only' => ['destroy']]);
-        
+
     }
 
      /**
      * Display a listing of the resource.
      */
-    // Controller
-// Controller
-public function index(Request $request)
-{
-    $query = User::whereDoesntHave('roles'); // Những người dùng không có vai trò
+    public function index(Request $request)
+    {
+        $title = 'Quản Lý Người Dùng';
+        $query = User::whereDoesntHave('roles');
 
-    if ($request->has('search') && !empty($request->search)) {
-        $search = $request->search;
-        $query->where(function($q) use ($search) {
-            $q->where('name', 'like', '%' . $search . '%')
-              ->orWhere('email', 'like', '%' . $search . '%')
-              ->orWhere('phone', 'like', '%' . $search . '%');
-        });
+        // Tìm kiếm tổng hợp
+        if ($request->has('search') && !empty($request->search)) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                  ->orWhere('email', 'like', '%' . $search . '%')
+                  ->orWhere('phone', 'like', '%' . $search . '%');
+            });
+        }
+
+        $users = User::latest()->paginate(10);
+        return view('admin.user.index', [
+            'users' => $users,
+            'type' => 'user',
+            'title' => $title,
+            'request' => $request
+        ]);
     }
 
-    $users = $query->latest()->paginate(10);
+    public function employeeList(Request $request)
+    {
+        $query = User::whereHas('roles');
 
-    return view('admin.user.index', [
-        'users' => $users,
-        'type' => 'user',  // Điều này đảm bảo view sẽ biết đang hiển thị người dùng
-        'request' => $request
-    ]);
-}
+        // Tìm kiếm tổng hợp
+        if ($request->has('search') && !empty($request->search)) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                  ->orWhere('email', 'like', '%' . $search . '%')
+                  ->orWhere('phone', 'like', '%' . $search . '%')
+                  ->orWhereHas('roles', function($roleQuery) use ($search) {
+                      $roleQuery->where('name', 'like', '%' . $search . '%');
+                  });
+            });
+        }
 
-public function employeeList(Request $request)
-{
-    $query = User::whereHas('roles'); // Những người dùng có vai trò
-
-    if ($request->has('search') && !empty($request->search)) {
-        $search = $request->search;
-        $query->where(function($q) use ($search) {
-            $q->where('name', 'like', '%' . $search . '%')
-              ->orWhere('email', 'like', '%' . $search . '%')
-              ->orWhere('phone', 'like', '%' . $search . '%')
-              ->orWhereHas('roles', function($roleQuery) use ($search) {
-                  $roleQuery->where('name', 'like', '%' . $search . '%');
-              });
-        });
+        $users = $query->latest()->paginate(10);
+        return view('admin.user.index', [
+            'users' => $users,
+            'type' => 'employee',
+            'request' => $request
+        ]);
     }
-
-    $users = $query->latest()->paginate(10);
-
-    return view('admin.user.index', [
-        'users' => $users,
-        'type' => 'employee',  // Điều này đảm bảo view sẽ biết đang hiển thị nhân viên
-        'request' => $request
-    ]);
-}
-
-
     /**
      * Show the form for creating a new resource.
      */
@@ -97,7 +95,6 @@ public function employeeList(Request $request)
     public function store(Request $request)
     {
 
-         
         $validator = Validator::make($request->all(),[
             'name' => 'required|min:3',
             'email' => 'required|email|unique:users,email', // Bỏ qua email hiện tại
@@ -107,11 +104,11 @@ public function employeeList(Request $request)
             'confirm_password' => 'required',
 
         ]);
-    
+
         if ($validator->fails()) {
             return redirect()->route('admin.user.create')->withInput()->withErrors($validator);
         }
-    
+
         // Chỉ cập nhật thông tin nếu có thay đổi\
         $user = new User();
         $user->name = $request->name;
@@ -120,17 +117,17 @@ public function employeeList(Request $request)
         }
         $user->phone = $request->phone; // Cập nhật phone
         $user->status = $request->status; // Cập nhật trạng thái
-        $user->password = Hash::make($request->password); 
-        $user->status = $request->status; 
+        $user->password = Hash::make($request->password);
+        $user->status = $request->status;
         $user->save();
-    
+
         $user->syncRoles($request->role); // Cập nhật vai trò
-    
+
         return redirect()->route('admin.user.index')->with('success', 'Thêm Người dùng Thành công');
 
 
     }
-    
+
 
     /**
      * Display the specified resource.
@@ -164,18 +161,18 @@ public function employeeList(Request $request)
     public function update(Request $request, string $id)
     {
         $user = User::findOrFail($id);
-    
+
         $validator = Validator::make($request->all(),[
             'name' => 'required|min:3',
             'email' => 'required|email|unique:users,email,' . $id, // Bỏ qua email hiện tại
             'phone' => 'nullable|digits_between:10,15', // Thêm validation cho phone nếu cần
             'status' => 'required|in:active,inactive',
         ]);
-    
+
         if ($validator->fails()) {
             return redirect()->route('admin.user.edit', $id)->withInput()->withErrors($validator);
         }
-    
+
         // Chỉ cập nhật thông tin nếu có thay đổi
         $user->name = $request->name;
         if ($request->email != $user->email) {
@@ -184,13 +181,13 @@ public function employeeList(Request $request)
         $user->phone = $request->phone; // Cập nhật phone
         $user->status = $request->status; // Cập nhật trạng thái
         $user->save();
-    
+
         $user->syncRoles($request->role); // Cập nhật vai trò
-    
+
         return redirect()->route('admin.user.index')->with('success', 'Chỉnh sửa Người dùng Thành công');
     }
-    
-    
+
+
 
     /**
      * Remove the specified resource from storage.
