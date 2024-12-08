@@ -97,7 +97,8 @@ class ReservationController extends Controller
         }
 
         // Lấy danh sách đặt bàn với phân trang
-        $reservations = $query->paginate(10);
+        $reservations = Reservation::latest()->paginate(10);
+
 
         // Truyền các biến tới view
         return view('admin.reservation.index', [

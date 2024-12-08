@@ -18,7 +18,7 @@ class DashboardController extends Controller
     /**
      * Display the admin dashboard with general statistics from reservations.
      */
-    public function index(Request $request)
+    public function index()
     {
         $title = 'Thống Kê';
 

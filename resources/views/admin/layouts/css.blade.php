@@ -1,4 +1,14 @@
+<<<<<<< HEAD
+<style>
+    html,
+    body {
+        font-family: Arial, sans-serif;
+        font-size: 15px;
+    }
+
+=======
 css<style>
+>>>>>>> 450db9419992868d9cfc33c78ceef351a497d47e
     .heart-btn {
         width: 70px;
         height: 40px;
@@ -46,7 +56,7 @@ css<style>
     }
 
     /* Scrollbar styling */
-     nav .sidebar-wrapper {
+    nav .sidebar-wrapper {
         max-height: 600px;
         /* Chiều cao tối đa, có thể điều chỉnh theo ý muốn */
         overflow-y: auto;
@@ -61,10 +71,44 @@ css<style>
         background-color: rgba(0, 0, 0, 0.2);
         border-radius: 4px;
     }
-    .required {
-    font-weight: bold;
-    font-size: 1.2em;
-    color: #dc3545; /* Màu đỏ */
-}
 
+    .required {
+        font-weight: bold;
+        font-size: 1.2em;
+        color: #dc3545;
+        /* Màu đỏ */
+    }
+
+    #feedbackDetailsModal .modal-content {
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    #feedbackDetailsModal .modal-header {
+        border-bottom: none;
+    }
+
+    #feedbackDetailsModal .modal-body {
+        font-size: 16px;
+        line-height: 1.6;
+    }
+
+    #feedbackDetailsModal .modal-footer {
+        border-top: none;
+    }
+
+    #feedbackDetailsModal h6 {
+        font-size: 14px;
+        color: #6c757d;
+        font-weight: 500;
+    }
+
+    #feedbackDetailsModal p {
+        margin-bottom: 0;
+    }
+
+    #feedbackRating i {
+        font-size: 20px;
+        margin-right: 3px;
+    }
 </style>

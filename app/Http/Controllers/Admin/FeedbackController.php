@@ -35,8 +35,8 @@ class FeedbackController extends Controller
     public function index()
     {
         $feedbacks = Feedback::all();
-        $feedbacks = $query = Feedback::query()->paginate(10);
-        $feedbacks = Feedback::with('customer')->paginate(10);
+        $feedbacks = Feedback::latest()->paginate(10);
+        // $feedbacks = Feedback::with('customer');
         $title = 'Phản Hồi';
         return view('admin.feedback.index', compact('feedbacks', 'title'));
     }
@@ -68,6 +68,7 @@ class FeedbackController extends Controller
     {
         return view('admin.feedback.detail', compact('feedback'));
     }
+    
 
 
     public function edit(Feedback $feedback)

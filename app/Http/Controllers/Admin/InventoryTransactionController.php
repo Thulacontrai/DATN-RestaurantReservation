@@ -46,7 +46,7 @@ class InventoryTransactionController extends Controller
         }
 
         // Phân trang kết quả
-        $transactions = $query->paginate(10);
+        $transactions = InventoryTransaction::latest()->paginate(10);
 
         return view('admin.inventoryTransaction.index', compact('transactions', 'title'));
     }

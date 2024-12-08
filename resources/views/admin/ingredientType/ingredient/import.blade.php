@@ -3,6 +3,7 @@
 @section('title', 'Danh Sách Nguyên Liệu')
 
 @section('content')
+@include('admin.layouts.messages')
     <div class="container">
         <div class="row">
             <div class="col-md-8 offset-md-2">
