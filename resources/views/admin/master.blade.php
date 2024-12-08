@@ -33,9 +33,8 @@
 
 
             @include('admin.layouts.header')
-
-
             @include('admin.layouts.messages')
+    
 
             <!-- Left side column. contains the sidebar -->
             @include('admin.layouts.menu')
@@ -44,9 +43,9 @@
 
             <!-- Content Header (Page header) -->
             <section class="content-header">
-                <div class="alert">
-                    <h4>@yield('title-page')</h4>
-                </div>
+
+                <h4>@yield('title-page')</h4>
+
             </section>
 
             @yield('content')

@@ -35,7 +35,9 @@ class PermissionController extends Controller
         }
 
         // Phân trang kết quả
-        $permissions = $permissions->orderBy('created_at', 'DESC')->paginate(10);
+        // $permissions = $permissions->orderBy('created_at', 'DESC')->paginate(10);
+        $permissions = Permission::latest()->paginate(10);
+
 
         return view('admin.user.permissions.index', [
             'permissions' => $permissions,

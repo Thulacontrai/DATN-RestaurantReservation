@@ -56,7 +56,7 @@ class DishesController extends Controller
             // Mặc định sẽ lấy cả hai
         }
 
-        $dishes = $query->paginate(10);
+        $dishes = Dishes::latest()->paginate(10);
 
         if ($request->ajax()) {
             return response()->json([

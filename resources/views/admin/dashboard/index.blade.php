@@ -685,7 +685,7 @@
 
 
 
-                <div class="col-xxl-3 col-sm-6 col-12">
+                {{-- <div class="col-xxl-3 col-sm-6 col-12">
                     <div class="card">
                         <div class="card-header">
                             <div class="card-title">Keywords</div>
@@ -946,7 +946,7 @@
                             </style>
                         </div>
                     </div>
-                </div>
+                </div> --}}
 
             </div>
 

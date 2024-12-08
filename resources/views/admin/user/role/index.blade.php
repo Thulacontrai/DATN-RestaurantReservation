@@ -65,8 +65,7 @@
                                                                 method="POST" style="display: inline-block;">
                                                                 @csrf
                                                                 @method('DELETE')
-                                                                <button type="submit" class="btn btn-link p-0"
-                                                                    style="margin-top: 15px">
+                                                                <button type="submit" class="btn btn-link p-0">
                                                                     <i class="bi bi-trash text-danger"
                                                                         style="font-size: 1.2rem;"></i>
                                                                 </button>

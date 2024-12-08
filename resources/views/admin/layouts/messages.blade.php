@@ -1,4 +1,4 @@
-<!-- Nơi Để Thông Báo - Hoàng -->
+<!-- Nơi Chứa Thông Báo - Hoàng -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 
@@ -38,7 +38,7 @@
                 title: "{{ $errors->first() }}",
                 showConfirmButton: false,
                 timerProgressBar: true,
-                timer: 3000
+                timer: 2500
             });
         @endif
 
@@ -51,7 +51,7 @@
                 title: "{{ session('success') }}",
                 showConfirmButton: false,
                 timerProgressBar: true,
-                timer: 3000
+                timer: 2500
             });
         @endif
     });

@@ -52,7 +52,7 @@
                                             <label for="reservation_time" class="form-label">Giờ Đặt</label>
                                             <div class="input-group">
                                                 <span class="input-group-text bg-danger text-white">
-                                                    <i class="bi bi-clock text-white"></i>
+                                                    <i class="bi bi-alarm text-white"></i>
                                                     <!-- Icon đồng hồ từ Bootstrap Icons -->
                                                 </span>
                                                 <input type="time" class="form-control" id="reservation_time"
