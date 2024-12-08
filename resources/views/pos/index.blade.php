@@ -922,7 +922,7 @@ ${availableTables.map(table => `
 <style>
 
     .card{
-        height: 320px;
+        height: 320px !important;
     }
     .wrapper {
         display: flex;

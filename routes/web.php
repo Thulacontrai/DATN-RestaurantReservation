@@ -34,6 +34,7 @@ use App\Http\Controllers\Client\MenuController;
 use App\Http\Controllers\Pos\PosController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\InventoryController;
+use App\Http\Controllers\Admin\InventoryDBController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
@@ -416,6 +417,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::resource('accountSetting', SettingController::class);
     Route::resource('inventory', InventoryController::class);
+    Route::resource('inventoryDashboard', InventoryDBController::class);
 
     // Lịch
     Route::resource('calendar', CalendarController::class);

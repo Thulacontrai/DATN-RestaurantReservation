@@ -25,7 +25,9 @@
                             <li>
                                 <a href="{{ route('admin.report.index') }}">Báo Cáo thống kê</a>
                             </li>
-
+                            <li>
+                                <a href="{{ route('admin.inventoryDashboard.index') }}">Thống Kê Kho</a>
+                            </li>
                         </ul>
                     </div>
                 </li>
