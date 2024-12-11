@@ -82,7 +82,7 @@
                                             <i class="bi bi-circle-fill text-success me-2"></i>
                                             <div class="d-flex flex-column">
                                                 <h6>Doanh Thu Từ Đặt Bàn</h6>
-                                                <h5>{{ number_format($totalRevenue ?? 0, 0, '.', ',') }} Triệu</h5>
+                                                <h5>{{ number_format($totalRevenue ?? 0, 0, '.', ',') }} VND</h5>
                                             </div>
                                         </div>
 

@@ -42,23 +42,60 @@ class TableController extends Controller
             $query->where('table_number', 'like', '%' . $request->name . '%');
         }
 
-        // // Lọc theo loại bàn
-        // if ($request->filled('table_type')) {
-        //     $query->where('table_type', $request->table_type);
-        // }
-
         // Lọc theo trạng thái bàn
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
-        // Phân trang kết quả
 
-        $tables = Table::latest()->paginate(10);
+        // Lọc theo loại bàn (nếu có)
+        if ($request->filled('type')) {
+            $query->where('type', $request->type);
+        }
+
+        // Lọc theo thời gian đặt bàn (từ ngày - đến ngày)
+        if ($request->filled('date_from') && $request->filled('date_to')) {
+            $query->whereBetween('created_at', [$request->date_from, $request->date_to]);
+        }
+
+        // Lọc theo số lượng khách (từ - đến)
+        if ($request->filled('guest_min')) {
+            $query->where('guest_count', '>=', $request->guest_min);
+        }
+        if ($request->filled('guest_max')) {
+            $query->where('guest_count', '<=', $request->guest_max);
+        }
+
+        // Lọc theo số lượng đơn hàng
+        if ($request->filled('order_count')) {
+            if ($request->order_count == '1') {
+                $query->has('orders'); // Giả sử có quan hệ 'orders' với Table
+            } else {
+                $query->doesntHave('orders');
+            }
+        }
+
+        // Lấy tham số sort và direction từ request
+        $sort = $request->input('sort', 'table_number'); // Mặc định sắp xếp theo 'table_number'
+        $direction = $request->input('direction', 'asc'); // Mặc định sắp xếp tăng dần
+
+        // Xác nhận cột sắp xếp hợp lệ
+        $allowedSorts = ['area', 'table_number']; // Các cột cho phép sắp xếp
+        $sort = in_array($sort, $allowedSorts) ? $sort : 'table_number';
+
+        // Xác nhận thứ tự sắp xếp hợp lệ
+        $direction = in_array($direction, ['asc', 'desc']) ? $direction : 'asc';
+
+        // Lấy danh sách bàn và phân trang, áp dụng sắp xếp
+        $tables = $query->orderBy($sort, $direction)->paginate(10);
+
 
         // Trả về view cùng với kết quả
         return view('admin.tables.index', compact('tables', 'title'));
     }
+
+
+
 
 
     public function create()
@@ -88,7 +125,7 @@ class TableController extends Controller
             }
         }
 
-        return view('admin.tables.edit', compact('table','title'));
+        return view('admin.tables.edit', compact('table', 'title'));
     }
 
 
@@ -171,7 +208,7 @@ class TableController extends Controller
     {
         $title = 'Khôi Phục Danh Sách Bàn';
         $tables = Table::onlyTrashed()->paginate(10);
-        return view('admin.tables.trash', compact('tables','title'));
+        return view('admin.tables.trash', compact('tables', 'title'));
     }
 
     public function restore($id)

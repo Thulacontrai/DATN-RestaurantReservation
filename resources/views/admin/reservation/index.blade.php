@@ -117,12 +117,33 @@
                                     <thead>
                                         <tr>
 
-                                            <th>Mã Đặt Chỗ</th>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.reservation.index', array_merge(request()->query(), ['sort' => 'id', 'direction' => request('sort') === 'id' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}">
+                                                    Mã Đặt Chỗ
+                                                    <i
+                                                        class="bi bi-arrow-{{ request('sort') === 'id' ? (request('direction') === 'asc' ? 'up' : 'down') : '' }}"></i>
+                                                </a>
+                                            </th>
                                             <th>Tên Khách Hàng</th>
-                                            <th>Số Lượng Khách</th>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.reservation.index', array_merge(request()->query(), ['sort' => 'guest_count', 'direction' => request('sort') === 'guest_count' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}">
+                                                    Số Lượng Khách
+                                                    <i
+                                                        class="bi bi-arrow-{{ request('sort') === 'guest_count' ? (request('direction') === 'asc' ? 'up' : 'down') : '' }}"></i>
+                                                </a>
+                                            </th>
                                             <th>Thời Gian Đặt</th>
-                                            {{-- <th>Bàn</th> --}}
-                                            <th>Tiền cọc</th>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.reservation.index', array_merge(request()->query(), ['sort' => 'deposit_amount', 'direction' => request('sort') === 'deposit_amount' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}">
+                                                    Tiền Cọc
+                                                    <i
+                                                        class="bi bi-arrow-{{ request('sort') === 'deposit_amount' ? (request('direction') === 'asc' ? 'up' : 'down') : '' }}"></i>
+                                                </a>
+                                            </th>
+
                                             <th>Ghi Chú</th>
                                             <th>Trạng Thái</th>
                                             <th>Hành Động</th>
@@ -135,9 +156,9 @@
                                                 <td>{{ $reservation->customer->name ?? 'Không rõ' }}</td>
                                                 <td>{{ $reservation->guest_count ?? 'N/A' }}</td>
                                                 <td style="text-align: center">
-                                                    <span>
-                                                        {{ \Carbon\Carbon::parse($reservation->reservation_date . ' ' . $reservation->reservation_time)->format('H:i:s') }}<br>
-                                                        {{ \Carbon\Carbon::parse($reservation->reservation_date)->format('d/m/Y') }}
+                                                    <span class="text-success">
+                                                        {{ \Carbon\Carbon::parse($reservation->reservation_date . ' ' . $reservation->reservation_time)->format('H:i:s') }}</span><br>
+                                                    {{ \Carbon\Carbon::parse($reservation->reservation_date)->format('d/m/Y') }}
                                                 </td>
 
 
@@ -167,7 +188,7 @@
 
                                                     <div class="actions">
                                                         <a href="{{ route('admin.reservation.show', $reservation->id) }}"
-                                                            class="editRow" data-id="{{ $reservation->id }}" 
+                                                            class="editRow" data-id="{{ $reservation->id }}"
                                                             data-bs-toggle="tooltip" data-bs-placement="top"
                                                             title="Chi Tiết">
                                                             <i class="bi bi-list text-green"></i>

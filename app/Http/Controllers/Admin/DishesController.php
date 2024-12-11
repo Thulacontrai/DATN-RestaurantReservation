@@ -35,38 +35,59 @@ class DishesController extends Controller
         $query = Dishes::query();
         $title = 'Món Ăn';
 
-        if ($request->filled('dish_name')) {
+        // Lọc theo tên món ăn nếu có
+        $query->when($request->filled('dish_name'), function ($query) use ($request) {
             $query->where('name', 'like', '%' . $request->dish_name . '%');
-        }
+        });
 
-        if ($request->filled('category_id')) {
+        // Lọc theo loại món ăn nếu có
+        $query->when($request->filled('category_id'), function ($query) use ($request) {
             $query->where('category_id', $request->category_id);
-        }
+        });
 
-        if ($request->filled('status')) {
+        // Lọc theo trạng thái món ăn nếu có
+        $query->when($request->filled('status'), function ($query) use ($request) {
             $query->where('status', $request->status);
-        }
+        });
 
-        // Kiểm tra và áp dụng trạng thái active/inactive nếu có
-        if ($request->filled('is_active')) {
-            $isActive = $request->is_active;
-            $query->where('is_active', $isActive); // Lọc theo trạng thái
-        } else {
-            // Nếu không có tham số, lấy cả active và inactive dish
-            // Mặc định sẽ lấy cả hai
-        }
+        // Lọc theo trạng thái is_active nếu có
+        $query->when($request->filled('is_active'), function ($query) use ($request) {
+            $query->where('is_active', $request->is_active);
+        });
 
-        $dishes = Dishes::latest()->paginate(10);
+        // Kiểm tra tham số sort và direction từ request
+        $sort = $request->input('sort', 'price'); // Mặc định sắp xếp theo 'price'
+        $direction = $request->input('direction', 'asc'); // Mặc định sắp xếp tăng dần
 
+        // Xác nhận cột sắp xếp hợp lệ
+        $allowedSorts = ['price', 'name']; // Các cột được phép sắp xếp
+        $sort = in_array($sort, $allowedSorts) ? $sort : 'price';
+
+        // Xác nhận thứ tự sắp xếp hợp lệ
+        $direction = in_array($direction, ['asc', 'desc']) ? $direction : 'asc';
+
+        // Áp dụng sắp xếp vào query
+        $query->orderBy($sort, $direction);
+
+        // Lấy danh sách món ăn và phân trang
+        $dishes = $query->paginate(10);
+
+
+
+        // Kiểm tra nếu yêu cầu là ajax
         if ($request->ajax()) {
             return response()->json([
                 'html' => view('admin.dish.dishes.partials.dishes_table', compact('dishes'))->render(),
             ]);
         }
 
+        // Lấy tất cả các danh mục món ăn
         $categories = Category::all();
         return view('admin.dish.dishes.index', compact('dishes', 'categories', 'title'));
     }
+
+
+
 
 
     public function create()

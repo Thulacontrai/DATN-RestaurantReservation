@@ -14,8 +14,10 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('reservations:check-status')->everyMinute();
         $schedule->command('reservation:check')->everyFifteenMinutes();
-
+        // Lệnh kiểm tra và cập nhật mã giảm giá mỗi ngày
+        $schedule->command('coupons:check-expiry')->daily();
     }
+
 
 
     /**
@@ -23,11 +25,8 @@ class Kernel extends ConsoleKernel
      */
     protected function commands(): void
     {
-        $this->load(__DIR__.'/Commands');
+        $this->load(__DIR__ . '/Commands');
 
         require base_path('routes/console.php');
     }
-
-
-
 }

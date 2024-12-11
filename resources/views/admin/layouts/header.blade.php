@@ -1,7 +1,7 @@
 <div class="page-header">
     <div class="toggle-sidebar" id="toggle-sidebar"><i class="bi bi-list"></i></div>
 
-    
+
     @if (isset($title))
         @include('components.breadcrumb', ['title' => $title ?? ''])
     @endif

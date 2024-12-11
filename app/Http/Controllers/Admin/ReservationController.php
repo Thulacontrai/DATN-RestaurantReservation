@@ -96,8 +96,19 @@ class ReservationController extends Controller
             }
         }
 
-        // Lấy danh sách đặt bàn với phân trang
-        $reservations = Reservation::latest()->paginate(10);
+        // Lấy tham số sort và direction từ request
+        $sort = $request->input('sort', 'id'); // Mặc định sắp xếp theo 'id'
+        $direction = $request->input('direction', 'asc'); // Mặc định sắp xếp tăng dần
+
+        // Xác nhận cột sắp xếp hợp lệ
+        $allowedSorts = ['id', 'guest_count', 'deposit_amount']; // Các cột được phép sắp xếp
+        $sort = in_array($sort, $allowedSorts) ? $sort : 'id';
+
+        // Xác nhận thứ tự sắp xếp hợp lệ
+        $direction = in_array($direction, ['asc', 'desc']) ? $direction : 'asc';
+
+        // Lấy danh sách đặt chỗ và áp dụng sắp xếp
+        $reservations = Reservation::orderBy($sort, $direction)->paginate(10);
 
 
         // Truyền các biến tới view
@@ -277,7 +288,7 @@ class ReservationController extends Controller
         $reservationDate = \Carbon\Carbon::parse($reservation->reservation_date)->format('Y-m-d');
         $reservationTime = \Carbon\Carbon::parse($reservation->reservation_time)->format('H:i');
 
-        return view('admin.reservation.edit', compact('reservation', 'customers', 'coupons', 'reservationDate', 'reservationTime','title'));
+        return view('admin.reservation.edit', compact('reservation', 'customers', 'coupons', 'reservationDate', 'reservationTime', 'title'));
     }
 
 
@@ -371,7 +382,7 @@ class ReservationController extends Controller
     {
         $title = 'Chi Tiết Đặt Bàn';
         $reservation = Reservation::with('customer')->findOrFail($id);
-        return view('admin.reservation.show', compact('reservation','title'));
+        return view('admin.reservation.show', compact('reservation', 'title'));
     }
 
 
@@ -697,7 +708,6 @@ class ReservationController extends Controller
                 'msg' => 'Đăng nhập thành công!',
                 'user' => $user,
             ]);
-
         }
     }
 
@@ -986,7 +996,7 @@ class ReservationController extends Controller
         //lấy ra đơn đặt bàn
         $reservationId = $request->reservation_id;
         $reservation = Reservation::query()->FindOrfail($reservationId);
-        //lấy ra giờ check-in 
+        //lấy ra giờ check-in
         $start_time = Carbon::parse($reservation->reservation_time);
         $end_time = $start_time->copy()->addHours(1);
         $tables = $request->tables;

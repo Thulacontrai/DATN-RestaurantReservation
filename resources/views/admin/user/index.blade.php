@@ -115,7 +115,7 @@
 
 
 
-                             <!-- Phần hiển thị phân trang bên phải -->
+                                <!-- Phần hiển thị phân trang bên phải -->
                                 <div class="flex items-center space-x-3">
                                     <!-- Nút Previous -->
                                     @if ($users->onFirstPage())
@@ -150,7 +150,8 @@
                                                 Trang Cuối</i></span>
                                         </button>
                                     @endif
-                                </div></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

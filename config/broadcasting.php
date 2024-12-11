@@ -32,21 +32,22 @@ return [
 
         'pusher' => [
             'driver' => 'pusher',
-            'key' => env('PUSHER_APP_KEY'),
-            'secret' => env('PUSHER_APP_SECRET'),
-            'app_id' => env('PUSHER_APP_ID'),
+            'key' => env('PUSHER_APP_KEY'),  // Lấy key từ .env
+            'secret' => env('PUSHER_APP_SECRET'),  // Lấy secret từ .env
+            'app_id' => env('PUSHER_APP_ID'),  // Lấy app_id từ .env
             'options' => [
-                'cluster' => env('PUSHER_APP_CLUSTER'),
-                'host' => env('PUSHER_HOST') ?: 'api-'.env('PUSHER_APP_CLUSTER', 'mt1').'.pusher.com',
-                'port' => env('PUSHER_PORT', 443),
-                'scheme' => env('PUSHER_SCHEME', 'https'),
-                'encrypted' => true,
-                'useTLS' => env('PUSHER_SCHEME', 'https') === 'https',
+                'cluster' => env('PUSHER_APP_CLUSTER'),  // Lấy cluster từ .env
+                'host' => env('PUSHER_HOST') ?: 'api-' . env('PUSHER_APP_CLUSTER', 'mt1') . '.pusher.com',  // Host mặc định nếu không có Pusher_HOST
+                'port' => env('PUSHER_PORT', 443),  // Cổng mặc định là 443
+                'scheme' => env('PUSHER_SCHEME', 'https'),  // Giao thức https mặc định
+                'encrypted' => true,  // Mã hóa kết nối
+                'useTLS' => env('PUSHER_SCHEME', 'https') === 'https',  // Sử dụng TLS nếu sử dụng https
             ],
             'client_options' => [
-                // Guzzle client options: https://docs.guzzlephp.org/en/stable/request-options.html
+                // Cấu hình thêm cho Guzzle client nếu cần thiết
             ],
         ],
+
 
         'ably' => [
             'driver' => 'ably',

@@ -33,14 +33,21 @@ class CategoryController extends Controller
         $query = Category::query();
         $title = 'Thực Đơn';
 
+        // Lọc theo tên category
         if ($request->filled('name')) {
             $query->where('name', 'like', '%' . $request->name . '%');
         }
 
-        $categories = Category::latest()->paginate(10);
+        // Lấy danh sách categories với phân trang
+        $categories = $query->latest()->paginate(10);
 
-        return view('admin.dish.category.index', compact('categories', 'title'));
+        // Trả về view với dữ liệu
+        return view('admin.dish.category.index', [
+            'categories' => $categories,
+            'title' => $title
+        ]);
     }
+
 
     public function create()
     {
