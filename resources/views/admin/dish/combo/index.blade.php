@@ -51,9 +51,31 @@
                                 <table class="table v-middle m-0">
                                     <thead>
                                         <tr>
-                                            <th>Tên Combo</th>
-                                            <th>Giá Combo</th>
-                                            <th>Số Lượng Món Ăn</th>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.combo.index', array_merge(request()->query(), ['sort' => 'name', 'direction' => request('sort') === 'name' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}">
+                                                    Tên Combo
+                                                    <i
+                                                        class="bi bi-arrow-{{ request('sort') === 'name' ? (request('direction') === 'asc' ? 'up' : 'down') : '' }}"></i>
+                                                </a>
+                                            </th>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.combo.index', array_merge(request()->query(), ['sort' => 'price', 'direction' => request('sort') === 'price' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}">
+                                                    Giá Combo
+                                                    <i
+                                                        class="bi bi-arrow-{{ request('sort') === 'price' ? (request('direction') === 'asc' ? 'up' : 'down') : '' }}"></i>
+                                                </a>
+                                            </th>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.combo.index', array_merge(request()->query(), ['sort' => 'quantity_dishes', 'direction' => request('sort') === 'quantity_dishes' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}">
+                                                    Số Lượng Món
+                                                    <i
+                                                        class="bi bi-arrow-{{ request('sort') === 'quantity_dishes' ? (request('direction') === 'asc' ? 'up' : 'down') : '' }}"></i>
+                                                </a>
+                                            </th>
+
                                             <th>Hình Ảnh</th>
                                             <th>Mô Tả</th>
                                             <th>Tính Năng</th>
@@ -156,7 +178,7 @@
                                 </table>
                             </div>
 
-                         
+
 
                         </div>
                         <!-- Pagination -->

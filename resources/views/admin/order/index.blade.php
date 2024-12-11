@@ -36,21 +36,78 @@
                                             class="form-control form-control-sm" placeholder="Tìm kiếm theo mã đơn hàng">
                                     </div>
                                     <div class="col-auto">
+                                        <select name="status" id="status" class="form-control form-control-sm">
+                                            <option value="">Tất Cả</option>
+                                            <option value="waiting" {{ request('status') === 'waiting' ? 'selected' : '' }}>
+                                                Đang Chờ</option>
+                                            <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>
+                                                Chờ Xử Lý</option>
+                                            <option value="completed"
+                                                {{ request('status') === 'completed' ? 'selected' : '' }}>Đã Hoàn Thành
+                                            </option>
+                                            <option value="cancelled"
+                                                {{ request('status') === 'cancelled' ? 'selected' : '' }}>Đã Hủy</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-auto">
                                         <button type="submit" class="btn btn-sm btn-primary">Tìm kiếm</button>
                                     </div>
                                 </div>
                             </form>
 
+
                             <div class="table-responsive">
                                 <table class="table v-middle m-0">
                                     <thead>
                                         <tr>
-                                            <th>Mã Đơn Hàng</th>
-                                            <th>Mã Đặt Bàn</th>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.order.index', array_merge(request()->query(), ['sort' => 'id', 'direction' => request('direction') === 'asc' && request('sort') === 'id' ? 'desc' : 'asc'])) }}">
+                                                    Mã Hoá Đơn
+                                                    <i
+                                                        class="bi bi-arrow-{{ request('sort') === 'id' ? (request('direction') === 'asc' ? 'up' : 'down') : 'up-down' }}">
+                                                    </i>
+                                                </a>
+                                            </th>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.order.index', array_merge(request()->query(), ['sort' => 'reservation_id', 'direction' => request('direction') === 'asc' && request('sort') === 'reservation_id' ? 'desc' : 'asc'])) }}">
+                                                    Mã Đặt Bàn
+                                                    <i
+                                                        class="bi bi-arrow-{{ request('sort') === 'reservation_id' ? (request('direction') === 'asc' ? 'up' : 'down') : 'up-down' }}">
+                                                    </i>
+                                                </a>
+                                            </th>
                                             <th>Nhân Viên</th>
-                                            <th>Bàn</th>
-                                            <th>Tổng Tiền</th>
-                                            <th>Số Tiền Cuối Cùng</th>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.order.index', array_merge(request()->query(), ['sort' => 'id', 'direction' => request('direction') === 'asc' && request('sort') === 'id' ? 'desc' : 'asc'])) }}">
+                                                    Bàn
+                                                    <i
+                                                        class="bi bi-arrow-{{ request('sort') === 'id' ? (request('direction') === 'asc' ? 'up' : 'down') : 'up-down' }}">
+                                                    </i>
+                                                </a>
+                                            </th>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.order.index', array_merge(request()->query(), ['sort' => 'total_amount', 'direction' => request('direction') === 'asc' && request('sort') === 'total_amount' ? 'desc' : 'asc'])) }}">
+                                                    Tổng Tiền
+                                                    <i
+                                                        class="bi bi-arrow-{{ request('sort') === 'total_amount' ? (request('direction') === 'asc' ? 'up' : 'down') : 'up-down' }}">
+                                                    </i>
+                                                </a>
+                                            </th>
+                                            <th>Loại Hoá Đơn</th>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.order.index', array_merge(request()->query(), ['sort' => 'final_amount', 'direction' => request('direction') === 'asc' && request('sort') === 'final_amount' ? 'desc' : 'asc'])) }}">
+                                                    Số Tiền Cuối Cùng
+                                                    <i
+                                                        class="bi bi-arrow-{{ request('sort') === 'final_amount' ? (request('direction') === 'asc' ? 'up' : 'down') : 'up-down' }}">
+                                                    </i>
+                                                </a>
+                                            </th>
                                             <th>Trạng Thái</th>
                                             <th>Ngày Tạo</th>
                                             <th>Hành Động</th>
@@ -64,6 +121,16 @@
                                                 <td>{{ $order->staff->name ?? 'Không rõ' }}</td>
                                                 <td>{{ $order->tables['0']->id ?? 'Không rõ' }}</td>
                                                 <td>{{ number_format($order->total_amount, 0, ',', '.') }} VND</td>
+                                                <td>
+                                                    @if ($order->order_type === 'dine_in')
+                                                        <span class="badge rounded-pill shade-primary">Dùng Tại Chỗ</span>
+                                                    @elseif ($order->order_type === 'take_away')
+                                                        <span class="badge rounded-pill shade-yellow">Mang Về</span>
+                                                    @else
+                                                        <span class="badge rounded-pill shade-red">Giao Hàng</span>
+                                                    @endif
+                                                </td>
+
                                                 <td>{{ number_format($order->final_amount, 0, ',', '.') }} VND</td>
 
                                                 <td>
@@ -81,7 +148,8 @@
                                                 {{-- <td>{{ $order->created_at->format('Y-m-d H:i') }}</td> --}}
                                                 <td style="text-align: center">
 
-                                                    {{ \Carbon\Carbon::parse($order->change_date . ' ' . $order->change_time)->format('H:i:s') }}<br>
+                                                    <span
+                                                        class="text-success">{{ \Carbon\Carbon::parse($order->change_date . ' ' . $order->change_time)->format('H:i:s') }}</span><br>
                                                     {{ \Carbon\Carbon::parse($order->change_date)->format('d/m/Y') }}
                                                 </td>
                                                 <td>

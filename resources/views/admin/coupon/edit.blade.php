@@ -38,8 +38,7 @@
                                     <div class="col-md-6">
                                         <!-- Mã Coupon -->
                                         <div class="mb-3">
-                                            <label for="code" class="form-label">Mã Giảm Giá <span
-                                                    class="text-danger">*</span></label>
+                                            <label for="code" class="form-label">Mã Giảm Giá </label>
                                             <div class="input-group">
                                                 <span class="input-group-text bg-info text-white"><i
                                                         class="bi bi-upc-scan"></i></span>
@@ -63,8 +62,7 @@
 
                                         <!-- Số Lượt Sử Dụng Tối Đa -->
                                         <div class="mb-3">
-                                            <label for="max_uses" class="form-label">Số Lượt Sử Dụng Tối Đa <span
-                                                    class="text-danger">*</span></label>
+                                            <label for="max_uses" class="form-label">Số Lượt Sử Dụng Tối Đa </label>
                                             <div class="input-group">
                                                 <span class="input-group-text bg-warning text-white"><i
                                                         class="bi bi-person-check"></i></span>
@@ -101,8 +99,7 @@
                                     <div class="col-md-6">
                                         <!-- Thời Gian Bắt Đầu -->
                                         <div class="mb-3">
-                                            <label for="start_time" class="form-label">Thời Gian Bắt Đầu <span
-                                                    class="text-danger">*</span></label>
+                                            <label for="start_time" class="form-label">Thời Gian Bắt Đầu </label>
                                             <div class="input-group">
                                                 <span class="input-group-text bg-info"><i
                                                         class="bi bi-calendar-date text-white"></i></span>
@@ -117,8 +114,7 @@
 
                                         <!-- Thời Gian Kết Thúc -->
                                         <div class="mb-3">
-                                            <label for="end_time" class="form-label">Thời Gian Kết Thúc <span
-                                                    class="text-danger">*</span></label>
+                                            <label for="end_time" class="form-label">Thời Gian Kết Thúc </label>
                                             <div class="input-group">
                                                 <span class="input-group-text bg-danger"><i
                                                         class="bi bi-calendar-x text-white"></i></span>
@@ -150,8 +146,7 @@
 
                                         <!-- Giá Trị Giảm -->
                                         <div class="mb-3" id="discount_amount_div" style="display: none;">
-                                            <label for="discount_amount" class="form-label">Số Tiền Giảm Giá <span
-                                                    class="text-danger">*</span></label>
+                                            <label for="discount_amount" class="form-label">Số Tiền Giảm Giá </label>
                                             <div class="input-group">
                                                 <span class="input-group-text bg-primary text-white">₫</span>
                                                 <input type="number" class="form-control" id="discount_amount"
@@ -167,8 +162,7 @@
 
                                         <!-- Giảm Giá (%) -->
                                         <div class="mb-3" id="discount_percentage_div" style="display: none;">
-                                            <label for="discount_percentage" class="form-label">Giảm Giá (%) <span
-                                                    class="text-danger">*</span></label>
+                                            <label for="discount_percentage" class="form-label">Giảm Giá (%) </label>
                                             <div class="input-group">
                                                 <span class="input-group-text bg-success text-white">%</span>
                                                 <select class="form-control" id="discount_percentage"

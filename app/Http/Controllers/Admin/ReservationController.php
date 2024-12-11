@@ -96,8 +96,19 @@ class ReservationController extends Controller
             }
         }
 
-        // Lấy danh sách đặt bàn với phân trang
-        $reservations = Reservation::latest()->paginate(10);
+        // Lấy tham số sort và direction từ request
+        $sort = $request->input('sort', 'id'); // Mặc định sắp xếp theo 'id'
+        $direction = $request->input('direction', 'asc'); // Mặc định sắp xếp tăng dần
+
+        // Xác nhận cột sắp xếp hợp lệ
+        $allowedSorts = ['id', 'guest_count', 'deposit_amount']; // Các cột được phép sắp xếp
+        $sort = in_array($sort, $allowedSorts) ? $sort : 'id';
+
+        // Xác nhận thứ tự sắp xếp hợp lệ
+        $direction = in_array($direction, ['asc', 'desc']) ? $direction : 'asc';
+
+        // Lấy danh sách đặt chỗ và áp dụng sắp xếp
+        $reservations = Reservation::orderBy($sort, $direction)->paginate(10);
 
 
         // Truyền các biến tới view
@@ -691,7 +702,12 @@ class ReservationController extends Controller
 
                 return [$reservation, $user];
             });
-            return redirect()->route('reservationSuccessfully.client')->with('reservation', $reservation);
+
+            return redirect()->route('reservationSuccessfully.client')->with([
+                'reservation' => $reservation,
+                'msg' => 'Đăng nhập thành công!',
+                'user' => $user,
+            ]);
         }
     }
 

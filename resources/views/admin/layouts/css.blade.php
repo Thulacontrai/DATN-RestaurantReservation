@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 <style>
     html,
     body {

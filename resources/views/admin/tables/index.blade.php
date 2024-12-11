@@ -39,54 +39,65 @@
                             <div class="filter-form">
                                 <form method="GET" action="{{ route('admin.table.index') }}" class="mb-3">
                                     <div class="row g-2">
+                                        <!-- Tìm kiếm theo số bàn -->
                                         <div class="col-auto">
                                             <input type="text" id="search-name" name="name"
                                                 class="form-control form-control-sm" placeholder="Tìm kiếm bàn"
                                                 value="{{ request('name') }}">
                                         </div>
-                                        {{-- <div class="col-auto">
-                                            <select name="table_type" id="search-table-type"
-                                                class="form-select form-select-sm">
-                                                <option value="">-- Loại bàn --</option>
-                                                <option value="Thường"
-                                                    {{ request('table_type') == 'Thường' ? 'selected' : '' }}>Thường
-                                                </option>
-                                                <option value="VIP"
-                                                    {{ request('table_type') == 'VIP' ? 'selected' : '' }}>VIP</option>
-                                            </select>
-                                        </div> --}}
+
+                                        <!-- Lọc theo trạng thái bàn -->
                                         <div class="col-auto">
                                             <select name="status" id="search-status" class="form-select form-select-sm">
-                                                <option value="">-- Trạng thái --</option>
+                                                <option value="">Tất Cả</option>
                                                 <option value="Available"
                                                     {{ request('status') == 'Available' ? 'selected' : '' }}>Có sẵn</option>
                                                 <option value="Reserved"
                                                     {{ request('status') == 'Reserved' ? 'selected' : '' }}>Đã đặt trước
                                                 </option>
-                                                <option value="In Use"
-                                                    {{ request('status') == 'In Use' ? 'selected' : '' }}>Đang sử dụng
+                                                <option value="Occupied"
+                                                    {{ request('status') == 'Occupied' ? 'selected' : '' }}>Đang sử dụng
                                                 </option>
                                             </select>
                                         </div>
+
+
+
+                                        <!-- Nút Tìm kiếm và làm mới -->
                                         <div class="col-auto">
                                             <button type="submit" class="btn btn-sm btn-primary">Tìm kiếm</button>
                                             <a href="{{ route('admin.table.index') }}" class="btn btn-sm btn-success">
                                                 <i class="bi bi-arrow-repeat"></i>
                                             </a>
                                         </div>
-
                                     </div>
                                 </form>
-
-
                             </div>
+
+
 
                             <div class="table-responsive">
                                 <table class="table v-middle table-hover m-0">
                                     <thead>
                                         <tr>
-                                            <th>Khu Vực</th>
-                                            <th>Số Bàn</th>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.table.index', array_merge(request()->query(), ['sort' => 'area', 'direction' => request('sort') === 'area' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}">
+                                                    Khu Vực
+                                                    <i
+                                                        class="bi bi-arrow-{{ request('sort') === 'area' ? (request('direction') === 'asc' ? 'up' : 'down') : '' }}"></i>
+                                                </a>
+                                            </th>
+
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.table.index', array_merge(request()->query(), ['sort' => 'table_number', 'direction' => request('sort') === 'table_number' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}">
+                                                    Số Bàn
+                                                    <i
+                                                        class="bi bi-arrow-{{ request('sort') === 'table_number' ? (request('direction') === 'asc' ? 'up' : 'down') : '' }}"></i>
+                                                </a>
+                                            </th>
+
                                             <th>Trạng Thái</th>
                                             <th>Hành Động</th>
                                         </tr>

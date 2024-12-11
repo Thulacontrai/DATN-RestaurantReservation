@@ -29,9 +29,22 @@ class CouponController extends Controller
         $this->middleware('permission:Xóa mã giảm giá', ['only' => ['destroy', 'trash', 'forceDelete']]);
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $title = 'Phiếu Giảm Giá';
+
+        // Lấy tham số sort, direction, code và status từ request
+        $sort = $request->input('sort', 'code');
+        $direction = $request->input('direction', 'asc');
+        $code = $request->input('code');
+        $status = $request->input('status');
+
+        // Xác nhận cột sắp xếp hợp lệ
+        $allowedSorts = ['code', 'max_uses'];
+        $sort = in_array($sort, $allowedSorts) ? $sort : 'code';
+
+        // Xác nhận thứ tự sắp xếp hợp lệ
+        $direction = in_array($direction, ['asc', 'desc']) ? $direction : 'asc';
 
         // Lấy danh sách các coupon sắp hết hạn trong 24 giờ
         $UpcomingCouponEvent = Coupon::where('end_time', '>', now())
@@ -52,12 +65,27 @@ class CouponController extends Controller
             event(new OverdueCouponEvent($coupon));
         }
 
-        // Lấy danh sách coupon với phân trang
-        $coupons = Coupon::paginate(10);
+        // Lấy danh sách coupon với phân trang, sắp xếp và lọc theo mã và trạng thái
+        $coupons = Coupon::query();
+
+        // Lọc theo mã coupon nếu có
+        if ($code) {
+            $coupons->where('code', 'like', "%{$code}%");
+        }
+
+        // Lọc theo trạng thái nếu có
+        if ($status) {
+            $coupons->where('status', $status);
+        }
+
+        // Áp dụng sắp xếp
+        $coupons = $coupons->orderBy($sort, $direction)->paginate(10);
 
         // Trả về view với dữ liệu
         return view('admin.coupon.index', compact('UpcomingCouponEvent', 'OverdueCouponEvent', 'coupons', 'title'));
     }
+
+
 
 
 

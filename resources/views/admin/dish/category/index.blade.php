@@ -30,7 +30,7 @@
                                 <div class="row g-2">
                                     <div class="col-auto">
                                         <input type="text" id="search-name" name="name"
-                                            class="form-control form-control-sm" placeholder="Tìm kiếm theo tên category"
+                                            class="form-control form-control-sm" placeholder="Tìm kiếm Tên Thực Đơn"
                                             value="{{ request('name') }}">
                                     </div>
                                     <div class="col-auto">
@@ -98,59 +98,7 @@
                                 {{ $categories->links() }}
                             </div>
 
-                               {{-- <!-- Pagination -->
-                        <div class="d-flex justify-content-between align-items-center bg-white p-4">
-                            <!-- Phần hiển thị phân trang bên trái -->
-                            <div class="mb-4 flex sm:mb-0 text-center">
-                                <span style="font-size: 15px">
-                                    <i class="bi bi-chevron-compact-left"></i>
-                                    <i class="bi bi-chevron-compact-right"></i>
-                                    <span class="text-sm font-normal text-gray-500 dark:text-gray-400">
-                                        Hiển thị <strong
-                                            class="font-semibold text-secondary ">{{ $categories->firstItem() }}-{{ $categories->lastItem() }}</strong>
-                                        trong tổng số <strong
-                                            class="font-semibold text-secondary ">{{ $categories->total() }}</strong>
-                                    </span>
-                                </span>
-                            </div>
 
-                            <!-- Phần hiển thị phân trang bên phải -->
-                            <div class="flex items-center space-x-3">
-                                <!-- Nút Previous -->
-                                @if ($categories->onFirstPage())
-                                    <button class="inline-flex  p-1 pl-2 bg-success text-white  cursor-not-allowed"
-                                        style="border-radius: 5px; border: 2px solid rgb(136, 243, 136);">
-                                        <span style="font-size: 15px"><i class="bi bi-chevron-compact-left"></i>Trước</span>
-                                    </button>
-                                @else
-                                    <a href="{{ $categories->previousPageUrl() }}">
-                                        <button class="inline-flex  p-1 pl-2  bg-success text-white "
-                                            style="border-radius: 5px;    border: 2px solid rgb(136, 243, 136);">
-                                            <span style="font-size: 15px"><i class="bi bi-chevron-double-left"></i>
-                                                Trước</span>
-                                        </button>
-                                    </a>
-                                @endif
-
-                                <!-- Nút Next -->
-                                @if ($categories->hasMorePages())
-                                    <a href="{{ $categories->nextPageUrl() }}">
-                                        <button class="inline-flex  p-1 pl-2 bg-success text-white"
-                                            style="border-radius: 5px;    border: 2px solid rgb(136, 243, 136);">
-                                            <span style="font-size: 15px"> Sau <i
-                                                    class="bi bi-chevron-compact-right"></i></span>
-                                        </button>
-                                    </a>
-                                @else
-                                    <button class="inline-flex  p-1 pl-2 bg-primary text-white cursor-not-allowed"
-                                        style="border-radius: 5px;    border: 2px solid rgb(83, 150, 216);">
-                                        <span style="font-size: 15px">
-                                            Trang Cuối</i></span>
-                                    </button>
-                                @endif
-                            </div>
-
-                        </div> --}}
                         </div>
                     </div>
                 </div>

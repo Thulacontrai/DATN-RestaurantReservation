@@ -4,6 +4,7 @@
 
 @section('content')
     @include('admin.layouts.messages')
+
     <!-- Content wrapper scroll start -->
     <div class="content-wrapper-scroll">
 
@@ -39,7 +40,7 @@
                                     </div>
                                     <div class="col-auto">
                                         <select name="category_id" class="form-control form-control-sm">
-                                            <option value="">Chọn loại món ăn</option>
+                                            <option value="">Tất Cả</option>
                                             @foreach ($categories as $category)
                                                 <option value="{{ $category->id }}"
                                                     {{ request('category_id') == $category->id ? 'selected' : '' }}>
@@ -50,7 +51,7 @@
                                     </div>
                                     <div class="col-auto">
                                         <select name="status" class="form-control form-control-sm">
-                                            <option value="">Chọn trạng thái</option>
+                                            <option value="">Tất Cả Trạng Thái</option>
                                             <option value="available"
                                                 {{ request('status') == 'available' ? 'selected' : '' }}>Có sẵn</option>
                                             <option value="out_of_stock"
@@ -59,15 +60,12 @@
                                             <option value="reserved"
                                                 {{ request('status') == 'reserved' ? 'selected' : '' }}>Đã đặt trước
                                             </option>
-                                            <option value="in_use" {{ request('status') == 'in_use' ? 'selected' : '' }}>
-                                                Đang sử dụng</option>
-                                            <option value="completed"
-                                                {{ request('status') == 'completed' ? 'selected' : '' }}>Hoàn thành
+                                            <option value="inactive"
+                                                {{ request('status') == 'inactive' ? 'selected' : '' }}>Không hoạt động
                                             </option>
-                                            <option value="cancelled"
-                                                {{ request('status') == 'cancelled' ? 'selected' : '' }}>Đã hủy</option>
                                         </select>
                                     </div>
+
                                     <div class="col-auto">
                                         <button type="submit" class="btn btn-sm btn-primary">Tìm kiếm</button>
                                         <a href="{{ route('admin.dishes.index') }}" class="btn btn-sm btn-success">
@@ -77,15 +75,36 @@
                                 </div>
                             </form>
 
+
+
                             <div class="table-responsive">
                                 <table class="table v-middle m-0">
                                     <thead>
                                         <tr>
-                                            <th>Tên Món Ăn</th>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.dishes.index', array_merge(request()->query(), ['sort' => 'name', 'direction' => request('direction') === 'asc' && request('sort') === 'name' ? 'desc' : 'asc'])) }}">
+                                                    Tên Món Ăn
+                                                    <i
+                                                        class="bi bi-arrow-{{ request('sort') === 'name' ? (request('direction') === 'asc' ? 'up' : 'down') : 'up-down' }}"></i>
+                                                </a>
+                                            </th>
+
                                             <th>Loại Món Ăn</th>
-                                            <th>Giá</th>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.dishes.index', array_merge(request()->query(), ['sort' => 'price', 'direction' => request('direction') === 'asc' && request('sort') === 'price' ? 'desc' : 'asc'])) }}">
+                                                    Giá Món Ăn
+                                                    <i
+                                                        class="bi bi-arrow-{{ request('sort') === 'price' ? (request('direction') === 'asc' ? 'up' : 'down') : 'up-down' }}">
+                                                    </i>
+                                                </a>
+                                            </th>
+
+
                                             <th>Hình Ảnh</th>
                                             <th>Trạng Thái</th>
+                                            <th>Tính Năng</th>
                                             <th>Hành Động</th>
                                         </tr>
                                     </thead>
@@ -162,8 +181,8 @@
                                                         </a>
 
                                                         <a href="{{ route('admin.dishes.edit', $dish->id) }}"
-                                                            class="" data-bs-toggle="tooltip" data-bs-placement="top"
-                                                            title="Sửa">
+                                                            class="" data-bs-toggle="tooltip"
+                                                            data-bs-placement="top" title="Sửa">
                                                             <i class="bi bi-pencil-square text-warning"></i>
                                                         </a>
                                                         <a href="#" class="deleteRow" data-bs-toggle="tooltip"
@@ -430,5 +449,28 @@
         left: calc(100% - var(--circle-diameter) - var(--switch-offset));
         -webkit-box-shadow: var(--circle-checked-shadow);
         box-shadow: var(--circle-checked-shadow);
+    }
+
+    /* Làm nổi bật mũi tên khi được chọn */
+    .bi-arrow-up-short,
+    .bi-arrow-down-short {
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+
+    .bi-arrow-up-short.text-primary {
+        color: #007bff;
+        /* Màu sắc nổi bật cho mũi tên lên */
+    }
+
+    .bi-arrow-down-short.text-primary {
+        color: #dc3545;
+        /* Màu sắc nổi bật cho mũi tên xuống */
+    }
+
+    /* Thêm hiệu ứng mượt mà khi nhấn vào mũi tên */
+    .bi-arrow-up-short:hover,
+    .bi-arrow-down-short:hover {
+        transform: scale(1.2);
     }
 </style>
