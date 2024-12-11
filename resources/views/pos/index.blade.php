@@ -239,7 +239,6 @@
                 </div>
             </div>
         </div>
-
     </header>
     <div class="wrapper">
         <div class="container-fluid d-flex flex-grow-1 px-0">
@@ -293,38 +292,48 @@
                     <!-- Phần Danh sách Món ăn -->
                     <div class="row" id="dish-list" style="max-height: 600px; overflow-y: auto;">
                         @foreach ($dishes as $dish)
-                            <div class="col-md-3 dish-item" data-category="{{ $dish->category->id }}"
-                                data-dish-id="{{ $dish->id }}" data-dish-price="{{ $dish->price }}">
+                            <div class="col-md-3 dish-item {{ $dish->is_active == 0 || $dish->status == 'out_of_stock' ? 'disabled' : '' }}"
+                                data-category="{{ $dish->category->id }}"
+                                @if ($dish->is_active && $dish->status != 'out_of_stock') data-dish-id="{{ $dish->id }}" 
+            data-dish-price="{{ $dish->price }}" @endif>
                                 <div class="card menu-item">
-                                    <img class="btn btn-add-dish" data-dish-id="{{ $dish->id }}"
-                                        src="{{ asset($dish->image ? 'storage/' . $dish->image : 'images/placeholder.jpg') }}"
+                                    <img src="{{ asset($dish->image ? 'storage/' . $dish->image : 'images/placeholder.jpg') }}"
                                         alt="{{ $dish->name }}" class="img-fluid rounded"
-                                        style="height: 200px; object-fit: cover;" />
+                                        style="height: 200px; object-fit: cover; {{ $dish->is_active == 0 || $dish->status == 'out_of_stock' ? 'filter: grayscale(100%); opacity: 0.6;' : '' }}" />
                                     <div class="card-body text-center">
                                         <h5 class="card-price text-primary">{{ number_format($dish->price, 0, ',', '.') }}
                                             VND</h5>
                                         <p class="card-title">{{ \Str::limit($dish->name, 20, '...') }}</p>
+                                        @if ($dish->is_active == 0 || $dish->status == 'out_of_stock')
+                                            <p class="text-danger">Không khả dụng</p>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
                         @endforeach
+
                         @foreach ($combo as $combo)
-                            <div class="col-md-3 dish-combo" data-category="combo" data-combo-id="{{ $combo->id }}"
-                                data-combo-price="{{ $combo->price }}">
+                            <div class="col-md-3 dish-combo {{ $combo->is_active == 0 || $combo->status == 'out_of_stock' ? 'disabled' : '' }}"
+                                data-category="combo"
+                                @if ($combo->is_active) data-combo-id="{{ $combo->id }}"
+                                data-combo-price="{{ $combo->price }}" @endif>
                                 <div class="card menu-item">
-                                    <img class="btn btn-add-combo" data-combo-id="{{ $combo->id }}"
-                                        src="{{ asset($combo->image ? 'storage/' . $combo->image : 'images/placeholder.jpg') }}"
+                                    <img src="{{ asset($combo->image ? 'storage/' . $combo->image : 'images/placeholder.jpg') }}"
                                         alt="{{ $combo->name }}" class="img-fluid rounded"
-                                        style="height: 200px; object-fit: cover;" />
+                                        style="height: 200px; object-fit: cover; {{ $combo->is_active == 0 || $combo->status == 'out_of_stock' ? 'filter: grayscale(100%); opacity: 0.6;' : '' }}" />
                                     <div class="card-body text-center">
                                         <h5 class="card-price text-primary">
-                                            {{ number_format($combo->price, 0, ',', '.') }}
-                                            VND</h5>
+                                            {{ number_format($combo->price, 0, ',', '.') }} VND
+                                        </h5>
                                         <p class="card-title">{{ \Str::limit($combo->name, 20, '...') }}</p>
+                                        @if ($combo->is_active == 0 || $combo->status == 'out_of_stock')
+                                            <p class="text-danger">Không khả dụng</p>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
                         @endforeach
+
                     </div>
                 </div>
             </div>
@@ -370,11 +379,12 @@
             const card = event.target.closest('.dish-item');
             const combo = event.target.closest('.dish-combo');
 
-            if (card) {
+            if (card && !card.classList.contains('disabled')) {
                 const dishId = card.dataset.dishId;
                 addDishToOrder(dishId, selectedTableId);
             }
-            if (combo) {
+
+            if (combo && !combo.classList.contains('disabled')) {
                 const comboId = combo.dataset.comboId;
                 addComboToOrder(comboId, selectedTableId);
             }
@@ -1092,7 +1102,7 @@ ${availableTables.map(table => `
         }
     });
 </script>
-@vite(['resources\js\posTable.js', 'resources\js\orderItem.js'])
+@vite(['resources/js/posTable.js', 'resources/js/orderItem.js', 'resources/js/DishStatusUpdated.js'])
 <style>
     .wrapper {
         display: flex;
