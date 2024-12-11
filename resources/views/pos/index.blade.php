@@ -1,7 +1,17 @@
 @extends('pos.layouts.master')
 
 @section('title', 'POS | Trang chủ')
+<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+<style>
+    .swal2-container .select2-dropdown {
+        z-index: 1060 !important;
+    }
 
+    .swal2-container .select2-container--default .select2-selection--multiple {
+        width: 100%;
+    }
+</style>
 @section('content')
     @if (session('error'))
         <script>
@@ -66,9 +76,8 @@
                                 <label for="roomTable">Phòng/bàn</label>
                                 <select id="roomTable">
                                     <option value="">Chọn phòng bàn</option>
-                                    @foreach ($availableTables as $table )
-                                        
-                                    <option value="{{$table->table_id}}">{{$table->table_number}}</option>
+                                    @foreach ($availableTables as $table)
+                                        <option value="{{ $table->table_id }}">{{ $table->table_number }}</option>
                                     @endforeach
                                     <!-- Các tùy chọn khác -->
                                 </select>
@@ -254,11 +263,13 @@
                         style="max-height: 600px; overflow-y: auto;" id="layoutTable">
                         @foreach ($tables as $table)
                             <div class="table-card {{ strtolower(trim($table->status)) }}"
-                                data-table-id="{{ $table->id }}" data-status="{{ $table->status }}">
+                                data-table-id="{{ $table->id }}" data-status="{{ $table->status }}"
+                                data-order-id="@foreach ($table->orders as $column) {{ $column->reservation->user_name ?? null }} @endforeach">
                                 <span class="table-number">Bàn {{ $table->table_number }}</span>
                                 <div class="table-o">
                                     @foreach ($table->orders as $column)
-                                        <span><i class="fa-solid fa-id-card"></i> {{ $column->id ?? null }}</span>
+                                        <span><i class="fa-solid fa-id-card"></i>
+                                            {{ $column->reservation->id ?? ($column->id ?? null) }}</span>
                                     @endforeach
                                 </div>
                             </div>
@@ -271,8 +282,10 @@
                     <div class="filter-section mb-4 d-flex justify-content-start flex-nowrap">
                         <button class="btn btn-outline-primary filter-btnn me-2 active" data-category="all">Tất
                             cả</button>
+                        <button class="btn btn-outline-primary filter-btnn me-2"
+                            data-category="combo">Combo({{ $combo->count() }})</button>
                         @foreach ($cate as $cate)
-                            <button class="btn btn-outline-light filter-btnn me-2"
+                            <button class="btn btn-outline-primary filter-btnn me-2"
                                 data-category="{{ $cate->id }}">{{ $cate->name }}({{ $cate->dishes->count() }})</button>
                         @endforeach
                     </div>
@@ -291,6 +304,23 @@
                                         <h5 class="card-price text-primary">{{ number_format($dish->price, 0, ',', '.') }}
                                             VND</h5>
                                         <p class="card-title">{{ \Str::limit($dish->name, 20, '...') }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                        @foreach ($combo as $combo)
+                            <div class="col-md-3 dish-combo" data-category="combo" data-combo-id="{{ $combo->id }}"
+                                data-combo-price="{{ $combo->price }}">
+                                <div class="card menu-item">
+                                    <img class="btn btn-add-combo" data-combo-id="{{ $combo->id }}"
+                                        src="{{ asset($combo->image ? 'storage/' . $combo->image : 'images/placeholder.jpg') }}"
+                                        alt="{{ $combo->name }}" class="img-fluid rounded"
+                                        style="height: 200px; object-fit: cover;" />
+                                    <div class="card-body text-center">
+                                        <h5 class="card-price text-primary">
+                                            {{ number_format($combo->price, 0, ',', '.') }}
+                                            VND</h5>
+                                        <p class="card-title">{{ \Str::limit($combo->name, 20, '...') }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -338,9 +368,16 @@
         });
         document.querySelector('#dish-list').addEventListener('click', function(event) {
             const card = event.target.closest('.dish-item');
-            if (!card) return;
-            const dishId = card.dataset.dishId;
-            addDishToOrder(dishId, selectedTableId);
+            const combo = event.target.closest('.dish-combo');
+
+            if (card) {
+                const dishId = card.dataset.dishId;
+                addDishToOrder(dishId, selectedTableId);
+            }
+            if (combo) {
+                const comboId = combo.dataset.comboId;
+                addComboToOrder(comboId, selectedTableId);
+            }
         });
         document.querySelector('#notification-button').addEventListener('click', function(event) {
             notificationButton(selectedTableId);
@@ -362,7 +399,7 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            const url = `/Ppayment/${selectedTableId}`;
+                            const url = `/viewCheckOut/${selectedTableId}`;
                             window.location.href = url;
                         } else {
                             Swal.fire({
@@ -393,18 +430,25 @@
                                             return response.json();
                                         })
                                         .then((json) => {
-                                            return fetch(json.redirect_url, {
-                                                method: 'POST',
-                                                headers: {
-                                                    'X-CSRF-TOKEN': document
-                                                        .querySelector(
-                                                            'meta[name="csrf-token"]'
-                                                        )
-                                                        .getAttribute(
-                                                            'content'),
-                                                    'Content-Type': 'application/json',
-                                                },
-                                            });
+                                            if (json.redirect_url && json.redirect_url
+                                                .includes('checkoutt')) {
+                                                return fetch(json.redirect_url, {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'X-CSRF-TOKEN': document
+                                                            .querySelector(
+                                                                'meta[name="csrf-token"]'
+                                                            )
+                                                            .getAttribute(
+                                                                'content'),
+                                                        'Content-Type': 'application/json',
+                                                    },
+                                                });
+                                            } else {
+                                                const url =
+                                                    `/viewCheckOut/${selectedTableId}`;
+                                                window.location.href = url;
+                                            }
                                         })
                                         .then((response) => {
                                             if (!response.ok) {
@@ -461,32 +505,86 @@
         }
 
         function createOrder(tableId) {
-            Swal.fire({
-                title: "Nhận gọi món cho bàn này?",
-                showDenyButton: true,
-                confirmButtonText: "Đúng",
-                denyButtonText: `Hủy`
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    showNotification('Tạo đơn thành công');
-                    fetch('/create-order/' + tableId, {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                    .getAttribute('content'),
-                                'Content-Type': 'application/json'
+
+            fetch('/checkAvailableTables', {
+                    method: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector(
+                                'meta[name="csrf-token"]')
+                            .getAttribute('content'),
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error('Failed to fetch available tables');
+                    return response.json();
+                })
+                .then(data => {
+                    const availableTables = data.tables || [];
+                    Swal.fire({
+                        title: 'Nhận gọi món',
+                        html: `
+          <div class="container">
+            <div class="mb-3">
+              <label for="tableRoom" class="form-label">Phòng/Bàn</label><br>
+              <select id="tableRoom" class="form-select" multiple>
+${availableTables.map(table => `
+  <option value="${table.id}" ${table.id == tableId ? 'selected' : ''}>
+    Bàn ${table.table_number}
+  </option>
+`).join('')}
+                </select>
+            </div>
+          </div>
+        `,
+                        showCancelButton: true,
+                        confirmButtonText: 'Xác nhận',
+                        cancelButtonText: 'Hủy',
+                        didOpen: () => {
+                            const $tableRoom = $('#tableRoom');
+                            $tableRoom.select2({
+                                allowClear: true,
+                                dropdownParent: $('.swal2-container')
+                            });
+                        },
+                        preConfirm: () => {
+                            const tableRoom = $('#tableRoom').val();
+                            if (!tableRoom.length) {
+                                Swal.showValidationMessage('Vui lòng nhập đầy đủ thông tin');
+                                return false;
                             }
-                        })
-                        .then(response => {
-                            if (!response.ok) throw new Error('Network response was not ok');
-                            return response.json();
-                        })
-                        .then(data => showOrderDetails(tableId))
-                        .catch(() => showNotification('Lỗi khi tạo đơn', 'error'));
-                } else if (result.isDenied) {
-                    showNotification('Tạo đơn thất bại', 'error');
-                }
-            });
+
+                            return {
+                                tableRoom,
+                            };
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            showNotification('Tạo đơn thành công');
+                            fetch('/create-order', {
+                                    method: 'POST',
+                                    headers: {
+                                        'X-CSRF-TOKEN': document.querySelector(
+                                                'meta[name="csrf-token"]')
+                                            .getAttribute('content'),
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({
+                                        table_id: result.value.tableRoom,
+                                    })
+                                })
+                                .then(response => {
+                                    if (!response.ok) throw new Error(
+                                        'Network response was not ok');
+                                    return response.json();
+                                })
+                                .then(data => showOrderDetails(tableId))
+                                .catch(() => showNotification('Lỗi khi tạo đơn', 'error'));
+                        } else if (result.isDenied) {
+                            showNotification('Tạo đơn thất bại', 'error');
+                        }
+                    });
+                })
         }
         const orderDetails = document.getElementById('order-details');
         orderDetails.addEventListener("click", function(event) {
@@ -494,29 +592,54 @@
             if (dishElement) {
                 const dishId = dishElement.dataset.dishId;
                 const dishStatus = dishElement.dataset.dishStatus;
+                const dishType = dishElement.dataset.dishType;
                 const dishOrder = dishElement.dataset.dishOrder;
                 if (event.target.classList.contains("plus-item")) {
-                    increaseQuantity(dishId, selectedTableId);
+                    if (dishType == 1) {
+                        increaseQuantity(dishId, selectedTableId);
+                    } else {
+                        increaseQuantityy(dishId, selectedTableId, dishType);
+                    }
                 }
                 if (event.target.classList.contains("minus-item")) {
                     if (dishStatus == 'chờ xử lý') {
-                        decreaseQuantity(dishId, selectedTableId);
+                        if (dishType == 1) {
+                            decreaseQuantity(dishId, selectedTableId);
+                        } else {
+                            decreaseQuantityy(dishId, selectedTableId, dishType);
+                        }
                     } else {
                         const dishInformed = dishElement.dataset.dishInformed;
                         const dishProcessing = dishElement.dataset.dishProcessing;
                         const dishQuantity = dishElement.dataset.dishQuantity;
                         if (dishInformed > dishProcessing || dishQuantity > dishProcessing) {
-                            decreaseQuantity(dishId, selectedTableId);
+                            if (dishType == 1) {
+                                decreaseQuantity(dishId, selectedTableId);
+                            } else {
+                                decreaseQuantityy(dishId, selectedTableId, dishType);
+                            }
                         } else {
-                            canelItem(dishId, selectedTableId, dishOrder)
+                            if (dishType == 1) {
+                                canelItem(dishId, selectedTableId, dishOrder)
+                            } else {
+                                canelItemm(dishId, selectedTableId, dishOrder, dishType)
+                            }
                         }
                     }
                 }
                 if (event.target.classList.contains("delete-item")) {
-                    deleteItem(dishId, selectedTableId);
+                    if (dishType == 1) {
+                        deleteItem(dishId, selectedTableId);
+                    } else {
+                        deleteItemm(dishId, selectedTableId, dishType);
+                    }
                 }
                 if (event.target.classList.contains("delette-item")) {
-                    deletteItem(dishId, selectedTableId);
+                    if (dishType == 1) {
+                        deletteItem(dishId, selectedTableId);
+                    } else {
+                        deletteItemm(dishId, selectedTableId, dishType);
+                    }
                 }
             }
         });
@@ -561,6 +684,47 @@
             });
         }
 
+        function canelItemm(dishId, selectedTableId, dishOrder, dishType) {
+            Swal.fire({
+                title: 'Nhập lý do hủy',
+                input: 'text',
+                inputPlaceholder: 'Nhập lý do...',
+                showCancelButton: true,
+                confirmButtonText: 'Xác nhận',
+                cancelButtonText: 'Hủy'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const reason = result.value;
+                    fetch(`/canelItemm`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                    .getAttribute('content'),
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                table_id: selectedTableId,
+                                dish_id: dishId,
+                                reason: reason,
+                                dishOrder: dishOrder,
+                                dishType: dishType
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                showNotification('Hủy món thành công!', 'success');
+                            } else {
+                                showNotification('Lỗi khi xóa', 'error');
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
+                } else {
+                    showNotification('Hủy món thất bại', 'info');
+                }
+            });
+        }
+
         function increaseQuantity(dishId, selectedTableId) {
             fetch(`/increaseQuantity`, {
                     method: 'POST',
@@ -583,6 +747,31 @@
                 .catch(error => console.error('Error:', error));
         }
 
+        function increaseQuantityy(dishId, selectedTableId, dishType) {
+            fetch(`/increaseQuantityy`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                            .getAttribute('content'),
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        table_id: selectedTableId,
+                        dish_id: dishId,
+                        dishType: dishType
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {} else {
+                        console.log(data);
+
+                        showNotification('Món đã hết nguyên liệu', 'error')
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
         function decreaseQuantity(dishId, selectedTableId) {
             fetch(`/decreaseQuantity`, {
                     method: 'POST',
@@ -594,6 +783,29 @@
                     body: JSON.stringify({
                         table_id: selectedTableId,
                         dish_id: dishId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {} else {
+                        showNotification('Món đã hết nguyên liệu', 'error')
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function decreaseQuantityy(dishId, selectedTableId, dishType) {
+            fetch(`/decreaseQuantityy`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                            .getAttribute('content'),
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        table_id: selectedTableId,
+                        dish_id: dishId,
+                        dishType: dishType
                     })
                 })
                 .then(response => response.json())
@@ -653,6 +865,55 @@
             });
         }
 
+        function deleteItemm(dishId, selectedTableId, dishType) {
+            Swal.fire({
+                title: 'Nhập lý do hủy',
+                input: 'text',
+                inputPlaceholder: 'Nhập lý do...',
+                showCancelButton: true,
+                confirmButtonText: 'Xác nhận',
+                cancelButtonText: 'Hủy',
+                preConfirm: () => {
+                    const reason = Swal.getInput().value.trim();
+                    if (!reason) {
+                        Swal.showValidationMessage(
+                            'Vui lòng nhập lý do hủy');
+                        return false;
+                    }
+                    return reason;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const reason = result.value;
+                    fetch(`/deleteItemm`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                    .getAttribute('content'),
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                table_id: selectedTableId,
+                                dish_id: dishId,
+                                reason: reason,
+                                dishType: dishType
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                showNotification('Hủy món thành công!', 'success');
+                            } else {
+                                showNotification('Lỗi khi xóa', 'error');
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
+                } else {
+                    showNotification('Hủy món thất bại', 'info');
+                }
+            });
+        }
+
 
         function deletteItem(dishId, selectedTableId) {
             fetch(`/deleteItem`, {
@@ -665,6 +926,31 @@
                     body: JSON.stringify({
                         table_id: selectedTableId,
                         dish_id: dishId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showNotification('Hủy món thành công!', 'success');
+                    } else {
+                        showNotification('Lỗi khi xóa', 'error');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function deletteItemm(dishId, selectedTableId, dishType) {
+            fetch(`/deleteItemm`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                            .getAttribute('content'),
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        table_id: selectedTableId,
+                        dish_id: dishId,
+                        dishType: dishType
                     })
                 })
                 .then(response => response.json())
@@ -709,6 +995,36 @@
             }
         }
 
+        function addComboToOrder(comboId, selectedTableId) {
+            if (selectedTableId) {
+                fetch(`/add-combo-to-order`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                .getAttribute('content'),
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            table_id: selectedTableId,
+                            combo_id: comboId
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showNotification('Thêm món thành công')
+                        } else {
+                            console.log(data);
+
+                            showNotification('Món đã hết nguyên liệu', 'error')
+                        }
+                    })
+                    .catch(error => console.log('Error:', error));
+            } else {
+                showNotification('Hãy chọn bàn trước khi thêm món', 'error')
+            }
+        }
+
         function showOrderDetails(tableId) {
             fetch('/order-details/' + tableId, {
                     method: 'POST',
@@ -735,7 +1051,6 @@
             const selectedTableIds = data.table.tables.map(table => String(table.table_number));
             tableCards.forEach(card => {
                 const isSelected = selectedTableIds.includes(card.getAttribute('data-table-id'));
-                console.log();
 
                 if (isSelected) {
                     card.style.backgroundColor = '#007bff';
@@ -1035,12 +1350,12 @@
         transform: translate3d(0, 0, 2em);
     }
 
-    .table-o{
+    .table-o {
         width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 </style>
 

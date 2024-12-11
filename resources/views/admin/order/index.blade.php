@@ -18,13 +18,13 @@
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <div class="card-title">Danh sách hoá đơn</div>
 
-                            <!-- Nút Thêm Mới và Khôi Phục -->
+                            {{-- <!-- Nút Thêm Mới và Khôi Phục -->
                             <div class="d-flex gap-2">
                                 <a href="{{ route('admin.order.trash') }}"
                                     class="btn btn-sm btn-secondary d-flex align-items-center">
                                     <i class="bi bi-trash3 me-2"></i> Khôi Phục
                                 </a>
-                            </div>
+                            </div> --}}
                         </div>
 
                         <div class="card-body">
@@ -96,19 +96,19 @@
                                                             title="Sửa">
                                                             <i class="bi bi-pencil-square text-warning"></i>
                                                         </a>
-                                                        <a href="" class="viewRow" data-bs-toggle="tooltip"
+                                                        {{-- <a href="" class="viewRow" data-bs-toggle="tooltip"
                                                             data-bs-placement="top" title="Xoá">
                                                             <form action="{{ route('admin.order.destroy', $order->id) }}"
                                                                 method="POST" style="display:inline-block;">
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button type="submit" class="btn btn-link p-0"
-                                                                    style="margin-top: 15px;">
+                                                                   >
                                                                     <i class="bi bi-trash text-danger"
                                                                         style="font-size: 1.2rem;"></i>
                                                                 </button>
                                                             </form>
-                                                        </a>
+                                                        </a> --}}
                                                     </div>
                                                 </td>
                                             </tr>
@@ -121,11 +121,59 @@
                                 </table>
                             </div>
 
-                            <!-- Pagination -->
-                            <div class="pagination justify-content-center mt-3">
-                                {{-- {{ $orders->links() }} --}}
+
+
+                        </div> <!-- Pagination -->
+                        <div class="d-flex justify-content-between align-items-center bg-white p-4">
+                            <!-- Phần hiển thị phân trang bên trái -->
+                            <div class="mb-4 flex sm:mb-0 text-center">
+                                <span style="font-size: 15px">
+                                    <i class="bi bi-chevron-compact-left"></i>
+
+                                    <span class="text-sm font-normal text-gray-500 dark:text-gray-400">
+                                        Hiển thị <strong
+                                            class="font-semibold text-secondary ">{{ $orders->firstItem() }}-{{ $orders->lastItem() }}</strong>
+                                        trong tổng số <strong
+                                            class="font-semibold text-secondary ">{{ $orders->total() }}</strong>
+                                    </span> <i class="bi bi-chevron-compact-right"></i>
+                                </span>
                             </div>
-                            <!-- Kết thúc Pagination -->
+
+                            <!-- Phần hiển thị phân trang bên phải -->
+                            <div class="flex items-center space-x-3">
+                                <!-- Nút Previous -->
+                                @if ($orders->onFirstPage())
+                                    <button class="inline-flex  p-1 pl-2 bg-success text-white  cursor-not-allowed"
+                                        style="border-radius: 5px; border: 2px solid rgb(136, 243, 136);">
+                                        <span style="font-size: 15px"><i class="bi bi-chevron-compact-left"></i>Trước</span>
+                                    </button>
+                                @else
+                                    <a href="{{ $orders->previousPageUrl() }}">
+                                        <button class="inline-flex  p-1 pl-2  bg-success text-white "
+                                            style="border-radius: 5px;    border: 2px solid rgb(136, 243, 136);">
+                                            <span style="font-size: 15px"><i class="bi bi-chevron-double-left"></i>
+                                                Trước</span>
+                                        </button>
+                                    </a>
+                                @endif
+
+                                <!-- Nút Next -->
+                                @if ($orders->hasMorePages())
+                                    <a href="{{ $orders->nextPageUrl() }}">
+                                        <button class="inline-flex  p-1 pl-2 bg-success text-white"
+                                            style="border-radius: 5px;    border: 2px solid rgb(136, 243, 136);">
+                                            <span style="font-size: 15px"> Sau <i
+                                                    class="bi bi-chevron-compact-right"></i></span>
+                                        </button>
+                                    </a>
+                                @else
+                                    <button class="inline-flex  p-1 pl-2 bg-primary text-white cursor-not-allowed"
+                                        style="border-radius: 5px;    border: 2px solid rgb(83, 150, 216);">
+                                        <span style="font-size: 15px">
+                                            Trang Cuối</i></span>
+                                    </button>
+                                @endif
+                            </div>
 
                         </div>
                     </div>

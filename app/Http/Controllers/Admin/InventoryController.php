@@ -65,7 +65,7 @@ class InventoryController extends Controller
             }
         }
 
-        $inventoryStocks = $query->paginate(10);
+        $inventoryStocks = InventoryStock::latest()->paginate(10);
 
         $outOfStock = InventoryStock::where('quantity_stock', 0)->get();
         $lowStock = InventoryStock::whereBetween('quantity_stock', [1, 10])->get();

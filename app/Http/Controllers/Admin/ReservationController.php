@@ -97,7 +97,8 @@ class ReservationController extends Controller
         }
 
         // Lấy danh sách đặt bàn với phân trang
-        $reservations = $query->paginate(10);
+        $reservations = Reservation::latest()->paginate(10);
+
 
         // Truyền các biến tới view
         return view('admin.reservation.index', [
@@ -276,7 +277,7 @@ class ReservationController extends Controller
         $reservationDate = \Carbon\Carbon::parse($reservation->reservation_date)->format('Y-m-d');
         $reservationTime = \Carbon\Carbon::parse($reservation->reservation_time)->format('H:i');
 
-        return view('admin.reservation.edit', compact('reservation', 'customers', 'coupons', 'reservationDate', 'reservationTime','title'));
+        return view('admin.reservation.edit', compact('reservation', 'customers', 'coupons', 'reservationDate', 'reservationTime', 'title'));
     }
 
 
@@ -370,7 +371,7 @@ class ReservationController extends Controller
     {
         $title = 'Chi Tiết Đặt Bàn';
         $reservation = Reservation::with('customer')->findOrFail($id);
-        return view('admin.reservation.show', compact('reservation','title'));
+        return view('admin.reservation.show', compact('reservation', 'title'));
     }
 
 
@@ -659,18 +660,15 @@ class ReservationController extends Controller
             return redirect()->route('deposit.client', compact('customerInformation'));
         } else {
             // Thực hiện giao dịch đặt bàn mà không cần cọc
-            $reservation = DB::transaction(function () use ($request) {
+            [$reservation, $user] = DB::transaction(function () use ($request) {
                 $customer_id = null;
-
+                $user = null;
 
                 if (auth()->check()) {
-                    // Nếu đã đăng nhập, chỉ lấy customer_id
                     $customer_id = auth()->id();
                 } else {
-
                     $user = User::where('phone', $request->user_phone)->first();
-                    if (!isset($user) && $user == null) {
-                        // Nếu chưa đăng nhập, tạo tài khoản tạm thời
+                    if (!$user) {
                         $user = User::create([
                             'name' => $request->user_name,
                             'phone' => $request->user_phone,
@@ -681,8 +679,7 @@ class ReservationController extends Controller
                     $customer_id = $user->id;
                 }
 
-                // Luôn sử dụng thông tin từ form
-                return Reservation::create([
+                $reservation = Reservation::create([
                     'customer_id' => $customer_id,
                     'user_name' => $request->user_name,
                     'user_phone' => $request->user_phone,
@@ -690,10 +687,16 @@ class ReservationController extends Controller
                     'note' => $request->note,
                     'reservation_date' => $request->reservation_date,
                     'reservation_time' => $request->reservation_time,
-                    // 'deposit_amount' => 0,  // Không cần cọc validate ss
                 ]);
+
+                return [$reservation, $user];
             });
-            return redirect()->route('reservationSuccessfully.client')->with('reservation', $reservation);
+
+            return redirect()->route('reservationSuccessfully.client')->with([
+                'reservation' => $reservation,
+                'msg' => 'Đăng nhập thành công!',
+                'user' => $user,
+            ]);
         }
     }
 
@@ -721,8 +724,15 @@ class ReservationController extends Controller
     public function reservationSuccessfully(Request $request)
     {
         $reservation = session('reservation');
+        $user = session('user');
         if (isset($reservation) && $reservation != null) {
-            return view('client.reservation-successfully', compact('reservation'));
+            if (!Auth::check()) {
+                Auth::login($user);
+                $msg = session('msg');
+                return view('client.reservation-successfully', compact('reservation', 'msg'));
+            } else {
+                return view('client.reservation-successfully', compact('reservation'));
+            }
         } else {
             return redirect()->route('booking.client');
         }
@@ -738,11 +748,12 @@ class ReservationController extends Controller
                 $reservation = $request->query('extraData');
                 $data = str_replace("'", '"', $reservation);
                 $reservation = json_decode($data, true);
-                DB::transaction(function () use ($reservation, $request) {
+                $user = DB::transaction(function () use ($reservation, $request) {
 
                     $customer_id = null;
                     if (auth()->check()) {
                         $customer_id = auth()->id();
+                        $user = null;
                     } else {
                         $user = User::where('phone', $reservation['user_phone'])->first();
                         if (!isset($user) && $user == null) {
@@ -753,6 +764,7 @@ class ReservationController extends Controller
                                 'status' => 'inactive',
                             ]);
                         }
+
                         $customer_id = $user->id;
                     }
                     Reservation::create([
@@ -766,16 +778,18 @@ class ReservationController extends Controller
                         'reservation_date' => $reservation['reservation_date'],
                         'reservation_time' => $reservation['reservation_time'],
                     ]);
+                    return $user;
                 });
             } else {
                 return redirect()->back()->with('err', 'Thanh toán không thành công!');
             }
         } else {
             $reservation = $request->all();
-            DB::transaction(function () use ($request) {
+            $user = DB::transaction(function () use ($request) {
                 $customer_id = null;
                 if (auth()->check()) {
                     $customer_id = auth()->id();
+                    $user = null;
                 } else {
                     $user = User::where('phone', $request->user_phone)->first();
                     if (!isset($user) && $user == null) {
@@ -786,6 +800,7 @@ class ReservationController extends Controller
                             'status' => 'inactive',
                         ]);
                     }
+
                     $customer_id = $user->id;
                 }
                 Reservation::create([
@@ -799,9 +814,14 @@ class ReservationController extends Controller
                     'reservation_date' => $request->reservation_date,
                     'reservation_time' => $request->reservation_time,
                 ]);
+                return $user;
             });
         }
-        return redirect()->route('reservationSuccessfully.client')->with('reservation', $reservation);
+        return redirect()->route('reservationSuccessfully.client')->with([
+            'reservation' => $reservation,
+            'msg' => 'Đăng nhập thành công!',
+            'user' => $user
+        ]);
     }
 
 
@@ -819,18 +839,26 @@ class ReservationController extends Controller
             $order = Order::find($orderId);
             $order->status = 'completed';
             $order->save();
-            $table = Table::find($order->tables['0']->id);
-            $table->status = 'Available';
-            $table->save();
-            $orderTable = OrdersTable::where('order_id', $orderId)
-                ->where('table_id', $table->id)
-                ->first();
-            $orderTable->status = 'Hoàn thành';
-            $orderTable->end_time = now();
-            $orderTable->save();
+            foreach ($order->tables as $tables) {
+                $table = Table::find($tables->id);
+                $table->status = 'Available';
+                $table->save();
+                $orderTable = OrdersTable::where('order_id', $orderId)
+                    ->where('table_id', $table->id)
+                    ->first();
+                $orderTable->status = 'Hoàn thành';
+                $orderTable->end_time = now();
+                $orderTable->save();
+            }
             $tables = Table::with([
                 'orders' => function ($query) {
-                    $query->where('orders.status', '!=', 'completed');
+                    $query->where('orders.status', '!=', 'completed')
+                        ->where('orders.status', '!=', 'waiting')
+                        ->with([
+                            'reservation' => function ($query) {
+                                $query->select('id', 'user_name');
+                            }
+                        ]);
                 }
             ])->get();
             broadcast(new MessageSent($tables))->toOthers();
@@ -843,18 +871,26 @@ class ReservationController extends Controller
             $order = Order::find($orderId);
             $order->status = 'completed';
             $order->save();
-            $table = Table::find($order->tables['0']->id);
-            $table->status = 'Available';
-            $table->save();
-            $orderTable = OrdersTable::where('order_id', $orderId)
-                ->where('table_id', $table->id)
-                ->first();
-            $orderTable->status = 'Hoàn thành';
-            $orderTable->end_time = now();
-            $orderTable->save();
+            foreach ($order->tables as $tables) {
+                $table = Table::find($tables->id);
+                $table->status = 'Available';
+                $table->save();
+                $orderTable = OrdersTable::where('order_id', $orderId)
+                    ->where('table_id', $table->id)
+                    ->first();
+                $orderTable->status = 'Hoàn thành';
+                $orderTable->end_time = now();
+                $orderTable->save();
+            }
             $tables = Table::with([
                 'orders' => function ($query) {
-                    $query->where('orders.status', '!=', 'completed');
+                    $query->where('orders.status', '!=', 'completed')
+                        ->where('orders.status', '!=', 'waiting')
+                        ->with([
+                            'reservation' => function ($query) {
+                                $query->select('id', 'user_name');
+                            }
+                        ]);
                 }
             ])->get();
             broadcast(new MessageSentt($tables))->toOthers();
@@ -1070,14 +1106,24 @@ class ReservationController extends Controller
             $id = $request->id;
             $reason = $request->reason; // Lấy lý do từ request
             $reservation = Reservation::findOrFail($id);
-            $reservation->status = 'Cancelled';
-            $reservation->cancelled_reason = $reason; // Lưu lý do hủy
 
-            $reservation->save();
-            return response()->json([
-                'success' => true,
-                'message' => 'Đặt bàn đã được hủy thành công.'
-            ]);
+            if ($reservation->status != 'Completed') {
+                $reservation->status = 'Cancelled';
+                $reservation->save();
+                return response()->json([
+                    'success' => true,
+                    'icon' => 'success',
+                    'title' => 'Thành công',
+                    'message' => 'Đặt bàn đã được hủy thành công.'
+                ]);
+            } else {
+                return response()->json([
+                    'success' => true,
+                    'icon' => 'warning',
+                    'title' => 'Lỗi',
+                    'message' => 'Cõ lỗi xảy ra, vui lòng thử lại!'
+                ]);
+            }
         } catch (\Exception $e) {
             Log::error('Error cancelling reservation', [
                 'reservation_id' => $id,
@@ -1115,12 +1161,14 @@ class ReservationController extends Controller
         $reservation_table = OrdersTable::where('order_id', $orderId)
             ->where('table_id', $table->id)
             ->first();
-        $items = OrderItem::where('order_id', $orderId)->get();
+        $items = OrderItem::where('order_id', $orderId)
+            ->where('status', '!=', 'hủy')
+            ->get();
         $item = $items->all();
         $dishIds = $items->pluck('item_id')->toArray();
         $dishes = Dishes::whereIn('id', $dishIds)->get();
         $staff = User::find($order->staff_id);
-        return view('pos.receipt', compact('dishes', 'data', 'order', 'table', 'staff', 'reservation_table', 'item'))->render();
+        return view('pos.receipt', compact('dishes', 'data', 'order', 'table', 'staff', 'reservation_table', 'items'))->render();
     }
 
     // Hàm chuẩn hóa số điện thoại

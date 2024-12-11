@@ -178,14 +178,19 @@
                     .toLowerCase();
                 $('.table-container .table-card').filter(function() {
                     var tableNumber = $(this).find('.table-number').text()
-                        .toLowerCase();
+                .toLowerCase();
                     var orders = $(this).find('span:not(.table-number)').text()
                         .toLowerCase();
+                    var dataOrderId = $(this).attr('data-order-id')?.toLowerCase() ||
+                    '';
+
                     $(this).toggle(
-                        tableNumber.indexOf(searchValue) > -1 || orders.indexOf(
-                            searchValue) > -1
+                        tableNumber.indexOf(searchValue) > -1 ||
+                        orders.indexOf(searchValue) > -1 ||
+                        dataOrderId.indexOf(searchValue) > -1
                     );
                 });
+
             });
         });
         $('.filter-btn').click(function() {

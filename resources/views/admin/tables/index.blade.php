@@ -3,7 +3,7 @@
 @section('title', 'Danh Mục Bàn')
 
 @section('content')
-@include('admin.layouts.messages')
+    @include('admin.layouts.messages')
 
     <!-- Content wrapper scroll start -->
     <div class="content-wrapper-scroll">
@@ -132,56 +132,72 @@
                                     </tbody>
                                 </table>
                             </div>
+                        </div>
 
-                            <!-- Pagination -->
-                            <div class="pagination justify-content-center mt-3">
-                                <div class="flex justify-center mt-6">
-                                    <div class="inline-flex items-center space-x-2">
-                                        {{-- Previous Page Link --}}
-                                        @if ($tables->onFirstPage())
-                                            <span
-                                                class="px-4 py-2 text-gray-500 bg-gray-100 border border-gray-300 rounded-l-md cursor-not-allowed "><i
-                                                    class="bi bi-chevron-compact-left "></i></span>
-                                        @else
-                                            <a href="{{ $tables->previousPageUrl() }}"
-                                                class="px-4 py-2 text-gray-800 bg-white border border-gray-300 rounded-l-md hover:bg-indigo-500 hover:text-white transition-colors duration-200 ease-in-out"><i
-                                                    class="bi bi-chevron-compact-left"></i></a>
-                                        @endif
 
-                                        {{-- Page Numbers --}}
-                                        @foreach ($tables->getUrlRange(1, $tables->lastPage()) as $page => $url)
-                                            @if ($page == $tables->currentPage())
-                                                <span
-                                                    class="px-4 py-2 text-success bg-indigo-600 border border-indigo-600 rounded-md">{{ $page }}</span>
-                                            @else
-                                                <a href="{{ $url }}"
-                                                    class="px-4 py-2 text-gray-800 bg-white border border-gray-300 hover:bg-indigo-500 hover:text-primary transition-colors duration-200 ease-in-out">{{ $page }}</a>
-                                            @endif
-                                        @endforeach
+                        <!-- Pagination -->
+                        <div class="d-flex justify-content-between align-items-center bg-white p-4">
+                            <!-- Phần hiển thị phân trang bên trái -->
+                            <div class="mb-4 flex sm:mb-0 text-center">
+                                <span style="font-size: 15px">
+                                    <i class="bi bi-chevron-compact-left"></i>
 
-                                        {{-- Next Page Link --}}
-                                        @if ($tables->hasMorePages())
-                                            <a href="{{ $tables->nextPageUrl() }}"
-                                                class="px-4 py-2 text-gray-800 bg-white border border-gray-300 rounded-r-md hover:bg-indigo-500 hover:text-white transition-colors duration-200 ease-in-out"><i
-                                                    class="bi bi-chevron-compact-right"></i></a>
-                                        @else
-                                            <span
-                                                class="px-4 py-2 text-gray-500 bg-gray-100 border border-gray-300 rounded-r-md cursor-not-allowed"><i
-                                                    class="bi bi-chevron-compact-right"></i></span>
-                                        @endif
-                                    </div>
-                                </div>
-
+                                    <span class="text-sm font-normal text-gray-500 dark:text-gray-400">
+                                        Hiển thị <strong
+                                            class="font-semibold text-secondary ">{{ $tables->firstItem() }}-{{ $tables->lastItem() }}</strong>
+                                        trong tổng số <strong
+                                            class="font-semibold text-secondary ">{{ $tables->total() }}</strong>
+                                    </span>
+                                    <i class="bi bi-chevron-compact-right"></i>
+                                </span>
                             </div>
-                            <!-- End Pagination -->
+
+                            <!-- Phần hiển thị phân trang bên phải -->
+                            <div class="flex items-center space-x-3">
+                                <!-- Nút Previous -->
+                                @if ($tables->onFirstPage())
+                                    <button class="inline-flex  p-1 pl-2 bg-success text-white  cursor-not-allowed"
+                                        style="border-radius: 5px; border: 2px solid rgb(136, 243, 136);">
+                                        <span style="font-size: 15px"><i class="bi bi-chevron-compact-left"></i>Trước</span>
+                                    </button>
+                                @else
+                                    <a href="{{ $tables->previousPageUrl() }}">
+                                        <button class="inline-flex  p-1 pl-2  bg-success text-white "
+                                            style="border-radius: 5px;    border: 2px solid rgb(136, 243, 136);">
+                                            <span style="font-size: 15px"><i class="bi bi-chevron-double-left"></i>
+                                                Trước</span>
+                                        </button>
+                                    </a>
+                                @endif
+
+                                <!-- Nút Next -->
+                                @if ($tables->hasMorePages())
+                                    <a href="{{ $tables->nextPageUrl() }}">
+                                        <button class="inline-flex  p-1 pl-2 bg-success text-white"
+                                            style="border-radius: 5px;    border: 2px solid rgb(136, 243, 136);">
+                                            <span style="font-size: 15px"> Sau <i
+                                                    class="bi bi-chevron-compact-right"></i></span>
+                                        </button>
+                                    </a>
+                                @else
+                                    <button class="inline-flex  p-1 pl-2 bg-primary text-white cursor-not-allowed"
+                                        style="border-radius: 5px;    border: 2px solid rgb(83, 150, 216);">
+                                        <span style="font-size: 15px">
+                                            Trang Cuối</i></span>
+                                    </button>
+                                @endif
+                            </div>
 
                         </div>
 
                     </div>
 
+
                 </div>
+
             </div>
             <!-- Row end -->
+
 
         </div>
         <!-- Content wrapper end -->

@@ -62,18 +62,23 @@ Route::get('/kitchen', function() {
     return app(\App\Http\Controllers\KitchenController::class)->index();
 })->name('kitchen.index');
 
-// Route::get('/admin/dashboard', function() {
-//     if (!Auth::check()) {
-//         return redirect()->route('login/admin');
-//     }
 
-//     if (!Auth::user()->can('access admin')) {
-//         return redirect('/');
-//     }
+Route::get('/admin/dashboard', function() {
+    // Kiểm tra xem người dùng đã đăng nhập chưa
+    if (!Auth::check()) {
+        // Nếu chưa đăng nhập thì chuyển đến form đăng nhập admin
+        return redirect()->route('login/admin');
+    }
 
-//     return app(\App\Http\Controllers\KitchenController::class)->index();
-// })->name('admin.dashboard');
+    // Kiểm tra xem người dùng có bất kỳ quyền hoặc role nào không
+    if (!Auth::user()->hasAnyPermission() && !Auth::user()->roles->count()) {
+        // Nếu không có quyền và không có role thì chuyển về trang chủ
+        return redirect('/');
+    }
 
+    // Nếu có quyền hoặc role thì vào dashboard admin
+        return app(\App\Http\Controllers\Admin\DashboardController::class)->index();
+})->name('admin.dashboard.index');
 
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])

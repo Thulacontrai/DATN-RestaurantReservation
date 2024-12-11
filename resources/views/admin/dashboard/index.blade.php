@@ -82,7 +82,7 @@
                                             <i class="bi bi-circle-fill text-success me-2"></i>
                                             <div class="d-flex flex-column">
                                                 <h6>Doanh Thu Từ Đặt Bàn</h6>
-                                                <h5>{{ number_format($totalRevenue ?? 0, 0, '.', ',') }} Triệu</h5>
+                                                <h5>{{ number_format($totalRevenue ?? 0, 0, '.', ',') }} VND</h5>
                                             </div>
                                         </div>
 
@@ -685,7 +685,7 @@
 
 
 
-                <div class="col-xxl-3 col-sm-6 col-12">
+                {{-- <div class="col-xxl-3 col-sm-6 col-12">
                     <div class="card">
                         <div class="card-header">
                             <div class="card-title">Keywords</div>
@@ -946,7 +946,7 @@
                             </style>
                         </div>
                     </div>
-                </div>
+                </div> --}}
 
             </div>
 

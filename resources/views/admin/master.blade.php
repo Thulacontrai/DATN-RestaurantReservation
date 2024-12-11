@@ -10,7 +10,8 @@
 
 
     <!-- Meta -->
-    <link rel="icon" type="image/x-icon"> <!-- Common Css Files -->
+
+    <link rel="icon" href="{{asset('client/03_images/logo.png')}}" type="image/x-icon">
     <link rel="stylesheet" href="{{ asset('adminn/assets/css/animate.css') }}">
     <link rel="stylesheet" href="{{ asset('adminn/assets/fonts/bootstrap/bootstrap-icons.css') }}">
     <link rel="stylesheet" href="{{ asset('adminn/assets/css/main.min.css') }}">
@@ -33,9 +34,8 @@
 
 
             @include('admin.layouts.header')
-
-
             @include('admin.layouts.messages')
+    
 
             <!-- Left side column. contains the sidebar -->
             @include('admin.layouts.menu')
@@ -44,9 +44,9 @@
 
             <!-- Content Header (Page header) -->
             <section class="content-header">
-                <div class="alert">
-                    <h4>@yield('title-page')</h4>
-                </div>
+
+                <h4>@yield('title-page')</h4>
+
             </section>
 
             @yield('content')

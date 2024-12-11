@@ -19,20 +19,24 @@
                         <div class="card-body">
                             <div class="row g-2">
                                 <div class="col-auto">
-                                    <input type="text" id="search-name" name="name"
-                                        class="form-control form-control-sm" placeholder="Tìm kiếm "
-                                        value="{{ request('name') }}">
+                                    <!-- Input with search icon inside -->
+                                    <div class="input-group">
+                                        <input type="text" id="search-name" name="name"
+                                            class="form-control form-control-sm" placeholder="Tìm kiếm"
+                                            value="{{ request('name') }}">
+                                        <span class="input-group-text" id="search-icon">
+                                            <i class="bi bi-search"></i>
+                                        </span>
+                                    </div>
                                 </div>
                                 <div class="col-auto">
-                                    <button type="submit" class="btn btn-sm btn-primary">Tìm kiếm</button>
+                                    <!-- The search button is removed since it's no longer needed -->
                                 </div>
                             </div>
                             <div class="table-responsive">
-
                                 <table class="table v-middle m-0">
                                     <thead>
                                         <tr>
-                                            {{-- <th>ID</th> --}}
                                             <th>Mã Hoá Đơn</th>
                                             <th>Tên Khách Hàng</th>
                                             <th>Nội Dung</th>
@@ -43,8 +47,7 @@
                                     <tbody>
                                         @forelse ($feedbacks as $feedback)
                                             <tr>
-                                                {{-- <td>{{ $feedback->id }}</td> --}}
-                                                <td>{{ $feedback->order_id }}</td>
+                                                <td>{{ $feedback->reservation_id }}</td>
                                                 <td>{{ $feedback->customer->name ?? 'Khách hàng không tồn tại' }}</td>
                                                 <td id="content_{{ $feedback->id }}">{{ $feedback->content }}</td>
                                                 <td id="rating_{{ $feedback->id }}">
@@ -58,8 +61,8 @@
                                                 </td>
                                                 <td>
                                                     <div class="actions d-flex">
-                                                        <a href="#" class="editRow me-2"
-                                                            onclick="showFeedbackDetails({{ $feedback->id }})">
+                                                        <a href="{{ route('admin.feedback.show', $feedback->id) }}"
+                                                            data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight">
                                                             <i class="bi bi-list text-green"></i>
                                                         </a>
                                                         <a href="">
@@ -85,11 +88,60 @@
                                     </tbody>
                                 </table>
                             </div>
+                        </div>
 
-                            <!-- Pagination -->
-                            <div class="pagination justify-content-center mt-3">
-                                {{ $feedbacks->links() }}
+                        <!-- Pagination -->
+                        <div class="d-flex justify-content-between align-items-center bg-white p-4">
+                            <!-- Phần hiển thị phân trang bên trái -->
+                            <div class="mb-4 flex sm:mb-0 text-center">
+                                <span style="font-size: 15px">
+                                    <i class="bi bi-chevron-compact-left"></i>
+
+                                    <span class="text-sm font-normal text-gray-500 dark:text-gray-400">
+                                        Hiển thị <strong
+                                            class="font-semibold text-secondary ">{{ $feedbacks->firstItem() }}-{{ $feedbacks->lastItem() }}</strong>
+                                        trong tổng số <strong
+                                            class="font-semibold text-secondary ">{{ $feedbacks->total() }}</strong>
+                                    </span><i class="bi bi-chevron-compact-right"></i>
+                                </span>
                             </div>
+
+                            <!-- Phần hiển thị phân trang bên phải -->
+                            <div class="flex items-center space-x-3">
+                                <!-- Nút Previous -->
+                                @if ($feedbacks->onFirstPage())
+                                    <button class="inline-flex  p-1 pl-2 bg-success text-white  cursor-not-allowed"
+                                        style="border-radius: 5px; border: 2px solid rgb(136, 243, 136);">
+                                        <span style="font-size: 15px"><i class="bi bi-chevron-compact-left"></i>Trước</span>
+                                    </button>
+                                @else
+                                    <a href="{{ $feedbacks->previousPageUrl() }}">
+                                        <button class="inline-flex  p-1 pl-2  bg-success text-white "
+                                            style="border-radius: 5px;    border: 2px solid rgb(136, 243, 136);">
+                                            <span style="font-size: 15px"><i class="bi bi-chevron-double-left"></i>
+                                                Trước</span>
+                                        </button>
+                                    </a>
+                                @endif
+
+                                <!-- Nút Next -->
+                                @if ($feedbacks->hasMorePages())
+                                    <a href="{{ $feedbacks->nextPageUrl() }}">
+                                        <button class="inline-flex  p-1 pl-2 bg-success text-white"
+                                            style="border-radius: 5px;    border: 2px solid rgb(136, 243, 136);">
+                                            <span style="font-size: 15px"> Sau <i
+                                                    class="bi bi-chevron-compact-right"></i></span>
+                                        </button>
+                                    </a>
+                                @else
+                                    <button class="inline-flex  p-1 pl-2 bg-primary text-white cursor-not-allowed"
+                                        style="border-radius: 5px;    border: 2px solid rgb(83, 150, 216);">
+                                        <span style="font-size: 15px">
+                                            Trang Cuối</i></span>
+                                    </button>
+                                @endif
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -98,86 +150,23 @@
     </div>
 
 
-    <!-- Feedback Details Modal -->
-    <div class="modal fade" id="feedbackDetailsModal" tabindex="-1" role="dialog"
-        aria-labelledby="feedbackDetailsModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header ">
-                    <h5 class="modal-title text-primary" id="feedbackDetailsModalLabel">
-                        <i class="bi bi-chat-dots me-2 text-primary"></i>Chi Tiết Phản Hồi
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <div class="border rounded p-3 bg-light">
-                                <h6 class="mb-2 text-muted">ID Phản Hồi</h6>
-                                <p id="feedbackId" class="mb-0 fs-5 fw-bold text-primary"></p>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="border rounded p-3 bg-light">
-                                <h6 class="mb-2 text-muted">Mã Hóa Đơn</h6>
-                                <p id="feedbackOrderId" class="mb-0 fs-5 fw-bold text-primary"></p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <div class="border rounded p-3 bg-light">
-                                <h6 class="mb-2 text-muted">Tên Khách Hàng</h6>
-                                <p id="feedbackCustomerId" class="mb-0 fs-5 fw-bold text-primary"></p>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="border rounded p-3 bg-light">
-                                <h6 class="mb-2 text-muted">Xếp Hạng</h6>
-                                <div id="feedbackRating" class="fs-5 text-warning"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <div class="border rounded p-3 bg-light">
-                            <h6 class="mb-2 text-muted">Nội Dung Phản Hồi</h6>
-                            <p id="feedbackContent" class="mb-0 fs-5 text-primary"></p>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer justify-content-end">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="bi bi-x-circle"></i> Đóng
-                    </button>
-                </div>
+
+
+
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+        <div class="offcanvas-header">
+            <h5 id="offcanvasRightLabel">Chi tiết phản hồi</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div id="feedback-details">
+                <p><strong>Mã Hóa Đơn:</strong> {{ $feedback->reservation_id }}</p>
+                <p><strong>Tên Khách Hàng:</strong> {{ $feedback->customer->name ?? 'N/A' }}</p>
+                <p><strong>Nội Dung:</strong> {{ $feedback->content }}</p>
+                <p><strong>Xếp Hạng:</strong> {{ $feedback->rating }} ⭐</p>
             </div>
         </div>
     </div>
 
-    <script>
-        function showFeedbackDetails(id) {
-            // Lấy thông tin feedback từ hàng trong bảng
-            const feedbackId = id;
-            const orderId = document.querySelector(`#content_${id}`).parentElement.children[1].innerText.trim();
-            const customerId = document.querySelector(`#content_${id}`).parentElement.children[2].innerText.trim();
-            const content = document.querySelector(`#content_${id}`).innerText.trim();
-            const ratingElement = document.querySelector(`#rating_${id}`);
 
-            // Đổ dữ liệu vào modal
-            document.querySelector("#feedbackId").innerText = feedbackId;
-            document.querySelector("#feedbackOrderId").innerText = orderId;
-            document.querySelector("#feedbackCustomerId").innerText = customerId;
-            document.querySelector("#feedbackContent").innerText = content;
-
-            // Hiển thị xếp hạng
-            const stars = ratingElement.innerHTML.trim();
-            document.querySelector("#feedbackRating").innerHTML = stars;
-
-            // Hiển thị modal
-            const feedbackModal = new bootstrap.Modal(document.querySelector("#feedbackDetailsModal"));
-            feedbackModal.show();
-        }
-    </script>
-  
 @endsection

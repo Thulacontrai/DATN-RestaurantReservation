@@ -4,8 +4,8 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="text-center">
-                    <h5 class="uptitle wow fadeInUp">Meet Our</h5>
-                    <h2 class="wow fadeInUp">Chefs</h2>
+                    {{-- <h5 class="uptitle wow fadeInUp">Meet Our</h5> --}}
+                    <h2 class="wow fadeInUp">Đầu bếp của chúng tôi</h2>
                     <div class="spacer-single"></div>
                 </div>
             </div>

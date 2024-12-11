@@ -13,16 +13,14 @@ class PosTableUpdatedWithNoti implements ShouldBroadcastNow
 {
     use InteractsWithSockets, SerializesModels;
 
-    public $order;
     public $orderItems;
     public $tableId;
     public $notiBtn;
     public $noti = null;
 
 
-    public function __construct($order, $orderItems, $tableId, $notiBtn,$noti)
+    public function __construct($orderItems, $tableId, $notiBtn,$noti)
     {
-        $this->order = $order;
         $this->orderItems = $orderItems;
         $this->tableId = $tableId;
         $this->notiBtn = $notiBtn;

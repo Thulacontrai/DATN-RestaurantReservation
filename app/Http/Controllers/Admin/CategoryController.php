@@ -37,7 +37,7 @@ class CategoryController extends Controller
             $query->where('name', 'like', '%' . $request->name . '%');
         }
 
-        $categories = $query->paginate(10);
+        $categories = Category::latest()->paginate(10);
 
         return view('admin.dish.category.index', compact('categories', 'title'));
     }

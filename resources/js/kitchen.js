@@ -2,10 +2,9 @@ import './bootstrap';
 
 // Function to generate card templates for a dish
 function generateCardTemplate(item, updatedAtKey, buttonClass, buttonTitle, buttonIcon, buttonColor) {
-    const { id, dish, formatted_created_at, formatted_updated_at, quantity, count_cancel, order } = item;
+    const { id, combo, dish, formatted_created_at, formatted_updated_at, quantity, count_cancel, order } = item;
     const table = order.tables[0];
     const updatedAt = item[updatedAtKey];
-
     let cancelInfo = count_cancel > 0
         ? `<div class="row">
                 <p>Hủy <span class="text-danger">${count_cancel}</span> vào lúc ${formatted_updated_at}</p>
@@ -21,9 +20,9 @@ function generateCardTemplate(item, updatedAtKey, buttonClass, buttonTitle, butt
            </button>`;
 
     return `
-        <div class="order-card row" data-item-id="${id}" data-table-id="${table.id}">
+        <div class="order-card row" data-item-id="${id}" data-item-type="${item.item_type}" data-table-id="${table.id}">
             <div class="col-md-6">
-                <strong>${dish.name}</strong>
+                <strong>${item.item_type == 2 ? combo?.name : dish?.name}</strong>
                 <p>${updatedAt}</p>
             </div>
             <div class="col-md-6">
@@ -66,6 +65,8 @@ function updateUI(containerId, items, updatedAtKey, buttonClass, buttonTitle, bu
 window.Echo.channel('kitchen')
     .listen('ProcessingDishes', (e) => {
         if (e.noti) {
+            let audio = new Audio('sounds/mixkit-doorbell-tone-2864.wav');
+            audio.play();
             Swal.fire({
                 icon: 'info',
                 title: 'Thông báo',

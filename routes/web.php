@@ -210,17 +210,23 @@ Route::post('client/cancel-reservationpopup', [ReservationController::class, 'ca
 Route::post('/reservation/cancel', [ReservationController::class, 'cancel'])->name('client.cancel.reservation');
 
 Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
-Route::post('/create-order/{tableId}', [PosController::class, 'createOrder']);
+Route::post('/create-order', [PosController::class, 'createOrder']);
 Route::post('/order-details/{tableId}', [PosController::class, 'orderDetails'])->name('order-details');
 Route::post('/add-dish-to-order', [PosController::class, 'addDishToOrder']);
+Route::post('/add-combo-to-order', [PosController::class, 'addComboToOrder']);
 Route::post('/deleteItem', [PosController::class, 'deleteItem']);
+Route::post('/deleteItemm', [PosController::class, 'deleteItemm']);
 Route::post('/increaseQuantity', [PosController::class, 'increaseQuantity']);
+Route::post('/increaseQuantityy', [PosController::class, 'increaseQuantityy']);
 Route::post('/decreaseQuantity', [PosController::class, 'decreaseQuantity']);
+Route::post('/decreaseQuantityy', [PosController::class, 'decreaseQuantityy']);
 Route::post('/notification-button/{tableId}', [PosController::class, 'notificatioButton']);
 Route::post('/canelItem', [PosController::class, 'canelItem']);
+Route::post('/canelItemm', [PosController::class, 'canelItemm']);
 Route::get('/Ppayment/{table_number}', [PosController::class, 'Ppayment'])->name('Ppayment');
 Route::get('/viewCheckOut/{table_number}', [PosController::class, 'viewCheckOut'])->name('viewCheckOut');
 Route::post('/check-payment-condition', [PosController::class, 'checkPaymentPondition'])->name('checkPaymentPondition');
+Route::get('/checkAvailableTables', [PosController::class, 'checkAvailableTables'])->name('checkPaymentPondition');
 
 ///
 Route::get('reserToOrder/{reservationId}', [PosController::class, 'reserToOrder'])->name('ReToOr');
@@ -238,7 +244,6 @@ Route::delete('/order/{order_id}/item/{item_id}', [PosController::class, 'delete
 
 
 Route::post('/reservation/check-table', [PosController::class, 'checkTable'])->name('reservation.checkTable');
-
 
 
 
@@ -387,6 +392,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('coupon-trash', [CouponController::class, 'trash'])->name('coupon.trash');
     Route::patch('coupon-restore/{id}', [CouponController::class, 'restore'])->name('coupon.restore');
     Route::delete('coupon-force-delete/{id}', [CouponController::class, 'forceDelete'])->name('coupon.forceDelete');
+    Route::get('/coupon/check', [CouponController::class, 'checkCoupon'])->name('coupon.check');
+
 
 
     route::resource('feedback', FeedbackController::class);
@@ -414,7 +421,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Route::get('/dashboard/revenue', [DashboardController::class, 'getRevenue'])->name('dashboard.revenue');
 
     Route::resource('dashboard', DashboardController::class);
-  
+
 
 
 

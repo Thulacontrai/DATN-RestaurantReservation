@@ -42,7 +42,7 @@ class UserController extends Controller
             });
         }
 
-        $users = $query->latest()->paginate(10);
+        $users = User::latest()->paginate(10);
         return view('admin.user.index', [
             'users' => $users,
             'type' => 'user',
