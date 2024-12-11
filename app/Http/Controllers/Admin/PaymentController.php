@@ -29,6 +29,8 @@ class PaymentController extends Controller
     {
         $title = 'Phương Thức Thanh Toán';
         $payments = Payment::all();
+        $payments = Payment::latest()->paginate(10);
+
         return view('admin.payment.index', compact('payments', 'title'));
     }
 

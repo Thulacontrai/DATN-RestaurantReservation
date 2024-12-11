@@ -62,7 +62,7 @@ class ComboController extends Controller
             }
 
             // Phân trang kết quả
-            $combos = $query->paginate(10);
+            $combos = Combo::latest()->paginate(10);
 
             // Trả về view
             return view($this->viewPath . '.index', compact('combos', 'title'));

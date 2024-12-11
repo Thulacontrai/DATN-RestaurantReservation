@@ -1,7 +1,9 @@
 @extends('admin.master')
 
-@section('content')
+@section('title', 'Tạo giao dịch nhập kho')
 
+@section('content')
+@include('admin.layouts.messages')
 
     <div class="card mb-4">
         <div class="card-body">

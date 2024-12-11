@@ -66,7 +66,7 @@
                                             </h4>
                                             <p class="card-text text-muted mt-3">{!! Str::limit(strip_tags($combo->description), 100) !!}</p>
                                             <a href="{{ route('booking.client') }}" style="justify-content: center"
-                                                class="btn-line">Đặt Ngay</a>
+                                                class="btn-line">Đặt bàn ngay</a>
                                         </div>
                                     </div>
                                 </div>
@@ -92,7 +92,7 @@
                                         <div class="dish-item d-flex border rounded overflow-hidden"
                                             style="background: #473529;">
                                             <!-- Dish Image -->
-                                            <div class="dish-image" style="width: 40%;">
+                                            <div class="dish-image" style="width: 30%;">
                                                 <img src="{{ asset($dish->image ? 'storage/' . $dish->image : 'images/placeholder.jpg') }}"
                                                     alt="{{ $dish->name }}" class="img-fluid h-100 w-100" />
                                             </div>

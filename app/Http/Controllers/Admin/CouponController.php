@@ -34,7 +34,7 @@ class CouponController extends Controller
             $query->where('name', 'like', '%' . $request->search . '%');
         }
 
-        $coupons = $query->paginate(10); // Sử dụng paginate để phân trang
+        $coupons = Coupon::latest()->paginate(10);// Sử dụng paginate để phân trang
         return view('admin.coupon.index', compact('coupons','title'));
     }
 

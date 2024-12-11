@@ -53,7 +53,8 @@ class TableController extends Controller
         }
 
         // Phân trang kết quả
-        $tables = $query->paginate(10);
+
+        $tables = Table::latest()->paginate(10);
 
         // Trả về view cùng với kết quả
         return view('admin.tables.index', compact('tables', 'title'));

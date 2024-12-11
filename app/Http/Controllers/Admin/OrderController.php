@@ -28,6 +28,8 @@ class OrderController extends Controller
     {
         $title = 'Hoá Đơn';
         $orders = Order::all();
+        $orders = Order::latest()->paginate(10);
+
         return view('admin.order.index', compact('orders', 'title',));
     }
 

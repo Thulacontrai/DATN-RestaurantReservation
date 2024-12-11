@@ -3,7 +3,7 @@
 @section('title', 'Chi Tiết Thanh Toán')
 
 @section('content')
-
+    @include('admin.layouts.messages')
 
     <!-- Content wrapper scroll start -->
     <div class="content-wrapper-scroll">
