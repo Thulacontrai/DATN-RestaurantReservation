@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <style>
     html,
     body {

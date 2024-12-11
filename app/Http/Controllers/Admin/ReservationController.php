@@ -691,12 +691,7 @@ class ReservationController extends Controller
 
                 return [$reservation, $user];
             });
-
-            return redirect()->route('reservationSuccessfully.client')->with([
-                'reservation' => $reservation,
-                'msg' => 'Đăng nhập thành công!',
-                'user' => $user,
-            ]);
+            return redirect()->route('reservationSuccessfully.client')->with('reservation', $reservation);
         }
     }
 

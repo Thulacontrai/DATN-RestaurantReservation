@@ -7,6 +7,7 @@
     @include('admin.layouts.messages')
 
 
+
     <!-- Content wrapper scroll start -->
     <div class="content-wrapper-scroll">
         <div class="content-wrapper">
@@ -28,8 +29,18 @@
                                             <i class="bi bi-search"></i>
                                         </span>
                                     </div>
+                                    <!-- Input with search icon inside -->
+                                    <div class="input-group">
+                                        <input type="text" id="search-name" name="name"
+                                            class="form-control form-control-sm" placeholder="Tìm kiếm"
+                                            value="{{ request('name') }}">
+                                        <span class="input-group-text" id="search-icon">
+                                            <i class="bi bi-search"></i>
+                                        </span>
+                                    </div>
                                 </div>
                                 <div class="col-auto">
+                                    <!-- The search button is removed since it's no longer needed -->
                                     <!-- The search button is removed since it's no longer needed -->
                                 </div>
                             </div>
@@ -89,7 +100,59 @@
                                 </table>
                             </div>
                         </div>
+                            </div>
+                        </div>
 
+                        <!-- Pagination -->
+                        <div class="d-flex justify-content-between align-items-center bg-white p-4">
+                            <!-- Phần hiển thị phân trang bên trái -->
+                            <div class="mb-4 flex sm:mb-0 text-center">
+                                <span style="font-size: 15px">
+                                    <i class="bi bi-chevron-compact-left"></i>
+
+                                    <span class="text-sm font-normal text-gray-500 dark:text-gray-400">
+                                        Hiển thị <strong
+                                            class="font-semibold text-secondary ">{{ $feedbacks->firstItem() }}-{{ $feedbacks->lastItem() }}</strong>
+                                        trong tổng số <strong
+                                            class="font-semibold text-secondary ">{{ $feedbacks->total() }}</strong>
+                                    </span><i class="bi bi-chevron-compact-right"></i>
+                                </span>
+                            </div>
+
+                            <!-- Phần hiển thị phân trang bên phải -->
+                            <div class="flex items-center space-x-3">
+                                <!-- Nút Previous -->
+                                @if ($feedbacks->onFirstPage())
+                                    <button class="inline-flex  p-1 pl-2 bg-success text-white  cursor-not-allowed"
+                                        style="border-radius: 5px; border: 2px solid rgb(136, 243, 136);">
+                                        <span style="font-size: 15px"><i class="bi bi-chevron-compact-left"></i>Trước</span>
+                                    </button>
+                                @else
+                                    <a href="{{ $feedbacks->previousPageUrl() }}">
+                                        <button class="inline-flex  p-1 pl-2  bg-success text-white "
+                                            style="border-radius: 5px;    border: 2px solid rgb(136, 243, 136);">
+                                            <span style="font-size: 15px"><i class="bi bi-chevron-double-left"></i>
+                                                Trước</span>
+                                        </button>
+                                    </a>
+                                @endif
+
+                                <!-- Nút Next -->
+                                @if ($feedbacks->hasMorePages())
+                                    <a href="{{ $feedbacks->nextPageUrl() }}">
+                                        <button class="inline-flex  p-1 pl-2 bg-success text-white"
+                                            style="border-radius: 5px;    border: 2px solid rgb(136, 243, 136);">
+                                            <span style="font-size: 15px"> Sau <i
+                                                    class="bi bi-chevron-compact-right"></i></span>
+                                        </button>
+                                    </a>
+                                @else
+                                    <button class="inline-flex  p-1 pl-2 bg-primary text-white cursor-not-allowed"
+                                        style="border-radius: 5px;    border: 2px solid rgb(83, 150, 216);">
+                                        <span style="font-size: 15px">
+                                            Trang Cuối</i></span>
+                                    </button>
+                                @endif
                         <!-- Pagination -->
                         <div class="d-flex justify-content-between align-items-center bg-white p-4">
                             <!-- Phần hiển thị phân trang bên trái -->
@@ -142,6 +205,7 @@
                                 @endif
                             </div>
 
+
                         </div>
                     </div>
                 </div>
@@ -167,6 +231,7 @@
             </div>
         </div>
     </div>
+
 
 
 @endsection

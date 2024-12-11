@@ -167,7 +167,7 @@
 
                                                     <div class="actions">
                                                         <a href="{{ route('admin.reservation.show', $reservation->id) }}"
-                                                            class="editRow" data-id="{{ $reservation->id }}"
+                                                            class="editRow" data-id="{{ $reservation->id }}" 
                                                             data-bs-toggle="tooltip" data-bs-placement="top"
                                                             title="Chi Tiết">
                                                             <i class="bi bi-list text-green"></i>
