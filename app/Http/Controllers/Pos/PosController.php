@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers\Pos;
-
 use App\Events\ComboStatusUpdated;
 use App\Events\DishStatusUpdated;
 use App\Events\ProcessingDishes;
@@ -27,9 +26,12 @@ use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Str;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class PosController extends Controller
 {
@@ -115,6 +117,13 @@ class PosController extends Controller
                     ->where('orders.status', '!=', 'waiting');
             }
         ])->get();
+
+        $qrCodes = $tables->mapWithKeys(function ($table) {
+            $encryptedId = Crypt::encryptString($table->id);
+            $url = route('menuOrder', ['data' => $encryptedId]);
+            $qrCode = QrCode::size(150)->generate($url);
+            return [$table->id => $qrCode];
+        });
         $cate = Category::all();
         $orders = Order::with(['reservation', 'staff', 'tables', 'orderItems', 'customer'])->get();
         $dishes = Dishes::all();
@@ -136,8 +145,8 @@ class PosController extends Controller
         $availableTables = Table::where('status', 'available')->get();
         //lấy  danh sách đơn đặt bàn đã được xác nhận
         $reservations = Reservation::where('status', 'Confirmed')->paginate(5);
-        // Truyền dữ liệu tới view
         return view('pos.index', [
+            'qrCodes' => $qrCodes,
             'tables' => $tables,
             'cate' => $cate,
             'order' => $orders,
@@ -184,7 +193,19 @@ class PosController extends Controller
     // Tạo đơn hàng
     public function createOrder(Request $request)
     {
+        $user = User::where('phone', $request->phone)
+            ->where('name', $request->user)->first();
+        if (!$user) {
+            $user = User::create([
+                'phone' => $request->phone,
+                'name' => $request->user,
+                'password' => bcrypt(Str::random(10)),
+                'status' => 'inactive',
+            ]);
+        }
         $order = Order::create([
+            'customer_id' => $user->id,
+            'guest_count' => $request->quantity,
             'staff_id' => Auth::user()->id,
             'status' => 'pending',
             'total_amount' => 0,
@@ -206,6 +227,9 @@ class PosController extends Controller
                     ->with([
                         'reservation' => function ($query) {
                             $query->select('id', 'user_name');
+                        },
+                        'customer' => function ($query) {
+                            $query->select('id', 'name');
                         }
                     ]);
             }
@@ -1791,6 +1815,7 @@ class PosController extends Controller
     public function checkAvailableTables()
     {
         $availableTables = Table::where('status', 'Available')->get(['id', 'table_number']);
-        return response()->json(['tables' => $availableTables]);
+        $user = User::where('phone', '!=', null)->get(['id', 'name', 'phone']);
+        return response()->json(['tables' => $availableTables, 'users' => $user]);
     }
 }

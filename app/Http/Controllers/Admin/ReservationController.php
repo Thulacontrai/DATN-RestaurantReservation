@@ -277,7 +277,7 @@ class ReservationController extends Controller
         $reservationDate = \Carbon\Carbon::parse($reservation->reservation_date)->format('Y-m-d');
         $reservationTime = \Carbon\Carbon::parse($reservation->reservation_time)->format('H:i');
 
-        return view('admin.reservation.edit', compact('reservation', 'customers', 'coupons', 'reservationDate', 'reservationTime','title'));
+        return view('admin.reservation.edit', compact('reservation', 'customers', 'coupons', 'reservationDate', 'reservationTime', 'title'));
     }
 
 
@@ -371,7 +371,7 @@ class ReservationController extends Controller
     {
         $title = 'Chi Tiết Đặt Bàn';
         $reservation = Reservation::with('customer')->findOrFail($id);
-        return view('admin.reservation.show', compact('reservation','title'));
+        return view('admin.reservation.show', compact('reservation', 'title'));
     }
 
 
@@ -839,6 +839,11 @@ class ReservationController extends Controller
         DB::transaction(function () use ($orderId) {
             $order = Order::find($orderId);
             $order->status = 'completed';
+            $reservation = $order->reservation;
+            if ($reservation) {
+                $reservation->status = 'completed';
+                $reservation->save();
+            }
             $order->save();
             foreach ($order->tables as $tables) {
                 $table = Table::find($tables->id);
@@ -858,6 +863,9 @@ class ReservationController extends Controller
                         ->with([
                             'reservation' => function ($query) {
                                 $query->select('id', 'user_name');
+                            },
+                            'customer' => function ($query) {
+                                $query->select('id', 'name');
                             }
                         ]);
                 }
@@ -871,6 +879,11 @@ class ReservationController extends Controller
         DB::transaction(function () use ($orderId) {
             $order = Order::find($orderId);
             $order->status = 'completed';
+            $reservation = $order->reservation;
+            if ($reservation) {
+                $reservation->status = 'completed';
+                $reservation->save();
+            }
             $order->save();
             foreach ($order->tables as $tables) {
                 $table = Table::find($tables->id);
@@ -890,7 +903,11 @@ class ReservationController extends Controller
                         ->with([
                             'reservation' => function ($query) {
                                 $query->select('id', 'user_name');
+                            },
+                            'customer' => function ($query) {
+                                $query->select('id', 'name');
                             }
+
                         ]);
                 }
             ])->get();

@@ -11,6 +11,45 @@
     .swal2-container .select2-container--default .select2-selection--multiple {
         width: 100%;
     }
+
+    .table-container {
+        position: relative;
+        max-height: 600px;
+        overflow-y: auto;
+        z-index: 1;
+    }
+
+    .table-card {
+        position: relative;
+        padding: 15px;
+        margin: 10px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        transition: transform 0.2s;
+        z-index: 2;
+    }
+
+    .table-card:hover {
+        transform: scale(1.05);
+        z-index: 3;
+    }
+
+    .qr-code-container {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #fff;
+        padding: 10px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        z-index: 4;
+    }
+
+    .table-card:hover .qr-code-container {
+        display: block;
+    }
 </style>
 @section('content')
     @if (session('error'))
@@ -263,7 +302,7 @@
                         @foreach ($tables as $table)
                             <div class="table-card {{ strtolower(trim($table->status)) }}"
                                 data-table-id="{{ $table->id }}" data-status="{{ $table->status }}"
-                                data-order-id="@foreach ($table->orders as $column) {{ $column->reservation->user_name ?? null }} @endforeach">
+                                data-order-id="@foreach ($table->orders as $column) {{ $column->reservation?->user_name ?? ($column->customer?->name ?? null) }} @endforeach">
                                 <span class="table-number">Bàn {{ $table->table_number }}</span>
                                 <div class="table-o">
                                     @foreach ($table->orders as $column)
@@ -271,9 +310,15 @@
                                             {{ $column->reservation->id ?? ($column->id ?? null) }}</span>
                                     @endforeach
                                 </div>
+                                <div class="qr-code-container">
+                                    <h5>Bàn {{ $table->table_number }}</h5>
+                                    <p><b>{{ $table->status == 'Available' ? 'Bàn mở' : 'Đang sử dụng' }}</b></p>
+                                    {!! $qrCodes[$table->id] ?? '' !!}
+                                </div>
                             </div>
                         @endforeach
                     </div>
+
                 </div>
 
                 <!-- Phần hiển thị Thực đơn -->
@@ -531,19 +576,39 @@
                 })
                 .then(data => {
                     const availableTables = data.tables || [];
+                    const users = data.users || [];
                     Swal.fire({
                         title: 'Nhận gọi món',
                         html: `
           <div class="container">
             <div class="mb-3">
+                <label for="customer" class="form-label">Khách hàng</label>
+                <select id="customer" class="form-select">
+                    <option value="" disabled selected hidden>Tìm khách hàng</option>
+                    ${users.map(user => `
+                        <option value="${user.name}" data-phone="${user.phone}">
+                            ${user.name}
+                        </option>
+                        `).join('')}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="phone" class="form-label">Số điện thoại</label>
+                <input type="text" id="phone" class="form-control" placeholder="Số điện thoại">
+            </div>
+            <div class="mb-3">
               <label for="tableRoom" class="form-label">Phòng/Bàn</label><br>
               <select id="tableRoom" class="form-select" multiple>
-${availableTables.map(table => `
-  <option value="${table.id}" ${table.id == tableId ? 'selected' : ''}>
-    Bàn ${table.table_number}
-  </option>
-`).join('')}
+                    ${availableTables.map(table => `
+                        <option value="${table.id}" ${table.id == tableId ? 'selected' : ''}>
+                            Bàn ${table.table_number}
+                        </option>
+                        `).join('')}
                 </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Số khách</label>
+                <input type="number" id="adults" class="form-control" placeholder="Số khách" min="1" max="6" value="1">
             </div>
           </div>
         `,
@@ -551,21 +616,92 @@ ${availableTables.map(table => `
                         confirmButtonText: 'Xác nhận',
                         cancelButtonText: 'Hủy',
                         didOpen: () => {
+                            const MAX_GUESTS_PER_TABLE = 6;
                             const $tableRoom = $('#tableRoom');
+                            const $adults = $('#adults');
+                            const $customer = $('#customer');
+                            const $phone = $('#phone');
+
+                            $customer.select2({
+                                placeholder: 'Tìm khách hàng',
+                                tags: true,
+                                dropdownParent: $('.swal2-container'),
+                                createTag: function(params) {
+                                    const term = $.trim(params.term);
+                                    if (term === '') {
+                                        return null;
+                                    }
+                                    return {
+                                        id: term,
+                                        text: term,
+                                        isNew: true
+                                    };
+                                }
+                            });
+
                             $tableRoom.select2({
+                                placeholder: 'Chọn Phòng/Bàn',
                                 allowClear: true,
                                 dropdownParent: $('.swal2-container')
                             });
+
+                            $customer.on('change', function() {
+                                const selectedOption = $(this).find(':selected');
+                                const phone = selectedOption.data('phone') || '';
+                                $phone.val(phone);
+                            });
+
+                            $phone.on('input', function() {
+                                const newPhone = $(this).val();
+                                let matchedCustomer = null;
+                                $customer.find('option').each(function() {
+                                    if ($(this).data('phone') === newPhone) {
+                                        matchedCustomer = $(this).val();
+                                        return false;
+                                    }
+                                });
+
+                                if (matchedCustomer) {
+                                    $customer.val(matchedCustomer).trigger('change');
+                                }
+                            });
+
+                            const updateGuestLimit = () => {
+                                const selectedTables = $tableRoom.val()
+                                    .length;
+                                const maxGuests = selectedTables * MAX_GUESTS_PER_TABLE;
+                                $adults.attr('max', maxGuests);
+                                if (parseInt($adults.val()) > maxGuests) {
+                                    $adults.val(maxGuests);
+                                }
+                            };
+                            $tableRoom.on('change', updateGuestLimit);
+                            $adults.on('input', () => {
+                                const maxGuests = parseInt($adults.attr('max'));
+                                const currentValue = parseInt($adults.val());
+                                if (currentValue > maxGuests) {
+                                    $adults.val(maxGuests);
+                                } else if (currentValue < 1 || isNaN(currentValue)) {
+                                    $adults.val(1);
+                                }
+                            });
+                            updateGuestLimit();
                         },
                         preConfirm: () => {
+                            const customer = $('#customer').val();
+                            const phone = $('#phone').val();
                             const tableRoom = $('#tableRoom').val();
-                            if (!tableRoom.length) {
+                            const adults = $('#adults').val();
+                            const note = $('#note').val();
+                            if (!customer || !tableRoom.length || !phone) {
                                 Swal.showValidationMessage('Vui lòng nhập đầy đủ thông tin');
                                 return false;
                             }
-
                             return {
+                                customer,
+                                phone,
                                 tableRoom,
+                                adults,
                             };
                         }
                     }).then((result) => {
@@ -581,6 +717,9 @@ ${availableTables.map(table => `
                                     },
                                     body: JSON.stringify({
                                         table_id: result.value.tableRoom,
+                                        phone: result.value.phone,
+                                        user: result.value.customer,
+                                        quantity: result.value.adults,
                                     })
                                 })
                                 .then(response => {
@@ -661,7 +800,16 @@ ${availableTables.map(table => `
                 inputPlaceholder: 'Nhập lý do...',
                 showCancelButton: true,
                 confirmButtonText: 'Xác nhận',
-                cancelButtonText: 'Hủy'
+                cancelButtonText: 'Hủy',
+                preConfirm: () => {
+                    const reason = Swal.getInput().value.trim();
+                    if (!reason) {
+                        Swal.showValidationMessage(
+                            'Vui lòng nhập lý do hủy');
+                        return false;
+                    }
+                    return reason;
+                }
             }).then((result) => {
                 if (result.isConfirmed) {
                     const reason = result.value;
@@ -701,7 +849,16 @@ ${availableTables.map(table => `
                 inputPlaceholder: 'Nhập lý do...',
                 showCancelButton: true,
                 confirmButtonText: 'Xác nhận',
-                cancelButtonText: 'Hủy'
+                cancelButtonText: 'Hủy',
+                preConfirm: () => {
+                    const reason = Swal.getInput().value.trim();
+                    if (!reason) {
+                        Swal.showValidationMessage(
+                            'Vui lòng nhập lý do hủy');
+                        return false;
+                    }
+                    return reason;
+                }
             }).then((result) => {
                 if (result.isConfirmed) {
                     const reason = result.value;
