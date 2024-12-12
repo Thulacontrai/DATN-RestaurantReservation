@@ -32,14 +32,14 @@
                                         <input value="{{ old('name') }}" type="text" id="name" name="name"
                                             class="form-control" placeholder="Nhập tên" required>
                                         <div class="invalid-feedback">Vui lòng nhập tên người dùng.</div>
-                                        <div class="valid-feedback">Looks good!</div>
+                                        {{-- <div class="valid-feedback">Looks good!</div> --}}
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="email" class="form-label">Email</label>
                                         <input value="{{ old('email') }}" type="email" id="email" name="email"
                                             class="form-control" placeholder="Nhập email" required>
                                         <div class="invalid-feedback">Vui lòng nhập email hợp lệ.</div>
-                                        <div class="valid-feedback">Looks good!</div>
+                                        {{-- <div class="valid-feedback">Looks good!</div> --}}
                                     </div>
                                 </div>
 
@@ -50,13 +50,13 @@
                                         <input value="{{ old('phone') }}" type="number" id="phone" name="phone"
                                             class="form-control" placeholder="Nhập số điện thoại">
                                         <div class="invalid-feedback">Vui lòng nhập số điện thoại hợp lệ.</div>
-                                        <div class="valid-feedback">Looks good!</div>
+                                        {{-- <div class="valid-feedback">Looks good!</div> --}}
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="address" class="form-label">Địa Chỉ</label>
                                         <textarea id="address" name="address" class="form-control" placeholder="Nhập địa chỉ">{{ old('address') }}</textarea>
                                         <div class="invalid-feedback">Vui lòng nhập địa chỉ.</div>
-                                        <div class="valid-feedback">Looks good!</div>
+                                        {{-- <div class="valid-feedback">Looks good!</div> --}}
                                     </div>
                                 </div>
 
@@ -78,7 +78,7 @@
                                             </option>
                                         </select>
                                         <div class="invalid-feedback">Vui lòng chọn giới tính.</div>
-                                        <div class="valid-feedback">Looks good!</div>
+                                        {{-- <div class="valid-feedback">Looks good!</div> --}}
                                     </div>
                                 </div>
 
@@ -94,7 +94,7 @@
                                         <input value="{{ old('position') }}" type="text" id="position" name="position"
                                             class="form-control" placeholder="Nhập chức vụ">
                                         <div class="invalid-feedback">Vui lòng nhập chức vụ.</div>
-                                        <div class="valid-feedback">Looks good!</div>
+                                        {{-- <div class="valid-feedback">Looks good!</div> --}}
                                     </div>
                                 </div>
 
@@ -105,7 +105,7 @@
                                         <input type="file" id="avatar" name="avatar" class="form-control"
                                             accept="image/*">
                                         <div class="invalid-feedback">Vui lòng chọn ảnh đại diện hợp lệ.</div>
-                                        <div class="valid-feedback">Looks good!</div>
+                                        {{-- <div class="valid-feedback">Looks good!</div> --}}
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="status" class="form-label">Trạng Thái</label>
@@ -116,12 +116,29 @@
                                                 Không Hoạt Động</option>
                                         </select>
                                         <div class="invalid-feedback">Vui lòng chọn trạng thái.</div>
-                                        <div class="valid-feedback">Looks good!</div>
+                                        {{-- <div class="valid-feedback">Looks good!</div> --}}
                                     </div>
                                 </div>
 
                                 <div class="row">
                                     <!-- Vai Trò và Mật Khẩu -->
+                                
+
+                                    <div class="col-md-6 mb-3">
+                                        <label for="password">Mật khẩu</label>
+                                        <input value="{{ old('password') }}" type="password" name="password"
+                                            class="form-control" required>
+                                        <div class="invalid-feedback">Vui lòng nhập mật khẩu.</div>
+                                        {{-- <div class="valid-feedback">Mật khẩu mạnh</div> --}}
+                                    </div>
+
+                                    <div class="col-md-6 mb-3">
+                                        <label for="confirm_password">Xác nhận mật khẩu</label>
+                                        <input value="{{ old('confirm_password') }}" type="password"
+                                            name="confirm_password" class="form-control" required>
+                                        <div class="invalid-feedback">Vui lòng xác nhận mật khẩu.</div>
+                                        {{-- <div class="valid-feedback">Looks good!</div> --}}
+                                    </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="role_id" class="form-label">Vai Trò</label>
                                         <div class="grid grid-cols-4 mb-3  ">
@@ -137,26 +154,10 @@
                                             @endif
                                         </div>
                                         <div class="invalid-feedback">Vui lòng chọn ít nhất một vai trò.</div>
-                                        <div class="valid-feedback">Looks good!</div>
-                                    </div>
-
-                                    <div class="col-md-6 mb-3">
-                                        <label for="password">Mật khẩu</label>
-                                        <input value="{{ old('password') }}" type="password" name="password"
-                                            class="form-control" required>
-                                        <div class="invalid-feedback">Vui lòng nhập mật khẩu.</div>
-                                        <div class="valid-feedback">Looks good!</div>
-                                    </div>
-
-                                    <div class="col-md-6 mb-3">
-                                        <label for="confirm_password">Xác nhận mật khẩu</label>
-                                        <input value="{{ old('confirm_password') }}" type="password"
-                                            name="confirm_password" class="form-control" required>
-                                        <div class="invalid-feedback">Vui lòng xác nhận mật khẩu.</div>
-                                        <div class="valid-feedback">Looks good!</div>
+                                        {{-- <div class="valid-feedback">Looks good!</div> --}}
                                     </div>
                                 </div>
-
+                             
                                 <div class="text-center mt-3">
                                     <button type="submit" class="btn btn-success">Lưu Người Dùng</button>
                                 </div>

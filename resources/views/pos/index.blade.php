@@ -334,17 +334,19 @@
                         @endforeach
                     </div>
 
-                    <!-- Phần Danh sách Món ăn -->
                     <div class="row" id="dish-list" style="max-height: 600px; overflow-y: auto;">
                         @foreach ($dishes as $dish)
-                            <div class="col-md-3 dish-item {{ $dish->is_active == 0 || $dish->status == 'out_of_stock' ? 'disabled' : '' }}"
-                                data-category="{{ $dish->category->id }}"
+                            <div class="col-6 col-sm-4 col-md-3 col-lg-3 dish-item {{ $dish->is_active == 0 || $dish->status == 'out_of_stock' ? 'disabled' : '' }}"
+                                data-category="{{ $dish->category->id }}" data-dish-id="{{ $dish->id }}"
+                                data-dish-price="{{ $dish->price }}" style="padding: 10px;"
                                 @if ($dish->is_active && $dish->status != 'out_of_stock') data-dish-id="{{ $dish->id }}" 
-            data-dish-price="{{ $dish->price }}" @endif>
-                                <div class="card menu-item">
-                                    <img src="{{ asset($dish->image ? 'storage/' . $dish->image : 'images/placeholder.jpg') }}"
+                                data-dish-price="{{ $dish->price }}" @endif>
+
+                                <div class="card menu-item col">
+                                    <img class="btn btn-add-dish" data-dish-id="{{ $dish->id }}"
+                                        src="{{ asset($dish->image ? 'storage/' . $dish->image : 'images/placeholder.jpg') }}"
                                         alt="{{ $dish->name }}" class="img-fluid rounded"
-                                        style="height: 200px; object-fit: cover; {{ $dish->is_active == 0 || $dish->status == 'out_of_stock' ? 'filter: grayscale(100%); opacity: 0.6;' : '' }}" />
+                                        style="object-fit: cover; height: 200px; width: 100%; max-height: 200px; {{ $dish->is_active == 0 || $dish->status == 'out_of_stock' ? 'filter: grayscale(100%); opacity: 0.6;' : '' }}" />
                                     <div class="card-body text-center">
                                         <h5 class="card-price text-primary">{{ number_format($dish->price, 0, ',', '.') }}
                                             VND</h5>
@@ -1261,6 +1263,10 @@
 </script>
 @vite(['resources/js/posTable.js', 'resources/js/orderItem.js', 'resources/js/DishStatusUpdated.js'])
 <style>
+    .card {
+        height: 320px !important;
+    }
+
     .wrapper {
         display: flex;
         flex-direction: row;
@@ -1304,11 +1310,19 @@
         transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
     }
 
+    .dish-item {
+        height: 100%;
+    }
+
     /* Responsive cho các màn hình nhỏ */
     @media (max-width: 768px) {
         .table-card {
             width: 80px;
             height: 100px;
+        }
+
+        .card {
+            height: 420px;
         }
     }
 
@@ -1345,6 +1359,10 @@
             padding: 8px 10px;
             font-size: 12px;
             /* Giảm kích thước nút trên thiết bị nhỏ */
+        }
+
+        .card {
+            height: 330px;
         }
     }
 
@@ -1444,6 +1462,8 @@
         transform: scale(0.9);
     }
 
+
+
     .garbage {
         position: absolute;
         width: 14px;
@@ -1523,6 +1543,26 @@
         display: flex;
         justify-content: center;
         align-items: center;
+    }
+
+
+    #dish-list .dish-item {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+
+    @media (min-width: 850px) and (max-width: 1199px) {
+        #dish-list .dish-item {
+            flex: 0 0 33.3333%;
+            max-width: 33.3333%;
+        }
+    }
+
+    @media (min-width: 1200px) {
+        #dish-list .dish-item {
+            flex: 0 0 25%;
+            max-width: 25%;
+        }
     }
 </style>
 
