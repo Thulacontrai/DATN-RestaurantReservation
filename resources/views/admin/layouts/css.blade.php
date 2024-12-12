@@ -5,8 +5,6 @@
         font-family: Arial, sans-serif;
         font-size: 15px;
     }
-
-<style>
     .heart-btn {
         width: 70px;
         height: 40px;
