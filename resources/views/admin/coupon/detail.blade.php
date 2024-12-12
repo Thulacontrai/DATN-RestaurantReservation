@@ -118,9 +118,15 @@
 
                                 <div class="col-md-6">
                                     <h5 class="text-primary">Trạng Thái</h5>
-                                    <ul class="list-group list-group-flush">
-                                        <li class="list-group-item"><strong>Trạng Thái:</strong> {{ $coupon->status }}</li>
-                                    </ul>
+
+                                    @if ($coupon->status == 'active')
+                                        <span class="badge shade-green">Hoạt Động</span>
+                                    @elseif ($coupon->status == 'inactive')
+                                        <span class="badge shade-yellow">Ngừng Hoạt Động</span>
+                                    @else
+                                        <span class="badge shade-red">Hết Hạn</span>
+                                    @endif
+
                                 </div>
                             </div>
 

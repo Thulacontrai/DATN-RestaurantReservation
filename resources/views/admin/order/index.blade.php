@@ -98,7 +98,7 @@
                                                     </i>
                                                 </a>
                                             </th>
-                                            <th>Loại Hoá Đơn</th>
+
                                             <th>
                                                 <a
                                                     href="{{ route('admin.order.index', array_merge(request()->query(), ['sort' => 'final_amount', 'direction' => request('direction') === 'asc' && request('sort') === 'final_amount' ? 'desc' : 'asc'])) }}">
@@ -121,15 +121,7 @@
                                                 <td>{{ $order->staff->name ?? 'Không rõ' }}</td>
                                                 <td>{{ $order->tables['0']->id ?? 'Không rõ' }}</td>
                                                 <td>{{ number_format($order->total_amount, 0, ',', '.') }} VND</td>
-                                                <td>
-                                                    @if ($order->order_type === 'dine_in')
-                                                        <span class="badge rounded-pill shade-primary">Dùng Tại Chỗ</span>
-                                                    @elseif ($order->order_type === 'take_away')
-                                                        <span class="badge rounded-pill shade-yellow">Mang Về</span>
-                                                    @else
-                                                        <span class="badge rounded-pill shade-red">Giao Hàng</span>
-                                                    @endif
-                                                </td>
+
 
                                                 <td>{{ number_format($order->final_amount, 0, ',', '.') }} VND</td>
 
@@ -192,56 +184,9 @@
 
 
                         </div> <!-- Pagination -->
-                        <div class="d-flex justify-content-between align-items-center bg-white p-4">
-                            <!-- Phần hiển thị phân trang bên trái -->
-                            <div class="mb-4 flex sm:mb-0 text-center">
-                                <span style="font-size: 15px">
-                                    <i class="bi bi-chevron-compact-left"></i>
+                        <div class="d-flex justify-content-center">
 
-                                    <span class="text-sm font-normal text-gray-500 dark:text-gray-400">
-                                        Hiển thị <strong
-                                            class="font-semibold text-secondary ">{{ $orders->firstItem() }}-{{ $orders->lastItem() }}</strong>
-                                        trong tổng số <strong
-                                            class="font-semibold text-secondary ">{{ $orders->total() }}</strong>
-                                    </span> <i class="bi bi-chevron-compact-right"></i>
-                                </span>
-                            </div>
-
-                            <!-- Phần hiển thị phân trang bên phải -->
-                            <div class="flex items-center space-x-3">
-                                <!-- Nút Previous -->
-                                @if ($orders->onFirstPage())
-                                    <button class="inline-flex  p-1 pl-2 bg-success text-white  cursor-not-allowed"
-                                        style="border-radius: 5px; border: 2px solid rgb(136, 243, 136);">
-                                        <span style="font-size: 15px"><i class="bi bi-chevron-compact-left"></i>Trước</span>
-                                    </button>
-                                @else
-                                    <a href="{{ $orders->previousPageUrl() }}">
-                                        <button class="inline-flex  p-1 pl-2  bg-success text-white "
-                                            style="border-radius: 5px;    border: 2px solid rgb(136, 243, 136);">
-                                            <span style="font-size: 15px"><i class="bi bi-chevron-double-left"></i>
-                                                Trước</span>
-                                        </button>
-                                    </a>
-                                @endif
-
-                                <!-- Nút Next -->
-                                @if ($orders->hasMorePages())
-                                    <a href="{{ $orders->nextPageUrl() }}">
-                                        <button class="inline-flex  p-1 pl-2 bg-success text-white"
-                                            style="border-radius: 5px;    border: 2px solid rgb(136, 243, 136);">
-                                            <span style="font-size: 15px"> Sau <i
-                                                    class="bi bi-chevron-compact-right"></i></span>
-                                        </button>
-                                    </a>
-                                @else
-                                    <button class="inline-flex  p-1 pl-2 bg-primary text-white cursor-not-allowed"
-                                        style="border-radius: 5px;    border: 2px solid rgb(83, 150, 216);">
-                                        <span style="font-size: 15px">
-                                            Trang Cuối</i></span>
-                                    </button>
-                                @endif
-                            </div>
+                            {{ $orders->links('pagination::client-paginate') }}
 
                         </div>
                     </div>

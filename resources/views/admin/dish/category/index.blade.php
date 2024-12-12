@@ -93,9 +93,10 @@
                                 </table>
                             </div>
 
-                            <!-- Pagination -->
-                            <div class="pagination justify-content-center mt-3">
-                                {{ $categories->links() }}
+                            <div class="d-flex justify-content-center">
+
+                                {{ $categories->links('pagination::client-paginate') }}
+
                             </div>
 
 

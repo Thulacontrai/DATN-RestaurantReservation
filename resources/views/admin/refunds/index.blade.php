@@ -89,7 +89,10 @@
                             </table>
 
                             <div class="mt-3">
-                                {{ $refunds->links() }}
+
+
+                                {{ $refunds->links('pagination::client-paginate') }}
+
                             </div>
                         </div>
                     </div>

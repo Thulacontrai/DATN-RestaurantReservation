@@ -209,6 +209,12 @@
                                 </table>
                             </div>
                         </div>
+
+                    </div>
+                    <div class="d-flex justify-content-center">
+
+                        {{ $coupons->links('pagination::client-paginate') }}
+
                     </div>
                 </div>
             </div>

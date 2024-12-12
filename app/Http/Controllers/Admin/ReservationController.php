@@ -52,10 +52,7 @@ class ReservationController extends Controller
 
     public function index(Request $request)
     {
-
-
-        // $this->updateOverdueReservations(); // Cập nhật các đơn quá hạn
-        $title = ' Đặt Bàn';
+        $title = 'Đặt Bàn';
         $query = Reservation::query();
 
         // Lọc theo tên khách hàng
@@ -80,17 +77,21 @@ class ReservationController extends Controller
             $now = Carbon::now();
             switch ($request->notification_type) {
                 case 'upcoming': // Sắp đến hạn 30 phút
-                    $query->whereBetween('reservation_time', [$now->toTimeString(), $now->copy()->addMinutes(30)->toTimeString()])
-                        ->where('status', 'Pending');
+                    $query->whereBetween('reservation_time', [
+                        $now->toDateTimeString(),
+                        $now->addMinutes(30)->toDateTimeString()
+                    ])->where('status', 'Pending');
                     break;
 
                 case 'waiting': // Chờ khách đến trong vòng 15 phút
-                    $query->whereBetween('reservation_time', [$now->copy()->subMinutes(15)->toTimeString(), $now->toTimeString()])
-                        ->where('status', 'Pending');
+                    $query->whereBetween('reservation_time', [
+                        $now->subMinutes(15)->toDateTimeString(),
+                        $now->toDateTimeString()
+                    ])->where('status', 'Pending');
                     break;
 
                 case 'overdue': // Quá hạn và bị hủy
-                    $query->where('reservation_time', '<', $now->copy()->subMinutes(15)->toTimeString())
+                    $query->where('reservation_time', '<', $now->subMinutes(15)->toDateTimeString())
                         ->where('status', 'Cancelled');
                     break;
             }
@@ -107,9 +108,8 @@ class ReservationController extends Controller
         // Xác nhận thứ tự sắp xếp hợp lệ
         $direction = in_array($direction, ['asc', 'desc']) ? $direction : 'asc';
 
-        // Lấy danh sách đặt chỗ và áp dụng sắp xếp
-        $reservations = Reservation::orderBy($sort, $direction)->paginate(10);
-
+        // Áp dụng sắp xếp và phân trang vào truy vấn
+        $reservations = $query->orderBy($sort, $direction)->paginate(10);
 
         // Truyền các biến tới view
         return view('admin.reservation.index', [
@@ -120,6 +120,7 @@ class ReservationController extends Controller
             'title' => $title,
         ]);
     }
+
     public function apiIndex()
     {
         return response()->json(Reservation::all());
@@ -298,28 +299,11 @@ class ReservationController extends Controller
     {
         DB::beginTransaction();
         try {
-            // Kiểm tra trạng thái trước khi cập nhật
+            // Lấy thông tin đặt bàn hiện tại
             $reservation = Reservation::findOrFail($id);
             $currentStatus = $reservation->status;
 
-            // Kiểm tra nếu trạng thái là "Đã hủy" và không cho phép thay đổi thành "Chờ xử lý" hoặc "Đã xác nhận"
-            if ($currentStatus === 'Cancelled' && in_array($request->status, ['Pending', 'Confirmed'])) {
-                return back()->withErrors(['status' => 'Không thể thay đổi trạng thái bàn này từ Đã hủy về Chờ xử lý hoặc Đã xác nhận.']);
-            }
-
-
-            // Kiểm tra nếu trạng thái là "Đã xác nhận" và chỉ có thể chuyển thành "Đã hủy" hoặc "Chờ xử lý"
-            if ($currentStatus === 'Confirmed' && !in_array($request->status, ['Cancelled', 'Pending'])) {
-                return back()->withErrors(['status' => 'Không thể thay đổi trạng thái bàn này theo cách này.']);
-            }
-
-            // Kiểm tra nếu trạng thái là "Chờ xử lý" và không thể chuyển sang "Đã xác nhận"
-            if ($currentStatus === 'Pending' && $request->status === 'Confirmed') {
-                return back()->withErrors(['status' => 'Chờ xử lý không thể chuyển sang trạng thái Đã xác nhận.']);
-            }
-
-
-
+            // Xác nhận dữ liệu đầu vào
             $validated = $request->validate([
                 'customer_name' => 'required|string|max:255',
                 'reservation_date' => 'required|date',
@@ -340,8 +324,24 @@ class ReservationController extends Controller
                 return back()->withErrors(['reservation_time' => 'Thời gian đặt bàn không được là quá khứ. Vui lòng chọn lại thời gian hợp lệ.']);
             }
 
-            $validated['reservation_time'] = $reservationTime;
+            // Nếu trạng thái mới giống trạng thái hiện tại, bỏ qua kiểm tra trạng thái
+            if ($request->status !== $currentStatus) {
+                // Logic kiểm tra trạng thái
+                if ($currentStatus === 'Cancelled' && in_array($request->status, ['Pending', 'Confirmed'])) {
+                    return back()->withErrors(['status' => 'Không thể thay đổi trạng thái bàn này từ Đã hủy về Chờ xử lý hoặc Đã xác nhận.']);
+                }
 
+                if ($currentStatus === 'Confirmed' && !in_array($request->status, ['Cancelled', 'Pending'])) {
+                    return back()->withErrors(['status' => 'Không thể thay đổi trạng thái bàn này theo cách này.']);
+                }
+
+                if ($currentStatus === 'Pending' && $request->status === 'Confirmed') {
+                    return back()->withErrors(['status' => 'Chờ xử lý không thể chuyển sang trạng thái Đã xác nhận.']);
+                }
+            }
+
+            // Cập nhật tiền cọc
+            $validated['reservation_time'] = $reservationTime;
             $validated['deposit_amount'] = $request->input('guest_count') >= 6
                 ? $request->input('guest_count') * 100000
                 : 0;
@@ -359,6 +359,7 @@ class ReservationController extends Controller
             return back()->withErrors(['error' => "Đã xảy ra lỗi khi cập nhật đặt bàn: " . $e->getMessage()]);
         }
     }
+
 
 
 
