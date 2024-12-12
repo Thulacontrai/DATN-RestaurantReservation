@@ -37,7 +37,7 @@ window.Echo.channel('order')
             <p><strong>Khách Hàng:</strong> ${e.orderItems?.reservation?.user_name ?? e.orderItems?.customer?.name ?? 'Khách lẻ'}</p>
         </div>
         <div class="col">
-            <p><strong>Giờ vào:</strong> ${e.tableId.orders['0'].pivot.start_time.split(" ")[1]}</p>
+            <p><strong>Giờ vào:</strong> ${e.tableId.orders['0'].pivot.start_time}</p>
         </div>
     </div>
     <div class="row">
@@ -195,7 +195,7 @@ window.Echo.channel('orders')
             <p><strong>Khách Hàng:</strong> ${e.orderItems?.reservation?.user_name ?? e.orderItems?.customer?.name ?? 'Khách lẻ'}</p>
         </div>
         <div class="col">
-            <p><strong>Giờ vào:</strong> ${e.tableId.orders['0'].pivot.start_time.split(" ")[1]}</p>
+            <p><strong>Giờ vào:</strong> ${e.tableId.orders['0'].pivot.start_time}</p>
         </div>
     </div>
     <div class="row">

@@ -228,6 +228,7 @@ Route::get('/Ppayment/{table_number}', [PosController::class, 'Ppayment'])->name
 Route::get('/viewCheckOut/{table_number}', [PosController::class, 'viewCheckOut'])->name('viewCheckOut');
 Route::post('/check-payment-condition', [PosController::class, 'checkPaymentPondition'])->name('checkPaymentPondition');
 Route::get('/checkAvailableTables', [PosController::class, 'checkAvailableTables'])->name('checkPaymentPondition');
+Route::get('/menu-order', [OrderController::class, 'menuOrder'])->name('menuOrder');
 
 ///
 Route::get('reserToOrder/{reservationId}', [PosController::class, 'reserToOrder'])->name('ReToOr');
@@ -420,7 +421,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Route::get('/dashboard/revenue', [DashboardController::class, 'getRevenue'])->name('dashboard.revenue');
 
     Route::resource('dashboard', DashboardController::class);
-  
+
 
 
 

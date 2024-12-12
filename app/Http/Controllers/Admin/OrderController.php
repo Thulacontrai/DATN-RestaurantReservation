@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\Table;
 use App\Traits\TraitCRUD;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 
 class OrderController extends Controller
 {
@@ -30,7 +33,7 @@ class OrderController extends Controller
         $orders = Order::all();
         $orders = Order::latest()->paginate(10);
 
-        return view('admin.order.index', compact('orders', 'title',));
+        return view('admin.order.index', compact('orders', 'title', ));
     }
 
     public function create()
@@ -58,14 +61,14 @@ class OrderController extends Controller
     {
         $title = 'Chi Tiết Hoá Đơn';
         $order = Order::with(['staff', 'reservation', 'customer'])->findOrFail($id);
-        return view('admin.order.show', compact('order','title'));
+        return view('admin.order.show', compact('order', 'title'));
     }
 
     public function edit(Order $order)
     {
         // Trả về view chỉnh sửa với dữ liệu đơn hàng
         $title = 'Chỉnh Sửa Hoá Đơn';
-        return view('admin.order.edit', compact('order','title'));
+        return view('admin.order.edit', compact('order', 'title'));
     }
 
     public function update(Request $request, Order $order)
@@ -131,7 +134,7 @@ class OrderController extends Controller
 
         // Kiểm tra thứ tự trạng thái
         return isset($statusOrder[$currentStatus], $statusOrder[$newStatus]) &&
-               $statusOrder[$currentStatus] > $statusOrder[$newStatus];
+            $statusOrder[$currentStatus] > $statusOrder[$newStatus];
     }
 
 
@@ -159,7 +162,7 @@ class OrderController extends Controller
     {
         $title = 'Khôi Phục Danh Sách Hoá Đơn';
         $orders = Order::onlyTrashed()->paginate(10);
-        return view('admin.order.trash', compact('orders','title'));
+        return view('admin.order.trash', compact('orders', 'title'));
     }
 
     public function restore($id)
@@ -176,5 +179,15 @@ class OrderController extends Controller
         $order->forceDelete();
 
         return redirect()->route('admin.order.trash')->with('success', 'Đơn hàng đã được xóa vĩnh viễn.');
+    }
+    public function menuOrder(Request $request)
+    {
+        try {
+            $encryptedData = $request->input('data');
+            $tableId = Crypt::decryptString($encryptedData);
+            return view('client.menuOrder');
+        } catch (Exception $e) {
+            abort(403, 'Mã QR không hợp lệ.');
+        }
     }
 }
