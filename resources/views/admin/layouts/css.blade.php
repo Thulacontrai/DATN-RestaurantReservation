@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 <style>
     html,
     body {
@@ -6,9 +6,7 @@
         font-size: 15px;
     }
 
-=======
-css<style>
->>>>>>> 450db9419992868d9cfc33c78ceef351a497d47e
+<style>
     .heart-btn {
         width: 70px;
         height: 40px;
