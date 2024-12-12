@@ -420,7 +420,7 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            const url = `/Ppayment/${selectedTableId}`;
+                            const url = `/viewCheckOut/${selectedTableId}`;
                             window.location.href = url;
                         } else {
                             Swal.fire({
@@ -451,18 +451,25 @@
                                             return response.json();
                                         })
                                         .then((json) => {
-                                            return fetch(json.redirect_url, {
-                                                method: 'POST',
-                                                headers: {
-                                                    'X-CSRF-TOKEN': document
-                                                        .querySelector(
-                                                            'meta[name="csrf-token"]'
-                                                        )
-                                                        .getAttribute(
-                                                            'content'),
-                                                    'Content-Type': 'application/json',
-                                                },
-                                            });
+                                            if (json.redirect_url && json.redirect_url
+                                                .includes('checkoutt')) {
+                                                return fetch(json.redirect_url, {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'X-CSRF-TOKEN': document
+                                                            .querySelector(
+                                                                'meta[name="csrf-token"]'
+                                                            )
+                                                            .getAttribute(
+                                                                'content'),
+                                                        'Content-Type': 'application/json',
+                                                    },
+                                                });
+                                            } else {
+                                                const url =
+                                                    `/viewCheckOut/${selectedTableId}`;
+                                                window.location.href = url;
+                                            }
                                         })
                                         .then((response) => {
                                             if (!response.ok) {
@@ -606,29 +613,54 @@ ${availableTables.map(table => `
             if (dishElement) {
                 const dishId = dishElement.dataset.dishId;
                 const dishStatus = dishElement.dataset.dishStatus;
+                const dishType = dishElement.dataset.dishType;
                 const dishOrder = dishElement.dataset.dishOrder;
                 if (event.target.classList.contains("plus-item")) {
-                    increaseQuantity(dishId, selectedTableId);
+                    if (dishType == 1) {
+                        increaseQuantity(dishId, selectedTableId);
+                    } else {
+                        increaseQuantityy(dishId, selectedTableId, dishType);
+                    }
                 }
                 if (event.target.classList.contains("minus-item")) {
                     if (dishStatus == 'chờ xử lý') {
-                        decreaseQuantity(dishId, selectedTableId);
+                        if (dishType == 1) {
+                            decreaseQuantity(dishId, selectedTableId);
+                        } else {
+                            decreaseQuantityy(dishId, selectedTableId, dishType);
+                        }
                     } else {
                         const dishInformed = dishElement.dataset.dishInformed;
                         const dishProcessing = dishElement.dataset.dishProcessing;
                         const dishQuantity = dishElement.dataset.dishQuantity;
                         if (dishInformed > dishProcessing || dishQuantity > dishProcessing) {
-                            decreaseQuantity(dishId, selectedTableId);
+                            if (dishType == 1) {
+                                decreaseQuantity(dishId, selectedTableId);
+                            } else {
+                                decreaseQuantityy(dishId, selectedTableId, dishType);
+                            }
                         } else {
-                            canelItem(dishId, selectedTableId, dishOrder)
+                            if (dishType == 1) {
+                                canelItem(dishId, selectedTableId, dishOrder)
+                            } else {
+                                canelItemm(dishId, selectedTableId, dishOrder, dishType)
+                            }
                         }
                     }
                 }
                 if (event.target.classList.contains("delete-item")) {
-                    deleteItem(dishId, selectedTableId);
+                    if (dishType == 1) {
+                        deleteItem(dishId, selectedTableId);
+                    } else {
+                        deleteItemm(dishId, selectedTableId, dishType);
+                    }
                 }
                 if (event.target.classList.contains("delette-item")) {
-                    deletteItem(dishId, selectedTableId);
+                    if (dishType == 1) {
+                        deletteItem(dishId, selectedTableId);
+                    } else {
+                        deletteItemm(dishId, selectedTableId, dishType);
+                    }
                 }
             }
         });
@@ -673,6 +705,47 @@ ${availableTables.map(table => `
             });
         }
 
+        function canelItemm(dishId, selectedTableId, dishOrder, dishType) {
+            Swal.fire({
+                title: 'Nhập lý do hủy',
+                input: 'text',
+                inputPlaceholder: 'Nhập lý do...',
+                showCancelButton: true,
+                confirmButtonText: 'Xác nhận',
+                cancelButtonText: 'Hủy'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const reason = result.value;
+                    fetch(`/canelItemm`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                    .getAttribute('content'),
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                table_id: selectedTableId,
+                                dish_id: dishId,
+                                reason: reason,
+                                dishOrder: dishOrder,
+                                dishType: dishType
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                showNotification('Hủy món thành công!', 'success');
+                            } else {
+                                showNotification('Lỗi khi xóa', 'error');
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
+                } else {
+                    showNotification('Hủy món thất bại', 'info');
+                }
+            });
+        }
+
         function increaseQuantity(dishId, selectedTableId) {
             fetch(`/increaseQuantity`, {
                     method: 'POST',
@@ -695,6 +768,31 @@ ${availableTables.map(table => `
                 .catch(error => console.error('Error:', error));
         }
 
+        function increaseQuantityy(dishId, selectedTableId, dishType) {
+            fetch(`/increaseQuantityy`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                            .getAttribute('content'),
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        table_id: selectedTableId,
+                        dish_id: dishId,
+                        dishType: dishType
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {} else {
+                        console.log(data);
+
+                        showNotification('Món đã hết nguyên liệu', 'error')
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
         function decreaseQuantity(dishId, selectedTableId) {
             fetch(`/decreaseQuantity`, {
                     method: 'POST',
@@ -706,6 +804,29 @@ ${availableTables.map(table => `
                     body: JSON.stringify({
                         table_id: selectedTableId,
                         dish_id: dishId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {} else {
+                        showNotification('Món đã hết nguyên liệu', 'error')
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function decreaseQuantityy(dishId, selectedTableId, dishType) {
+            fetch(`/decreaseQuantityy`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                            .getAttribute('content'),
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        table_id: selectedTableId,
+                        dish_id: dishId,
+                        dishType: dishType
                     })
                 })
                 .then(response => response.json())
@@ -765,6 +886,55 @@ ${availableTables.map(table => `
             });
         }
 
+        function deleteItemm(dishId, selectedTableId, dishType) {
+            Swal.fire({
+                title: 'Nhập lý do hủy',
+                input: 'text',
+                inputPlaceholder: 'Nhập lý do...',
+                showCancelButton: true,
+                confirmButtonText: 'Xác nhận',
+                cancelButtonText: 'Hủy',
+                preConfirm: () => {
+                    const reason = Swal.getInput().value.trim();
+                    if (!reason) {
+                        Swal.showValidationMessage(
+                            'Vui lòng nhập lý do hủy');
+                        return false;
+                    }
+                    return reason;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const reason = result.value;
+                    fetch(`/deleteItemm`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                    .getAttribute('content'),
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                table_id: selectedTableId,
+                                dish_id: dishId,
+                                reason: reason,
+                                dishType: dishType
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                showNotification('Hủy món thành công!', 'success');
+                            } else {
+                                showNotification('Lỗi khi xóa', 'error');
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
+                } else {
+                    showNotification('Hủy món thất bại', 'info');
+                }
+            });
+        }
+
 
         function deletteItem(dishId, selectedTableId) {
             fetch(`/deleteItem`, {
@@ -777,6 +947,31 @@ ${availableTables.map(table => `
                     body: JSON.stringify({
                         table_id: selectedTableId,
                         dish_id: dishId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showNotification('Hủy món thành công!', 'success');
+                    } else {
+                        showNotification('Lỗi khi xóa', 'error');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function deletteItemm(dishId, selectedTableId, dishType) {
+            fetch(`/deleteItemm`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                            .getAttribute('content'),
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        table_id: selectedTableId,
+                        dish_id: dishId,
+                        dishType: dishType
                     })
                 })
                 .then(response => response.json())
@@ -841,7 +1036,7 @@ ${availableTables.map(table => `
                             showNotification('Thêm món thành công')
                         } else {
                             console.log(data);
-                            
+
                             showNotification('Món đã hết nguyên liệu', 'error')
                         }
                     })

@@ -78,6 +78,7 @@
                                             <td>{{ $item->quantity }}</td>
                                             <td>{{ $item->order->tables['0']->table_number }}</td>
                                             <td class="text-center">
+
                                                 @if ($item->quantity != 0)
                                                     <button class="btn btn-danger cook-all" title="Chế biến toàn bộ">
                                                         <i class="fa-solid fa-forward"></i>
@@ -208,6 +209,7 @@
                                                     @endif
                                                 </td>
                                             </tr>
+
                                             @if ($item->count_cancel != 0)
                                                 <tr>
                                                     <td colspan="5">
@@ -227,10 +229,12 @@
         </div>
     </div>
     <script>
+
        document.addEventListener("DOMContentLoaded", function() {
     document.addEventListener("click", function(event) {
         const orderRow = event.target.closest("tr[data-item-id]"); // Thay .order-card bằng tr
         if (!orderRow) return;
+
 
         const itemId = orderRow.dataset.itemId;
         const tableId = orderRow.dataset.tableId;
@@ -257,7 +261,6 @@
         }
     });
 });
-
 // Hàm xử lý cook-all
 function handleCookAll(itemId, tableId) {
     fetch(`/kitchen/${itemId}/cook-all`, {
@@ -318,6 +321,7 @@ function handleDoneAll(itemId, tableId) {
         })
         .catch(error => console.error('Lỗi:', error));
 }
+
 
     </script>
 

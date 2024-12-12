@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -98,6 +99,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="receipt-container">
         <!-- Header -->
@@ -111,7 +113,8 @@
         <div class="info-section">
             <p><strong>Bàn số:</strong> {{ $table->table_number }}</p>
             <p><strong>Ngày:</strong> {{ \Carbon\Carbon::parse($reservation_table->start_time)->format('d-m-Y') }}</p>
-            <p><strong>Giờ vào:</strong> {{ \Carbon\Carbon::parse($reservation_table->start_time)->format('H:i:s') }}</p>
+            <p><strong>Giờ vào:</strong> {{ \Carbon\Carbon::parse($reservation_table->start_time)->format('H:i:s') }}
+            </p>
             <p><strong>Giờ ra:</strong> {{ $data }}</p>
         </div>
 
@@ -125,10 +128,14 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($order->orderItems as $item)
+                @foreach ($items as $item)
                     <tr>
                         <td>{{ $item->quantity }}</td>
-                        <td>{{ $item->dish->name }}</td>
+                        @if ($item->item_type == 1)
+                            <td>{{ $item->dish->name }}</td>
+                        @else
+                            <td>{{ $item->combo->name }}</td>
+                        @endif
                         <td>{{ number_format($item->total_price) }}</td>
                     </tr>
                 @endforeach
@@ -147,4 +154,5 @@
         </div>
     </div>
 </body>
+
 </html>

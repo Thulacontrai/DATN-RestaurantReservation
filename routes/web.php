@@ -216,10 +216,14 @@ Route::post('/order-details/{tableId}', [PosController::class, 'orderDetails'])-
 Route::post('/add-dish-to-order', [PosController::class, 'addDishToOrder']);
 Route::post('/add-combo-to-order', [PosController::class, 'addComboToOrder']);
 Route::post('/deleteItem', [PosController::class, 'deleteItem']);
+Route::post('/deleteItemm', [PosController::class, 'deleteItemm']);
 Route::post('/increaseQuantity', [PosController::class, 'increaseQuantity']);
+Route::post('/increaseQuantityy', [PosController::class, 'increaseQuantityy']);
 Route::post('/decreaseQuantity', [PosController::class, 'decreaseQuantity']);
+Route::post('/decreaseQuantityy', [PosController::class, 'decreaseQuantityy']);
 Route::post('/notification-button/{tableId}', [PosController::class, 'notificatioButton']);
 Route::post('/canelItem', [PosController::class, 'canelItem']);
+Route::post('/canelItemm', [PosController::class, 'canelItemm']);
 Route::get('/Ppayment/{table_number}', [PosController::class, 'Ppayment'])->name('Ppayment');
 Route::get('/viewCheckOut/{table_number}', [PosController::class, 'viewCheckOut'])->name('viewCheckOut');
 Route::post('/check-payment-condition', [PosController::class, 'checkPaymentPondition'])->name('checkPaymentPondition');
@@ -412,7 +416,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Route::resource('recipes', RecipesController::class);
 
     Route::resource('ingredient', IngredientController::class);
+
+    // Route::get('/dashboard/revenue', [DashboardController::class, 'getRevenue'])->name('dashboard.revenue');
+
     Route::resource('dashboard', DashboardController::class);
+  
+
+
+
+
+
     Route::resource('report', ReportController::class);
 
     Route::resource('accountSetting', SettingController::class);

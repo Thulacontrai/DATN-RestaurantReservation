@@ -1,9 +1,9 @@
 @extends('admin.master')
 
-@section('title', 'Danh Sách Đơn Hàng')
+@section('title', 'Danh Sách Hoá Đơn')
 
 @section('content')
-
+    @include('admin.layouts.messages')
 
     <!-- Content wrapper scroll start -->
     <div class="content-wrapper-scroll">
@@ -16,7 +16,7 @@
                 <div class="col-sm-12 col-12">
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
-                            <div class="card-title">Danh sách đơn hàng</div>
+                            <div class="card-title">Danh sách hoá đơn</div>
 
                             <!-- Nút Thêm Mới và Khôi Phục -->
                             <div class="d-flex gap-2">
@@ -46,7 +46,7 @@
                                     <thead>
                                         <tr>
                                             <th>Mã Đơn Hàng</th>
-                                            <th>Mã Đặt Chỗ</th>
+                                            <th>Mã Đặt Bàn</th>
                                             <th>Nhân Viên</th>
                                             <th>Bàn</th>
                                             <th>Tổng Tiền</th>
@@ -121,11 +121,59 @@
                                 </table>
                             </div>
 
-                            <!-- Pagination -->
-                            <div class="pagination justify-content-center mt-3">
-                                {{-- {{ $orders->links() }} --}}
+
+
+                        </div> <!-- Pagination -->
+                        <div class="d-flex justify-content-between align-items-center bg-white p-4">
+                            <!-- Phần hiển thị phân trang bên trái -->
+                            <div class="mb-4 flex sm:mb-0 text-center">
+                                <span style="font-size: 15px">
+                                    <i class="bi bi-chevron-compact-left"></i>
+
+                                    <span class="text-sm font-normal text-gray-500 dark:text-gray-400">
+                                        Hiển thị <strong
+                                            class="font-semibold text-secondary ">{{ $orders->firstItem() }}-{{ $orders->lastItem() }}</strong>
+                                        trong tổng số <strong
+                                            class="font-semibold text-secondary ">{{ $orders->total() }}</strong>
+                                    </span> <i class="bi bi-chevron-compact-right"></i>
+                                </span>
                             </div>
-                            <!-- Kết thúc Pagination -->
+
+                            <!-- Phần hiển thị phân trang bên phải -->
+                            <div class="flex items-center space-x-3">
+                                <!-- Nút Previous -->
+                                @if ($orders->onFirstPage())
+                                    <button class="inline-flex  p-1 pl-2 bg-success text-white  cursor-not-allowed"
+                                        style="border-radius: 5px; border: 2px solid rgb(136, 243, 136);">
+                                        <span style="font-size: 15px"><i class="bi bi-chevron-compact-left"></i>Trước</span>
+                                    </button>
+                                @else
+                                    <a href="{{ $orders->previousPageUrl() }}">
+                                        <button class="inline-flex  p-1 pl-2  bg-success text-white "
+                                            style="border-radius: 5px;    border: 2px solid rgb(136, 243, 136);">
+                                            <span style="font-size: 15px"><i class="bi bi-chevron-double-left"></i>
+                                                Trước</span>
+                                        </button>
+                                    </a>
+                                @endif
+
+                                <!-- Nút Next -->
+                                @if ($orders->hasMorePages())
+                                    <a href="{{ $orders->nextPageUrl() }}">
+                                        <button class="inline-flex  p-1 pl-2 bg-success text-white"
+                                            style="border-radius: 5px;    border: 2px solid rgb(136, 243, 136);">
+                                            <span style="font-size: 15px"> Sau <i
+                                                    class="bi bi-chevron-compact-right"></i></span>
+                                        </button>
+                                    </a>
+                                @else
+                                    <button class="inline-flex  p-1 pl-2 bg-primary text-white cursor-not-allowed"
+                                        style="border-radius: 5px;    border: 2px solid rgb(83, 150, 216);">
+                                        <span style="font-size: 15px">
+                                            Trang Cuối</i></span>
+                                    </button>
+                                @endif
+                            </div>
 
                         </div>
                     </div>
@@ -136,105 +184,5 @@
         <!-- Content wrapper end -->
 
     </div>
-    <div id="notification" class="notification d-none">
-        <div class="notification-icon">
-            <i class="bi"></i>
-        </div>
-        <div class="notification-content">
-            <strong id="notification-title"></strong>
-            <p id="notification-message"></p>
-        </div>
-    </div>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // Hàm hiển thị thông báo
-            function showNotification(message, type = "success") {
-                const notification = document.getElementById("notification");
-                const notificationIcon = notification.querySelector(".notification-icon i");
-                const notificationTitle = document.getElementById("notification-title");
-                const notificationMessage = document.getElementById("notification-message");
 
-                // Cập nhật nội dung thông báo
-                notificationMessage.textContent = message;
-
-                // Đặt kiểu thông báo
-                if (type === "success") {
-                    notification.style.background = "linear-gradient(90deg, #58ade8, #48d1cc)";
-                    notification.style.color = "#ffffff";
-                    notificationIcon.className = "bi bi-check-circle-fill icon-animate";
-                    notificationTitle.textContent = "Thành công!";
-                } else if (type === "error") {
-                    notification.style.background = "linear-gradient(90deg, #f44336, #ff6347)";
-                    notification.style.color = "#ffffff";
-                    notificationIcon.className = "bi bi-x-circle-fill icon-animate";
-                    notificationTitle.textContent = "Lỗi!";
-                }
-
-                // Hiển thị thông báo
-                notification.classList.remove("d-none");
-                notification.classList.add("show");
-
-                // Ẩn thông báo sau 3 giây
-                setTimeout(() => {
-                    notification.classList.remove("show");
-                    notification.classList.add("hide");
-
-                    // Reset sau khi ẩn
-                    setTimeout(() => {
-                        notification.classList.add("d-none");
-                        notification.classList.remove("hide");
-                        notificationIcon.classList.remove("icon-animate");
-                    }, 300);
-                }, 3000);
-            }
-
-            // Hiển thị thông báo từ session
-            @if (session('success'))
-                showNotification("{{ session('success') }}", "success");
-            @endif
-
-            @if (session('error'))
-                showNotification("{{ session('error') }}", "error");
-            @endif
-        });
-    </script>
 @endsection
-<style>
-    .notification {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        max-width: 300px;
-        background: #ffffff;
-        color: #333;
-        border-radius: 8px;
-        padding: 12px 16px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-size: 14px;
-        font-weight: 500;
-        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-        opacity: 0;
-        pointer-events: none;
-        transform: translateY(-10px);
-        transition: opacity 0.3s ease, transform 0.3s ease;
-    }
-
-    .notification.show {
-        opacity: 1;
-        pointer-events: all;
-        transform: translateY(0);
-    }
-
-    .notification.hide {
-        opacity: 0;
-        pointer-events: none;
-        transform: translateY(-10px);
-    }
-
-    .notification i {
-        font-size: 20px;
-        color: inherit;
-    }
-</style>

@@ -4,11 +4,7 @@
 
 @section('content')
 
-    @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
+@include('admin.layouts.messages')
 
     <div class="content-wrapper-scroll">
         <div class="content-wrapper">

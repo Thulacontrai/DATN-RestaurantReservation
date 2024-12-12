@@ -3,6 +3,7 @@
 @section('title', 'Danh Sách Nhà Cung Cấp')
 
 @section('content')
+@include('admin.layouts.messages')
 <div class="container">
     <div class="row">
         <div class="col-md-8 offset-md-2">
@@ -26,7 +27,7 @@
                         </div>
                     @endif
 
-                    
+
 
                     <form action="{{ route('admin.supplier.import') }}" method="POST" enctype="multipart/form-data">
                         @csrf

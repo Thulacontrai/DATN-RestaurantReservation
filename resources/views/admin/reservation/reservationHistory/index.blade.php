@@ -3,6 +3,7 @@
 @section('title', 'Danh Sách Lịch Sử Đặt Bàn')
 
 @section('content')
+    @include('admin.layouts.messages')
 
     <!-- Content wrapper scroll start -->
     <div class="content-wrapper-scroll">
@@ -53,10 +54,10 @@
                                                 <td>{{ optional($history->reservation)->id ?? 'Không rõ' }}</td>
                                                 <td>{{ optional(optional($history->reservation)->customer)->name ?? 'Không rõ' }}
                                                 </td>
-                                                <td >
+                                                <td>
 
-                                                        {{ \Carbon\Carbon::parse($history->reservation_date . ' ' . $history->change_time)->format('H:i:s') }}<br>
-                                                        {{ \Carbon\Carbon::parse($history->change_date)->format('d/m/Y') }}
+                                                    {{ \Carbon\Carbon::parse($history->reservation_date . ' ' . $history->change_time)->format('H:i:s') }}<br>
+                                                    {{ \Carbon\Carbon::parse($history->change_date)->format('d/m/Y') }}
                                                 </td>
                                                 <td>
                                                     @switch($history->status)
@@ -90,7 +91,7 @@
                                                             <i class="bi bi-list text-green"></i>
                                                         </a>
                                                         <a href="#" class="deleteRow" data-bs-toggle="tooltip"
-                                                        data-bs-placement="top" title="Xoá">
+                                                            data-bs-placement="top" title="Xoá">
                                                             <button type="submit" class="btn btn-link p-0">
                                                                 <i class="bi bi-trash text-red"></i>
                                                             </button>

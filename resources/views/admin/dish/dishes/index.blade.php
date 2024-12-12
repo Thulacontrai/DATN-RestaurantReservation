@@ -3,7 +3,7 @@
 @section('title', 'Danh Sách Món Ăn')
 
 @section('content')
-
+    @include('admin.layouts.messages')
     <!-- Content wrapper scroll start -->
     <div class="content-wrapper-scroll">
 
@@ -70,6 +70,9 @@
                                     </div>
                                     <div class="col-auto">
                                         <button type="submit" class="btn btn-sm btn-primary">Tìm kiếm</button>
+                                        <a href="{{ route('admin.dishes.index') }}" class="btn btn-sm btn-success">
+                                            <i class="bi bi-arrow-repeat"></i>
+                                        </a>
                                     </div>
                                 </div>
                             </form>
@@ -153,18 +156,18 @@
                                                 <td>
                                                     <div class="actions">
                                                         <a href="{{ route('admin.dishes.show', $dish->id) }}"
-                                                            class="viewRow" data-bs-toggle="tooltip"
-                                                            data-bs-placement="top" title="Chi tiết">
+                                                            class="viewRow" data-bs-toggle="tooltip" data-bs-placement="top"
+                                                            title="Chi tiết">
                                                             <i class="bi bi-list text-green"></i>
                                                         </a>
 
                                                         <a href="{{ route('admin.dishes.edit', $dish->id) }}"
-                                                            class="" data-bs-toggle="tooltip"
-                                                            data-bs-placement="top" title="Sửa">
+                                                            class="" data-bs-toggle="tooltip" data-bs-placement="top"
+                                                            title="Sửa">
                                                             <i class="bi bi-pencil-square text-warning"></i>
                                                         </a>
                                                         <a href="#" class="deleteRow" data-bs-toggle="tooltip"
-                                                        data-bs-placement="top" title="Xoá">
+                                                            data-bs-placement="top" title="Xoá">
                                                             <form action="{{ route('admin.dishes.destroy', $dish->id) }}"
                                                                 method="POST" style="display:inline-block;"
                                                                 onsubmit="return confirm('Bạn có chắc chắn muốn xóa?');">
@@ -190,9 +193,60 @@
                                 </table>
                             </div>
 
-                            <!-- Pagination -->
-                            <div class="pagination justify-content-center mt-3">
-                                {{ $dishes->links() }}
+
+
+                        </div>
+                        <!-- Pagination -->
+                        <div class="d-flex justify-content-between align-items-center bg-white p-4">
+                            <!-- Phần hiển thị phân trang bên trái -->
+                            <div class="mb-4 flex sm:mb-0 text-center">
+                                <span style="font-size: 15px">
+                                    <i class="bi bi-chevron-compact-left"></i>
+
+                                    <span class="text-sm font-normal text-gray-500 dark:text-gray-400">
+                                        Hiển thị <strong
+                                            class="font-semibold text-secondary ">{{ $dishes->firstItem() }}-{{ $dishes->lastItem() }}</strong>
+                                        trong tổng số <strong
+                                            class="font-semibold text-secondary ">{{ $dishes->total() }}</strong>
+                                    </span> <i class="bi bi-chevron-compact-right"></i>
+                                </span>
+                            </div>
+
+                            <!-- Phần hiển thị phân trang bên phải -->
+                            <div class="flex items-center space-x-3">
+                                <!-- Nút Previous -->
+                                @if ($dishes->onFirstPage())
+                                    <button class="inline-flex  p-1 pl-2 bg-success text-white  cursor-not-allowed"
+                                        style="border-radius: 5px; border: 2px solid rgb(136, 243, 136);">
+                                        <span style="font-size: 15px"><i
+                                                class="bi bi-chevron-compact-left"></i>Trước</span>
+                                    </button>
+                                @else
+                                    <a href="{{ $dishes->previousPageUrl() }}">
+                                        <button class="inline-flex  p-1 pl-2  bg-success text-white "
+                                            style="border-radius: 5px;    border: 2px solid rgb(136, 243, 136);">
+                                            <span style="font-size: 15px"><i class="bi bi-chevron-double-left"></i>
+                                                Trước</span>
+                                        </button>
+                                    </a>
+                                @endif
+
+                                <!-- Nút Next -->
+                                @if ($dishes->hasMorePages())
+                                    <a href="{{ $dishes->nextPageUrl() }}">
+                                        <button class="inline-flex  p-1 pl-2 bg-success text-white"
+                                            style="border-radius: 5px;    border: 2px solid rgb(136, 243, 136);">
+                                            <span style="font-size: 15px"> Sau <i
+                                                    class="bi bi-chevron-compact-right"></i></span>
+                                        </button>
+                                    </a>
+                                @else
+                                    <button class="inline-flex  p-1 pl-2 bg-primary text-white cursor-not-allowed"
+                                        style="border-radius: 5px;    border: 2px solid rgb(83, 150, 216);">
+                                        <span style="font-size: 15px">
+                                            Trang Cuối</i></span>
+                                    </button>
+                                @endif
                             </div>
 
                         </div>
@@ -203,68 +257,6 @@
 
         </div>
     </div>
-    <div id="notification" class="notification d-none">
-        <div class="notification-icon">
-            <i class="bi"></i>
-        </div>
-        <div class="notification-content">
-            <strong id="notification-title"></strong>
-            <p id="notification-message"></p>
-        </div>
-    </div>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // Hàm hiển thị thông báo
-            function showNotification(message, type = "success") {
-                const notification = document.getElementById("notification");
-                const notificationIcon = notification.querySelector(".notification-icon i");
-                const notificationTitle = document.getElementById("notification-title");
-                const notificationMessage = document.getElementById("notification-message");
-
-                // Cập nhật nội dung thông báo
-                notificationMessage.textContent = message;
-
-                // Đặt kiểu thông báo
-                if (type === "success") {
-                    notification.style.background = "linear-gradient(90deg, #58ade8, #48d1cc)";
-                    notification.style.color = "#ffffff";
-                    notificationIcon.className = "bi bi-check-circle-fill icon-animate";
-                    notificationTitle.textContent = "Thành công!";
-                } else if (type === "error") {
-                    notification.style.background = "linear-gradient(90deg, #f44336, #ff6347)";
-                    notification.style.color = "#ffffff";
-                    notificationIcon.className = "bi bi-x-circle-fill icon-animate";
-                    notificationTitle.textContent = "Lỗi!";
-                }
-
-                // Hiển thị thông báo
-                notification.classList.remove("d-none");
-                notification.classList.add("show");
-
-                // Ẩn thông báo sau 3 giây
-                setTimeout(() => {
-                    notification.classList.remove("show");
-                    notification.classList.add("hide");
-
-                    // Reset sau khi ẩn
-                    setTimeout(() => {
-                        notification.classList.add("d-none");
-                        notification.classList.remove("hide");
-                        notificationIcon.classList.remove("icon-animate");
-                    }, 300);
-                }, 3000);
-            }
-
-            // Hiển thị thông báo từ session
-            @if (session('success'))
-                showNotification("{{ session('success') }}", "success");
-            @endif
-
-            @if (session('error'))
-                showNotification("{{ session('error') }}", "error");
-            @endif
-        });
-    </script>
 
     <script>
         $(document).on('change', '.toggle-status', function() {
@@ -297,44 +289,6 @@
 
 @endsection
 <style>
-    .notification {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        max-width: 300px;
-        background: #ffffff;
-        color: #333;
-        border-radius: 8px;
-        padding: 12px 16px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-size: 14px;
-        font-weight: 500;
-        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-        opacity: 0;
-        pointer-events: none;
-        transform: translateY(-10px);
-        transition: opacity 0.3s ease, transform 0.3s ease;
-    }
-
-    .notification.show {
-        opacity: 1;
-        pointer-events: all;
-        transform: translateY(0);
-    }
-
-    .notification.hide {
-        opacity: 0;
-        pointer-events: none;
-        transform: translateY(-10px);
-    }
-
-    .notification i {
-        font-size: 20px;
-        color: inherit;
-    }
-
     /* From Uiverse.io by Galahhad */
     .switch {
         /* switch */

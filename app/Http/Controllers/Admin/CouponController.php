@@ -17,7 +17,6 @@ class CouponController extends Controller
         $this->middleware('permission:Tạo mới mã giảm giá', ['only' => ['create']]);
         $this->middleware('permission:Sửa mã giảm giá', ['only' => ['edit']]);
         $this->middleware('permission:Xóa mã giảm giá', ['only' => ['destroy']]);
-        
     }
 
     use TraitCRUD;
@@ -26,15 +25,24 @@ class CouponController extends Controller
     protected $viewPath = 'admin.coupon';
     protected $routePath = 'admin.coupon';
 
-    public function index()
+    public function index(Request $request)
     {
-        $coupons = Coupon::all();
-        return view('admin.coupon.index', compact('coupons'));
+        $title = 'Phiếu giảm giá';
+        $query = Coupon::query();
+
+        if ($request->has('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        $coupons = Coupon::latest()->paginate(10);// Sử dụng paginate để phân trang
+        return view('admin.coupon.index', compact('coupons','title'));
     }
+
 
     public function create()
     {
-        return view('admin.coupon.create');
+        $title = ' Thêm Mới Phiếu Giảm Giá';
+        return view('admin.coupon.create', compact('title'));
     }
 
     public function store(Request $request)
@@ -57,13 +65,15 @@ class CouponController extends Controller
 
     public function show($id)
     {
+        $title = 'Chi Tiết Phiếu Giảm Giá';
         $coupon = Coupon::findOrFail($id);
-        return view('admin.coupon.detail', compact('coupon'));
+        return view('admin.coupon.detail', compact('coupon', 'title'));
     }
 
     public function edit(Coupon $coupon)
     {
-        return view('admin.coupon.edit', compact('coupon'));
+        $title = 'Chỉnh Sửa Phiếu Giảm Giá';
+        return view('admin.coupon.edit', compact('coupon', 'title'));
     }
 
     public function update(Request $request, Coupon $coupon)
@@ -102,8 +112,9 @@ class CouponController extends Controller
     // Hiển thị các mã giảm giá đã bị xóa mềm (thùng rác)
     public function trash()
     {
+        $title = 'Khôi Phục Danh Sách Phiếu Giảm Giá';
         $coupons = Coupon::onlyTrashed()->paginate(10);
-        return view($this->viewPath . '.trash', compact('coupons'));
+        return view($this->viewPath . '.trash', compact('coupons', 'title'));
     }
 
 

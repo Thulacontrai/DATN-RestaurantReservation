@@ -3,6 +3,7 @@
 @section('title', 'Danh Sách Nhà Cung Cấp')
 
 @section('content')
+    @include('admin.layouts.messages')
     <div class="content-wrapper-scroll">
         <div class="content-wrapper">
             <div class="row">
@@ -10,10 +11,11 @@
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <div class="card-title">Danh Sách Nhà Cung Cấp</div>
-                            <a href="{{ route('admin.supplier.import') }}" >
+                            <a href="{{ route('admin.supplier.import') }}">
 
                                 {{-- <input type="file" name="file" accept=".xlsx, .xls" class="form-control form-control-sm d-none" id="import-file"> --}}
-                                <button type="button" id="import-button" class="btn btn-sm btn-success d-flex align-items-center">
+                                <button type="button" id="import-button"
+                                    class="btn btn-sm btn-success d-flex align-items-center">
                                     <i class="bi bi-file-earmark-arrow-up me-2"></i> Import Excel
                                 </button>
                             </a>
@@ -28,11 +30,14 @@
                                 <div class="row g-2">
                                     <div class="col-auto">
                                         <input type="text" id="search-name" name="name"
-                                            class="form-control form-control-sm" placeholder="Tìm kiếm theo tên nhà cung cấp"
-                                            value="{{ request('name') }}">
+                                            class="form-control form-control-sm"
+                                            placeholder="Tìm kiếm theo tên nhà cung cấp" value="{{ request('name') }}">
                                     </div>
                                     <div class="col-auto">
                                         <button type="submit" class="btn btn-sm btn-primary">Tìm kiếm</button>
+                                        <a href="{{ route('admin.supplier.index') }}" class="btn btn-sm btn-success">
+                                            <i class="bi bi-arrow-repeat"></i>
+                                        </a>
                                     </div>
                                 </div>
                             </form>
@@ -60,12 +65,12 @@
                                                 <td>
                                                     <div class="actions d-flex">
                                                         <a href="{{ route('admin.supplier.edit', $supplier->id) }}"
-                                                            class="viewRow" data-bs-toggle="tooltip"
-                                                            data-bs-placement="top" title="Sửa">
+                                                            class="viewRow" data-bs-toggle="tooltip" data-bs-placement="top"
+                                                            title="Sửa">
                                                             <i class="bi bi-pencil-square text-warning"></i>
                                                         </a>
                                                         <a href="" class="viewRow" data-bs-toggle="tooltip"
-                                                        data-bs-placement="top" title="Xoá">
+                                                            data-bs-placement="top" title="Xoá">
                                                             <form
                                                                 action="{{ route('admin.supplier.destroy', $supplier->id) }}"
                                                                 method="POST" style="display:inline-block;"
@@ -82,18 +87,67 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="5" class="text-center">Không có nhà cung cấp nào được tìm thấy.</td>
+                                                <td colspan="5" class="text-center">Không có nhà cung cấp nào được tìm
+                                                    thấy.</td>
                                             </tr>
                                         @endforelse
                                     </tbody>
                                 </table>
                             </div>
 
-                            <!-- Pagination -->
-                            <div class="pagination justify-content-center mt-3">
-                                {{-- {{ $suppliers->links() }} --}}
+
+                        </div>
+                        <!-- Pagination -->
+                        <div class="d-flex justify-content-between align-items-center bg-white p-4">
+                            <!-- Phần hiển thị phân trang bên trái -->
+                            <div class="mb-4 flex sm:mb-0 text-center">
+                                <span style="font-size: 15px">
+                                    <i class="bi bi-chevron-compact-left"></i>
+
+                                    <span class="text-sm font-normal text-gray-500 dark:text-gray-400">
+                                        Hiển thị <strong
+                                            class="font-semibold text-secondary ">{{ $suppliers->firstItem() }}-{{ $suppliers->lastItem() }}</strong>
+                                        trong tổng số <strong
+                                            class="font-semibold text-secondary ">{{ $suppliers->total() }}</strong>
+                                    </span> <i class="bi bi-chevron-compact-right"></i>
+                                </span>
                             </div>
-                            <!-- Kết thúc Pagination -->
+
+                            <!-- Phần hiển thị phân trang bên phải -->
+                            <div class="flex items-center space-x-3">
+                                <!-- Nút Previous -->
+                                @if ($suppliers->onFirstPage())
+                                    <button class="inline-flex  p-1 pl-2 bg-success text-white  cursor-not-allowed"
+                                        style="border-radius: 5px; border: 2px solid rgb(136, 243, 136);">
+                                        <span style="font-size: 15px"><i class="bi bi-chevron-compact-left"></i>Trước</span>
+                                    </button>
+                                @else
+                                    <a href="{{ $suppliers->previousPageUrl() }}">
+                                        <button class="inline-flex  p-1 pl-2  bg-success text-white "
+                                            style="border-radius: 5px;    border: 2px solid rgb(136, 243, 136);">
+                                            <span style="font-size: 15px"><i class="bi bi-chevron-double-left"></i>
+                                                Trước</span>
+                                        </button>
+                                    </a>
+                                @endif
+
+                                <!-- Nút Next -->
+                                @if ($suppliers->hasMorePages())
+                                    <a href="{{ $suppliers->nextPageUrl() }}">
+                                        <button class="inline-flex  p-1 pl-2 bg-success text-white"
+                                            style="border-radius: 5px;    border: 2px solid rgb(136, 243, 136);">
+                                            <span style="font-size: 15px"> Sau <i
+                                                    class="bi bi-chevron-compact-right"></i></span>
+                                        </button>
+                                    </a>
+                                @else
+                                    <button class="inline-flex  p-1 pl-2 bg-primary text-white cursor-not-allowed"
+                                        style="border-radius: 5px;    border: 2px solid rgb(83, 150, 216);">
+                                        <span style="font-size: 15px">
+                                            Trang Cuối</i></span>
+                                    </button>
+                                @endif
+                            </div>
 
                         </div>
                     </div>
@@ -101,4 +155,6 @@
             </div>
         </div>
     </div>
+
+
 @endsection

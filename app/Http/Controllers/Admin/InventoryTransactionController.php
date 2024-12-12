@@ -25,11 +25,12 @@ class InventoryTransactionController extends Controller
         $this->middleware('permission:Tạo mới nhập kho', ['only' => ['create']]);
         $this->middleware('permission:Sửa nhập kho', ['only' => ['edit']]);
         $this->middleware('permission:Xóa nhập kho', ['only' => ['destroy']]);
-        
+
     }
 
     public function index(Request $request)
     {
+        $title = 'Phiếu Nhập Kho';
         $query = InventoryTransaction::query()
             ->select('inventory_transactions.*', 'users.name as staff_name')
             ->leftJoin('users', 'inventory_transactions.staff_id', '=', 'users.id');
@@ -45,9 +46,9 @@ class InventoryTransactionController extends Controller
         }
 
         // Phân trang kết quả
-        $transactions = $query->paginate(10);
+        $transactions = InventoryTransaction::latest()->paginate(10);
 
-        return view('admin.inventoryTransaction.index', compact('transactions'));
+        return view('admin.inventoryTransaction.index', compact('transactions', 'title'));
     }
 
     public function showImportForm()
@@ -164,13 +165,14 @@ class InventoryTransactionController extends Controller
 
     public function show($id)
     {
+        $title = 'Chi Tiết Phiếu Nhập Kho';
         $transaction = InventoryTransaction::with(['supplier', 'inventoryItems.ingredient'])
             ->findOrFail($id);
 
         // Lấy thông tin nhân viên từ bảng users
         $staff = User::find($transaction->staff_id);
 
-        return view('admin.inventoryTransaction.show', compact('transaction', 'staff'));
+        return view('admin.inventoryTransaction.show', compact('transaction','title', 'staff'));
     }
 
     public function createTransaction()
@@ -214,8 +216,8 @@ class InventoryTransactionController extends Controller
              'ingredients.*.unit_price.numeric' => 'Đơn giá phải là số.',
              'ingredients.*.unit_price.min' => 'Đơn giá không được âm.',
          ]);
-         
-        
+
+
 
         // Lấy ID của user đang đăng nhập
         $userId = Auth::id();
@@ -240,7 +242,7 @@ class InventoryTransactionController extends Controller
         }
 
         // Trở lại trang tạo giao dịch với thông báo thành công
-        return redirect()->route('transactions.create')->with('success', 'Tạo phiếu nhập và thêm nguyên liệu thành công!');
+        return redirect()->route('transactions.index')->with('success', 'Tạo phiếu nhập và thêm nguyên liệu thành công!');
     }
 
 
@@ -271,6 +273,7 @@ class InventoryTransactionController extends Controller
 
     public function edit($id)
     {
+        $title = 'Chỉnh Sửa Phiếu Nhập Kho';
         $transaction = InventoryTransaction::findOrFail($id);
 
         // Kiểm tra nếu trạng thái là "hoàn thành" thì ngăn chỉnh sửa
@@ -283,7 +286,7 @@ class InventoryTransactionController extends Controller
         $suppliers = Supplier::all();
         $ingredients = Ingredient::all();
 
-        return view('admin.inventoryTransaction.edit', compact('transaction', 'suppliers', 'ingredients', 'user'));
+        return view('admin.inventoryTransaction.edit', compact('transaction' ,'title', 'suppliers', 'ingredients', 'user'));
     }
 
 
@@ -320,7 +323,7 @@ class InventoryTransactionController extends Controller
             ]);
         }
 
-        return redirect()->route('transactions.show', $transaction->id)->with('success', 'Cập nhật phiếu nhập thành công!');
+        return redirect()->route('transactions.index', $transaction->id)->with('success', 'Cập nhật phiếu nhập thành công!');
     }
 
 

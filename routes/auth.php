@@ -62,6 +62,7 @@ Route::get('/kitchen', function() {
     return app(\App\Http\Controllers\KitchenController::class)->index();
 })->name('kitchen.index');
 
+
 Route::get('/admin/dashboard', function() {
     // Kiểm tra xem người dùng đã đăng nhập chưa
     if (!Auth::check()) {

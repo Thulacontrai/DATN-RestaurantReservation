@@ -28,5 +28,4 @@ Route::put('/reservations/{id}', [ReservationController::class, 'updateReservati
 Route::middleware(['api'])->put('/reservations/{id}', [ReservationController::class, 'updateReservation']);
 Route::put('/reservations/calendar/{id}', [ReservationController::class, 'updateCalendar']);
 Route::post('/reservations/cancel/{id}', [ReservationController::class, 'processReservationCancellation']);
-Route::get('/admin/dashboard/monthly-statistics', [DashboardController::class, 'getMonthlyStatistics'])
-    ->name('admin.dashboard.monthly-statistics');
+

@@ -33,13 +33,19 @@ class Dishes extends Model
     // Quan hệ nhiều-nhiều với Combo
     public function combos()
     {
-        return $this->belongsToMany(Combo::class, 'combo_dish')->withPivot('quantity')->withTimestamps();
+        return $this->belongsToMany(Combo::class, 'combo_dish', 'dish_id', 'combo_id')
+            ->withPivot('quantity')
+            ->withTimestamps();
     }
 
     // Quan hệ một-nhiều với OrderItem
     public function orderItems()
     {
         return $this->hasMany(OrderItem::class, 'item_id');
+    }
+    public function kitchen()
+    {
+        return $this->hasMany(Kitchen::class, 'item_id');
     }
 
     // Quan hệ một-nhiều với Recipe

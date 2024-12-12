@@ -15,6 +15,7 @@ class SettingController extends Controller
   protected $routePath = 'admin.settings';
 
   public function index(){
-     return view('admin.accountSetting.index');
+    $title = 'Settings';
+     return view('admin.accountSetting.index', compact('title', 'setting'));
   }
 }

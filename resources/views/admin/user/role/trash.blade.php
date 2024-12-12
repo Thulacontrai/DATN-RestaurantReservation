@@ -4,17 +4,7 @@
 
 @section('content')
 
-    @if (session('error'))
-        <div class="alert alert-danger">
-            {{ session('error') }}
-        </div>
-    @endif
-
-    @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
+    @include('admin.layouts.messages')
 
     <div class="content-wrapper-scroll">
         <div class="content-wrapper">
@@ -72,7 +62,8 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="3" class="text-center">Không có vai trò nào trong thùng rác.</td>
+                                                <td colspan="3" class="text-center">Không có vai trò nào trong thùng rác.
+                                                </td>
                                             </tr>
                                         @endforelse
                                     </tbody>
