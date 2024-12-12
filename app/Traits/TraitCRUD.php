@@ -107,6 +107,6 @@ trait TraitCRUD
             $item->delete();
         });
 
-        return redirect()->route($this->routePath . '.index')->with('success', 'Item deleted successfully.');
+        return redirect()->route($this->routePath . '.index')->with('success', 'Combo được xóa thành công.');
     }
 }

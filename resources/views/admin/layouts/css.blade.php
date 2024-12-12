@@ -1,14 +1,10 @@
 
-
-
 <style>
     html,
     body {
         font-family: Arial, sans-serif;
         font-size: 15px;
     }
-
-
     .heart-btn {
         width: 70px;
         height: 40px;
