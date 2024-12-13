@@ -25,31 +25,45 @@ class InventoryTransactionController extends Controller
         $this->middleware('permission:Tạo mới nhập kho', ['only' => ['create']]);
         $this->middleware('permission:Sửa nhập kho', ['only' => ['edit']]);
         $this->middleware('permission:Xóa nhập kho', ['only' => ['destroy']]);
-
     }
-
     public function index(Request $request)
     {
-        $title = 'Phiếu Nhập Kho';
+        $title = 'Phiếu Nhập Kho';
+
+        // Xây dựng truy vấn cơ bản với việc tải trước (eager load) nhà cung cấp
         $query = InventoryTransaction::query()
             ->select('inventory_transactions.*', 'users.name as staff_name')
-            ->leftJoin('users', 'inventory_transactions.staff_id', '=', 'users.id');
+            ->leftJoin('users', 'inventory_transactions.staff_id', '=', 'users.id')
+            ->with('supplier'); // Eager load quan hệ với Supplier
+
+        // Lọc theo mã phiếu nhập nếu có
+        if ($request->has('id') && !empty($request->id)) {
+            $query->where('inventory_transactions.id', 'like', '%' . $request->id . '%');
+        }
 
         // Lọc theo trạng thái nếu có
         if ($request->has('status') && !empty($request->status)) {
             $query->where('inventory_transactions.status', $request->status);
         }
 
-        // Lọc theo ngày tạo nếu có
+        // Lọc theo ngày nếu có
         if ($request->has('date') && !empty($request->date)) {
             $query->whereDate('inventory_transactions.created_at', $request->date);
         }
 
+        // Sắp xếp theo cột và chiều hướng sắp xếp nếu có
+        if ($request->has('sort') && in_array($request->sort, ['id', 'staff_name', 'name', 'total_amount'])) {
+            $direction = $request->get('direction', 'asc') === 'asc' ? 'asc' : 'desc';
+            $query->orderBy($request->sort, $direction);
+        }
+
         // Phân trang kết quả
-        $transactions = InventoryTransaction::latest()->paginate(10);
+        $transactions = $query->paginate(10);
 
         return view('admin.inventoryTransaction.index', compact('transactions', 'title'));
     }
+
+
 
     public function showImportForm()
     {
@@ -172,7 +186,7 @@ class InventoryTransactionController extends Controller
         // Lấy thông tin nhân viên từ bảng users
         $staff = User::find($transaction->staff_id);
 
-        return view('admin.inventoryTransaction.show', compact('transaction','title', 'staff'));
+        return view('admin.inventoryTransaction.show', compact('transaction', 'title', 'staff'));
     }
 
     public function createTransaction()
@@ -199,23 +213,23 @@ class InventoryTransactionController extends Controller
             'ingredients.*.ingredient_id' => 'required|exists:ingredients,id',
             'ingredients.*.quantity' => 'required|numeric|min:1',
             'ingredients.*.unit_price' => 'required|numeric|min:0',
-         ], [
-             'total_amount.required' => 'Tổng số tiền là bắt buộc.',
-             'total_amount.numeric' => 'Tổng số tiền phải là một số.',
-             'total_amount.max' => 'Tổng số tiền không được vượt quá 2,147,483,647.',
-             'total_amount.min' => 'Tổng số tiền không được âm.',
-             'supplier_id.required' => 'Vui lòng chọn nhà cung cấp.',
-             'supplier_id.exists' => 'Nhà cung cấp không tồn tại.',
-             'ingredients.required' => 'Vui lòng thêm ít nhất một nguyên liệu.',
-             'ingredients.*.ingredient_id.required' => 'Mã nguyên liệu là bắt buộc.',
-             'ingredients.*.ingredient_id.exists' => 'Nguyên liệu không tồn tại.',
-             'ingredients.*.quantity.required' => 'Số lượng là bắt buộc.',
-             'ingredients.*.quantity.numeric' => 'Số lượng phải là số.',
-             'ingredients.*.quantity.min' => 'Số lượng phải lớn hơn 0.',
-             'ingredients.*.unit_price.required' => 'Đơn giá là bắt buộc.',
-             'ingredients.*.unit_price.numeric' => 'Đơn giá phải là số.',
-             'ingredients.*.unit_price.min' => 'Đơn giá không được âm.',
-         ]);
+        ], [
+            'total_amount.required' => 'Tổng số tiền là bắt buộc.',
+            'total_amount.numeric' => 'Tổng số tiền phải là một số.',
+            'total_amount.max' => 'Tổng số tiền không được vượt quá 2,147,483,647.',
+            'total_amount.min' => 'Tổng số tiền không được âm.',
+            'supplier_id.required' => 'Vui lòng chọn nhà cung cấp.',
+            'supplier_id.exists' => 'Nhà cung cấp không tồn tại.',
+            'ingredients.required' => 'Vui lòng thêm ít nhất một nguyên liệu.',
+            'ingredients.*.ingredient_id.required' => 'Mã nguyên liệu là bắt buộc.',
+            'ingredients.*.ingredient_id.exists' => 'Nguyên liệu không tồn tại.',
+            'ingredients.*.quantity.required' => 'Số lượng là bắt buộc.',
+            'ingredients.*.quantity.numeric' => 'Số lượng phải là số.',
+            'ingredients.*.quantity.min' => 'Số lượng phải lớn hơn 0.',
+            'ingredients.*.unit_price.required' => 'Đơn giá là bắt buộc.',
+            'ingredients.*.unit_price.numeric' => 'Đơn giá phải là số.',
+            'ingredients.*.unit_price.min' => 'Đơn giá không được âm.',
+        ]);
 
 
 
@@ -286,7 +300,7 @@ class InventoryTransactionController extends Controller
         $suppliers = Supplier::all();
         $ingredients = Ingredient::all();
 
-        return view('admin.inventoryTransaction.edit', compact('transaction' ,'title', 'suppliers', 'ingredients', 'user'));
+        return view('admin.inventoryTransaction.edit', compact('transaction', 'title', 'suppliers', 'ingredients', 'user'));
     }
 
 

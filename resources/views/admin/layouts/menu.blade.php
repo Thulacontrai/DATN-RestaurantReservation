@@ -15,15 +15,15 @@
                 <li class="sidebar-dropdown">
                     <a href="#">
                         <i class="bi bi-house"></i>
-                        <span class="menu-text" style="font-size: 14px">Thống kê</span>
+                        <span class="menu-text" >Thống kê</span>
                     </a>
                     <div class="sidebar-submenu" >
                         <ul>
                             <li>
-                                <a href="{{ route('admin.dashboard.index') }}"  style="font-size: 14px">Phân tích</a>
+                                <a href="{{ route('admin.dashboard.index') }}"  >Phân tích</a>
                             </li>
                             <li>
-                                <a href="{{ route('admin.report.index') }}"  style="font-size: 14px">Báo Cáo</a>
+                                <a href="{{ route('admin.report.index') }}"  >Báo Cáo</a>
                             </li>
                             <li>
                                 <a href="{{ route('admin.inventoryDashboard.index') }}">Thống Kê Kho</a>
@@ -131,11 +131,11 @@
                                         <a href="{{ route('admin.coupon.index') }}">Phiếu giảm giá</a>
                                     </li>
                                 @endcan
-                                @can('Xem thanh toán')
+                                {{-- @can('Xem thanh toán')
                                     <li>
                                         <a href="{{ route('admin.payment.index') }}">Phương thức thanh toán</a>
                                     </li>
-                                @endcan
+                                @endcan --}}
                             </ul>
                         </div>
                     </li>
