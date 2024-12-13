@@ -51,9 +51,31 @@
                                 <table class="table v-middle m-0">
                                     <thead>
                                         <tr>
-                                            <th>Tên Combo</th>
-                                            <th>Giá Combo</th>
-                                            <th>Số Lượng Món Ăn</th>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.combo.index', array_merge(request()->query(), ['sort' => 'name', 'direction' => request('sort') === 'name' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}">
+                                                    Tên Combo
+                                                    <i
+                                                        class="bi bi-arrow-{{ request('sort') === 'name' ? (request('direction') === 'asc' ? 'up' : 'down') : '' }}"></i>
+                                                </a>
+                                            </th>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.combo.index', array_merge(request()->query(), ['sort' => 'price', 'direction' => request('sort') === 'price' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}">
+                                                    Giá Combo
+                                                    <i
+                                                        class="bi bi-arrow-{{ request('sort') === 'price' ? (request('direction') === 'asc' ? 'up' : 'down') : '' }}"></i>
+                                                </a>
+                                            </th>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.combo.index', array_merge(request()->query(), ['sort' => 'quantity_dishes', 'direction' => request('sort') === 'quantity_dishes' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}">
+                                                    Số Lượng Món
+                                                    <i
+                                                        class="bi bi-arrow-{{ request('sort') === 'quantity_dishes' ? (request('direction') === 'asc' ? 'up' : 'down') : '' }}"></i>
+                                                </a>
+                                            </th>
+
                                             <th>Hình Ảnh</th>
                                             <th>Mô Tả</th>
                                             <th>Tính Năng</th>
@@ -156,61 +178,12 @@
                                 </table>
                             </div>
 
-                         
+
 
                         </div>
-                        <!-- Pagination -->
-                        <div class="d-flex justify-content-between align-items-center bg-white p-4">
-                            <!-- Phần hiển thị phân trang bên trái -->
-                            <div class="mb-4 flex sm:mb-0 text-center">
-                                <span style="font-size: 15px">
-                                    <i class="bi bi-chevron-compact-left"></i>
+                        <div class="d-flex justify-content-center">
 
-                                    <span class="text-sm font-normal text-gray-500 dark:text-gray-400">
-                                        Hiển thị <strong
-                                            class="font-semibold text-secondary ">{{ $combos->firstItem() }}-{{ $combos->lastItem() }}</strong>
-                                        trong tổng số <strong
-                                            class="font-semibold text-secondary ">{{ $combos->total() }}</strong>
-                                    </span><i class="bi bi-chevron-compact-right"></i>
-                                </span>
-                            </div>
-
-                            <!-- Phần hiển thị phân trang bên phải -->
-                            <div class="flex items-center space-x-3">
-                                <!-- Nút Previous -->
-                                @if ($combos->onFirstPage())
-                                    <button class="inline-flex  p-1 pl-2 bg-success text-white  cursor-not-allowed"
-                                        style="border-radius: 5px; border: 2px solid rgb(136, 243, 136);">
-                                        <span style="font-size: 15px"><i
-                                                class="bi bi-chevron-compact-left"></i>Trước</span>
-                                    </button>
-                                @else
-                                    <a href="{{ $combos->previousPageUrl() }}">
-                                        <button class="inline-flex  p-1 pl-2  bg-success text-white "
-                                            style="border-radius: 5px;    border: 2px solid rgb(136, 243, 136);">
-                                            <span style="font-size: 15px"><i class="bi bi-chevron-double-left"></i>
-                                                Trước</span>
-                                        </button>
-                                    </a>
-                                @endif
-
-                                <!-- Nút Next -->
-                                @if ($combos->hasMorePages())
-                                    <a href="{{ $combos->nextPageUrl() }}">
-                                        <button class="inline-flex  p-1 pl-2 bg-success text-white"
-                                            style="border-radius: 5px;    border: 2px solid rgb(136, 243, 136);">
-                                            <span style="font-size: 15px"> Sau <i
-                                                    class="bi bi-chevron-compact-right"></i></span>
-                                        </button>
-                                    </a>
-                                @else
-                                    <button class="inline-flex  p-1 pl-2 bg-primary text-white cursor-not-allowed"
-                                        style="border-radius: 5px;    border: 2px solid rgb(83, 150, 216);">
-                                        <span style="font-size: 15px">
-                                            Trang Cuối</i></span>
-                                    </button>
-                                @endif
-                            </div>
+                            {{ $combos->links('pagination::client-paginate') }}
 
                         </div>
                     </div>

@@ -395,6 +395,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('coupon-trash', [CouponController::class, 'trash'])->name('coupon.trash');
     Route::patch('coupon-restore/{id}', [CouponController::class, 'restore'])->name('coupon.restore');
     Route::delete('coupon-force-delete/{id}', [CouponController::class, 'forceDelete'])->name('coupon.forceDelete');
+    Route::get('/coupon/check', [CouponController::class, 'checkCoupon'])->name('coupon.check');
+
 
 
     route::resource('feedback', FeedbackController::class);

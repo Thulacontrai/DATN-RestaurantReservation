@@ -60,9 +60,20 @@ class ComboController extends Controller
                 // Nếu không có tham số, lấy cả active và inactive combo
                 // Mặc định sẽ lấy cả hai
             }
+            // Lấy tham số sort và direction từ request
+            $sort = $request->input('sort', 'id'); // Mặc định sắp xếp theo id
+            $direction = $request->input('direction', 'asc'); // Mặc định thứ tự tăng dần
 
-            // Phân trang kết quả
-            $combos = Combo::latest()->paginate(10);
+            // Xác nhận cột sắp xếp hợp lệ
+            $allowedSorts = ['id', 'name', 'price', 'quantity']; // Các cột cho phép sắp xếp
+            $sort = in_array($sort, $allowedSorts) ? $sort : 'id';
+
+            // Xác nhận thứ tự sắp xếp hợp lệ
+            $direction = in_array($direction, ['asc', 'desc']) ? $direction : 'asc';
+
+            // Truy vấn dữ liệu với sắp xếp và phân trang
+            $combos = Combo::orderBy($sort, $direction)->paginate(10);
+
 
             // Trả về view
             return view($this->viewPath . '.index', compact('combos', 'title'));

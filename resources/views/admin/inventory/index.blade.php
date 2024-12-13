@@ -11,47 +11,57 @@
             <!-- Toast notifications container -->
             <div id="toastContainer" class="toast-container position-fixed top-0 end-0 p-3">
                 @foreach ($outOfStock as $item)
-                    <div class="toast inventory-alert" data-id="{{ $item->id }}" role="alert" aria-live="assertive"
-                        aria-atomic="true" data-bs-delay="5000">
-                        <div class="toast-header bg-danger text-white">
-                            <strong class="me-auto">Cảnh báo tồn kho</strong>
-                            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    @if ($item->ingredient)
+                        <div class="toast inventory-alert" data-id="{{ $item->id }}" role="alert" aria-live="assertive"
+                            aria-atomic="true" data-bs-delay="5000">
+                            <div class="toast-header bg-danger text-white">
+                                <strong class="me-auto">Cảnh báo tồn kho</strong>
+                                <button type="button" class="btn-close" data-bs-dismiss="toast"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="toast-body">
+                                Mặt hàng: {{ $item->ingredient->name }}, với ID: {{ $item->id }} đã hết hàng.
+                            </div>
                         </div>
-                        <div class="toast-body">
-                            Mặt hàng: {{ $item->ingredient->name }}, với ID: {{ $item->id }} đã hết hàng.
-                        </div>
-                    </div>
+                    @endif
                 @endforeach
 
                 @foreach ($lowStock as $item)
-                    <div class="toast inventory-alert" data-id="{{ $item->id }}" role="alert" aria-live="assertive"
-                        aria-atomic="true" data-bs-delay="5000">
-                        <div class="toast-header bg-warning text-white">
-                            <strong class="me-auto">Cảnh báo tồn kho</strong>
-                            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    @if ($item->ingredient)
+                        <div class="toast inventory-alert" data-id="{{ $item->id }}" role="alert"
+                            aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+                            <div class="toast-header bg-warning text-white">
+                                <strong class="me-auto">Cảnh báo tồn kho</strong>
+                                <button type="button" class="btn-close" data-bs-dismiss="toast"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="toast-body">
+                                Mặt hàng: {{ $item->ingredient->name }}, với ID: {{ $item->id }} có số lượng thấp
+                                ({{ $item->quantity_stock }})
+                                .
+                            </div>
                         </div>
-                        <div class="toast-body">
-                            Mặt hàng: {{ $item->ingredient->name }}, với ID: {{ $item->id }} có số lượng thấp
-                            ({{ $item->quantity_stock }})
-                            .
-                        </div>
-                    </div>
+                    @endif
                 @endforeach
 
                 @foreach ($highStock as $item)
-                    <div class="toast inventory-alert" data-id="{{ $item->id }}" role="alert" aria-live="assertive"
-                        aria-atomic="true" data-bs-delay="5000">
-                        <div class="toast-header bg-success text-white">
-                            <strong class="me-auto">Thông báo tồn kho</strong>
-                            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    @if ($item->ingredient)
+                        <div class="toast inventory-alert" data-id="{{ $item->id }}" role="alert"
+                            aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+                            <div class="toast-header bg-success text-white">
+                                <strong class="me-auto">Thông báo tồn kho</strong>
+                                <button type="button" class="btn-close" data-bs-dismiss="toast"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="toast-body">
+                                Mặt hàng: {{ $item->ingredient->name }}, với ID: {{ $item->id }} có số lượng lớn cần ưu
+                                tiên sử dụng ({{ $item->quantity_stock }}).
+                            </div>
                         </div>
-                        <div class="toast-body">
-                            Mặt hàng: {{ $item->ingredient->name }}, với ID: {{ $item->id }} có số lượng lớn cần ưu
-                            tiên sử dụng ({{ $item->quantity_stock }}).
-                        </div>
-                    </div>
+                    @endif
                 @endforeach
             </div>
+
 
 
             <div class="row">
@@ -94,6 +104,9 @@
                                     </div>
                                     <div class="col-auto">
                                         <button type="submit" class="btn btn-sm btn-primary">Tìm kiếm</button>
+                                        <a href="{{ route('admin.inventory.index') }}" class="btn btn-sm btn-success">
+                                            <i class="bi bi-arrow-repeat"></i>
+                                        </a>
                                     </div>
                                 </div>
                             </form>
@@ -103,10 +116,21 @@
                                 <table class="table v-middle m-0">
                                     <thead>
                                         <tr>
-                                            <th>ID</th>
-                                            <th>Tên Nguyên Liệu</th>
+                                            <th> <a
+                                                    href="{{ route('admin.inventory.index', array_merge(request()->query(), ['sort' => 'id', 'direction' => request('sort') === 'id' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}">
+                                                    ID
+                                                    <i
+                                                        class="bi bi-arrow-{{ request('sort') === 'id' ? (request('direction') === 'asc' ? 'up' : 'down') : '' }}"></i>
+                                                </a></th>
+                                            <th>Tên Nguyên Liệu</th>
                                             <th>Đơn Vị</th>
-                                            <th>Số Lượng Tồn Kho</th>
+                                            <th> <a
+                                                    href="{{ route('admin.inventory.index', array_merge(request()->query(), ['sort' => 'quantity_stock', 'direction' => request('sort') === 'quantity_stock' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}">
+                                                    Số Lượng Tồn Kho
+                                                    <i
+                                                        class="bi bi-arrow-{{ request('sort') === 'quantity_stock' ? (request('direction') === 'asc' ? 'up' : 'down') : '' }}"></i>
+                                                </a></th>
+
                                             <th>Hành Động</th>
                                         </tr>
                                     </thead>
@@ -153,57 +177,9 @@
                         </div>
 
                     </div>
-                    <!-- Pagination -->
-                    <div class="d-flex justify-content-between align-items-center bg-white p-4">
-                        <!-- Phần hiển thị phân trang bên trái -->
-                        <div class="mb-4 flex sm:mb-0 text-center">
-                            <span style="font-size: 15px">
-                                <i class="bi bi-chevron-compact-left"></i>
+                    <div class="d-flex justify-content-center">
 
-                                <span class="text-sm font-normal text-gray-500 dark:text-gray-400">
-                                    Hiển thị <strong
-                                        class="font-semibold text-secondary ">{{ $inventoryStocks->firstItem() }}-{{ $inventoryStocks->lastItem() }}</strong>
-                                    trong tổng số <strong
-                                        class="font-semibold text-secondary ">{{ $inventoryStocks->total() }}</strong>
-                                </span> <i class="bi bi-chevron-compact-right"></i>
-                            </span>
-                        </div>
-
-                        <!-- Phần hiển thị phân trang bên phải -->
-                        <div class="flex items-center space-x-3">
-                            <!-- Nút Previous -->
-                            @if ($inventoryStocks->onFirstPage())
-                                <button class="inline-flex  p-1 pl-2 bg-success text-white  cursor-not-allowed"
-                                    style="border-radius: 5px; border: 2px solid rgb(136, 243, 136);">
-                                    <span style="font-size: 15px"><i class="bi bi-chevron-compact-left"></i>Trước</span>
-                                </button>
-                            @else
-                                <a href="{{ $inventoryStocks->previousPageUrl() }}">
-                                    <button class="inline-flex  p-1 pl-2  bg-success text-white "
-                                        style="border-radius: 5px;    border: 2px solid rgb(136, 243, 136);">
-                                        <span style="font-size: 15px"><i class="bi bi-chevron-double-left"></i>
-                                            Trước</span>
-                                    </button>
-                                </a>
-                            @endif
-
-                            <!-- Nút Next -->
-                            @if ($inventoryStocks->hasMorePages())
-                                <a href="{{ $inventoryStocks->nextPageUrl() }}">
-                                    <button class="inline-flex  p-1 pl-2 bg-success text-white"
-                                        style="border-radius: 5px;    border: 2px solid rgb(136, 243, 136);">
-                                        <span style="font-size: 15px"> Sau <i
-                                                class="bi bi-chevron-compact-right"></i></span>
-                                    </button>
-                                </a>
-                            @else
-                                <button class="inline-flex  p-1 pl-2 bg-primary text-white cursor-not-allowed"
-                                    style="border-radius: 5px;    border: 2px solid rgb(83, 150, 216);">
-                                    <span style="font-size: 15px">
-                                        Trang Cuối</i></span>
-                                </button>
-                            @endif
-                        </div>
+                        {{ $inventoryStocks->links('pagination::client-paginate') }}
 
                     </div>
                 </div>

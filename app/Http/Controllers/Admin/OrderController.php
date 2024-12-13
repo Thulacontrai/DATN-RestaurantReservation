@@ -30,14 +30,43 @@ class OrderController extends Controller
     protected $viewPath = 'admin.order';
     protected $routePath = 'admin.order';
 
-    public function index()
+    public function index(Request $request)
     {
-        $title = 'Hoá Đơn';
-        $orders = Order::all();
-        $orders = Order::latest()->paginate(10);
+        $title = 'Hóa Đơn';
+        // Lấy tham số sort, direction, id, và status từ request
+        $sort = $request->input('sort', 'id');
+        $direction = $request->input('direction', 'desc');
+        $id = $request->input('id');
+        $status = $request->input('status');
 
-        return view('admin.order.index', compact('orders', 'title', ));
+        // Xác nhận cột sắp xếp hợp lệ
+        $allowedSorts = ['id', 'reservation_id', 'total_amount', 'final_amount'];
+        $sort = in_array($sort, $allowedSorts) ? $sort : 'id';
+
+        // Xác nhận thứ tự sắp xếp hợp lệ
+        $direction = in_array($direction, ['asc', 'desc']) ? $direction : 'desc';
+
+        // Lấy danh sách hóa đơn, áp dụng sắp xếp
+        $orders = Order::query();
+
+        // Lọc theo mã đơn hàng nếu có
+        if ($id) {
+            $orders->where('id', 'like', "%{$id}%");
+        }
+
+        // Lọc theo trạng thái nếu có
+        if ($status) {
+            $orders->where('status', $status);
+        }
+
+        // Áp dụng sắp xếp
+        $orders = $orders->orderBy($sort, $direction)->paginate(10);
+
+        return view('admin.order.index', compact('orders', 'title'));
+
     }
+
+
 
     public function create()
     {

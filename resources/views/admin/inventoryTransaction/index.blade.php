@@ -70,10 +70,31 @@
                                 <table class="table v-middle m-0">
                                     <thead>
                                         <tr>
-                                            <th>Mã Phiếu Nhập</th>
-                                            <th>Nhân Viên</th>
-                                            <th>Nhà Cung Cấp</th>
-                                            <th>Tổng Tiền</th>
+                                            <th> <a
+                                                    href="{{ route('transactions.index', array_merge(request()->query(), ['sort' => 'id', 'direction' => request('sort') === 'id' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}">
+                                                    ID
+                                                    <i
+                                                        class="bi bi-arrow-{{ request('sort') === 'id' ? (request('direction') === 'asc' ? 'up' : 'down') : '' }}"></i>
+                                                </a></th>
+                                            <th> <a
+                                                    href="{{ route('transactions.index', array_merge(request()->query(), ['sort' => 'staff_name', 'direction' => request('sort') === 'staff_name' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}">
+                                                    Nhân Viên
+                                                    <i
+                                                        class="bi bi-arrow-{{ request('sort') === 'staff_name' ? (request('direction') === 'asc' ? 'up' : 'down') : '' }}"></i>
+                                                </a></th>
+                                            <th> <a
+                                                    href="{{ route('transactions.index', array_merge(request()->query(), ['sort' => 'name', 'direction' => request('sort') === 'name' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}">
+                                                    Nhà Cung Cấp
+                                                    <i
+                                                        class="bi bi-arrow-{{ request('sort') === 'name' ? (request('direction') === 'asc' ? 'up' : 'down') : '' }}"></i>
+                                                </a></th>
+                                            <th> <a
+                                                    href="{{ route('transactions.index', array_merge(request()->query(), ['sort' => 'total_amount', 'direction' => request('sort') === 'total_amount' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}">
+                                                    Tổng Tiền
+                                                    <i
+                                                        class="bi bi-arrow-{{ request('sort') === 'total_amount' ? (request('direction') === 'asc' ? 'up' : 'down') : '' }}"></i>
+                                                </a></th>
+
                                             <th>Trạng Thái</th>
                                             <th>Ngày Tạo</th>
                                             <th>Hành Động</th>
@@ -99,7 +120,8 @@
                                                 </td>
 
                                                 <td>
-                                                    {{ \Carbon\Carbon::parse($transaction->change_date . ' ' . $transaction->change_time)->format('H:i:s') }}<br>
+                                                    <span
+                                                        class="text-success">{{ \Carbon\Carbon::parse($transaction->change_date . ' ' . $transaction->change_time)->format('H:i:s') }}</span><br>
                                                     {{ \Carbon\Carbon::parse($transaction->change_date)->format('d/m/Y') }}
                                                 </td>
                                                 <td>
@@ -143,57 +165,9 @@
 
 
                         </div>
-                        <!-- Pagination -->
-                        <div class="d-flex justify-content-between align-items-center bg-white p-4">
-                            <!-- Phần hiển thị phân trang bên trái -->
-                            <div class="mb-4 flex sm:mb-0 text-center">
-                                <span style="font-size: 15px">
-                                    <i class="bi bi-chevron-compact-left"></i>
+                        <div class="d-flex justify-content-center">
 
-                                    <span class="text-sm font-normal text-gray-500 dark:text-gray-400">
-                                        Hiển thị <strong
-                                            class="font-semibold text-secondary ">{{ $transactions->firstItem() }}-{{ $transactions->lastItem() }}</strong>
-                                        trong tổng số <strong
-                                            class="font-semibold text-secondary ">{{ $transactions->total() }}</strong>
-                                    </span> <i class="bi bi-chevron-compact-right"></i>
-                                </span>
-                            </div>
-
-                            <!-- Phần hiển thị phân trang bên phải -->
-                            <div class="flex items-center space-x-3">
-                                <!-- Nút Previous -->
-                                @if ($transactions->onFirstPage())
-                                    <button class="inline-flex  p-1 pl-2 bg-success text-white  cursor-not-allowed"
-                                        style="border-radius: 5px; border: 2px solid rgb(136, 243, 136);">
-                                        <span style="font-size: 15px"><i class="bi bi-chevron-compact-left"></i>Trước</span>
-                                    </button>
-                                @else
-                                    <a href="{{ $transactions->previousPageUrl() }}">
-                                        <button class="inline-flex  p-1 pl-2  bg-success text-white "
-                                            style="border-radius: 5px;    border: 2px solid rgb(136, 243, 136);">
-                                            <span style="font-size: 15px"><i class="bi bi-chevron-double-left"></i>
-                                                Trước</span>
-                                        </button>
-                                    </a>
-                                @endif
-
-                                <!-- Nút Next -->
-                                @if ($transactions->hasMorePages())
-                                    <a href="{{ $transactions->nextPageUrl() }}">
-                                        <button class="inline-flex  p-1 pl-2 bg-success text-white"
-                                            style="border-radius: 5px;    border: 2px solid rgb(136, 243, 136);">
-                                            <span style="font-size: 15px"> Sau <i
-                                                    class="bi bi-chevron-compact-right"></i></span>
-                                        </button>
-                                    </a>
-                                @else
-                                    <button class="inline-flex  p-1 pl-2 bg-primary text-white cursor-not-allowed"
-                                        style="border-radius: 5px;    border: 2px solid rgb(83, 150, 216);">
-                                        <span style="font-size: 15px">
-                                            Trang Cuối</i></span>
-                                    </button>
-                                @endif
-                            </div>
+                            {{ $transactions->links('pagination::client-paginate') }}
 
                         </div>
                     </div>

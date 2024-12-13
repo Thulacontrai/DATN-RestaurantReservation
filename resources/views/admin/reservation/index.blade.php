@@ -85,23 +85,6 @@
                                             value="{{ request('date') }}" id="dateFilter">
                                     </div>
 
-                                    {{-- <!-- New filter for notifications -->
-                                    <div class="col-auto">
-                                        <select name="notification_type" class="form-select form-select-sm"
-                                            id="notificationTypeFilter">
-                                            <option value="">Chọn thông báo</option>
-                                            <option value="upcoming"
-                                                {{ request('notification_type') == 'upcoming' ? 'selected' : '' }}>Sắp đến
-                                                hạn </option>
-                                            <option value="waiting"
-                                                {{ request('notification_type') == 'waiting' ? 'selected' : '' }}>Chờ khách
-                                                đến </option>
-                                            <option value="overdue"
-                                                {{ request('notification_type') == 'overdue' ? 'selected' : '' }}>Quá hạn
-                                            </option>
-                                        </select>
-                                    </div> --}}
-
                                     <div class="col-auto">
                                         <button type="submit" class="btn btn-sm btn-primary">Tìm kiếm</button>
                                         <a href="{{ route('admin.reservation.index') }}" class="btn btn-sm btn-success">
@@ -117,12 +100,33 @@
                                     <thead>
                                         <tr>
 
-                                            <th>Mã Đặt Chỗ</th>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.reservation.index', array_merge(request()->query(), ['sort' => 'id', 'direction' => request('sort') === 'id' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}">
+                                                    Mã Đặt Chỗ
+                                                    <i
+                                                        class="bi bi-arrow-{{ request('sort') === 'id' ? (request('direction') === 'asc' ? 'up' : 'down') : '' }}"></i>
+                                                </a>
+                                            </th>
                                             <th>Tên Khách Hàng</th>
-                                            <th>Số Lượng Khách</th>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.reservation.index', array_merge(request()->query(), ['sort' => 'guest_count', 'direction' => request('sort') === 'guest_count' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}">
+                                                    Số Lượng Khách
+                                                    <i
+                                                        class="bi bi-arrow-{{ request('sort') === 'guest_count' ? (request('direction') === 'asc' ? 'up' : 'down') : '' }}"></i>
+                                                </a>
+                                            </th>
                                             <th>Thời Gian Đặt</th>
-                                            {{-- <th>Bàn</th> --}}
-                                            <th>Tiền cọc</th>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.reservation.index', array_merge(request()->query(), ['sort' => 'deposit_amount', 'direction' => request('sort') === 'deposit_amount' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}">
+                                                    Tiền Cọc
+                                                    <i
+                                                        class="bi bi-arrow-{{ request('sort') === 'deposit_amount' ? (request('direction') === 'asc' ? 'up' : 'down') : '' }}"></i>
+                                                </a>
+                                            </th>
+
                                             <th>Ghi Chú</th>
                                             <th>Trạng Thái</th>
                                             <th>Hành Động</th>
@@ -135,9 +139,9 @@
                                                 <td>{{ $reservation->customer->name ?? 'Không rõ' }}</td>
                                                 <td>{{ $reservation->guest_count ?? 'N/A' }}</td>
                                                 <td style="text-align: center">
-                                                    <span>
-                                                        {{ \Carbon\Carbon::parse($reservation->reservation_date . ' ' . $reservation->reservation_time)->format('H:i:s') }}<br>
-                                                        {{ \Carbon\Carbon::parse($reservation->reservation_date)->format('d/m/Y') }}
+                                                    <span class="text-success">
+                                                        {{ \Carbon\Carbon::parse($reservation->reservation_date . ' ' . $reservation->reservation_time)->format('H:i:s') }}</span><br>
+                                                    {{ \Carbon\Carbon::parse($reservation->reservation_date)->format('d/m/Y') }}
                                                 </td>
 
 
@@ -167,7 +171,7 @@
 
                                                     <div class="actions">
                                                         <a href="{{ route('admin.reservation.show', $reservation->id) }}"
-                                                            class="editRow" data-id="{{ $reservation->id }}" 
+                                                            class="editRow" data-id="{{ $reservation->id }}"
                                                             data-bs-toggle="tooltip" data-bs-placement="top"
                                                             title="Chi Tiết">
                                                             <i class="bi bi-list text-green"></i>
@@ -258,60 +262,11 @@
                             <!-- Pagination -->
 
                         </div>
-                        <div class="d-flex justify-content-between align-items-center bg-white p-4">
-                            <!-- Phần hiển thị phân trang bên trái -->
-                            <div class="mb-4 flex sm:mb-0 text-center">
-                                <span style="font-size: 15px">
-                                    <i class="bi bi-chevron-compact-left"></i>
+                        <div class="d-flex justify-content-center">
 
-                                    <span class="text-sm font-normal text-gray-500 dark:text-gray-400">
-                                        Hiển thị <strong
-                                            class="font-semibold text-secondary ">{{ $reservations->firstItem() }}-{{ $reservations->lastItem() }}</strong>
-                                        trong tổng số <strong
-                                            class="font-semibold text-secondary ">{{ $reservations->total() }}</strong>
-                                    </span> <i class="bi bi-chevron-compact-right"></i>
-                                </span>
-                            </div>
-
-                            <!-- Phần hiển thị phân trang bên phải -->
-                            <div class="flex items-center space-x-3">
-                                <!-- Nút Previous -->
-                                @if ($reservations->onFirstPage())
-                                    <button class="inline-flex  p-1 pl-2 bg-success text-white  cursor-not-allowed"
-                                        style="border-radius: 5px; border: 2px solid rgb(136, 243, 136);">
-                                        <span style="font-size: 15px"><i
-                                                class="bi bi-chevron-compact-left"></i>Trước</span>
-                                    </button>
-                                @else
-                                    <a href="{{ $reservations->previousPageUrl() }}">
-                                        <button class="inline-flex  p-1 pl-2  bg-success text-white "
-                                            style="border-radius: 5px;    border: 2px solid rgb(136, 243, 136);">
-                                            <span style="font-size: 15px"><i class="bi bi-chevron-double-left"></i>
-                                                Trước</span>
-                                        </button>
-                                    </a>
-                                @endif
-
-                                <!-- Nút Next -->
-                                @if ($reservations->hasMorePages())
-                                    <a href="{{ $reservations->nextPageUrl() }}">
-                                        <button class="inline-flex  p-1 pl-2 bg-success text-white"
-                                            style="border-radius: 5px;    border: 2px solid rgb(136, 243, 136);">
-                                            <span style="font-size: 15px"> Sau <i
-                                                    class="bi bi-chevron-compact-right"></i></span>
-                                        </button>
-                                    </a>
-                                @else
-                                    <button class="inline-flex  p-1 pl-2 bg-primary text-white cursor-not-allowed"
-                                        style="border-radius: 5px;    border: 2px solid rgb(83, 150, 216);">
-                                        <span style="font-size: 15px">
-                                            Trang Cuối</i></span>
-                                    </button>
-                                @endif
-                            </div>
+                            {{ $reservations->links('pagination::client-paginate') }}
 
                         </div>
-                        <!-- End Pagination -->
 
                     </div>
                 </div>

@@ -22,33 +22,53 @@
                                 <div class="col-auto">
                                     <!-- Input with search icon inside -->
                                     <div class="input-group">
-                                        <input type="text" id="search-name" name="name"
-                                            class="form-control form-control-sm" placeholder="Tìm kiếm"
-                                            value="{{ request('name') }}">
-                                        <span class="input-group-text" id="search-icon">
-                                            <i class="bi bi-search"></i>
-                                        </span>
+                                        <form method="GET" action="{{ route('admin.feedback.index') }}" class="mb-3">
+                                            <div class="row g-2">
+                                                <div class="col-auto">
+                                                    <input type="text" id="search" name="search"
+                                                        class="form-control form-control-sm"
+                                                        placeholder="Tìm kiếm tên khách hàng"
+                                                        value="{{ request('search') }}">
+                                                </div>
+                                                <div class="col-auto">
+                                                    <button type="submit" class="btn btn-sm btn-primary">Tìm kiếm</button>
+                                                </div>
+                                            </div>
+                                        </form>
                                     </div>
+
                                 </div>
                                 <div class="col-auto">
-                                    <!-- The search button is removed since it's no longer needed -->
+
                                 </div>
                             </div>
                             <div class="table-responsive">
                                 <table class="table v-middle m-0">
                                     <thead>
                                         <tr>
-                                            <th>Mã Hoá Đơn</th>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.feedback.index', array_merge(request()->query(), ['sort' => 'reservation_id', 'direction' => request('sort') === 'reservation_id' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}">
+                                                    Mã Đơn Hàng
+                                                    <i
+                                                        class="bi bi-arrow-{{ request('sort') === 'reservation_id' ? (request('direction') === 'asc' ? 'up' : 'down') : '' }}"></i>
+                                                </a>
+                                            </th>
                                             <th>Tên Khách Hàng</th>
                                             <th>Nội Dung</th>
-                                            <th>Xếp Hạng</th>
+                                            <th> <a
+                                                    href="{{ route('admin.feedback.index', array_merge(request()->query(), ['sort' => 'rating', 'direction' => request('sort') === 'rating' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}">
+                                                    Xếp Hạng
+                                                    <i
+                                                        class="bi bi-arrow-{{ request('sort') === 'rating' ? (request('direction') === 'asc' ? 'up' : 'down') : '' }}"></i>
+                                                </a></th>
                                             <th>Hành Động</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @forelse ($feedbacks as $feedback)
                                             <tr>
-                                                <td>{{ $feedback->order_id }}</td>
+                                                <td>{{ $feedback->reservation_id }}</td>
                                                 <td>{{ $feedback->customer->name ?? 'Khách hàng không tồn tại' }}</td>
                                                 <td id="content_{{ $feedback->id }}">{{ $feedback->content }}</td>
                                                 <td id="rating_{{ $feedback->id }}">
@@ -62,7 +82,8 @@
                                                 </td>
                                                 <td>
                                                     <div class="actions d-flex">
-                                                        <a href="{{ route('admin.feedback.show', $feedback->id) }}" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight">
+                                                        <a href="{{ route('admin.feedback.show', $feedback->id) }}"
+                                                            data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight">
                                                             <i class="bi bi-list text-green"></i>
                                                         </a>
                                                         <a href="">
@@ -89,83 +110,18 @@
                                 </table>
                             </div>
                         </div>
-
-                        <!-- Pagination -->
-                        <div class="d-flex justify-content-between align-items-center bg-white p-4">
-                            <!-- Phần hiển thị phân trang bên trái -->
-                            <div class="mb-4 flex sm:mb-0 text-center">
-                                <span style="font-size: 15px">
-                                    <i class="bi bi-chevron-compact-left"></i>
-
-                                    <span class="text-sm font-normal text-gray-500 dark:text-gray-400">
-                                        Hiển thị <strong
-                                            class="font-semibold text-secondary ">{{ $feedbacks->firstItem() }}-{{ $feedbacks->lastItem() }}</strong>
-                                        trong tổng số <strong
-                                            class="font-semibold text-secondary ">{{ $feedbacks->total() }}</strong>
-                                    </span><i class="bi bi-chevron-compact-right"></i>
-                                </span>
-                            </div>
-
-                            <!-- Phần hiển thị phân trang bên phải -->
-                            <div class="flex items-center space-x-3">
-                                <!-- Nút Previous -->
-                                @if ($feedbacks->onFirstPage())
-                                    <button class="inline-flex  p-1 pl-2 bg-success text-white  cursor-not-allowed"
-                                        style="border-radius: 5px; border: 2px solid rgb(136, 243, 136);">
-                                        <span style="font-size: 15px"><i class="bi bi-chevron-compact-left"></i>Trước</span>
-                                    </button>
-                                @else
-                                    <a href="{{ $feedbacks->previousPageUrl() }}">
-                                        <button class="inline-flex  p-1 pl-2  bg-success text-white "
-                                            style="border-radius: 5px;    border: 2px solid rgb(136, 243, 136);">
-                                            <span style="font-size: 15px"><i class="bi bi-chevron-double-left"></i>
-                                                Trước</span>
-                                        </button>
-                                    </a>
-                                @endif
-
-                                <!-- Nút Next -->
-                                @if ($feedbacks->hasMorePages())
-                                    <a href="{{ $feedbacks->nextPageUrl() }}">
-                                        <button class="inline-flex  p-1 pl-2 bg-success text-white"
-                                            style="border-radius: 5px;    border: 2px solid rgb(136, 243, 136);">
-                                            <span style="font-size: 15px"> Sau <i
-                                                    class="bi bi-chevron-compact-right"></i></span>
-                                        </button>
-                                    </a>
-                                @else
-                                    <button class="inline-flex  p-1 pl-2 bg-primary text-white cursor-not-allowed"
-                                        style="border-radius: 5px;    border: 2px solid rgb(83, 150, 216);">
-                                        <span style="font-size: 15px">
-                                            Trang Cuối</i></span>
-                                    </button>
-                                @endif
-                            </div>
-
-                        </div>
                     </div>
+                </div>
+
+                <div class="d-flex justify-content-center">
+
+                    {{ $feedbacks->links('pagination::client-paginate') }}
+
                 </div>
             </div>
         </div>
     </div>
-
-
-
-
-
-    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
-        <div class="offcanvas-header">
-            <h5 id="offcanvasRightLabel">Chi tiết phản hồi</h5>
-            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body">
-            <div id="feedback-details">
-                <p><strong>Mã Hóa Đơn:</strong> {{ $feedback->order_id }}</p>
-                <p><strong>Tên Khách Hàng:</strong> {{ $feedback->customer_name ?? 'N/A' }}</p>
-                <p><strong>Nội Dung:</strong> {{ $feedback->content }}</p>
-                <p><strong>Xếp Hạng:</strong> {{ $feedback->rating }} ⭐</p>
-            </div>
-        </div>
+    </div>
     </div>
 
 
