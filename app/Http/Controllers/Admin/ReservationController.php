@@ -360,22 +360,19 @@ class ReservationController extends Controller
         }
     }
 
-
-
-
-
-
-    public function cancel($id)
+    public function cancel(Request $request, $id)
     {
         // Tìm đơn đặt chỗ
         $reservation = Reservation::findOrFail($id);
-
-        // Cập nhật trạng thái đơn đặt chỗ thành 'Cancelled'
+    
+        // Cập nhật trạng thái và lý do hủy
         $reservation->status = 'Cancelled';
+        $reservation->cancelled_reason = $request->input('cancelled_reason');
         $reservation->save();
-
+    
         return redirect()->route('admin.reservation.index')->with('success', 'Đơn đặt bàn đã được hủy thành công.');
     }
+    
 
 
 
@@ -850,6 +847,11 @@ class ReservationController extends Controller
         DB::transaction(function () use ($orderId) {
             $order = Order::find($orderId);
             $order->status = 'completed';
+            $reservation = $order->reservation;
+            if ($reservation) {
+                $reservation->status = 'completed';
+                $reservation->save();
+            }
             $order->save();
             foreach ($order->tables as $tables) {
                 $table = Table::find($tables->id);
@@ -869,6 +871,9 @@ class ReservationController extends Controller
                         ->with([
                             'reservation' => function ($query) {
                                 $query->select('id', 'user_name');
+                            },
+                            'customer' => function ($query) {
+                                $query->select('id', 'name');
                             }
                         ]);
                 }
@@ -882,6 +887,11 @@ class ReservationController extends Controller
         DB::transaction(function () use ($orderId) {
             $order = Order::find($orderId);
             $order->status = 'completed';
+            $reservation = $order->reservation;
+            if ($reservation) {
+                $reservation->status = 'completed';
+                $reservation->save();
+            }
             $order->save();
             foreach ($order->tables as $tables) {
                 $table = Table::find($tables->id);
@@ -901,7 +911,11 @@ class ReservationController extends Controller
                         ->with([
                             'reservation' => function ($query) {
                                 $query->select('id', 'user_name');
+                            },
+                            'customer' => function ($query) {
+                                $query->select('id', 'name');
                             }
+
                         ]);
                 }
             ])->get();

@@ -98,44 +98,53 @@ class ComboController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request->all());
         $request->validate([
             'name'             => 'required|string|max:255',
             'price'            => 'required|numeric',
             'description'      => 'nullable|string',
             'image'            => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'quantity_dishes'  => 'required|integer|min:1',
+            'dishes'           => 'required|array|min:1',
+            'dish_quantities'  => 'required|array',
+            'dish_quantities.*' => 'required|integer|min:1',
+        ], [
+            'name.required'              => 'Vui lòng nhập tên combo.',
+            'price.required'             => 'Vui lòng nhập giá combo.',
+            'dishes.required'            => 'Vui lòng chọn ít nhất một món ăn.',
+            'dish_quantities.required'   => 'Vui lòng nhập số lượng cho các món ăn.',
+            'dish_quantities.*.required' => 'Vui lòng nhập số lượng cho từng món ăn.',
+            'dish_quantities.*.min'      => 'Số lượng món ăn phải lớn hơn hoặc bằng 1.',
         ]);
-
-        // Kiểm tra tên combo đã tồn tại hay chưa
+    
         $existingCombo = Combo::where('name', $request->name)->first();
         if ($existingCombo) {
             return redirect()->back()->withInput()->with('error', 'Tên combo đã tồn tại. Vui lòng đặt tên khác.');
         }
-
+    
         DB::transaction(function () use ($request) {
             $imagePath = null;
             if ($request->hasFile('image')) {
                 $imagePath = $request->file('image')->store('combo_images', 'public');
             }
-
+    
             $combo = Combo::create([
                 'name'             => $request->name,
                 'price'            => $request->price,
                 'description'      => $request->description,
                 'image'            => $imagePath,
-                'quantity_dishes'  => $request->quantity_dishes,
+                'quantity_dishes'  => array_sum($request->dish_quantities),
             ]);
-
+    
             foreach ($request->dishes as $dishId) {
-                // Tạo bản ghi trong bảng combo_dish
-                $combo->dishes()->attach($dishId, ['quantity' => 1]);
+                if (isset($request->dish_quantities[$dishId])) {
+                    $quantity = $request->dish_quantities[$dishId];
+                    $combo->dishes()->attach($dishId, ['quantity' => $quantity]);
+                }
             }
         });
-
+    
         return redirect()->route($this->routePath . '.index')->with('success', 'Combo đã được thêm thành công!');
     }
-
+    
 
     public function edit($id)
     {
@@ -151,41 +160,45 @@ class ComboController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'name'             => 'required|string|max:255', // Tên combo là bắt buộc
-            'price'            => 'required|numeric|min:1', // Giá combo là bắt buộc và phải là số
-            'description'      => 'nullable|string', // Mô tả món ăn không bắt buộc
-            'image'            => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Ảnh combo là không bắt buộc
-            'quantity_dishes'  => 'required|integer|min:1', // Số lượng món ăn là bắt buộc và phải là số nguyên
+            'name'             => 'required|string|max:255',
+            'price'            => 'required|numeric|min:1',
+            'description'      => 'nullable|string',
+            'image'            => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'dishes'           => 'required|array|min:1',
+            'dish_quantities'  => 'required|array',
+            'dish_quantities.*' => 'required|integer|min:1',
         ]);
 
-
-        // Kiểm tra tên combo đã tồn tại nhưng loại trừ combo hiện tại
         $existingCombo = Combo::where('name', $request->name)->where('id', '!=', $id)->first();
         if ($existingCombo) {
             return redirect()->back()->withInput()->with('error', 'Tên combo đã tồn tại. Vui lòng đặt tên khác.');
         }
 
-        // Cập nhật thông tin combo trong một transaction
         DB::transaction(function () use ($request, $id) {
-            $combo = $this->model::findOrFail($id);
+            $combo = Combo::findOrFail($id);
 
-            // Nếu có ảnh mới, xử lý lưu ảnh và xóa ảnh cũ nếu cần
             if ($request->hasFile('image')) {
                 if ($combo->image) {
-                    // Xóa ảnh cũ khỏi storage
                     Storage::delete('public/' . $combo->image);
                 }
-                // Lưu ảnh mới vào thư mục combo_images
                 $imagePath = $request->file('image')->store('combo_images', 'public');
-                $combo->image = $imagePath; // Cập nhật đường dẫn ảnh mới
+                $combo->image = $imagePath;
             }
 
-            // Cập nhật các thông tin còn lại
-            $combo->update($request->except('image')); // Cập nhật tất cả trường, ngoại trừ ảnh
-            $combo->dishes()->sync($request->dishes); // Cập nhật mối quan hệ món ăn với combo
+            $combo->update([
+                'name'             => $request->name,
+                'price'            => $request->price,
+                'description'      => $request->description,
+                'quantity_dishes'  => array_sum($request->dish_quantities),
+            ]);
+
+            $dishesData = [];
+            foreach ($request->dishes as $dishId) {
+                $dishesData[$dishId] = ['quantity' => $request->dish_quantities[$dishId] ?? 1];
+            }
+            $combo->dishes()->sync($dishesData);
         });
 
-        // Trả về thông báo thành công
         return redirect()->route($this->routePath . '.index')->with('success', 'Combo đã được cập nhật thành công!');
     }
 

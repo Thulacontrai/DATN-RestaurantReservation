@@ -12,10 +12,12 @@
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <span><i class="fas fa-user"></i> <strong>Tên khách hàng:</strong></span>
-                            @if (isset($order->reservation->customer->name))
-                                <span>{{ $order->reservation->customer->name }}</span>
-                            @elseif(isset($order->reservation->user_name))
+                            @if (isset($order->reservation->user_name))
                                 <span>{{ $order->reservation->user_name }}</span>
+                            @elseif (isset($order->reservation->customer->name))
+                                <span>{{ $order->reservation->customer->name }}</span>
+                            @elseif(isset($order->customer->name))
+                                <span>{{ $order->customer->name }}</span>
                             @else
                                 <span>Khách lẻ </span>
                             @endif

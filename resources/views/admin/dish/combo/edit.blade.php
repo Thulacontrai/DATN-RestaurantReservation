@@ -5,11 +5,42 @@
 @section('css')
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/summernote-lite.min.css" rel="stylesheet">
+    <style>
+        th {
+            font-weight: 400 !important;
+            color: #555
+        }
+
+        .table-responsive {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .table thead th {
+            white-space: nowrap;
+        }
+
+        .table td input {
+            text-align: center;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    </style>
 @endsection
 
 @section('content')
 
-@include('admin.layouts.messages')
+    @include('admin.layouts.messages')
 
     <div class="content-wrapper-scroll">
         <div class="content-wrapper">
@@ -27,7 +58,7 @@
                                 @method('PUT')
 
                                 <div class="row">
-                                    <div class="col-sm-6 col-12">
+                                    <div class="col-8">
                                         <div class="mb-3">
                                             <label class="form-label">Tên Combo <span
                                                     class="text-danger required">*</span></label>
@@ -41,10 +72,7 @@
                                             </div>
                                             <div class="invalid-feedback">Vui lòng nhập tên combo hợp lệ.</div>
                                         </div>
-                                    </div>
 
-
-                                    <div class="col-sm-6 col-12">
                                         <div class="mb-3">
                                             <label class="form-label">Giá Combo <span
                                                     class="text-danger required">*</span></label>
@@ -58,40 +86,15 @@
                                             <div class="invalid-feedback">Vui lòng nhập giá combo hợp lệ (từ 1 đến
                                                 100.000.000 VND).</div>
                                         </div>
-                                    </div>
 
-
-
-                                    <div class="col-sm-12 col-12">
-                                        <label for="dishes">Chọn Món Ăn:</label>
-                                        <select name="dishes[]" id="dishes" multiple="multiple" style="width: 100%">
-                                            @foreach ($dishes as $dish)
-                                                <option value="{{ $dish->id }}"
-                                                    {{ in_array($dish->id, $combo->dishes->pluck('id')->toArray()) ? 'selected' : '' }}>
-                                                    {{ $dish->name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-
-                                    <div class="col-sm-12 col-12">
-                                        <div class="mb-3">
-                                            <label for="editor" class="form-label">Mô tả món ăn</label>
-                                            <textarea name="description" id="editor" class="form-control">{{ $combo->description }}</textarea>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-sm-6 col-12">
                                         <div class="mb-3">
                                             <label class="form-label">Ảnh Combo</label>
                                             <input type="file" name="image" class="form-control" accept="image/*">
                                             <img src="{{ asset('storage/' . $combo->image) }}" alt="{{ $combo->name }}"
                                                 width="100" class="mt-2">
                                         </div>
-                                    </div>
 
-                                    <div class="col-sm-6 col-12">
-                                        <div class="mb-3">
+                                        {{-- <div class="mb-3">
                                             <label class="form-label">Số Lượng Món Ăn</label>
                                             <div class="input-group">
                                                 <span class="input-group-text bg-success">
@@ -103,15 +106,69 @@
                                                     placeholder="Số lượng món ăn trong combo" required readonly>
                                             </div>
                                             <div class="invalid-feedback">Vui lòng nhập số lượng món ăn.</div>
+                                        </div> --}}
+
+                                        <div class="mb-3">
+                                            <label for="editor" class="form-label">Mô tả món ăn</label>
+                                            <textarea name="description" id="editor" class="form-control">{{ $combo->description }}</textarea>
                                         </div>
                                     </div>
 
+                                    <div class="col-4">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="dishes">Chọn Món Ăn: <span
+                                                    class="text-danger required">*</span></label>
+                                            <select name="dishes[]" class="form-select" id="dishes" multiple="multiple"
+                                                style="width: 100%;">
+                                                @foreach ($dishes as $dish)
+                                                    <option value="{{ $dish->id }}"
+                                                        {{ in_array($dish->id, $combo->dishes->pluck('id')->toArray()) ? 'selected' : '' }}>
+                                                        {{ $dish->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+
+                                        <div class="table-responsive">
+                                            <label class="form-label">Danh sách món ăn</label>
+                                            <table class="table" id="selected-dishes-table">
+                                                <thead class="text-muted">
+                                                    <tr>
+                                                        <th class="w-50 text-muted">Món ăn</th>
+                                                        <th class="w-25 text-muted">Số lượng</th>
+                                                        {{-- <th class="w-25 text-muted">Hành Động</th> --}}
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="text-center align-middle">
+                                                    @foreach ($combo->dishes as $dish)
+                                                        <tr data-dish-id="{{ $dish->id }}">
+                                                            <td class="text-start">{{ $dish->name }}</td>
+                                                            <td>
+                                                                <input type="number"
+                                                                    name="dish_quantities[{{ $dish->id }}]"
+                                                                    class="form-control text-center mx-auto" min="1"
+                                                                    value="{{ $dish->pivot->quantity ?? 1 }}"
+                                                                    style="max-width: 100px;">
+                                                            </td>
+                                                            <td>
+                                                                <button type="button"
+                                                                    class="btn btn-alt btn-sm remove-dish">
+                                                                    <i class="fa fa-fw fa-times text-danger"></i>
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="mb-3 d-flex justify-content-end">
                                     <div class="text-end">
                                         <button type="submit" class="btn btn-primary">Cập Nhật Combo</button>
-                                        <a href="{{ route('admin.combo.index') }}" class="btn btn-secondary">Quay lại</a>
+                                        <a href="{{ route('admin.combo.index') }}" class="btn btn-secondary">Quay
+                                            lại</a>
                                     </div>
                                 </div>
                             </form>
@@ -129,10 +186,10 @@
 
     <script>
         $(document).ready(function() {
-            $('#dishes').select2({
-                placeholder: 'Chọn món ăn',
-                tags: false
-            });
+            // $('#dishes').select2({
+            //     placeholder: 'Chọn món ăn',
+            //     tags: false
+            // });
 
             $('#dishes').on('change', function() {
                 const selectedDishesCount = $(this).val() ? $(this).val().length : 0;
@@ -183,6 +240,7 @@
             }
         });
     </script>
+    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const priceInput = document.getElementById('price');
@@ -250,6 +308,54 @@
                 const existingErrorMessages = comboNameParent.querySelectorAll('.text-danger');
                 existingErrorMessages.forEach(error => error.remove());
             }
+        });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $('#dishes').select2({
+                placeholder: 'Chọn món ăn',
+                tags: false,
+            });
+
+            const selectedDishesTable = $('#selected-dishes-table tbody');
+
+            $('#dishes').on('select2:select', function(e) {
+                const selectedDishId = e.params.data.id;
+                const dishName = e.params.data.text;
+
+                if (!selectedDishesTable.find(`tr[data-dish-id="${selectedDishId}"]`).length) {
+                    selectedDishesTable.append(`
+        <tr data-dish-id="${selectedDishId}">
+          <td class="text-start">${dishName}</td>
+          <td>
+            <input type="number" name="dish_quantities[${selectedDishId}]" class="form-control text-center mx-auto" min="1" value="1" style="max-width: 100px;">
+          </td>
+          <td>
+            <button type="button" class="btn btn-alt btn-sm remove-dish">
+              <i class="fa fa-fw fa-times text-danger"></i>
+            </button>
+          </td>
+        </tr>
+      `);
+                }
+            });
+
+            $('#dishes').on('select2:unselect', function(e) {
+                const deselectedDishId = e.params.data.id;
+
+                selectedDishesTable.find(`tr[data-dish-id="${deselectedDishId}"]`).remove();
+            });
+
+            $(document).on('click', '.remove-dish', function() {
+                const row = $(this).closest('tr');
+                const dishId = row.data('dish-id');
+                row.remove();
+
+                const selectedDishes = $('#dishes').val();
+                const updatedDishes = selectedDishes.filter(id => id != dishId);
+                $('#dishes').val(updatedDishes).trigger('change');
+            });
         });
     </script>
 @endsection

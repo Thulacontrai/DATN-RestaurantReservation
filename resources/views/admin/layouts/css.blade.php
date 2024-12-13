@@ -1,9 +1,11 @@
+
 <style>
     html,
     body {
         font-family: Arial, sans-serif;
         font-size: 15px;
     }
+
 
     /* paginate */
     .my-pagination {
@@ -43,7 +45,6 @@
         padding: 10px 15px;
         border-radius: 5px;
     }
-
     .heart-btn {
         width: 70px;
         height: 40px;

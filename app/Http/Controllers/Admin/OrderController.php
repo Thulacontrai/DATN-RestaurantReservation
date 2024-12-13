@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\Table;
 use App\Traits\TraitCRUD;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 
 class OrderController extends Controller
 {
@@ -27,7 +30,6 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         $title = 'Hóa Đơn';
-
         // Lấy tham số sort, direction, id, và status từ request
         $sort = $request->input('sort', 'id');
         $direction = $request->input('direction', 'desc');
@@ -58,6 +60,7 @@ class OrderController extends Controller
         $orders = $orders->orderBy($sort, $direction)->paginate(10);
 
         return view('admin.order.index', compact('orders', 'title'));
+
     }
 
 
@@ -205,5 +208,15 @@ class OrderController extends Controller
         $order->forceDelete();
 
         return redirect()->route('admin.order.trash')->with('success', 'Đơn hàng đã được xóa vĩnh viễn.');
+    }
+    public function menuOrder(Request $request)
+    {
+        try {
+            $encryptedData = $request->input('data');
+            $tableId = Crypt::decryptString($encryptedData);
+            return view('client.menuOrder');
+        } catch (Exception $e) {
+            abort(403, 'Mã QR không hợp lệ.');
+        }
     }
 }
