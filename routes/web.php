@@ -101,6 +101,10 @@ Route::post('/member/update-booking', [MemberController::class, 'updateBooking']
 Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () {
     Route::get('user', [UserController::class, 'index'])->name('user.index'); // Danh sách người dùng
     Route::get('user/employees', [UserController::class, 'employeeList'])->name('user.employees'); // Danh sách nhân viên
+    Route::get('/users/{user}/edit', [UserController::class, 'edit'])
+    ->name('admin.user.edit');
+    Route::delete('/admin/user/{id}', [UserController::class, 'destroy'])->name('admin.user.destroy');
+
 });
 
 

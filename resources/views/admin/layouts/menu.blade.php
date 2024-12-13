@@ -164,7 +164,7 @@
                 @endcan
 
                 <!-- Menu Quản lý Nhân Viên -->
-                @can('Xem nhân viên')
+                @can('Xem người dùng')
                     <li class="sidebar-dropdown">
                         <a href="#">
                             <i class="bi bi-people-fill"></i>

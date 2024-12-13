@@ -15,15 +15,20 @@
             <div class="row">
                 <div class="col-sm-12 col-12">
                     <div class="card shadow-sm">
+                        @section('title', $type == 'employee' ? 'Thêm Mới Nhân Viên' : 'Thêm Mới Người Dùng')
+
                         <div class="card-header d-flex justify-content-between align-items-center text-white">
-                            <h5 class="card-title mb-3 ">Thêm Mới Người Dùng</h5>
-                            <a href="{{ route('admin.user.employees') }}" class="btn btn-sm btn-secondary">Quay lại</a>
+                            <h5 class="card-title mb-3">
+                                {{ $type == 'employee' ? 'Thêm Mới Nhân Viên' : 'Thêm Mới Người Dùng' }}
+                            </h5>
+                            <a href="{{ $type == 'employee' ? route('admin.user.employees') : route('admin.user.index') }}" class="btn btn-sm btn-secondary">Quay lại</a>
                         </div>
                         <div class="card-body">
                             <!-- Form Thêm Mới -->
-                            <form id="addUserForm" method="POST" action="{{ route('admin.user.store') }}"
-                                enctype="multipart/form-data" novalidate>
-                                @csrf
+                            <form id="addUserForm" method="POST" 
+                            action="{{ $type == 'employee' ? route('admin.user.store', ['type' => 'employee']) : route('admin.user.store', ['type' => 'user']) }}"
+                            enctype="multipart/form-data" novalidate>
+                          @csrf
 
                                 <div class="row">
                                     <!-- Tên và Email -->
@@ -89,36 +94,8 @@
                                         <input value="{{ old('hire_date') }}" type="date" id="hire_date"
                                             name="hire_date" class="form-control">
                                     </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="position" class="form-label">Chức Vụ</label>
-                                        <input value="{{ old('position') }}" type="text" id="position" name="position"
-                                            class="form-control" placeholder="Nhập chức vụ">
-                                        <div class="invalid-feedback">Vui lòng nhập chức vụ.</div>
-                                        <div class="valid-feedback">Looks good!</div>
-                                    </div>
-                                </div>
 
-                                <div class="row">
-                                    <!-- Avatar và Trạng Thái -->
-                                    <div class="col-md-6 mb-3">
-                                        <label for="avatar" class="form-label">Ảnh Đại Diện</label>
-                                        <input type="file" id="avatar" name="avatar" class="form-control"
-                                            accept="image/*">
-                                        <div class="invalid-feedback">Vui lòng chọn ảnh đại diện hợp lệ.</div>
-                                        <div class="valid-feedback">Looks good!</div>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="status" class="form-label">Trạng Thái</label>
-                                        <select id="status" name="status" class="form-select" required>
-                                            <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Hoạt
-                                                Động</option>
-                                            <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>
-                                                Không Hoạt Động</option>
-                                        </select>
-                                        <div class="invalid-feedback">Vui lòng chọn trạng thái.</div>
-                                        <div class="valid-feedback">Looks good!</div>
-                                    </div>
-                                </div>
+                             
 
                                 <div class="row">
                                     <!-- Vai Trò và Mật Khẩu -->
