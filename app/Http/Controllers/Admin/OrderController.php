@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
+use App\Models\Combo;
+use App\Models\Dishes;
 use App\Models\Order;
 use App\Models\Table;
 use App\Traits\TraitCRUD;
@@ -185,9 +188,15 @@ class OrderController extends Controller
         try {
             $encryptedData = $request->input('data');
             $tableId = Crypt::decryptString($encryptedData);
-            return view('client.menuOrder');
+            $table = Table::findOrFail($tableId);
+            $order = $table->orders->where('status', 'pending')->first();
+            $item = $order->items->where('status', '!=', 'hủy');
+            $dishes = Dishes::all();
+            $combo = Combo::all();
+            $cate = Category::all();
+            return view('client.menuOrder', compact('cate', 'table', 'order', 'item', 'dishes', 'combo'));
         } catch (Exception $e) {
-            abort(403, 'Mã QR không hợp lệ.');
+            echo $e->getMessage();
         }
     }
 }

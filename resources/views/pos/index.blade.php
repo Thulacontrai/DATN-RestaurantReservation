@@ -337,8 +337,7 @@
                     <div class="row" id="dish-list" style="max-height: 600px; overflow-y: auto;">
                         @foreach ($dishes as $dish)
                             <div class="col-6 col-sm-4 col-md-3 col-lg-3 dish-item {{ $dish->is_active == 0 || $dish->status == 'out_of_stock' ? 'disabled' : '' }}"
-                                data-category="{{ $dish->category->id }}" data-dish-id="{{ $dish->id }}"
-                                data-dish-price="{{ $dish->price }}" style="padding: 10px;"
+                                data-category="{{ $dish->category->id }}" style="padding: 10px;"
                                 @if ($dish->is_active && $dish->status != 'out_of_stock') data-dish-id="{{ $dish->id }}" 
                                 data-dish-price="{{ $dish->price }}" @endif>
 

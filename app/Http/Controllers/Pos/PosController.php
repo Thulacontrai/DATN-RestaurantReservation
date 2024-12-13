@@ -1,12 +1,16 @@
 <?php
 
 namespace App\Http\Controllers\Pos;
+
+use App\Events\CartUpdated;
 use App\Events\ComboStatusUpdated;
 use App\Events\DishStatusUpdated;
 use App\Events\ProcessingDishes;
 use App\Events\MessageSent;
 use App\Events\PosTableUpdated;
 use App\Events\ProvideDishes;
+use App\Events\UpdateComboStatus;
+use App\Events\UpdateDishStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Combo;
@@ -253,13 +257,14 @@ class PosController extends Controller
             foreach ($reciep as $recipe) {
                 $inventoryStock = InventoryStock::where('ingredient_id', $recipe->ingredient_id)->first();
                 $inventoryStock->quantity_reserved += $recipe->quantity_need;
-                if ($inventoryStock->quantity_reserved > $inventoryStock->quantity_stock) {
+                if ($inventoryStock->quantity_reserved >= $inventoryStock->quantity_stock) {
                     DB::rollBack();
                     $dish = Dishes::find($request->dish_id);
                     $dish->is_active = 0;
                     $dish->status = 'out_of_stock';
                     $dish->save();
                     broadcast(new DishStatusUpdated($dish));
+                    broadcast(new UpdateDishStatus($dish));
                     return response()->json([
                         'success' => false,
                     ]);
@@ -339,6 +344,9 @@ class PosController extends Controller
                 }
             }
             broadcast(new PosTableUpdated($orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
+            $countItems = $orderItem->count();
+            $total = $orderItems->total_amount;
+            broadcast(new CartUpdated($countItems, $total, $tableId->id))->toOthers();
             DB::commit();
             return response()->json([
                 'success' => true,
@@ -363,12 +371,13 @@ class PosController extends Controller
                 foreach ($reciep as $recipe) {
                     $inventoryStock = InventoryStock::where('ingredient_id', $recipe->ingredient_id)->first();
                     $inventoryStock->quantity_reserved += $recipe->quantity_need;
-                    if ($inventoryStock->quantity_reserved > $inventoryStock->quantity_stock) {
+                    if ($inventoryStock->quantity_reserved >= $inventoryStock->quantity_stock) {
                         DB::rollBack();
                         $combo = Combo::find($request->dish_id);
                         $combo->is_active = 1;
                         $combo->save();
                         broadcast(new ComboStatusUpdated($combo));
+                        broadcast(new UpdateComboStatus($combo));
                         return response()->json([
                             'success' => false,
                         ]);
@@ -449,6 +458,9 @@ class PosController extends Controller
                 }
             }
             broadcast(new PosTableUpdated($orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
+            $countItems = $orderItem->count();
+            $total = $orderItems->total_amount;
+            broadcast(new CartUpdated($countItems, $total, $tableId->id))->toOthers();
             DB::commit();
             return response()->json([
                 'success' => true,
@@ -891,6 +903,9 @@ class PosController extends Controller
         }
         $order = Order::with(['reservation', 'tables', 'customer'])->findOrFail($orderId);
         broadcast(new PosTableUpdated($orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
+        $countItems = $orderItem->count();
+        $total = $orderItems->total_amount;
+        broadcast(new CartUpdated($countItems, $total, $tableId->id))->toOthers();
         return response()->json([
             'success' => true,
             'order' => $table,
@@ -907,13 +922,14 @@ class PosController extends Controller
             foreach ($reciep as $recipe) {
                 $inventoryStock = InventoryStock::where('ingredient_id', $recipe->ingredient_id)->first();
                 $inventoryStock->quantity_reserved += $recipe->quantity_need;
-                if ($inventoryStock->quantity_reserved > $inventoryStock->quantity_stock) {
+                if ($inventoryStock->quantity_reserved >= $inventoryStock->quantity_stock) {
                     DB::rollBack();
                     $dish = Dishes::find($request->dish_id);
                     $dish->is_active = 0;
                     $dish->status = 'out_of_stock';
                     $dish->save();
                     broadcast(new DishStatusUpdated($dish));
+                    broadcast(new UpdateDishStatus($dish));
                     return response()->json([
                         'success' => false,
                     ]);
@@ -979,6 +995,9 @@ class PosController extends Controller
                 }
             }
             broadcast(new PosTableUpdated($orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
+            $countItems = $orderItem->count();
+            $total = $orderItems->total_amount;
+            broadcast(new CartUpdated($countItems, $total, $tableId->id))->toOthers();
             DB::commit();
             return response()->json([
                 'success' => true,
@@ -1001,12 +1020,13 @@ class PosController extends Controller
                 foreach ($reciep as $recipe) {
                     $inventoryStock = InventoryStock::where('ingredient_id', $recipe->ingredient_id)->first();
                     $inventoryStock->quantity_reserved += $recipe->quantity_need * $combo->pivot->quantity;
-                    if ($inventoryStock->quantity_reserved > $inventoryStock->quantity_stock) {
+                    if ($inventoryStock->quantity_reserved >= $inventoryStock->quantity_stock) {
                         DB::rollBack();
                         $combo = Combo::find($request->dish_id);
                         $combo->is_active = 0;
                         $combo->save();
                         broadcast(new ComboStatusUpdated($combo));
+                        broadcast(new UpdateComboStatus($combo));
                         return response()->json([
                             'success' => false
                         ]);
@@ -1073,6 +1093,9 @@ class PosController extends Controller
                 }
             }
             broadcast(new PosTableUpdated($orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
+            $countItems = $orderItem->count();
+            $total = $orderItems->total_amount;
+            broadcast(new CartUpdated($countItems, $total, $tableId->id))->toOthers();
             DB::commit();
             return response()->json([
                 'success' => true,
@@ -1099,6 +1122,7 @@ class PosController extends Controller
         $dish->status = 'available';
         $dish->save();
         broadcast(new DishStatusUpdated($dish));
+        broadcast(new UpdateDishStatus($dish));
         $orderId = Table::findOrFail($request->table_id)
             ->orders
             ->where('status', 'pending')
@@ -1169,6 +1193,9 @@ class PosController extends Controller
             }
         }
         broadcast(new PosTableUpdated($orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
+        $countItems = $orderItem->count();
+        $total = $orderItems->total_amount;
+        broadcast(new CartUpdated($countItems, $total, $tableId->id))->toOthers();
         $items = Kitchen::where('status', 'đang chế biến')
             ->with([
                 'order.tables:id,table_number',
@@ -1197,6 +1224,7 @@ class PosController extends Controller
         $combo->is_active = 1;
         $combo->save();
         broadcast(new ComboStatusUpdated($combo));
+        broadcast(new UpdateComboStatus($combo));
         $orderId = Table::findOrFail($request->table_id)
             ->orders
             ->where('status', 'pending')
@@ -1268,6 +1296,9 @@ class PosController extends Controller
             }
         }
         broadcast(new PosTableUpdated($orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
+        $countItems = $orderItem->count();
+        $total = $orderItems->total_amount;
+        broadcast(new CartUpdated($countItems, $total, $tableId->id))->toOthers();
         $items = Kitchen::where('status', 'đang chế biến')
             ->with([
                 'order.tables:id,table_number',
@@ -1372,6 +1403,9 @@ class PosController extends Controller
                 }
             }
             broadcast(new PosTableUpdated($orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
+            $countItems = $orderItem->count();
+            $total = $orderItems->total_amount;
+            broadcast(new CartUpdated($countItems, $total, $tableId->id))->toOthers();
             $items = Kitchen::where('status', 'đang chế biến')
                 ->with([
                     'order.tables:id,table_number',
@@ -1486,6 +1520,9 @@ class PosController extends Controller
                 }
             }
             broadcast(new PosTableUpdated($orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
+            $countItems = $orderItem->count();
+            $total = $orderItems->total_amount;
+            broadcast(new CartUpdated($countItems, $total, $tableId->id))->toOthers();
             $items = Kitchen::where('status', 'đang chế biến')
                 ->with([
                     'order.tables:id,table_number',
@@ -1577,6 +1614,9 @@ class PosController extends Controller
                 }
             }
             broadcast(new PosTableUpdated($orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
+            $countItems = $orderItem->count();
+            $total = $orderItems->total_amount;
+            broadcast(new CartUpdated($countItems, $total, $tableId->id))->toOthers();
             $items = Kitchen::where('status', 'đang chế biến')
                 ->with([
                     'order.tables:id,table_number',
@@ -1672,6 +1712,9 @@ class PosController extends Controller
                 }
             }
             broadcast(new PosTableUpdated($orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
+            $countItems = $orderItem->count();
+            $total = $orderItems->total_amount;
+            broadcast(new CartUpdated($countItems, $total, $tableId->id))->toOthers();
             $items = Kitchen::where('status', 'đang chế biến')
                 ->with([
                     'order.tables:id,table_number',
@@ -1774,6 +1817,9 @@ class PosController extends Controller
                 }
             }
             broadcast(new PosTableUpdated($orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
+            $countItems = $orderItem->count();
+            $total = $orderItems->total_amount;
+            broadcast(new CartUpdated($countItems, $total, $tableId->id))->toOthers();
             $items = Kitchen::where('status', 'đang chế biến')
                 ->with([
                     'order.tables:id,table_number',

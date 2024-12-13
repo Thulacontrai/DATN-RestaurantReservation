@@ -228,8 +228,9 @@ Route::get('/Ppayment/{table_number}', [PosController::class, 'Ppayment'])->name
 Route::get('/viewCheckOut/{table_number}', [PosController::class, 'viewCheckOut'])->name('viewCheckOut');
 Route::post('/check-payment-condition', [PosController::class, 'checkPaymentPondition'])->name('checkPaymentPondition');
 Route::get('/checkAvailableTables', [PosController::class, 'checkAvailableTables'])->name('checkPaymentPondition');
-Route::get('/menu-order', [OrderController::class, 'menuOrder'])->name('menuOrder');
-
+Route::middleware(['checkTableAndUser'])->group(function () {
+    Route::get('/menu-order', [OrderController::class, 'menuOrder'])->name('menuOrder');
+});
 ///
 Route::get('reserToOrder/{reservationId}', [PosController::class, 'reserToOrder'])->name('ReToOr');
 
