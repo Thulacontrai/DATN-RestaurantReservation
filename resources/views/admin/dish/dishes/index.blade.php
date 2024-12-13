@@ -51,7 +51,7 @@
                                     </div>
                                     <div class="col-auto">
                                         <select name="status" class="form-control form-control-sm">
-                                            <option value="">Tất Cả Trạng Thái</option>
+                                            <option value="">Chọn Trạng Thái</option>
                                             <option value="available"
                                                 {{ request('status') == 'available' ? 'selected' : '' }}>Có sẵn</option>
                                             <option value="out_of_stock"

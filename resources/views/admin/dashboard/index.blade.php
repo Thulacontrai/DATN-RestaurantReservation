@@ -438,34 +438,63 @@
 
 
 
+            {{-- <div class="row">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title"></div>
+                    </div>
+                    <div class="card-body">
+                        <div></div>
+                    </div>
+                </div>
+
+            </div> --}}
+
+
+
+
+
             <div class="row">
-                <div class="col-12">
+                <div class="col-sm-6 col-12">
                     <div class="card shadow">
                         <div class="card-header">
                             {{-- <h5 class="card-title text-center text-secondary">Thống Kê Đặt Bàn</h5> --}}
                         </div>
                         <div class="card-body">
-                            <div class="row text-center">
+                            <div class="row justify-content-center text-center">
                                 <!-- Biểu đồ tỷ lệ khách cọc và không cọc -->
                                 <div class="col-md-6">
                                     <h6>Khách Cọc và Không Cọc</h6>
-                                    <canvas id="depositStatusChart" style="max-width: 300px; margin: auto;"></canvas>
-                                </div>
-
-                                <!-- Biểu đồ trạng thái đặt bàn - Pie Chart mới -->
-                                <div class="col-md-6">
-                                    <h6>Trạng Thái Đặt Bàn</h6>
-                                    <canvas id="tableStatusChart" style="max-width: 300px; margin: auto;"></canvas>
+                                    <canvas id="depositStatusChart"
+                                        style="max-width: 300px; width: 100%; display: block; margin: 0 auto;"></canvas>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Biểu đồ trạng thái đặt bàn - Pie Chart mới -->
+                <div class="col-sm-6 col-12">
+                    <div class="card shadow">
+                        <div class="card-header">
+                        </div>
+                        <div class="card-body">
+                            <div class="row text-center justify-content-center">
+                                <div class="col-md-6">
+                                    <h6>Trạng Thái Đặt Bàn</h6>
+                                    <canvas id="tableStatusChart"
+                                        style="max-width: 500px; width: 100%; display: block; margin: auto;"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
             <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
             <script>
-                // Gradient helper function
+                // Hàm tạo gradient
                 function createGradient(ctx, color1, color2) {
                     const gradient = ctx.createLinearGradient(0, 0, 0, 300);
                     gradient.addColorStop(0, color1);
@@ -474,73 +503,91 @@
                 }
 
                 const ctx2 = document.getElementById('tableStatusChart').getContext('2d');
+
                 new Chart(ctx2, {
-                    type: 'pie',
+                    type: 'radar', // Biểu đồ radar
                     data: {
-                        labels: ['Đã Xác Nhận', 'Đang Chờ', 'Đang Check-in', 'Bị Hủy', 'Hoàn Tiền'], // Thêm 'Hoàn Tiền'
+                        labels: ['Đã Xác Nhận', 'Đang Chờ', 'Đang Check-in', 'Bị Hủy', 'Hoàn Tiền'], // Các nhãn của biểu đồ
                         datasets: [{
+                            label: 'Trạng Thái Đặt Bàn', // Nhãn cho tập dữ liệu
                             data: [
                                 {{ $confirmed }},
                                 {{ $pending }},
                                 {{ $checkedIn }},
                                 {{ $cancelled ?? 0 }},
                                 {{ $refund ?? 0 }}
-                            ],
+                            ], // Dữ liệu cho từng trạng thái
                             backgroundColor: [
-                                createGradient(ctx2, '#42A5F5', '#1E88E5'), // Màu cho 'Confirmed'
-                                createGradient(ctx2, '#FFC107', '#FFA000'), // Màu cho 'Pending'
-                                createGradient(ctx2, '#66BB6A', '#43A047'), // Màu cho 'Checked-in'
-                                createGradient(ctx2, '#FF5722', '#E64A19'), // Màu cho 'Cancelled'
-                                createGradient(ctx2, '#9C27B0', '#8E24AA') // Màu cho 'Refund' (màu tím)
+                                createGradient(ctx2, '#42A5F5', '#1E88E5'), // Gradient cho 'Đã Xác Nhận'
+                                createGradient(ctx2, '#FFC107', '#FFA000'), // Gradient cho 'Đang Chờ'
+                                createGradient(ctx2, '#66BB6A', '#43A047'), // Gradient cho 'Đang Check-in'
+                                createGradient(ctx2, '#FF5722', '#E64A19'), // Gradient cho 'Bị Hủy'
+                                createGradient(ctx2, '#9C27B0', '#8E24AA') // Gradient cho 'Hoàn Tiền'
                             ],
-                            hoverOffset: 10,
-                            borderWidth: 2
+                            borderWidth: 2,
+                            borderColor: '#000', // Màu viền cho biểu đồ radar
+                            hoverOffset: 10 // Khoảng cách khi hover qua các phân đoạn
                         }]
                     },
                     options: {
-                        responsive: true,
+                        responsive: true, // Đảm bảo biểu đồ có thể thay đổi kích thước
+                        scales: {
+                            r: {
+                                angleLines: {
+                                    display: true // Hiển thị các đường góc (liên kết giữa tâm và mỗi phân đoạn)
+                                },
+                                suggestedMin: 0, // Giá trị tối thiểu được gợi ý cho thang đo
+                                suggestedMax: 50, // Giá trị tối đa được gợi ý cho thang đo (giúp so sánh dễ dàng hơn)
+                                ticks: {
+                                    backdropColor: 'rgba(0, 0, 0, 0)', // Màu nền trong suốt cho các vạch chia
+                                    color: '#444', // Màu sắc cho các vạch chia
+                                    font: {
+                                        size: 14,
+                                        weight: 'bold' // Kiểu chữ cho các vạch chia
+                                    }
+                                }
+                            }
+                        },
                         plugins: {
                             legend: {
-                                position: 'bottom',
+                                position: 'bottom', // Di chuyển legend xuống dưới biểu đồ
                                 labels: {
                                     font: {
                                         size: 14,
-                                        weight: 'bold'
+                                        weight: 'bold' // Kiểu chữ cho các nhãn trong legend
                                     },
-                                    color: '#444'
+                                    color: '#444' // Màu chữ trong legend
                                 }
                             },
                             tooltip: {
                                 callbacks: {
-                                    label: (context) => `${context.label}: ${context.raw}%`
+                                    label: (context) =>
+                                        `${context.label}: ${context.raw}` // Tooltip hiển thị nhãn và giá trị thô (số lượng đặt bàn)
                                 }
                             }
-                        },
+                        }
                     }
                 });
 
 
 
-                // Biểu đồ tỷ lệ khách cọc và không cọc - Doughnut
+
                 const ctx1 = document.getElementById('depositStatusChart').getContext('2d');
                 new Chart(ctx1, {
-                    type: 'doughnut',
+                    type: 'polarArea', // Thay đổi loại biểu đồ thành Polar Area
                     data: {
                         labels: ['Khách Cọc', 'Khách Không Cọc'],
                         datasets: [{
-                            data: [
-                                {{ $coc }},
-                                {{ $khongCoc }}
-                            ],
+                            data: [{{ $coc }}, {{ $khongCoc }}],
                             backgroundColor: [
                                 createGradient(ctx1, '#8E2DE2', '#4A00E0'),
                                 createGradient(ctx1, '#F953C6', '#B91D73')
                             ],
-                            hoverOffset: 10,
                             borderWidth: 2
                         }]
                     },
                     options: {
+                        responsive: true,
                         plugins: {
                             legend: {
                                 position: 'bottom',
@@ -555,13 +602,11 @@
                                     label: (context) => `${context.label}: ${context.raw}%`
                                 }
                             }
-                        },
-                        cutout: '65%' // Tạo hình tròn, không có phần trung tâm
+                        }
                     }
                 });
             </script>
             <!-- Row end -->
-
 
 
             <!-- Row start -->
@@ -571,7 +616,7 @@
                         <div class="card-header">
                             <div class="card-title">Giao Dịch</div>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body" style="height: 425px">
                             <div class="scroll370">
                                 <div class="transactions-container">
                                     <!-- Giao Dịch MoMo -->
@@ -585,7 +630,7 @@
                                             <h4>MoMo</h4>
                                             <p class="text-truncate">Thanh Toán Đơn Hàng</p>
                                         </div>
-                                        <div class="transaction-amount text-blue">0₫</div>
+
                                     </div>
 
                                     <!-- Giao Dịch VNPay -->
@@ -599,7 +644,7 @@
                                             <h4>VNPay</h4>
                                             <p class="text-truncate">Thanh Toán Thực Phẩm</p>
                                         </div>
-                                        <div class="transaction-amount text-green">0₫</div>
+
                                     </div>
 
 
@@ -614,7 +659,7 @@
                                             <h4>Thẻ Tín Dụng</h4>
                                             <p class="text-truncate">Thanh Toán Đơn Hàng</p>
                                         </div>
-                                        <div class="transaction-amount text-blue">0₫</div>
+
                                     </div>
 
                                     <!-- Giao Dịch VietQR -->
@@ -628,7 +673,7 @@
                                             <h4>VietQR</h4>
                                             <p class="text-truncate">Thanh Toán Thực Phẩm</p>
                                         </div>
-                                        <div class="transaction-amount text-green">0₫</div>
+
                                     </div>
                                     <!-- Giao Dịch QR Code -->
                                     <div class="transaction-block">
@@ -641,7 +686,7 @@
                                             <h4>QR Code</h4>
                                             <p class="text-truncate">Thanh Toán Qua QR</p>
                                         </div>
-                                        <div class="transaction-amount text-blue">0₫</div>
+
                                     </div>
                                 </div>
                             </div>
@@ -649,11 +694,10 @@
                     </div>
 
                 </div>
-
                 <div class="col-sm-6 col-12">
                     <div class="card">
                         <div class="card-header">
-                            <div class="card-title">Công Việc</div>
+                            <div class="card-title">Đơn Hàng Trong Bếp</div>
                         </div>
                         <div class="card-body">
                             <div id="taskGraph"></div>
@@ -664,7 +708,17 @@
                                     </div>
                                     <div class="task-info">
                                         <h5 class="task-title">Mới</h5>
-                                        <p class="amount-spend">12</p>
+                                        <p class="amount-spend" id="newOrders">{{ $newOrders }}</p>
+                                    </div>
+                                </li>
+                                <li class="task-list-item">
+                                    <div class="task-icon shade-yellow">
+                                        <i class="bi bi-hourglass-split"></i>
+                                    </div>
+                                    <div class="task-info">
+                                        <h5 class="task-title">Đang Chế Biến</h5>
+                                        <p class="amount-spend" id="cookingOrders">{{ $cookingOrders }}
+                                        </p>
                                     </div>
                                 </li>
                                 <li class="task-list-item">
@@ -673,283 +727,65 @@
                                     </div>
                                     <div class="task-info">
                                         <h5 class="task-title">Hoàn Thành</h5>
-                                        <p class="amount-spend">15</p>
+                                        <p class="amount-spend" id="completedOrders">
+                                            {{ $completedOrders }}</p>
                                     </div>
                                 </li>
                             </ul>
-                        </div>
-                    </div>
-                </div>
-
-
-
-
-
-                {{-- <div class="col-xxl-3 col-sm-6 col-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title">Keywords</div>
-                        </div>
-                        <div class="card-body">
-                            <div id="tagscloud">
-                                <a href="reports.html" class="tagc1">Analytics</a>
-                                <a href="reports.html" class="tagc2">Tasks</a>
-                                <a href="index.html" class="tagc3">Sales</a>
-                                <a href="#" class="tagc4">Bootstrap</a>
-                                <a href="#" class="tagc1">Scss</a>
-                                <a href="#" class="tagc2">Bootstrap</a>
-                                <a href="index.html" class="tagc3">Admin</a>
-                                <a href="index.html" class="tagc4">Dashboard</a>
-                                <a href="#" class="tagc1">Creative</a>
-                                <a href="#" class="tagc2">Rising Stars</a>
-                                <a href="reports.html" class="tagc3">BS Admin</a>
-                                <a href="#" class="tagc4">Top Rated</a>
-                                <a href="#" class="tagc1">Admin</a>
-                                <a href="#" class="tagc2">Creative</a>
-                                <a href="#" class="tagc3">Best Selling</a>
-                                <a href="#" class="tagc4">Awesome</a>
-                                <a href="#" class="tagc1">jQuery</a>
-                                <a href="#" class="tagc2">Hot Under $19</a>
-                                <a href="reports.html" class="tagc3">High</a>
-                                <a href="#" class="tagc4">Low Price</a>
-                                <a href="#" class="tagc1">Top Selling</a>
-                                <a href="index.html" class="tagc2">Best Admin</a>
-                                <a href="#" class="tagc3">Popular</a>
-                                <a href="#" class="tagc1">Best Sellers</a>
-                                <a href="index.html" class="tagc2">eCommerce</a>
-                                <a href="reports.html" class="tagc3">Analytics</a>
-                                <a href="#" class="tagc4">Rising Stars</a>
-                                <a href="tasks.html" class="tagc1">Crm</a>
-                                <a href="#" class="tagc2">Sass</a>
-                                <a href="#" class="tagc3">Template Monster</a>
-                                <a href="index.html" class="tagc4">Dashboard</a>
-                                <a href="#" class="tagc1">Admin</a>
-                                <a href="reports.html" class="tagc2">Creative</a>
-                                <a href="#" class="tagc3">Template Monster</a>
-                                <a href="#" class="tagc4">Theme</a>
-                                <a href="#" class="tagc1">Dashboard</a>
-                                <a href="#" class="tagc2">Rising stars</a>
-                                <a href="#" class="tagc3">Template</a>
-                                <a href="index.html" class="tagc4">Top Rated</a>
-
-                            </div>
                             <script>
-                                var radius = 90;
-                                var d = 200;
-                                var dtr = Math.PI / 180;
-                                var mcList = [];
-                                var lasta = 1;
-                                var lastb = 1;
-                                var distr = true;
-                                var tspeed = 11;
-                                var size = 200;
-                                var mouseX = 0;
-                                var mouseY = 10;
-                                var howElliptical = 1;
-                                var aA = null;
-                                var oDiv = null;
-                                window.onload = function() {
-                                    var i = 0;
-                                    var oTag = null;
-                                    oDiv = document.getElementById('tagscloud');
-                                    aA = oDiv.getElementsByTagName('a');
-                                    for (i = 0; i < aA.length; i++) {
-                                        oTag = {};
-                                        aA[i].onmouseover = (function(obj) {
-                                            return function() {
-                                                obj.on = true;
-                                                this.style.zIndex = 9999;
-                                                this.style.color = '#fff';
-                                                this.style.padding = '5px 12px';
-                                                this.style.filter = "alpha(opacity=100)";
-                                                this.style.opacity = 1;
+                                var options = {
+                                    chart: {
+                                        height: 300,
+                                        type: 'radialBar',
+                                        toolbar: {
+                                            show: false,
+                                        },
+                                    },
+                                    plotOptions: {
+                                        radialBar: {
+                                            dataLabels: {
+                                                name: {
+                                                    fontSize: '12px',
+                                                    fontColor: 'black',
+                                                    fontFamily: 'Merriweather',
+                                                },
+                                                value: {
+                                                    fontSize: '21px',
+                                                    fontFamily: 'Merriweather',
+                                                },
+                                                total: {
+                                                    show: true,
+                                                    label: 'Tổng số đơn hàng',
+                                                    formatter: function(w) {
+                                                        // Hiển thị tổng số đơn hàng
+                                                        return '{{ $newOrders + $cookingOrders + $completedOrders }}'; // Tổng số đơn hàng
+                                                    }
+                                                }
                                             }
-                                        })(oTag)
-                                        aA[i].onmouseout = (function(obj) {
-                                            return function() {
-                                                obj.on = false;
-                                                this.style.zIndex = obj.zIndex;
-                                                this.style.color = '#fff';
-                                                this.style.padding = '5px 12px';
-                                                this.style.filter = "alpha(opacity=" + 100 * obj.alpha + ")";
-                                                this.style.opacity = obj.alpha;
-                                                this.style.zIndex = obj.zIndex;
-                                            }
-                                        })(oTag)
-                                        oTag.offsetWidth = aA[i].offsetWidth;
-                                        oTag.offsetHeight = aA[i].offsetHeight;
-                                        mcList.push(oTag);
-                                    }
-                                    sineCosine(0, 0, 0);
-                                    positionAll();
-                                    (function() {
-                                        update();
-                                        setTimeout(arguments.callee, 40);
-                                    })();
+                                        }
+                                    },
+                                    // Dữ liệu động từ PHP
+                                    series: [{{ $newOrders }}, {{ $cookingOrders }}, {{ $completedOrders }}],
+                                    labels: ['Mới', 'Đang Chế Biến', 'Hoàn Thành'],
+                                    colors: ['#4267cd', '#32b2fa', '#f87957'],
                                 };
 
-                                function update() {
-                                    var a, b, c = 0;
-                                    a = (Math.min(Math.max(-mouseY, -size), size) / radius) * tspeed;
-                                    b = (-Math.min(Math.max(-mouseX, -size), size) / radius) * tspeed;
-                                    lasta = a;
-                                    lastb = b;
-                                    if (Math.abs(a) <= 0.01 && Math.abs(b) <= 0.01) {
-                                        return;
-                                    }
-                                    sineCosine(a, b, c);
-                                    for (var i = 0; i < mcList.length; i++) {
-                                        if (mcList[i].on) {
-                                            continue;
-                                        }
-                                        var rx1 = mcList[i].cx;
-                                        var ry1 = mcList[i].cy * ca + mcList[i].cz * (-sa);
-                                        var rz1 = mcList[i].cy * sa + mcList[i].cz * ca;
-
-                                        var rx2 = rx1 * cb + rz1 * sb;
-                                        var ry2 = ry1;
-                                        var rz2 = rx1 * (-sb) + rz1 * cb;
-
-                                        var rx3 = rx2 * cc + ry2 * (-sc);
-                                        var ry3 = rx2 * sc + ry2 * cc;
-                                        var rz3 = rz2;
-
-                                        mcList[i].cx = rx3;
-                                        mcList[i].cy = ry3;
-                                        mcList[i].cz = rz3;
-
-                                        per = d / (d + rz3);
-
-                                        mcList[i].x = (howElliptical * rx3 * per) - (howElliptical * 2);
-                                        mcList[i].y = ry3 * per;
-                                        mcList[i].scale = per;
-                                        var alpha = per;
-                                        alpha = (alpha - 0.6) * (10 / 6);
-                                        mcList[i].alpha = alpha * alpha * alpha - 0.2;
-                                        mcList[i].zIndex = Math.ceil(100 - Math.floor(mcList[i].cz));
-                                    }
-                                    doPosition();
-                                }
-
-                                function positionAll() {
-                                    var phi = 0;
-                                    var theta = 0;
-                                    var max = mcList.length;
-                                    for (var i = 0; i < max; i++) {
-                                        if (distr) {
-                                            phi = Math.acos(-1 + (2 * (i + 1) - 1) / max);
-                                            theta = Math.sqrt(max * Math.PI) * phi;
-                                        } else {
-                                            phi = Math.random() * (Math.PI);
-                                            theta = Math.random() * (2 * Math.PI);
-                                        }
-                                        //åæ ‡å˜æ¢
-                                        mcList[i].cx = radius * Math.cos(theta) * Math.sin(phi);
-                                        mcList[i].cy = radius * Math.sin(theta) * Math.sin(phi);
-                                        mcList[i].cz = radius * Math.cos(phi);
-
-                                        aA[i].style.left = mcList[i].cx + oDiv.offsetWidth / 2 - mcList[i].offsetWidth / 2 + 'px';
-                                        aA[i].style.top = mcList[i].cy + oDiv.offsetHeight / 2 - mcList[i].offsetHeight / 2 + 'px';
-                                    }
-                                }
-
-                                function doPosition() {
-                                    var l = oDiv.offsetWidth / 2;
-                                    var t = oDiv.offsetHeight / 2;
-                                    for (var i = 0; i < mcList.length; i++) {
-                                        if (mcList[i].on) {
-                                            continue;
-                                        }
-                                        var aAs = aA[i].style;
-                                        if (mcList[i].alpha > 0.1) {
-                                            if (aAs.display != '')
-                                                aAs.display = '';
-                                        } else {
-                                            if (aAs.display != 'none')
-                                                aAs.display = 'none';
-                                            continue;
-                                        }
-                                        aAs.left = mcList[i].cx + l - mcList[i].offsetWidth / 2 + 'px';
-                                        aAs.top = mcList[i].cy + t - mcList[i].offsetHeight / 2 + 'px';
-                                        //aAs.fontSize=Math.ceil(12*mcList[i].scale/2)+8+'px';
-                                        //aAs.filter="progid:DXImageTransform.Microsoft.Alpha(opacity="+100*mcList[i].alpha+")";
-                                        aAs.filter = "alpha(opacity=" + 100 * mcList[i].alpha + ")";
-                                        aAs.zIndex = mcList[i].zIndex;
-                                        aAs.opacity = mcList[i].alpha;
-                                    }
-                                }
-
-                                function sineCosine(a, b, c) {
-                                    sa = Math.sin(a * dtr);
-                                    ca = Math.cos(a * dtr);
-                                    sb = Math.sin(b * dtr);
-                                    cb = Math.cos(b * dtr);
-                                    sc = Math.sin(c * dtr);
-                                    cc = Math.cos(c * dtr);
-                                }
+                                var chart = new ApexCharts(
+                                    document.querySelector("#taskGraph"),
+                                    options
+                                );
+                                chart.render();
                             </script>
-                            <style>
-                                /* Đặt chiều rộng của container để kéo dài giao diện */
-                                #tagscloud {
-                                    display: flex;
-                                    flex-wrap: wrap;
-                                    /* Cho phép các thẻ xếp chồng lên nhau */
-                                    justify-content: center;
-                                    align-items: center;
-                                    gap: 10px;
-                                    /* Khoảng cách giữa các thẻ */
-                                    position: relative;
-                                }
-
-                                /* Định dạng cho các thẻ tag */
-                                .tagc1,
-                                .tagc2,
-                                .tagc3,
-                                .tagc4 {
-                                    display: inline-block;
-                                    padding: 5px 12px;
-                                    border-radius: 15px;
-                                    color: white;
-                                    text-decoration: none;
-                                    font-size: 14px;
-                                    position: absolute;
-                                    /* Các thẻ sẽ chồng lên nhau */
-                                    transition: all 0.3s ease;
-                                }
-
-                                /* Các màu sắc khác nhau cho từng lớp */
-                                .tagc1 {
-                                    background-color: #007bff;
-                                }
-
-                                .tagc2 {
-                                    background-color: #28a745;
-                                }
-
-                                .tagc3 {
-                                    background-color: #ffc107;
-                                }
-
-                                .tagc4 {
-                                    background-color: #dc3545;
-                                }
-
-                                /* Khi hover thì thẻ sẽ di chuyển ra ngoài một chút */
-                                .tagc1:hover,
-                                .tagc2:hover,
-                                .tagc3:hover,
-                                .tagc4:hover {
-                                    opacity: 0.8;
-                                    transform: translate(5px, -5px);
-                                    /* Đẩy thẻ lên một chút khi hover */
-                                }
-                            </style>
                         </div>
                     </div>
-                </div> --}}
 
+
+                </div>
             </div>
 
-            <!-- Row end -->
 
-        @endsection
+        </div>
+
+        <!-- Row end -->
+
+    @endsection

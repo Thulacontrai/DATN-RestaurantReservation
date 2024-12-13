@@ -47,8 +47,9 @@
                                             <label for="max_uses" class="form-label">Số Lượt Sử Dụng Tối Đa <span
                                                     class="text-danger">*</span></label>
                                             <div class="input-group">
-                                                <span class="input-group-text bg-warning text-white"><i
-                                                        class="bi bi-person-check"></i></span>
+                                                <span class="input-group-text bg-warning text-white">
+                                                    <i class="bi bi-person-check"></i>
+                                                </span>
                                                 <input type="number" class="form-control" id="max_uses" name="max_uses"
                                                     min="1" max="100" value="1" required>
                                             </div>
@@ -56,6 +57,7 @@
                                                 <div class="text-danger">{{ $message }}</div>
                                             @enderror
                                         </div>
+
 
                                         <!-- Trạng Thái -->
                                         <div class="mb-3">
@@ -164,6 +166,49 @@
     </div>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('tableForm');
+            const inputs = form.querySelectorAll('input, select');
+            const maxUsesInput = document.getElementById('max_uses');
+            const errorMessage = "{{ $errors->first('max_uses') }}"; // Lấy thông báo lỗi từ Blade
+
+            // Kiểm tra nếu có lỗi khi trang được tải
+            if (errorMessage) {
+                maxUsesInput.classList.add('is-invalid');
+                const errorDiv = document.createElement('div');
+                errorDiv.classList.add('text-danger');
+                errorDiv.innerText = errorMessage; // Thêm thông báo lỗi vào
+                maxUsesInput.parentElement.appendChild(errorDiv); // Thêm vào dưới input
+            }
+
+            // Thêm sự kiện kiểm tra cho từng input
+            inputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    // Kiểm tra riêng cho trường "Số Lượt Sử Dụng Tối Đa"
+                    if (input.id === 'max_uses') {
+                        const value = parseInt(input.value);
+
+                        // Kiểm tra giá trị nhập vào có hợp lệ hay không
+                        if (value < 1 || value > 100 || isNaN(value)) {
+                            input.setCustomValidity(
+                                "Số lượt sử dụng phải nằm trong khoảng từ 1 đến 100.");
+                        } else {
+                            input.setCustomValidity(""); // Xóa lỗi
+                        }
+                    }
+
+                    // Kiểm tra tính hợp lệ chung
+                    if (input.checkValidity()) {
+                        input.classList.remove('is-invalid');
+                        input.classList.add('is-valid');
+                    } else {
+                        input.classList.remove('is-valid');
+                        input.classList.add('is-invalid');
+                    }
+                });
+            });
+        });
+
         document.getElementById('discount_type').addEventListener('change', function() {
             const discountType = this.value;
             document.getElementById('discount_amount_div').style.display = discountType === 'Fixed' ? 'block' :

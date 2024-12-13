@@ -7,7 +7,7 @@
     @endif
 
     <div class="header-actions-container">
-       
+
         <ul class="header-actions">
             <li class="dropdown">
 
@@ -24,8 +24,8 @@
                         @can('access pos')
                             <a href="{{ route('pos.index') }}">Pos</a>
                         @endcan
-                        <a href="{{ route('admin.accountSetting.index') }}">Settings</a>
-                        </a>
+                        {{-- <a href="{{ route('admin.accountSetting.index') }}">Settings</a>
+                        </a> --}}
 
                         <!-- Form Logout -->
                         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">

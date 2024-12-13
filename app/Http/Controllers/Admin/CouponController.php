@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 
 class CouponController extends Controller
 {
@@ -150,16 +151,31 @@ class CouponController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'code' => 'required|max:255|unique:coupons',
+            'code' => 'required|max:15|unique:coupons', // Mã giảm giá không quá 15 ký tự
             'description' => 'nullable|string',
-            'max_uses' => 'nullable|integer',
-            'start_time' => 'nullable|date',
-            'end_time' => 'nullable|date|after_or_equal:start_time',
+            'max_uses' => 'nullable|integer|min:1|max:100', // Số lượt sử dụng tối thiểu là 1, tối đa là 100
+            'start_time' => 'nullable|date|after_or_equal:today', // Thời gian bắt đầu không được trong quá khứ và phải từ ngày hôm nay
+            'end_time' => 'nullable|date|after_or_equal:start_time|after:start_time', // Thời gian kết thúc phải sau thời gian bắt đầu ít nhất 1 ngày
             'discount_type' => 'required|in:Percentage,Fixed',
             'discount_amount' => 'required_if:discount_type,Fixed|numeric',
             'discount_percentage' => 'required_if:discount_type,Percentage|numeric|between:5,100',
             'status' => 'required|in:active,inactive',
+        ], [
+            'code.required' => 'Mã giảm giá là bắt buộc.',
+            'code.max' => 'Mã giảm giá không được quá 15 ký tự.',
+            'max_uses.integer' => 'Số lượt sử dụng phải là một số nguyên.',
+            'max_uses.min' => 'Số lượt sử dụng tối thiểu là 1.',
+            'max_uses.max' => 'Số lượt sử dụng tối đa là 100.',
+            'start_time.after_or_equal' => 'Thời gian bắt đầu phải từ ngày hôm nay trở đi.',
+            'end_time.after_or_equal' => 'Thời gian kết thúc phải sau thời gian bắt đầu.',
+            'end_time.after' => 'Thời gian kết thúc phải ít nhất cách thời gian bắt đầu một ngày.',
+            'discount_amount.required_if' => 'Trường này là bắt buộc khi loại giảm giá là Fixed.',
+            'discount_percentage.required_if' => 'Trường này là bắt buộc khi loại giảm giá là Percentage.',
+            'discount_percentage.between' => 'Giảm giá theo phần trăm phải nằm trong khoảng từ 5% đến 100%.',
+            'status.in' => 'Trạng thái phải là một trong các giá trị: active, inactive.',
         ]);
+
+
 
         // Kiểm tra nếu phiếu đã hết hạn
         if (isset($validated['end_time']) && now()->greaterThan($validated['end_time'])) {
@@ -188,21 +204,38 @@ class CouponController extends Controller
 
     public function update(Request $request, Coupon $coupon)
     {
-        // Lấy thời gian hiện tại
-        $now = now();
+        $now = Carbon::now(); // Đảm bảo lấy thời gian hiện tại
 
-        // Xác thực dữ liệu
         $validated = $request->validate([
-            'code' => 'required|max:255',
+            'code' => [
+                'required',
+                'max:15',  // Giới hạn mã giảm giá không quá 15 ký tự
+                Rule::unique('coupons')->ignore($coupon->id) // Tránh xung đột khi cập nhật
+            ],
             'description' => 'nullable|string',
-            'max_uses' => 'nullable|integer|min:1',
-            'start_time' => 'nullable|date|after_or_equal:' . $now->toDateString(), // Kiểm tra thời gian bắt đầu không được nhỏ hơn thời gian hiện tại
-            'end_time' => 'nullable|date|after_or_equal:start_time', // Kiểm tra thời gian kết thúc phải lớn hơn hoặc bằng thời gian bắt đầu
-            'discount_type' => 'required|in:Percentage,Fixed',
-            'discount_amount' => 'nullable|numeric|required_if:discount_type,Fixed|min:0.01',
-            'discount_percentage' => 'nullable|integer|required_if:discount_type,Percentage|min:1|max:100',
-            'status' => 'required|in:active,inactive,expired',
+            'max_uses' => 'nullable|integer|min:1|max:100', // Số lượt sử dụng tối thiểu là 1, tối đa là 100
+            'start_time' => 'nullable|date|after_or_equal:today', // Thời gian bắt đầu phải không nhỏ hơn thời gian hiện tại
+            'end_time' => 'nullable|date|after_or_equal:start_time|after:start_time', // Thời gian kết thúc phải sau thời gian bắt đầu ít nhất 1 ngày
+            'discount_type' => 'required|in:Percentage,Fixed', // Loại giảm giá phải là Percentage hoặc Fixed
+            'discount_amount' => 'nullable|numeric|required_if:discount_type,Fixed|min:0.01', // Nếu loại là Fixed, phải có giá trị
+            'discount_percentage' => 'nullable|integer|required_if:discount_type,Percentage|min:1|max:100', // Nếu loại là Percentage, giá trị trong khoảng 1 đến 100
+            'status' => 'required|in:active,inactive,expired', // Trạng thái chỉ có thể là active, inactive hoặc expired
+        ], [
+            // Tùy chỉnh thông báo lỗi
+            'code.required' => 'Mã giảm giá là bắt buộc.',
+            'code.max' => 'Mã giảm giá không được vượt quá 15 ký tự.',
+            'max_uses.integer' => 'Số lượt sử dụng phải là một số nguyên.',
+            'max_uses.min' => 'Số lượt sử dụng tối thiểu là 1.',
+            'max_uses.max' => 'Số lượt sử dụng tối đa là 100.',
+            'start_time.after_or_equal' => 'Thời gian bắt đầu phải không nhỏ hơn ngày hôm nay.',
+            'end_time.after_or_equal' => 'Thời gian kết thúc phải sau thời gian bắt đầu.',
+            'end_time.after' => 'Thời gian kết thúc phải cách thời gian bắt đầu ít nhất 1 ngày.',
+            'discount_amount.required_if' => 'Số tiền giảm giá là bắt buộc khi loại giảm giá là Fixed.',
+            'discount_percentage.required_if' => 'Phần trăm giảm giá là bắt buộc khi loại giảm giá là Percentage.',
+            'discount_percentage.between' => 'Phần trăm giảm giá phải nằm trong khoảng từ 1 đến 100.',
+            'status.in' => 'Trạng thái phải là một trong các giá trị: active, inactive, expired.',
         ]);
+
 
         // Kiểm tra trạng thái "đã hủy"
         if ($coupon->status === 'expired' && $validated['status'] !== 'expired') {
