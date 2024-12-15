@@ -92,6 +92,7 @@ class KitchenController extends Controller
             $orderItem = OrderItem::where('item_id', $item->item_id)
                 ->where('order_id', $item->order_id)
                 ->where('status', '!=', 'hủy')
+                ->where('status', '!=', 'chưa yêu cầu')
                 ->where('item_type', $request->itemType)
                 ->first();
             $orderItem->processing += $item->quantity;
@@ -102,7 +103,9 @@ class KitchenController extends Controller
             $item = Kitchen::find($id);
             $orderItems = Order::with([
                 'orderItems' => function ($query) {
-                    $query->where('status', '!=', 'hủy');
+                    $query->where('status', '!=', 'hủy')
+                        ->where('status', '!=', 'chưa yêu cầu')
+                    ;
                 },
                 'orderItems.dish:id,name',
                 'orderItems.combo:id,name',
@@ -154,7 +157,9 @@ class KitchenController extends Controller
             if ($item->item_type == 2) {
                 $orderItem = $orderItem->where('item_type', $request->item_type);
             }
-            $orderItem = $orderItem->where('status', '!=', 'hủy')->first();
+            $orderItem = $orderItem->where('status', '!=', 'hủy')
+                ->where('status', '!=', 'chưa yêu cầu')
+                ->first();
             if ($orderItem) {
                 $orderItem->completed += $item->quantity;
                 if ($orderItem->completed == $orderItem->quantity) {
@@ -166,7 +171,9 @@ class KitchenController extends Controller
             $item = Kitchen::find($id);
             $orderItems = Order::with([
                 'orderItems' => function ($query) {
-                    $query->where('status', '!=', 'hủy');
+                    $query->where('status', '!=', 'hủy')
+                        ->where('status', '!=', 'chưa yêu cầu')
+                    ;
                 },
                 'orderItems.dish:id,name',
                 'orderItems.combo:id,name',

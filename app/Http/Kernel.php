@@ -69,5 +69,7 @@ class Kernel extends HttpKernel
         'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
         'prevent.back.history' => \App\Http\Middleware\PreventBackHistory::class,
         'checkTableAndUser' => \App\Http\Middleware\CheckTableStatusAndUser::class,
+        'checkUser' => \App\Http\Middleware\CheckUser::class,
+
     ];
 }

@@ -215,6 +215,8 @@ Route::post('/create-order', [PosController::class, 'createOrder']);
 Route::post('/order-details/{tableId}', [PosController::class, 'orderDetails'])->name('order-details');
 Route::post('/add-dish-to-order', [PosController::class, 'addDishToOrder']);
 Route::post('/add-combo-to-order', [PosController::class, 'addComboToOrder']);
+Route::post('/add-dish-waiting', [PosController::class, 'addDishWaiting']);
+Route::post('/add-combo-waiting', [PosController::class, 'addComboWaiting']);
 Route::post('/deleteItem', [PosController::class, 'deleteItem']);
 Route::post('/deleteItemm', [PosController::class, 'deleteItemm']);
 Route::post('/increaseQuantity', [PosController::class, 'increaseQuantity']);
@@ -231,6 +233,11 @@ Route::get('/checkAvailableTables', [PosController::class, 'checkAvailableTables
 Route::middleware(['checkTableAndUser'])->group(function () {
     Route::get('/menu-order', [OrderController::class, 'menuOrder'])->name('menuOrder');
 });
+Route::middleware(['checkUser'])->group(function () {
+    Route::get('/menu-selected/{table_number}', [OrderController::class, 'menuSelected'])->name('menuSelected');
+});
+Route::post('/menuOrder/updatee', [OrderController::class, 'updateItemm'])->name('updateItem.menuOrder');
+
 ///
 Route::get('reserToOrder/{reservationId}', [PosController::class, 'reserToOrder'])->name('ReToOr');
 

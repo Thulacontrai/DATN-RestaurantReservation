@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Events\MenuOrderUpdateItem;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Combo;
@@ -215,11 +216,12 @@ class OrderController extends Controller
     public function menuOrder(Request $request)
     {
         try {
-            $encryptedData = $request->input('data');
-            $tableId = Crypt::decryptString($encryptedData);
+            $tableId = $request->input('data');
             $table = Table::findOrFail($tableId);
             $order = $table->orders->where('status', 'pending')->first();
-            $item = $order->items->where('status', '!=', 'hủy');
+            $item = $order->items
+                ->where('status', '==', 'chưa yêu cầu')
+            ;
             $dishes = Dishes::all();
             $combo = Combo::all();
             $cate = Category::all();
@@ -227,5 +229,51 @@ class OrderController extends Controller
         } catch (Exception $e) {
             echo $e->getMessage();
         }
+    }
+    public function menuSelected($id)
+    {
+        $table = Table::findOrFail($id);
+        $order = $table->orders->where('status', 'pending')->first();
+        $item = $order->items
+            ->where('status', '==', 'chưa yêu cầu')
+        ;
+        $encryptedId = Crypt::encryptString($id);
+        $url = route('menuOrder', ['data' => $encryptedId]);
+        return view('client.menuSelected', compact('item', 'table', 'order', 'url'));
+    }
+    public function updateItemm(Request $request)
+    {
+        $item_id = $request->item_id;
+        $action = $request->action;
+        $item_type = $request->item_type;
+        if ($item_type == 'dish') {
+            $item = Dishes::find($item_id);
+        } else {
+            $item = Combo::find($item_id);
+        }
+        if (!$item) {
+            return response()->json(['error' => 'Item not found'], 404);
+        }
+        if ($action === 'increase') {
+            $item->quantity += 1;
+        } elseif ($action === 'decrease') {
+            $item->quantity = max(0, $item->quantity - 1);
+        } elseif ($action === 'remove') {
+            $item->delete();
+            broadcast(new MenuOrderUpdateItem(['id' => $item_id, 'deleted' => true]));
+            return response()->json(['success' => true]);
+        } elseif ($action === 'add') {
+            // $item = ($item_type === 'dish') ? Dish::create([...]) : Combo::create([...]);
+        }
+        $item->save();
+        broadcast(new MenuOrderUpdateItem([
+            'id' => $item->id,
+            'type' => $item_type,
+            'name' => $item->name,
+            'image' => asset('storage/' . $item->dish->image),
+            'price' => $item->price,
+            'quantity' => $item->quantity
+        ]));
+        return response()->json(['message' => 'Item updated successfully']);
     }
 }

@@ -4,19 +4,30 @@
     @include('client.layouts.partials.menuOrder')
     @include('client.layouts.component.subheader', [
         'backgroundImage' => 'client/03_images/background/bg-1.jpg',
-        'subtitle' => 'Menu Order',
+        'subtitle' => 'Steak House',
         'title' => 'Bàn ' . $table->table_number,
         'currentPage' => 'Menu Order',
     ])
     <div class="container mt-4">
         <div class="mx-2 my-3">
-            <select name="" id="" class="form-select">
-                <option value="all" selected>Tất cả</option>
-                <option value="combo">Combo({{ $combo->count() }})</option>
-                @foreach ($cate as $cate)
-                    <option value="{{ $cate->id }}">{{ $cate->name }} ({{ $cate->dishes->count() }})</option>
-                @endforeach
-            </select>
+            <div class="row ">
+                <div class="col">
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="Tìm món ăn" aria-label="Username"
+                            aria-describedby="basic-addon1">
+                        <span class="input-group-text" id="basic-addon1"><i class="bi bi-search"></i></span>
+                    </div>
+                </div>
+                <div class="col">
+                    <select name="" id="" class="form-select">
+                        <option value="all" selected>Tất cả</option>
+                        <option value="combo">Combo({{ $combo->count() }})</option>
+                        @foreach ($cate as $cate)
+                            <option value="{{ $cate->id }}">{{ $cate->name }} ({{ $cate->dishes->count() }})</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
         </div>
 
         <div class="row" id="dish-list">
@@ -64,10 +75,10 @@
     </div>
 
     <!-- Fixed Bottom Bar -->
-    <button class="fixed-bottom-bar mx-4 mb-1 rounded">
-        <span id="cart-total">Gọi món ({{ $item->count() }})</span>
-        <span id="cart-quantity">{{ number_format($order->total_amount) }}đ</span>
-    </button>
+    <a href="{{ route('menuSelected', ['table_number' => $table->id]) }}" class="fixed-bottom-bar mx-4 mb-1 rounded">
+        <span id="cart-total">Gọi món ({{ $item->sum('quantity') }})</span>
+        <span id="cart-quantity">{{ number_format($item->sum('price')) }}đ</span>
+    </a>
     @vite(['resources/js/menuOrder.js', 'resources/js/DishStatus.js'])
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
@@ -101,10 +112,10 @@
                     };
 
                     if (dishId) {
-                        url = "/add-dish-to-order";
+                        url = "/add-dish-waiting";
                         bodyData.dish_id = dishId;
                     } else if (comboId) {
-                        url = "/add-combo-to-order";
+                        url = "/add-combo-waiting";
                         bodyData.combo_id = comboId;
                     }
 
@@ -158,6 +169,30 @@
         });
     </script>
     <script>
+        $(document).ready(function() {
+            $(".form-control").on("input", function() {
+                let searchValue = $(this).val().toLowerCase();
+                let selectedCategory = $(".form-select").val();
+                $("#dish-list .menu-item").each(function() {
+                    let dishName = $(this).find("h6").text().toLowerCase();
+                    let dishPrice = $(this).data("dish-price") || $(this).data("combo-price") || 0;
+                    let dishCategory = $(this).data("category");
+                    let matchesName = dishName.includes(searchValue);
+                    let matchesPrice = dishPrice.toString().includes(searchValue);
+                    let matchesCategory = selectedCategory === "all" || dishCategory ===
+                        selectedCategory;
+                    if ((matchesName || matchesPrice) && matchesCategory) {
+                        $(this).closest(".col-6").show();
+                    } else {
+                        $(this).closest(".col-6").hide();
+                    }
+                });
+            });
+            $(".form-select").on("change", function() {
+                $(".form-control").trigger("input");
+            });
+        });
+
         $(document).ready(function() {
             $("select").on("change", function() {
                 let selectedCategory = $(this).val();

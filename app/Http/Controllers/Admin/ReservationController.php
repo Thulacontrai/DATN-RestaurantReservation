@@ -364,15 +364,15 @@ class ReservationController extends Controller
     {
         // Tìm đơn đặt chỗ
         $reservation = Reservation::findOrFail($id);
-    
+
         // Cập nhật trạng thái và lý do hủy
         $reservation->status = 'Cancelled';
         $reservation->cancelled_reason = $request->input('cancelled_reason');
         $reservation->save();
-    
+
         return redirect()->route('admin.reservation.index')->with('success', 'Đơn đặt bàn đã được hủy thành công.');
     }
-    
+
 
 
 
@@ -1189,6 +1189,7 @@ class ReservationController extends Controller
             ->first();
         $items = OrderItem::where('order_id', $orderId)
             ->where('status', '!=', 'hủy')
+            ->where('status', '!=', 'chưa yêu cầu')
             ->get();
         $item = $items->all();
         $dishIds = $items->pluck('item_id')->toArray();

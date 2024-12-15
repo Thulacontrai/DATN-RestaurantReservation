@@ -112,6 +112,7 @@
         }
 
         .fixed-bottom-bar {
+            cursor: pointer;
             position: fixed;
             border: none;
             bottom: 0;

@@ -2,16 +2,14 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Order;
 use App\Models\Table;
 use Closure;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\Session;
 use Symfony\Component\HttpFoundation\Response;
 
-class CheckTableStatusAndUser
+class CheckUser
 {
     /**
      * Handle an incoming request.
@@ -20,7 +18,7 @@ class CheckTableStatusAndUser
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $tableId = $request->input('data');
+        $tableId = $request->route('table_number');
         $table = Table::find($tableId);
         if (!$table || $table->status !== 'Occupied') {
             return redirect()->route('client.index')->with('err', 'Vui lòng đến quầy lễ tân đặt bàn trước!');
