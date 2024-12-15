@@ -34,15 +34,27 @@ class SupplierController extends Controller
     public function index(Request $request)
     {
         $title = 'Nhà Cung Cấp';
+
+        // Lấy tham số tìm kiếm
         $suppliers = Supplier::when($request->name, function ($query) use ($request) {
             $query->where('name', 'like', '%' . $request->name . '%');
         });
-        $suppliers = Supplier::latest()->paginate(10);
 
+        // Xử lý sắp xếp
+        if ($request->has('sort') && $request->has('direction')) {
+            $suppliers->orderBy($request->get('sort'), $request->get('direction'));
+        } else {
+            // Nếu không có tham số sắp xếp, mặc định sắp xếp theo ID giảm dần
+            $suppliers->orderBy('id', 'desc');
+        }
 
+        // Phân trang kết quả
+        $suppliers = $suppliers->paginate(10);
 
         return view('admin.ingredientType.supplier.index', compact('suppliers', 'title'));
     }
+
+
 
 
     /**

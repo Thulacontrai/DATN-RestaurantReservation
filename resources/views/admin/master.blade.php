@@ -35,7 +35,7 @@
 
             @include('admin.layouts.header')
             @include('admin.layouts.messages')
-    
+
 
             <!-- Left side column. contains the sidebar -->
             @include('admin.layouts.menu')
@@ -50,7 +50,6 @@
             </section>
 
             @yield('content')
-
             <!-- /.content -->
 
             <!-- /.content-wrapper -->

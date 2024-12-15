@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers\Pos;
-
+use App\Events\ComboStatusUpdated;
+use App\Events\DishStatusUpdated;
 use App\Events\ProcessingDishes;
 use App\Events\MessageSent;
 use App\Events\PosTableUpdated;
@@ -25,9 +26,12 @@ use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Str;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class PosController extends Controller
 {
@@ -113,14 +117,17 @@ class PosController extends Controller
                     ->where('orders.status', '!=', 'waiting');
             }
         ])->get();
+
+        $qrCodes = $tables->mapWithKeys(function ($table) {
+            $encryptedId = Crypt::encryptString($table->id);
+            $url = route('menuOrder', ['data' => $encryptedId]);
+            $qrCode = QrCode::size(150)->generate($url);
+            return [$table->id => $qrCode];
+        });
         $cate = Category::all();
         $orders = Order::with(['reservation', 'staff', 'tables', 'orderItems', 'customer'])->get();
-        $dishes = Dishes::where('status', '!=', 'inactive')
-            ->where('status', '!=', 'out_of_stock')
-            ->where('is_active', '!=', '0')
-            ->get();
-        $combo = Combo::where('is_active', '!=', '0')
-            ->get();
+        $dishes = Dishes::all();
+        $combo = Combo::all();
         // Lấy các đơn đặt bàn sắp đến trong 30 phút tới
         $upcomingReservations = Reservation::where('reservation_date', '=', today())
             ->where('reservation_time', '>=', $now->toTimeString())
@@ -138,8 +145,8 @@ class PosController extends Controller
         $availableTables = Table::where('status', 'available')->get();
         //lấy  danh sách đơn đặt bàn đã được xác nhận
         $reservations = Reservation::where('status', 'Confirmed')->paginate(5);
-        // Truyền dữ liệu tới view
         return view('pos.index', [
+            'qrCodes' => $qrCodes,
             'tables' => $tables,
             'cate' => $cate,
             'order' => $orders,
@@ -186,7 +193,19 @@ class PosController extends Controller
     // Tạo đơn hàng
     public function createOrder(Request $request)
     {
+        $user = User::where('phone', $request->phone)
+            ->where('name', $request->user)->first();
+        if (!$user) {
+            $user = User::create([
+                'phone' => $request->phone,
+                'name' => $request->user,
+                'password' => bcrypt(Str::random(10)),
+                'status' => 'inactive',
+            ]);
+        }
         $order = Order::create([
+            'customer_id' => $user->id,
+            'guest_count' => $request->quantity,
             'staff_id' => Auth::user()->id,
             'status' => 'pending',
             'total_amount' => 0,
@@ -208,6 +227,9 @@ class PosController extends Controller
                     ->with([
                         'reservation' => function ($query) {
                             $query->select('id', 'user_name');
+                        },
+                        'customer' => function ($query) {
+                            $query->select('id', 'name');
                         }
                     ]);
             }
@@ -232,6 +254,12 @@ class PosController extends Controller
                 $inventoryStock = InventoryStock::where('ingredient_id', $recipe->ingredient_id)->first();
                 $inventoryStock->quantity_reserved += $recipe->quantity_need;
                 if ($inventoryStock->quantity_reserved > $inventoryStock->quantity_stock) {
+                    DB::rollBack();
+                    $dish = Dishes::find($request->dish_id);
+                    $dish->is_active = 0;
+                    $dish->status = 'out_of_stock';
+                    $dish->save();
+                    broadcast(new DishStatusUpdated($dish));
                     return response()->json([
                         'success' => false,
                     ]);
@@ -336,6 +364,11 @@ class PosController extends Controller
                     $inventoryStock = InventoryStock::where('ingredient_id', $recipe->ingredient_id)->first();
                     $inventoryStock->quantity_reserved += $recipe->quantity_need;
                     if ($inventoryStock->quantity_reserved > $inventoryStock->quantity_stock) {
+                        DB::rollBack();
+                        $combo = Combo::find($request->dish_id);
+                        $combo->is_active = 1;
+                        $combo->save();
+                        broadcast(new ComboStatusUpdated($combo));
                         return response()->json([
                             'success' => false,
                         ]);
@@ -547,10 +580,9 @@ class PosController extends Controller
                 ->get();
             broadcast(new ProcessingDishes($items, null))->toOthers();
             broadcast(new ProvideDishes($items1))->toOthers();
-
             if (!$isSuccess) {
                 return response()->json([
-                    'redirect_url' => route('checkoutt', ['orderID' => $orderId])
+                    'redirect_url' => route('checkout.adminn', ['orderID' => $orderId])
                 ]);
             } else {
                 return response()->json([
@@ -876,6 +908,12 @@ class PosController extends Controller
                 $inventoryStock = InventoryStock::where('ingredient_id', $recipe->ingredient_id)->first();
                 $inventoryStock->quantity_reserved += $recipe->quantity_need;
                 if ($inventoryStock->quantity_reserved > $inventoryStock->quantity_stock) {
+                    DB::rollBack();
+                    $dish = Dishes::find($request->dish_id);
+                    $dish->is_active = 0;
+                    $dish->status = 'out_of_stock';
+                    $dish->save();
+                    broadcast(new DishStatusUpdated($dish));
                     return response()->json([
                         'success' => false,
                     ]);
@@ -962,8 +1000,13 @@ class PosController extends Controller
                 $reciep = $combo->recipes;
                 foreach ($reciep as $recipe) {
                     $inventoryStock = InventoryStock::where('ingredient_id', $recipe->ingredient_id)->first();
-                    $inventoryStock->quantity_reserved += $recipe->quantity_need;
+                    $inventoryStock->quantity_reserved += $recipe->quantity_need * $combo->pivot->quantity;
                     if ($inventoryStock->quantity_reserved > $inventoryStock->quantity_stock) {
+                        DB::rollBack();
+                        $combo = Combo::find($request->dish_id);
+                        $combo->is_active = 0;
+                        $combo->save();
+                        broadcast(new ComboStatusUpdated($combo));
                         return response()->json([
                             'success' => false
                         ]);
@@ -1051,6 +1094,11 @@ class PosController extends Controller
             $inventoryStock->quantity_reserved -= $recipe->quantity_need;
             $inventoryStock->save();
         }
+        $dish = Dishes::find($request->dish_id);
+        $dish->is_active = 1;
+        $dish->status = 'available';
+        $dish->save();
+        broadcast(new DishStatusUpdated($dish));
         $orderId = Table::findOrFail($request->table_id)
             ->orders
             ->where('status', 'pending')
@@ -1141,10 +1189,14 @@ class PosController extends Controller
             $reciep = $combo->recipes;
             foreach ($reciep as $recipe) {
                 $inventoryStock = InventoryStock::where('ingredient_id', $recipe->ingredient_id)->first();
-                $inventoryStock->quantity_reserved -= $recipe->quantity_need;
+                $inventoryStock->quantity_reserved -= $recipe->quantity_need * $combo->pivot->quantity;
                 $inventoryStock->save();
             }
         }
+        $combo = Combo::find($request->dish_id);
+        $combo->is_active = 1;
+        $combo->save();
+        broadcast(new ComboStatusUpdated($combo));
         $orderId = Table::findOrFail($request->table_id)
             ->orders
             ->where('status', 'pending')
@@ -1231,12 +1283,6 @@ class PosController extends Controller
     public function canelItem(Request $request)
     {
         DB::transaction(function () use ($request) {
-            $reciep = Dishes::findOrFail($request->dish_id)->recipes;
-            foreach ($reciep as $recipe) {
-                $inventoryStock = InventoryStock::where('ingredient_id', $recipe->ingredient_id)->first();
-                $inventoryStock->quantity_reserved -= $recipe->quantity_need;
-                $inventoryStock->save();
-            }
             $orderId = $request->dishOrder;
             $order = Order::findOrFail($orderId);
             $dish = Dishes::findOrFail($request->dish_id);
@@ -1350,15 +1396,6 @@ class PosController extends Controller
     public function canelItemm(Request $request)
     {
         DB::transaction(function () use ($request) {
-            $combos = Combo::findOrFail($request->dish_id)->dishes;
-            foreach ($combos as $combo) {
-                $reciep = $combo->recipes;
-                foreach ($reciep as $recipe) {
-                    $inventoryStock = InventoryStock::where('ingredient_id', $recipe->ingredient_id)->first();
-                    $inventoryStock->quantity_reserved -= $recipe->quantity_need;
-                    $inventoryStock->save();
-                }
-            }
             $orderId = $request->dishOrder;
             $order = Order::findOrFail($orderId);
             $dish = Dishes::findOrFail($request->dish_id);
@@ -1585,7 +1622,7 @@ class PosController extends Controller
                 $reciep = $combo->recipes;
                 foreach ($reciep as $recipe) {
                     $inventoryStock = InventoryStock::where('ingredient_id', $recipe->ingredient_id)->first();
-                    $inventoryStock->quantity_reserved -= $recipe->quantity_need * $existingOrderItem->quantity;
+                    $inventoryStock->quantity_reserved -= $recipe->quantity_need * $existingOrderItem->quantity * $combo->pivot->quantity;
                     $inventoryStock->save();
                 }
             }
@@ -1778,6 +1815,7 @@ class PosController extends Controller
     public function checkAvailableTables()
     {
         $availableTables = Table::where('status', 'Available')->get(['id', 'table_number']);
-        return response()->json(['tables' => $availableTables]);
+        $user = User::where('phone', '!=', null)->get(['id', 'name', 'phone']);
+        return response()->json(['tables' => $availableTables, 'users' => $user]);
     }
 }
