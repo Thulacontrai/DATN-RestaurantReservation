@@ -17,7 +17,6 @@ window.Echo.channel('order')
             notification.disabled = false;
         };
         if (selectedTableId == e.tableId.id) {
-            console.log(e);
             layoutTable.innerHTML = `
             <div style="display: flex; flex-direction: column; overflow-x: hidden;">
     <div style="display: flex; justify-content: center;">

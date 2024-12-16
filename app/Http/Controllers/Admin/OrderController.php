@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Events\CartUpdated;
 use App\Events\ComboStatusUpdated;
 use App\Events\DishStatusUpdated;
+use App\Events\ItemUpdated;
 use App\Events\MenuOrderUpdateItem;
 use App\Events\PosTableUpdated;
+use App\Events\PosTableUpdatedWithNoti;
 use App\Events\UpdateComboStatus;
 use App\Events\UpdateDishStatus;
 use App\Http\Controllers\Controller;
@@ -20,6 +22,7 @@ use App\Models\Table;
 use App\Traits\TraitCRUD;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
@@ -501,15 +504,25 @@ class OrderController extends Controller
         $item = $order->items
             ->where('status', '!=', 'chưa yêu cầu')
         ;
+        $page = request()->get('page', 1); // Trang hiện tại
+        $perPage = 5; // Số lượng item trên mỗi trang
+        $offset = ($page - 1) * $perPage;
+        $pagedItems = new LengthAwarePaginator(
+            $item->slice($offset, $perPage)->values(), // Dữ liệu của trang hiện tại
+            $item->count(), // Tổng số lượng item
+            $perPage, // Số item trên mỗi trang
+            $page, // Trang hiện tại
+            ['path' => request()->url(), 'query' => request()->query()] // Cấu hình URL phân trang
+        );
         if ($item->count() == 0) {
-            return redirect()->back()->with('error','Vui lòng gọi món trước!');
+            return redirect()->back()->with('error', 'Vui lòng gọi món trước!');
         }
         ;
         $total = $item->sum(function ($item) {
             return $item->price * $item->quantity;
         });
         $url = route('menuOrder', ['data' => $id]);
-        return view('client.menuHistory', compact('item', 'table', 'order', 'url', 'total'));
+        return view('client.menuHistory', compact('pagedItems', 'item', 'table', 'order', 'url', 'total'));
     }
     public function requestToOrder($id)
     {
@@ -531,6 +544,8 @@ class OrderController extends Controller
                     $waitingItem->status = 'chờ xử lý';
                     $waitingItem->save();
                 }
+                $order->total_amount += $waitingItem->price * $waitingItem->quantity;
+                $order->save();
             }
             $orderItems = Order::with([
                 'orderItems' => function ($query) {
@@ -565,7 +580,7 @@ class OrderController extends Controller
                     $notiBtn = false;
                 }
             }
-            broadcast(new PosTableUpdated($orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
+            broadcast(new PosTableUpdatedWithNoti($orderItems, $tableId, $notiBtn, "Bàn $tableId->table_number đã yêu cầu gọi món!"))->toOthers();
             $item = OrderItem::where('order_id', $order->id)
                 ->where('status', 'chưa yêu cầu')
                 ->get();
@@ -574,6 +589,12 @@ class OrderController extends Controller
                 return $items->price * $items->quantity;
             });
             broadcast(new CartUpdated($countItems, $total, $id))->toOthers();
+            $orderItem = OrderItem::with(['dish:id,name,image', 'combo:id,name,image'])
+                ->where('order_id', $order->id)
+                ->where('status', '!=', 'chưa yêu cầu')
+                ->get();
+            $orderItemArray = $orderItem->toArray();
+            broadcast(new ItemUpdated($orderItemArray, 'Danh sách đã được cập nhật!', $id))->toOthers();
         });
         return redirect()->route('menuHistory', $id);
     }

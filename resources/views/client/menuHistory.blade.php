@@ -11,6 +11,7 @@
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         body {
             background-color: #2c2c2c;
@@ -232,6 +233,32 @@
     </div>
     <div class="order-list" id="order-container">
         @foreach ($item as $item)
+            @php
+                $statusText = '';
+                $statusColor = '';
+                switch ($item->status) {
+                    case 'chờ xử lý':
+                        $statusText = 'Chờ xác nhận';
+                        $statusColor = '#FFA500';
+                        break;
+                    case 'đang xử lý':
+                        $statusText = 'Đã duyệt';
+                        $statusColor = '#007BFF'; // màu xanh dương
+                        break;
+                    case 'hoàn thành':
+                        $statusText = 'Đã hoàn thành';
+                        $statusColor = '#28A745'; // màu xanh lá
+                        break;
+                    case 'hủy':
+                        $statusText = 'Đã hủy';
+                        $statusColor = '#DC3545'; // màu đỏ
+                        break;
+                    default:
+                        $statusText = 'Không xác định';
+                        $statusColor = '#6C757D'; // màu xám
+                        break;
+                }
+            @endphp
             <div class="order-item" data-id="{{ $item->item_id }}"
                 data-type="{{ $item->item_type == 1 ? 'dish' : 'combo' }}" data-status="{{ $item->status }}">
                 <img src="{{ asset('storage/' . ($item->item_type == 1 ? $item->dish->image : $item->combo->image)) }}"
@@ -241,12 +268,16 @@
                     <small>{{ number_format($item->item_type == 1 ? $item->dish->price : $item->combo->price) }}đ</small>
                 </div>
                 <div class="item-controls">
-                    <span class="mx-2 quantity" style="color: #ff8c00">{{ ucfirst($item->status) }}</span>
+                    <span class="mx-2 quantity" style="color: {{ $statusColor }}">{{ $statusText }}</span>
                     <br>
                     <span class="mx-2 quantity">X {{ $item->quantity }}</span>
                 </div>
             </div>
         @endforeach
+
+        <div class="pagination">
+            {{ $pagedItems->links() }}
+        </div>
     </div>
 
     <div class="order-footer">
@@ -255,11 +286,12 @@
             <span class="total" id="btn-subb">{{ number_format($total, 0, ',', '.') }} đ</span>
         </div>
     </div>
-    @vite(['resources/js/updateItemMenuOrder.js', 'resources/js/DishStatus.js'])
+    @vite(['resources/js/menuHistoryUpdated.js'])
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
     </script>
     <script>
+        const tableId = "{{ $table->id }}";
         $(document).ready(function() {
             // Mặc định hiển thị các món "chờ xử lý"
             const defaultStatus = "chờ xử lý";

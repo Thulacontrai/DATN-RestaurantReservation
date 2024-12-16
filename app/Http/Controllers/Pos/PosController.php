@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Pos;
 use App\Events\CartUpdated;
 use App\Events\ComboStatusUpdated;
 use App\Events\DishStatusUpdated;
+use App\Events\ItemUpdated;
 use App\Events\MenuOrderUpdateItem;
 use App\Events\ProcessingDishes;
 use App\Events\MessageSent;
@@ -357,6 +358,12 @@ class PosController extends Controller
                 }
             }
             broadcast(new PosTableUpdated($orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
+            $orderItem = OrderItem::with(['dish:id,name,image', 'combo:id,name,image'])
+                ->where('order_id', $orderId)
+                ->where('status', '!=', 'chưa yêu cầu')
+                ->get();
+            $orderItemArray = $orderItem->toArray();
+            broadcast(new ItemUpdated($orderItemArray, 'Danh sách đã được Nhân viên POS cập nhật!', $request->table_id))->toOthers();
             DB::commit();
             return response()->json([
                 'success' => true,
@@ -562,6 +569,12 @@ class PosController extends Controller
                 }
             }
             broadcast(new PosTableUpdated($orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
+            $orderItem = OrderItem::with(['dish:id,name,image', 'combo:id,name,image'])
+                ->where('order_id', $orderId)
+                ->where('status', '!=', 'chưa yêu cầu')
+                ->get();
+            $orderItemArray = $orderItem->toArray();
+            broadcast(new ItemUpdated($orderItemArray, 'Danh sách đã được Nhân viên POS cập nhật!', $request->table_id))->toOthers();
             DB::commit();
             return response()->json([
                 'success' => true,
@@ -1192,6 +1205,12 @@ class PosController extends Controller
                 }
             }
             broadcast(new PosTableUpdated($orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
+            $orderItem = OrderItem::with(['dish:id,name,image', 'combo:id,name,image'])
+                ->where('order_id', $orderId)
+                ->where('status', '!=', 'chưa yêu cầu')
+                ->get();
+            $orderItemArray = $orderItem->toArray();
+            broadcast(new ItemUpdated($orderItemArray, 'Danh sách đã được Nhân viên POS cập nhật!', $request->table_id))->toOthers();
             DB::commit();
             return response()->json([
                 'success' => true,
@@ -1292,6 +1311,12 @@ class PosController extends Controller
                 }
             }
             broadcast(new PosTableUpdated($orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
+            $orderItem = OrderItem::with(['dish:id,name,image', 'combo:id,name,image'])
+                ->where('order_id', $orderId)
+                ->where('status', '!=', 'chưa yêu cầu')
+                ->get();
+            $orderItemArray = $orderItem->toArray();
+            broadcast(new ItemUpdated($orderItemArray, 'Danh sách đã được Nhân viên POS cập nhật!', $request->table_id))->toOthers();
             DB::commit();
             return response()->json([
                 'success' => true,
@@ -1402,6 +1427,12 @@ class PosController extends Controller
             ])
             ->get();
         broadcast(new ProcessingDishes($items, "Bàn $tableId->table_number gửi yêu cầu chế biến"))->toOthers();
+        $orderItem = OrderItem::with(['dish:id,name,image', 'combo:id,name,image'])
+                ->where('order_id', $orderId)
+                ->where('status', '!=', 'chưa yêu cầu')
+                ->get();
+            $orderItemArray = $orderItem->toArray();
+            broadcast(new ItemUpdated($orderItemArray, 'Danh sách đã được Nhân viên POS cập nhật!', $request->table_id))->toOthers();
         return response()->json([
             'success' => true,
         ]);
@@ -1507,6 +1538,12 @@ class PosController extends Controller
             ])
             ->get();
         broadcast(new ProcessingDishes($items, "Bàn $tableId->table_number gửi yêu cầu chế biến"))->toOthers();
+        $orderItem = OrderItem::with(['dish:id,name,image', 'combo:id,name,image'])
+                ->where('order_id', $orderId)
+                ->where('status', '!=', 'chưa yêu cầu')
+                ->get();
+            $orderItemArray = $orderItem->toArray();
+            broadcast(new ItemUpdated($orderItemArray, 'Danh sách đã được Nhân viên POS cập nhật!', $request->table_id))->toOthers();
         return response()->json([
             'success' => true,
         ]);
@@ -1624,6 +1661,12 @@ class PosController extends Controller
                 ->get();
             broadcast(new ProcessingDishes($items, null))->toOthers();
             broadcast(new ProvideDishes($items1))->toOthers();
+            $orderItem = OrderItem::with(['dish:id,name,image', 'combo:id,name,image'])
+                ->where('order_id', $orderId)
+                ->where('status', '!=', 'chưa yêu cầu')
+                ->get();
+            $orderItemArray = $orderItem->toArray();
+            broadcast(new ItemUpdated($orderItemArray, 'Danh sách đã được Nhân viên POS cập nhật!', $request->table_id))->toOthers();
         });
         return response()->json([
             'success' => true,
@@ -1743,6 +1786,12 @@ class PosController extends Controller
                 ->get();
             broadcast(new ProcessingDishes($items, null))->toOthers();
             broadcast(new ProvideDishes($items1))->toOthers();
+            $orderItem = OrderItem::with(['dish:id,name,image', 'combo:id,name,image'])
+                ->where('order_id', $orderId)
+                ->where('status', '!=', 'chưa yêu cầu')
+                ->get();
+            $orderItemArray = $orderItem->toArray();
+            broadcast(new ItemUpdated($orderItemArray, 'Danh sách đã được Nhân viên POS cập nhật!', $request->table_id))->toOthers();
         });
         return response()->json([
             'success' => true,
@@ -1843,6 +1892,12 @@ class PosController extends Controller
                 ->get();
             broadcast(new ProcessingDishes($items, null))->toOthers();
             broadcast(new ProvideDishes($items1))->toOthers();
+            $orderItem = OrderItem::with(['dish:id,name,image', 'combo:id,name,image'])
+                ->where('order_id', $orderId)
+                ->where('status', '!=', 'chưa yêu cầu')
+                ->get();
+            $orderItemArray = $orderItem->toArray();
+            broadcast(new ItemUpdated($orderItemArray, 'Danh sách đã được Nhân viên POS cập nhật!', $request->table_id))->toOthers();
         });
         return response()->json([
             'success' => true,
@@ -1947,6 +2002,12 @@ class PosController extends Controller
                 ->get();
             broadcast(new ProcessingDishes($items, null))->toOthers();
             broadcast(new ProvideDishes($items1))->toOthers();
+            $orderItem = OrderItem::with(['dish:id,name,image', 'combo:id,name,image'])
+                ->where('order_id', $orderId)
+                ->where('status', '!=', 'chưa yêu cầu')
+                ->get();
+            $orderItemArray = $orderItem->toArray();
+            broadcast(new ItemUpdated($orderItemArray, 'Danh sách đã được Nhân viên POS cập nhật!', $request->table_id))->toOthers();
         });
         return response()->json([
             'success' => true,

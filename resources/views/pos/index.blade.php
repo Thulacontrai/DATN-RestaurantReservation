@@ -313,7 +313,9 @@
                                 <div class="qr-code-container">
                                     <h5 class="text-dark">Bàn {{ $table->table_number }}</h5>
                                     <p>
-                                        <b class="text-dark">{{ $table->status == 'Available' ? 'Bàn mở' : 'Đang sử dụng' }}</b></p>
+                                        <b
+                                            class="text-dark">{{ $table->status == 'Available' ? 'Bàn mở' : 'Đang sử dụng' }}</b>
+                                    </p>
                                     {!! $qrCodes[$table->id] ?? '' !!}
                                 </div>
                             </div>
@@ -623,7 +625,7 @@
                         confirmButtonText: 'Xác nhận',
                         cancelButtonText: 'Hủy',
                         didOpen: () => {
-                            const MAX_GUESTS_PER_TABLE = 6;
+                            const MAX_GUESTS_PER_TABLE = 4;
                             const $tableRoom = $('#tableRoom');
                             const $adults = $('#adults');
                             const $customer = $('#customer');
@@ -673,33 +675,52 @@
                                 }
                             });
 
-                            const updateGuestLimit = () => {
-                                const selectedTables = $tableRoom.val()
-                                    .length;
-                                const maxGuests = selectedTables * MAX_GUESTS_PER_TABLE;
+                            const updateGuestLimits = () => {
+                                const selectedTables = $tableRoom.val().length;
+                                if (selectedTables === 0) {
+                                    $adults.attr('min', 1);
+                                    $adults.attr('max', MAX_GUESTS_PER_TABLE);
+                                    $adults.val(
+                                    1); 
+                                    return;
+                                }
+
+                                const maxGuests = selectedTables *
+                                MAX_GUESTS_PER_TABLE; 
+                                const minGuests = selectedTables === 1 ? 1 : (
+                                    selectedTables - 1) * MAX_GUESTS_PER_TABLE +
+                                1; 
+
                                 $adults.attr('max', maxGuests);
-                                if (parseInt($adults.val()) > maxGuests) {
+                                $adults.attr('min', minGuests);
+
+                                const currentValue = parseInt($adults.val(), 10);
+                                if (currentValue < minGuests) {
+                                    $adults.val(minGuests);
+                                } else if (currentValue > maxGuests) {
                                     $adults.val(maxGuests);
                                 }
                             };
-                            $tableRoom.on('change', updateGuestLimit);
+                            $tableRoom.on('change', updateGuestLimits);
                             $adults.on('input', () => {
-                                const maxGuests = parseInt($adults.attr('max'));
-                                const currentValue = parseInt($adults.val());
+                                const maxGuests = parseInt($adults.attr('max'), 10);
+                                const minGuests = parseInt($adults.attr('min'), 10);
+                                const currentValue = parseInt($adults.val(), 10);
+
                                 if (currentValue > maxGuests) {
                                     $adults.val(maxGuests);
-                                } else if (currentValue < 1 || isNaN(currentValue)) {
-                                    $adults.val(1);
+                                } else if (currentValue < minGuests || isNaN(
+                                        currentValue)) {
+                                    $adults.val(minGuests);
                                 }
                             });
-                            updateGuestLimit();
+                            updateGuestLimits();
                         },
                         preConfirm: () => {
                             const customer = $('#customer').val();
                             const phone = $('#phone').val();
                             const tableRoom = $('#tableRoom').val();
                             const adults = $('#adults').val();
-                            const note = $('#note').val();
                             if (!customer || !tableRoom.length || !phone) {
                                 Swal.showValidationMessage('Vui lòng nhập đầy đủ thông tin');
                                 return false;
@@ -714,8 +735,6 @@
                     }).then((result) => {
                         if (result.isConfirmed) {
                             showNotification('Tạo đơn thành công');
-                            console.log(result);
-                            
                             fetch('/create-order', {
                                     method: 'POST',
                                     headers: {
