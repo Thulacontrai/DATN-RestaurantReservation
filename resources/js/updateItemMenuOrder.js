@@ -2,13 +2,21 @@ import './bootstrap';
 
 window.Echo.channel('order-updates')
     .listen('MenuOrderUpdateItem', (data) => {
-        updateOrderUI(data.item);
+        if (data.item.table == tableId) {
+            updateOrderUI(data.item);
+        }
     });
 
 function updateOrderUI(item) {
     const orderContainer = document.getElementById('order-container');
-    const existingItem = orderContainer.querySelector(`.order-item[data-id="${item.id}"]`);
-
+    const btnSubb = document.getElementById('btn-subb');
+    const formattedTotal = new Intl.NumberFormat('vi-VN', {
+        style: 'currency',
+        currency: 'VND'
+    }).format(item.total);
+    btnSubb.innerText = formattedTotal;
+    btnSubb.value = formattedTotal;
+    const existingItem = orderContainer.querySelector(`.order-item[data-id="${item.id}"][data-type="${item.type}"]`);
     if (item.deleted) {
         existingItem?.remove();
     } else if (existingItem) {

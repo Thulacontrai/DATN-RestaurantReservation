@@ -196,7 +196,7 @@
                                         <th>Hành động</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="ChoCungUng">
                                     @foreach ($items1 as $item)
                                         @if ($item->status == 'chờ cung ứng' || $item->status == 'đã xong')
                                             <tr data-item-id="{{ $item->id }}"

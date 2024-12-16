@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Pos;
 use App\Events\CartUpdated;
 use App\Events\ComboStatusUpdated;
 use App\Events\DishStatusUpdated;
+use App\Events\MenuOrderUpdateItem;
 use App\Events\ProcessingDishes;
 use App\Events\MessageSent;
 use App\Events\PosTableUpdated;
@@ -42,7 +43,15 @@ class PosController extends Controller
 
     public function __construct()
     {
-        $this->middleware(['auth', 'permission:access pos']);
+        $this->middleware(function ($request, $next) {
+            if (Auth::check() && !Auth::user()->hasRole('superadmin')) {
+                return $next($request); // Cho phép truy cập nếu không có role
+            }
+
+            // Đối với các tài khoản có role, kiểm tra quyền
+            $this->middleware(['auth', 'permission:access pos']);
+            return $next($request);
+        });
     }
 
     public function checkTable(Request $request)
@@ -208,7 +217,7 @@ class PosController extends Controller
         }
         $order = Order::create([
             'customer_id' => $user->id,
-            'guest_count' => $request->quantity,
+            'guest_count' => (int) $request->quantity,
             'staff_id' => Auth::user()->id,
             'status' => 'pending',
             'total_amount' => 0,
@@ -421,8 +430,24 @@ class PosController extends Controller
                 })
                 ->get();
             $countItems = $orderItem->sum('quantity');
-            $total = $orderItem->sum('price');
+            $total = $orderItem->sum(function ($item) {
+                return $item->price * $item->quantity;
+            });
             broadcast(new CartUpdated($countItems, $total, $tableId->id))->toOthers();
+            $orderItem = OrderItem::where('item_id', $request->dish_id)
+                ->where('status', 'chưa yêu cầu')
+                ->where('item_type', '1')
+                ->first();
+            broadcast(new MenuOrderUpdateItem([
+                'id' => $orderItem->item_id,
+                'type' => 'dish',
+                'name' => $orderItem->dish->name,
+                'image' => asset('storage/' . $orderItem->dish->image),
+                'price' => $orderItem->price,
+                'quantity' => $orderItem->quantity,
+                'table' => $request->table_id,
+                'total' => $total
+            ]));
             DB::commit();
             return response()->json([
                 'success' => true,
@@ -610,8 +635,24 @@ class PosController extends Controller
                 })
                 ->get();
             $countItems = $orderItem->sum('quantity');
-            $total = $orderItem->sum('price');
+            $total = $orderItem->sum(function ($item) {
+                return $item->price * $item->quantity;
+            });
             broadcast(new CartUpdated($countItems, $total, $tableId->id))->toOthers();
+            $orderItem = OrderItem::where('item_id', $request->combo_id)
+                ->where('status', 'chưa yêu cầu')
+                ->where('item_type', '2')
+                ->first();
+            broadcast(new MenuOrderUpdateItem([
+                'id' => $orderItem->item_id,
+                'type' => 'combo',
+                'name' => $orderItem->combo->name,
+                'image' => asset('storage/' . $orderItem->combo->image),
+                'price' => $orderItem->price,
+                'quantity' => $orderItem->quantity,
+                'table' => $request->table_id,
+                'total' => $total,
+            ]));
             DB::commit();
             return response()->json([
                 'success' => true,
@@ -1057,9 +1098,6 @@ class PosController extends Controller
         }
         $order = Order::with(['reservation', 'tables', 'customer'])->findOrFail($orderId);
         broadcast(new PosTableUpdated($orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
-        $countItems = $orderItem->count();
-        $total = $orderItems->total_amount;
-        broadcast(new CartUpdated($countItems, $total, $tableId->id))->toOthers();
         return response()->json([
             'success' => true,
             'order' => $table,
@@ -1154,9 +1192,6 @@ class PosController extends Controller
                 }
             }
             broadcast(new PosTableUpdated($orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
-            $countItems = $orderItem->count();
-            $total = $orderItems->total_amount;
-            broadcast(new CartUpdated($countItems, $total, $tableId->id))->toOthers();
             DB::commit();
             return response()->json([
                 'success' => true,
@@ -1257,9 +1292,6 @@ class PosController extends Controller
                 }
             }
             broadcast(new PosTableUpdated($orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
-            $countItems = $orderItem->count();
-            $total = $orderItems->total_amount;
-            broadcast(new CartUpdated($countItems, $total, $tableId->id))->toOthers();
             DB::commit();
             return response()->json([
                 'success' => true,
@@ -1362,9 +1394,6 @@ class PosController extends Controller
             }
         }
         broadcast(new PosTableUpdated($orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
-        $countItems = $orderItem->count();
-        $total = $orderItems->total_amount;
-        broadcast(new CartUpdated($countItems, $total, $tableId->id))->toOthers();
         $items = Kitchen::where('status', 'đang chế biến')
             ->with([
                 'order.tables:id,table_number',
@@ -1470,9 +1499,6 @@ class PosController extends Controller
             }
         }
         broadcast(new PosTableUpdated($orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
-        $countItems = $orderItem->count();
-        $total = $orderItems->total_amount;
-        broadcast(new CartUpdated($countItems, $total, $tableId->id))->toOthers();
         $items = Kitchen::where('status', 'đang chế biến')
             ->with([
                 'order.tables:id,table_number',
@@ -1582,9 +1608,6 @@ class PosController extends Controller
                 }
             }
             broadcast(new PosTableUpdated($orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
-            $countItems = $orderItem->count();
-            $total = $orderItems->total_amount;
-            broadcast(new CartUpdated($countItems, $total, $tableId->id))->toOthers();
             $items = Kitchen::where('status', 'đang chế biến')
                 ->with([
                     'order.tables:id,table_number',
@@ -1704,9 +1727,6 @@ class PosController extends Controller
                 }
             }
             broadcast(new PosTableUpdated($orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
-            $countItems = $orderItem->count();
-            $total = $orderItems->total_amount;
-            broadcast(new CartUpdated($countItems, $total, $tableId->id))->toOthers();
             $items = Kitchen::where('status', 'đang chế biến')
                 ->with([
                     'order.tables:id,table_number',
@@ -1754,7 +1774,11 @@ class PosController extends Controller
                 $inventoryStock->quantity_reserved -= $recipe->quantity_need * $existingOrderItem->quantity;
                 $inventoryStock->save();
             }
-
+            $dish->is_active = 1;
+            $dish->status = 'available';
+            $dish->save();
+            broadcast(new DishStatusUpdated($dish));
+            broadcast(new UpdateDishStatus($dish));
             $kitchens = Kitchen::where('item_id', $request->dish_id)
                 ->where('order_id', $orderId)
                 ->get();
@@ -1803,9 +1827,6 @@ class PosController extends Controller
                 }
             }
             broadcast(new PosTableUpdated($orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
-            $countItems = $orderItem->count();
-            $total = $orderItems->total_amount;
-            broadcast(new CartUpdated($countItems, $total, $tableId->id))->toOthers();
             $items = Kitchen::where('status', 'đang chế biến')
                 ->with([
                     'order.tables:id,table_number',
@@ -1856,7 +1877,11 @@ class PosController extends Controller
                     $inventoryStock->save();
                 }
             }
-
+            $combo = Combo::find($request->dish_id);
+            $combo->is_active = 1;
+            $combo->save();
+            broadcast(new ComboStatusUpdated($combo));
+            broadcast(new UpdateComboStatus($combo));
             $kitchens = Kitchen::where('item_id', $request->dish_id)
                 ->where('order_id', $orderId)
                 ->where('item_type', $request->dishType)
@@ -1906,9 +1931,6 @@ class PosController extends Controller
                 }
             }
             broadcast(new PosTableUpdated($orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
-            $countItems = $orderItem->count();
-            $total = $orderItems->total_amount;
-            broadcast(new CartUpdated($countItems, $total, $tableId->id))->toOthers();
             $items = Kitchen::where('status', 'đang chế biến')
                 ->with([
                     'order.tables:id,table_number',
@@ -2015,9 +2037,6 @@ class PosController extends Controller
                 }
             }
             broadcast(new PosTableUpdated($orderItems, $tableId, $notiBtn, $checkoutBtn))->toOthers();
-            $countItems = $orderItem->count();
-            $total = $orderItems->total_amount;
-            broadcast(new CartUpdated($countItems, $total, $tableId->id))->toOthers();
             $items = Kitchen::where('status', 'đang chế biến')
                 ->with([
                     'order.tables:id,table_number',

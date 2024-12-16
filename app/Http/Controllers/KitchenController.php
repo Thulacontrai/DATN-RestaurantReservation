@@ -141,9 +141,6 @@ class KitchenController extends Controller
             }
             $order = Order::with(['reservation', 'tables', 'customer'])->findOrFail($orderId);
             broadcast(new PosTableUpdatedWithNoti($orderItems, $tableId, $notiBtn, "Bàn $tableId->table_number đang được chế biến món $itemName"))->toOthers();
-            $countItems = $orderItem->count();
-            $total = $orderItems->total_amount;
-            broadcast(new CartUpdated($countItems, $total, $tableId->id))->toOthers();
         });
         return response()->json(['status' => 'success']);
     }
@@ -209,9 +206,6 @@ class KitchenController extends Controller
             }
             $order = Order::with(['reservation', 'tables', 'customer'])->findOrFail($orderId);
             broadcast(new PosTableUpdatedWithNoti($orderItems, $tableId, $notiBtn, "Bàn $tableId->table_number đã được cung ứng món $itemName"))->toOthers();
-            $countItems = $orderItem->count();
-            $total = $orderItems->total_amount;
-            broadcast(new CartUpdated($countItems, $total, $tableId->id))->toOthers();
         });
         return response()->json(['status' => 'success']);
     }

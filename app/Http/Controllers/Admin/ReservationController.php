@@ -662,6 +662,12 @@ class ReservationController extends Controller
 
     public function createReservation(StoreReservationRquest $request)
     {
+        $lastReservation = Reservation::where('customer_id', auth()->id())
+            ->latest('created_at')
+            ->first();
+        if ($lastReservation && now()->diffInMinutes($lastReservation->created_at) < 5) {
+            return back()->with('err', 'Mỗi đơn đặt bàn cần cách nhau 5 phút!');
+        }
         // Kiểm tra số lượng khách, nếu >= 6 thì chuyển hướng đến trang đặt cọc
         if ($request->guest_count >= 6) {
             // Lưu thông tin khách hàng tạm thời để sử dụng ở trang cọc

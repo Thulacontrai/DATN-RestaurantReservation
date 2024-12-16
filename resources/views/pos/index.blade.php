@@ -311,8 +311,9 @@
                                     @endforeach
                                 </div>
                                 <div class="qr-code-container">
-                                    <h5>Bàn {{ $table->table_number }}</h5>
-                                    <p><b>{{ $table->status == 'Available' ? 'Bàn mở' : 'Đang sử dụng' }}</b></p>
+                                    <h5 class="text-dark">Bàn {{ $table->table_number }}</h5>
+                                    <p>
+                                        <b class="text-dark">{{ $table->status == 'Available' ? 'Bàn mở' : 'Đang sử dụng' }}</b></p>
                                     {!! $qrCodes[$table->id] ?? '' !!}
                                 </div>
                             </div>
@@ -347,34 +348,39 @@
                                         alt="{{ $dish->name }}" class="img-fluid rounded"
                                         style="object-fit: cover; height: 200px; width: 100%; max-height: 200px; {{ $dish->is_active == 0 || $dish->status == 'out_of_stock' ? 'filter: grayscale(100%); opacity: 0.6;' : '' }}" />
                                     <div class="card-body text-center">
-                                        <h5 class="card-price text-primary">{{ number_format($dish->price, 0, ',', '.') }}
-                                            VND</h5>
-                                        <p class="card-title">{{ \Str::limit($dish->name, 20, '...') }}</p>
                                         @if ($dish->is_active == 0 || $dish->status == 'out_of_stock')
                                             <p class="text-danger">Không khả dụng</p>
+                                        @else
+                                            <h5 class="card-price text-primary">
+                                                {{ number_format($dish->price, 0, ',', '.') }}
+                                                VND</h5>
                                         @endif
+                                        <p class="card-title">{{ \Str::limit($dish->name, 20, '...') }}</p>
                                     </div>
                                 </div>
                             </div>
                         @endforeach
 
                         @foreach ($combo as $combo)
-                            <div class="col-md-3 dish-combo {{ $combo->is_active == 0 || $combo->status == 'out_of_stock' ? 'disabled' : '' }}"
+                            <div class="col-6 col-sm-4 col-md-3 col-lg-3 dish-combo {{ $combo->is_active == 0 || $combo->status == 'out_of_stock' ? 'disabled' : '' }}"
                                 data-category="combo"
                                 @if ($combo->is_active) data-combo-id="{{ $combo->id }}"
-                                data-combo-price="{{ $combo->price }}" @endif>
-                                <div class="card menu-item">
-                                    <img src="{{ asset($combo->image ? 'storage/' . $combo->image : 'images/placeholder.jpg') }}"
+                                data-combo-price="{{ $combo->price }}" @endif
+                                style="padding: 10px;">
+                                <div class="card menu-item col">
+                                    <img class="btn btn-add-dish"
+                                        src="{{ asset($combo->image ? 'storage/' . $combo->image : 'images/placeholder.jpg') }}"
                                         alt="{{ $combo->name }}" class="img-fluid rounded"
-                                        style="height: 200px; object-fit: cover; {{ $combo->is_active == 0 || $combo->status == 'out_of_stock' ? 'filter: grayscale(100%); opacity: 0.6;' : '' }}" />
+                                        style="object-fit: cover; height: 200px; width: 100%; max-height: 200px; {{ $combo->is_active == 0 || $combo->status == 'out_of_stock' ? 'filter: grayscale(100%); opacity: 0.6;' : '' }}" />
                                     <div class="card-body text-center">
-                                        <h5 class="card-price text-primary">
-                                            {{ number_format($combo->price, 0, ',', '.') }} VND
-                                        </h5>
-                                        <p class="card-title">{{ \Str::limit($combo->name, 20, '...') }}</p>
                                         @if ($combo->is_active == 0 || $combo->status == 'out_of_stock')
                                             <p class="text-danger">Không khả dụng</p>
+                                        @else
+                                            <h5 class="card-price text-primary">
+                                                {{ number_format($combo->price, 0, ',', '.') }} VND
+                                            </h5>
                                         @endif
+                                        <p class="card-title">{{ \Str::limit($combo->name, 20, '...') }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -708,6 +714,8 @@
                     }).then((result) => {
                         if (result.isConfirmed) {
                             showNotification('Tạo đơn thành công');
+                            console.log(result);
+                            
                             fetch('/create-order', {
                                     method: 'POST',
                                     headers: {
@@ -1313,6 +1321,10 @@
         height: 100%;
     }
 
+    .dish-combo {
+        height: 100%;
+    }
+
     /* Responsive cho các màn hình nhỏ */
     @media (max-width: 768px) {
         .table-card {
@@ -1550,8 +1562,18 @@
         max-width: 50%;
     }
 
+    #dish-list .dish-combo {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+
     @media (min-width: 850px) and (max-width: 1199px) {
         #dish-list .dish-item {
+            flex: 0 0 33.3333%;
+            max-width: 33.3333%;
+        }
+
+        #dish-list .dish-combo {
             flex: 0 0 33.3333%;
             max-width: 33.3333%;
         }
@@ -1559,6 +1581,11 @@
 
     @media (min-width: 1200px) {
         #dish-list .dish-item {
+            flex: 0 0 25%;
+            max-width: 25%;
+        }
+
+        #dish-list .dish-combo {
             flex: 0 0 25%;
             max-width: 25%;
         }

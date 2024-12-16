@@ -8,6 +8,18 @@
         'title' => 'Bàn ' . $table->table_number,
         'currentPage' => 'Menu Order',
     ])
+    @if (session('error'))
+        <script>
+            Swal.fire({
+                title: "Bạn chưa gọi món",
+                text: "{{ sesstion('error') }}",
+                icon: "warning",
+                timer: 2000,
+                timerProgressBar: true,
+                showCloseButton: true
+            });
+        </script>
+    @endif
     <div class="container mt-4">
         <div class="mx-2 my-3">
             <div class="row ">
@@ -45,7 +57,7 @@
                                 <p class="price">Hết hàng</p>
                             @else
                                 <p class="price">{{ number_format($dish->price) }}đ</p>
-                                <button class="btn-add">Gọi món</button>
+                                <button class="btn-add">Thêm món</button>
                             @endif
                         </div>
                     </div>
@@ -65,7 +77,7 @@
                                 <p class="price">Hết hàng</p>
                             @else
                                 <p class="price">{{ number_format($combo->price) }}đ</p>
-                                <button class="btn-add">Gọi món</button>
+                                <button class="btn-add">Thêm Combo</button>
                             @endif
                         </div>
                     </div>
@@ -76,8 +88,8 @@
 
     <!-- Fixed Bottom Bar -->
     <a href="{{ route('menuSelected', ['table_number' => $table->id]) }}" class="fixed-bottom-bar mx-4 mb-1 rounded">
-        <span id="cart-total">Gọi món ({{ $item->sum('quantity') }})</span>
-        <span id="cart-quantity">{{ number_format($item->sum('price')) }}đ</span>
+        <span id="cart-total">Tổng số lượng ({{ $item->sum('quantity') }})</span>
+        <span id="cart-quantity">{{ number_format($total, 0, ',', '.') }}đ</span>
     </a>
     @vite(['resources/js/menuOrder.js', 'resources/js/DishStatus.js'])
 
@@ -85,7 +97,6 @@
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script>
         let TableId = "{{ $table->id }}";
-
         document.addEventListener("DOMContentLoaded", () => {
             function showNotification(message, type = 'success') {
                 Swal.fire({
@@ -131,7 +142,7 @@
                             })
                             .then((response) => response.json())
                             .then((data) => {
-                                showNotification(data.message || "Gọi món thành công!");
+                                showNotification(data.message || "Thêm món thành công!");
                             })
                             .catch(() => {
                                 showNotification("Đã xảy ra lỗi, vui lòng thử lại.", "warning");

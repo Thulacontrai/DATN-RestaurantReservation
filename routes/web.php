@@ -235,8 +235,11 @@ Route::middleware(['checkTableAndUser'])->group(function () {
 });
 Route::middleware(['checkUser'])->group(function () {
     Route::get('/menu-selected/{table_number}', [OrderController::class, 'menuSelected'])->name('menuSelected');
+    Route::get('/menu-history/{table_number}', [OrderController::class, 'menuHistory'])->name('menuHistory');
 });
 Route::post('/menuOrder/updatee', [OrderController::class, 'updateItemm'])->name('updateItem.menuOrder');
+Route::get('/menuOrder/requestToOrder/{table_number}', [OrderController::class, 'requestToOrder'])->name('requestToOrder.menuOrder');
+
 
 ///
 Route::get('reserToOrder/{reservationId}', [PosController::class, 'reserToOrder'])->name('ReToOr');

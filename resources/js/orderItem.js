@@ -17,6 +17,7 @@ window.Echo.channel('order')
             notification.disabled = false;
         };
         if (selectedTableId == e.tableId.id) {
+            console.log(e);
             layoutTable.innerHTML = `
             <div style="display: flex; flex-direction: column; overflow-x: hidden;">
     <div style="display: flex; justify-content: center;">
@@ -42,10 +43,11 @@ window.Echo.channel('order')
     </div>
     <div class="row">
         <div class="col">
-            <p><strong>Số người:</strong> ${e.orderItems?.reservation?.guest_count ?? 'Khách lẻ'}</p>
-        </div>
-    </div>
-</div>
+            <p><strong>Số người:</strong> ${e.orderItems?.reservation?.guest_count ?? e.orderItems?.guest_count ?? 'Khách lẻ'
+                }</p >
+        </div >
+    </div >
+</div >
             <h4>Danh sách món</h4>
         `;
             e.orderItems.order_items.forEach(item => {

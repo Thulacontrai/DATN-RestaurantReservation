@@ -10,6 +10,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <style>
         body {
             background-color: #2c2c2c;
@@ -17,6 +18,12 @@
             font-family: Arial, sans-serif;
             font-size: 16px;
             line-height: 1.5;
+        }
+
+        .order-itemm.active {
+            background-color: #ff8c00;
+            color: black;
+            font-weight: bold;
         }
 
         .order-header {
@@ -51,7 +58,7 @@
         .order-list {
             padding: 15px;
             background-color: #3b3b3b;
-            margin-bottom: 100px;
+            margin-bottom: 20px;
         }
 
         .order-item {
@@ -187,16 +194,10 @@
             color: #666;
         }
 
-        .item-controls {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            /* Thêm khoảng cách giữa các nút */
-        }
 
         .item-controls span {
             display: inline-block;
-            width: 30px;
+            width: 120px;
             /* Chiều rộng cố định */
             text-align: center;
             font-weight: bold;
@@ -210,23 +211,29 @@
         <a href="{{ $url }}" class="icon-btn">
             <i class="fa-solid fa-arrow-left"></i>
         </a>
-        <h5>CÁC MÓN ĐÃ CHỌN</h5>
+        <h5>Lịch sử gọi món</h5>
     </div>
     <div class="order-headerr">
+        <h5>Bàn {{ $table->table_number }}</h5>
         <a href="{{ $url }}" class="icon-btn btn">
             Thêm món
             <i class="fa-solid fa-plus"></i>
         </a>
-        <h5>Bàn {{ $table->table_number }}</h5>
-        <a href="{{ route('menuHistory', $table->id) }}" class="icon-btn btn">
-            Lịch sử
-            <i class="fa-solid fa-clock"></i>
-        </a>
+    </div>
+    <div class="order-list row d-flex justify-content-center">
+        <div class="order-item order-itemm col-5 mx-3" data-status="chờ xử lý">Chờ xác nhận <i
+                class="fa-solid fa-clock-rotate-left"></i></div>
+        <div class="order-item order-itemm col-5 mx-3" data-status="đang xử lý">Đã duyệt <i
+                class="fa-solid fa-check-double"></i>
+        </div>
+        <div class="order-item order-itemm col-5 mx-3" data-status="hoàn thành">Đã hoàn thành <i
+                class="fa-regular fa-circle-check"></i></div>
+        <div class="order-item order-itemm col-5 mx-3" data-status="hủy">Đã hủy <i class="fa-solid fa-ban"></i></div>
     </div>
     <div class="order-list" id="order-container">
         @foreach ($item as $item)
             <div class="order-item" data-id="{{ $item->item_id }}"
-                data-type="{{ $item->item_type == 1 ? 'dish' : 'combo' }}">
+                data-type="{{ $item->item_type == 1 ? 'dish' : 'combo' }}" data-status="{{ $item->status }}">
                 <img src="{{ asset('storage/' . ($item->item_type == 1 ? $item->dish->image : $item->combo->image)) }}"
                     alt="{{ $item->item_type == 1 ? $item->dish->name : $item->combo->name }}">
                 <div class="item-details">
@@ -234,10 +241,9 @@
                     <small>{{ number_format($item->item_type == 1 ? $item->dish->price : $item->combo->price) }}đ</small>
                 </div>
                 <div class="item-controls">
-                    <button class="btn btn-sm btn-outline-secondary decrease">-</button>
-                    <span class="mx-2 quantity">{{ $item->quantity }}</span>
-                    <button class="btn btn-sm btn-outline-secondary increase">+</button>
-                    <button class="btn btn-sm btn-outline-danger remove">Xóa</button>
+                    <span class="mx-2 quantity" style="color: #ff8c00">{{ ucfirst($item->status) }}</span>
+                    <br>
+                    <span class="mx-2 quantity">X {{ $item->quantity }}</span>
                 </div>
             </div>
         @endforeach
@@ -245,72 +251,48 @@
 
     <div class="order-footer">
         <div class="d-flex justify-content-between mb-2">
-            <span>Tạm tính</span>
+            <span>Tổng tiền</span>
             <span class="total" id="btn-subb">{{ number_format($total, 0, ',', '.') }} đ</span>
         </div>
-        <a href="{{ route('requestToOrder.menuOrder', $table->id) }}" class="btn btn-primary btn-submit">Gửi yêu cầu
-            gọi
-            món</a>
     </div>
-    <script>
-        tableId = "{{ $table->id }}";
-        document.getElementById('order-container').addEventListener('click', function(event) {
-            const target = event.target;
-            const orderItem = target.closest('.order-item');
-            if (!orderItem) return;
-            const itemId = orderItem.getAttribute('data-id');
-            const itemType = orderItem.getAttribute('data-type');
-            let action = '';
-            if (target.classList.contains('increase')) {
-                action = 'increase';
-            } else if (target.classList.contains('decrease')) {
-                action = 'decrease';
-            } else if (target.classList.contains('remove')) {
-                action = 'remove';
-            }
-            if (action) {
-                sendUpdate(itemId, itemType, action);
-            }
-        });
-
-        function sendUpdate(itemId, itemType, action) {
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-            fetch('/menuOrder/updatee', {
-                    method: 'POST',
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRF-TOKEN": csrfToken,
-                    },
-                    body: JSON.stringify({
-                        item_id: itemId,
-                        item_type: itemType,
-                        action: action,
-                        table: "{{ $table->id }}"
-                    })
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(result => {
-                    if (result.success) {
-                        console.log('Update success:', result);
-                    } else {
-                        console.log('Update !success:', result);
-                    }
-                })
-                .catch(error => {
-                    alert('Đã xảy ra lỗi khi gửi yêu cầu.');
-                    console.error('Error:', error);
-                });
-        }
-    </script>
     @vite(['resources/js/updateItemMenuOrder.js', 'resources/js/DishStatus.js'])
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
+    </script>
+    <script>
+        $(document).ready(function() {
+            // Mặc định hiển thị các món "chờ xử lý"
+            const defaultStatus = "chờ xử lý";
+            filterOrders(defaultStatus);
+
+            // Thay đổi CSS cho nút mặc định
+            $(`.order-item[data-status='${defaultStatus}']`).addClass("active");
+
+            // Lắng nghe sự kiện nhấn vào các nút trạng thái
+            $(".order-list .order-item").on("click", function() {
+                // Lấy trạng thái từ nút được nhấn
+                const status = $(this).attr("data-status");
+
+                // Thay đổi CSS cho nút được chọn
+                $(".order-list .order-item").removeClass("active");
+                $(this).addClass("active");
+
+                // Gọi hàm lọc danh sách món
+                filterOrders(status);
+            });
+
+            // Hàm lọc danh sách món theo trạng thái
+            function filterOrders(status) {
+                $("#order-container .order-item").each(function() {
+                    const itemStatus = $(this).attr("data-status");
+                    if (itemStatus === status) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            }
+        });
     </script>
 </body>
 
