@@ -11,19 +11,19 @@
     <!-- Sidebar menu starts -->
     <div class="sidebar-menu">
         <div class="sidebarMenuScroll">
-            <ul >
+            <ul>
                 <li class="sidebar-dropdown">
                     <a href="#">
                         <i class="bi bi-house"></i>
-                        <span class="menu-text" >Thống kê</span>
+                        <span class="menu-text">Thống kê</span>
                     </a>
-                    <div class="sidebar-submenu" >
+                    <div class="sidebar-submenu">
                         <ul>
                             <li>
-                                <a href="{{ route('admin.dashboard.index') }}"  >Phân tích</a>
+                                <a href="{{ route('admin.dashboard.index') }}">Phân tích</a>
                             </li>
                             <li>
-                                <a href="{{ route('admin.report.index') }}"  >Báo Cáo</a>
+                                <a href="{{ route('admin.report.index') }}">Báo Cáo</a>
                             </li>
                             <li>
                                 <a href="{{ route('admin.inventoryDashboard.index') }}">Thống Kê Kho</a>
@@ -37,7 +37,7 @@
                     <li class="sidebar-dropdown">
                         <a href="#">
                             <i class="bi bi-window-split"></i>
-                            <span class="menu-text" >Quản Lý Bàn</span>
+                            <span class="menu-text">Quản Lý Bàn</span>
                         </a>
                         <div class="sidebar-submenu">
                             <ul>
@@ -126,11 +126,11 @@
                                     <a href="{{ route('admin.order.index') }}">Danh sách Hoá Đơn</a>
                                 </li>
 
-                                @can('Xem mã giảm giá')
+                                {{-- @can('Xem mã giảm giá')
                                     <li>
                                         <a href="{{ route('admin.coupon.index') }}">Phiếu giảm giá</a>
                                     </li>
-                                @endcan
+                                @endcan --}}
                                 {{-- @can('Xem thanh toán')
                                     <li>
                                         <a href="{{ route('admin.payment.index') }}">Phương thức thanh toán</a>
@@ -201,7 +201,7 @@
                             <i class="bi bi-pci-card"></i>
                             <span class="menu-text">Quản lý kho</span>
                         </a>
-                        <div class="sidebar-submenu" >
+                        <div class="sidebar-submenu">
                             <ul>
                                 @can('Xem nhà cung cấp')
                                     <li>
@@ -211,7 +211,7 @@
 
                                     @can('Xem nguyên liệu')
                                     <li>
-                                        <a href="{{ route('admin.ingredient.index') }}" > Nguyên Liệu</a>
+                                        <a href="{{ route('admin.ingredient.index') }}"> Nguyên Liệu</a>
                                     </li>
                                 @endcan
                                 @can('Xem nhập kho')
