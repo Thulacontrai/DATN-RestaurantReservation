@@ -191,15 +191,10 @@ Route::get('/customerInformation', [ReservationController::class, 'showInformati
 
 
 
-
-
-
 Route::get('/kitchen', [KitchenController::class, 'index'])->name('kitchen.index');
 Route::post('/kitchen/{id}/cook-all', [KitchenController::class, 'cookAll'])->name('order-item.cook-all');
 Route::post('/kitchen/{id}/done-all', [KitchenController::class, 'doneAll'])->name('order-item.cook-all');
 Route::post('/kitchen/{id}/delete', [KitchenController::class, 'delete'])->name('order-item.cook-all');
-
-
 
 
 
@@ -234,7 +229,6 @@ Route::post('/check-payment-condition', [PosController::class, 'checkPaymentPond
 Route::get('/checkAvailableTables', [PosController::class, 'checkAvailableTables'])->name('checkPaymentPondition');
 Route::get('/menu-order', [OrderController::class, 'menuOrder'])->name('menuOrder');
 
-///
 Route::get('reserToOrder/{reservationId}', [PosController::class, 'reserToOrder'])->name('ReToOr');
 
 
@@ -315,18 +309,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('tables/trash', [TableController::class, 'trash'])->name('tables.trash');
     Route::patch('table/{id}/restore', [TableController::class, 'restore'])->name('table.restore');
     Route::delete('table/{id}/force-delete', [TableController::class, 'forceDelete'])->name('table.forceDelete');
-
-    /// xếp bàn cho khách
-    Route::get('reservation/{reservationId}/assign-tables', [ReservationController::class, 'assignTables'])->name('reservation.assignTables');
-    Route::get('reservation/assign-table', [ReservationController::class, 'assignTable'])->name('assignTable');
-    Route::post('reservation/submit-table', [ReservationController::class, 'submitTable'])->name('submit.tables');
-    Route::post('reservation/submit-move-table', [ReservationController::class, 'submitMoveTable'])->name('submit.Movetables');
-
-    /// xếp bàn cho khách
-    Route::get('reservation/{reservationId}/assign-tables', [ReservationController::class, 'assignTables'])->name('reservation.assignTables');
-    Route::get('reservation/assign-table', [ReservationController::class, 'assignTable'])->name('assignTable');
-    Route::post('reservation/submit-table', [ReservationController::class, 'submitTable'])->name('submit.tables');
-    Route::post('reservation/submit-move-table', [ReservationController::class, 'submitMoveTable'])->name('submit.Movetables');
 
     /// xếp bàn cho khách
     Route::get('reservation/{reservationId}/assign-tables', [ReservationController::class, 'assignTables'])->name('reservation.assignTables');

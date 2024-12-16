@@ -103,8 +103,8 @@ class DashboardController extends Controller
             ->keyBy('status');
 
         // Lấy số lượng đơn hàng theo từng trạng thái
-        $newOrders = $orderCounts->get('đang chế biến', collect(['count' => 0]))->count;
-        $cookingOrders = $orderCounts->get('chờ cung ứng', collect(['count' => 0]))->count;
+        $newOrders = $orderCounts->get('đang chế biến', collect(['count' => 0]))->count();
+        $cookingOrders = $orderCounts->get('chờ cung ứng', collect(['count' => 0]))->count();
         $completedOrders = $orderCounts->get('hoàn thành', collect(['count' => 0]))->count();
 
 
