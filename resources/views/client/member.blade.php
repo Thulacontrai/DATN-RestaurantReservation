@@ -5,6 +5,11 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
     <!-- Nhúng Summernote CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/summernote-lite.min.css" rel="stylesheet">
+    <!-- CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 @endsection
 @section('content')
 
@@ -107,7 +112,6 @@
 
 
                                     <div class=" mt-3">
-
                                         @if ($reservation->status == 'Pending' || $reservation->status == 'Confirmed')
                                             <button class="btn-warning edit-reservation-btn"
                                                 data-id="{{ $reservation->id }}">Chỉnh sửa</button>
@@ -132,7 +136,7 @@
                                                 {{-- <p class="text-success">Đánh giá của bạn:
                                                     {{ $reservation->feedback->content }}</p> --}}
                                                 <p>
-                                                    <strong>Đánh giá của bạn: </strong>
+                                                    <strong class="text-white">Đánh giá của bạn: </strong>
                                                     <span class="stars-summary" style="font-size: 20px; color: #ffc107;">
                                                         {{-- Hiển thị số sao đã đánh giá --}}
                                                         @for ($i = 1; $i <= 5; $i++)
@@ -145,8 +149,8 @@
                                                     </span>
                                                     {{-- (<span class="rating-number-summary"></span> sao) --}}
                                                 </p>
-                                                <p><strong>Nội dung:</strong> <span
-                                                        class="review-content-summary">{{ $reservation->feedback->content }}</span>
+                                                <p><strong class="text-white">Nội dung:</strong> <span
+                                                        class="review-content-summary text-white">{{ $reservation->feedback->content }}</span>
                                                 </p>
                                                 {{-- <button style="background: transparent; border: none;" class="text-warning cancel-btn-new deleteButton" id="deleteButton" data-id ="{{$reservation->id}}">Chỉnh sửa</button>  --}}
                                             @else
@@ -168,7 +172,7 @@
                                             @csrf
                                             <div class="form-group">
                                                 <label>Đánh giá sao</label>
-                                                <div class="rating-stars d-flex">
+                                                <div class="rating-stars">
                                                     @for ($i = 1; $i <= 5; $i++)
                                                         <i class="bi bi-star star-rating"
                                                             data-value="{{ $i }}"></i>
@@ -205,93 +209,99 @@
                                     <div class="review-summary review-summary-{{ $reservation->id }}"
                                         style="display: none;">
                                         <p>
-                                            <strong>Đánh giá của bạn: </strong>
+                                            <strong class="text-white">Đánh giá của bạn: </strong>
                                             <span class="stars-summary" style="font-size: 20px; color: #ffc107;"></span>
                                             (<span class="rating-number-summary"></span> sao)
                                         </p>
-                                        <p><strong>Nội dung:</strong> <span class="review-content-summary"></span></p>
+                                        <p><strong class="text-white">Nội dung:</strong><span
+                                                class="review-content-summary text-white"></span></p>
                                     </div>
 
 
                                     <!-- Form chỉnh sửa thông tin đặt bàn -->
-                                    <div class=" reservation-edit-form reservation-edit-form-{{ $reservation->id }}"
+                                    <div id="reservation-edit-form" class="modal modal-custom reservation-edit-form reservation-edit-form-{{ $reservation->id }}"
                                         style="display: none;">
-                                        <form data-id="{{ $reservation->id }}" class="edit-reservation">
-                                            @csrf
-                                            <div class="form-group">
-                                                <label for="customer_name">Tên khách hàng</label>
-                                                <input type="text" class=" form-control user_name" name="user_name"
-                                                    value="{{ $reservation->user_name }}" required>
-                                                <span id="error-customer_name" class="text-danger"></span>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label for="user_phone">Số điện thoại</label>
-                                                <input type="text" class=" form-control user_phone" name="user_phone"
-                                                    value="{{ $reservation->user_phone }}" required>
-                                                <span id="error-user_phone" class="text-danger"></span>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label for="guest_count">Số lượng khách</label>
-                                                <input type="number" class=" form-control guest_count"
-                                                    name="guest_count" value="{{ $reservation->guest_count }}"
-                                                    min="1" max="50" required>
-                                                <span id="error-guest_count" class="text-danger"></span>
-                                            </div>
-
-                                            <div class="deposit-section" style="display: none;">
-                                                <div class="form-group">
-                                                    <label for="deposit_amount">Tiền cọc</label>
-                                                    <input type="number" class=" form-control deposit_amount"
-                                                        name="deposit_amount" readonly>
+                                          <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title text-black" id="reservationEditLabel-{{ $reservation->id }}">Chỉnh sửa đặt bàn</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                 </div>
-                                                <p class="text-warning" class="deposit-warning">
-                                                    @if ($reservation->guest_count >= 6)
-                                                        Số lượng khách của bạn cần đặt cọc
-                                                        {{-- {{ number_format($reservation->guest_count * 100000, 0, ',', '.') }}
-                                                        VNĐ. --}}
-                                                    @endif
-                                                </p>
-                                                <div class="qr-section" style="display: none; text-align: center;">
-                                                    <p>Quét mã QR để thanh toán:</p>
-                                                    <img src="" alt="QR Code" class="qr-code"
-                                                        style="max-width: 200px; height: auto;">
-                                                </div>
-                                            </div>
+                                                <div class="modal-body">
+                                                    <form data-id="{{ $reservation->id }}" class="edit-reservation">
+                                                        @csrf
+                                                        <div class="form-group mb-3">
+                                                            <label class="text-black" for="customer_name">Tên khách hàng</label>
+                                                            <input type="text" class="form-control user_name" name="user_name" value="{{ $reservation->user_name }}" >
+                                                            <span id="error-customer_name" class="text-danger"></span>
+                                                        </div>
+                                    
+                                                        <div class="form-group mb-3">
+                                                            <label class="text-black" for="user_phone">Số điện thoại</label>
+                                                            <input type="text" class="form-control user_phone" name="user_phone" value="{{ $reservation->user_phone }}" >
+                                                            <span id="error-user_phone" class="text-danger"></span>
+                                                        </div>
+                                    
+                                                        <div class="form-group mb-3">
+                                                            <label class="text-black" for="guest_count">Số lượng khách</label>
+                                                            <input type="number" class="form-control guest_count" name="guest_count" value="{{ $reservation->guest_count }}" min="1" max="50" >
+                                                            <span id="error-guest_count" class="text-danger"></span>
+                                                        </div>
+                                    
+                                                        <div class="deposit-section" style="display: none;">
+                                                            <div class="form-group mb-3">
+                                                                <label class="text-black" for="deposit_amount">Tiền cọc</label>
+                                                                <input type="number" class="form-control deposit_amount" name="deposit_amount" readonly>
+                                                            </div>
+                                                            <p class="text-warning deposit-warning">
+                                                                @if ($reservation->guest_count >= 6)
+                                                                    Số lượng khách của bạn cần đặt cọc
+                                                                    {{-- {{ number_format($reservation->guest_count * 100000, 0, ',', '.') }} VNĐ. --}}
+                                                                @endif
+                                                            </p>
+                                                            <div class="qr-section" style="display: none; text-align: center;">
+                                                                <p>Quét mã QR để thanh toán:</p>
+                                                                <img src="" alt="QR Code" class="qr-code" style="max-width: 200px; height: auto;">
+                                                            </div>
+                                                        </div>
+                                    
+                                                        <div class="form-group mb-3">
+                                                            <label class="text-black" for="reservation_date">Ngày đặt bàn</label>
+                                                            <input type="date" class="form-control reservation_date" name="reservation_date" value="{{ \Carbon\Carbon::parse($reservation->reservation_date)->format('Y-m-d') }}" >
+                                                            <span id="error-reservation_date" class="text-danger"></span>
+                                                        </div>
+                                    
+                                                        <div class="form-group mb-3">
+                                                            <label class="text-black" for="reservation_time">Giờ đặt bàn</label>
+                                                            <input type="time" class="form-control reservation_time" name="reservation_time" value="{{ \Carbon\Carbon::parse($reservation->reservation_time)->format('H:i') }}" >
+                                                            <span id="error-reservation_time" class="text-danger"></span>
+                                                        </div>
+                                    
+                                                        <button type="submit" class="edit-form btn-primary">Lưu thay đổi</button>
 
-                                            {{-- <div class="form-group">
-                                                <label for="reservation_time">Ngày và giờ đặt</label>
-                                                <input type="time" class=" form-control reservation_time"
-                                                    name="reservation_time"
-                                                    value="{{ \Carbon\Carbon::parse($reservation->reservation_time)->format('TH:i') }}"
-                                                    required>
-                                                <span id="error-reservation_time" class="text-danger"></span>
-                                            </div> --}}
-
-                                            <div class="form-group">
-                                                <label for="reservation_date">Ngày đặt bàn</label>
-                                                <input type="date" class="form-control reservation_date"
-                                                    name="reservation_date"
-                                                    value="{{ \Carbon\Carbon::parse($reservation->reservation_date)->format('Y-m-d') }}"
-                                                    required>
-                                                <span id="error-reservation_date" class="text-danger"></span>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label for="reservation_time">Giờ đặt bàn</label>
-                                                <input type="time" class="form-control reservation_time"
-                                                    name="reservation_time"
-                                                    value="{{ \Carbon\Carbon::parse($reservation->reservation_time)->format('H:i') }}"
-                                                    required>
-                                                <span id="error-reservation_time" class="text-danger"></span>
-                                            </div>
-
-                                            <button type="submit" class="edit-form" class=" btn-primary">Lưu thay
-                                                đổi</button>
                                             <button type="button" class="cancel-edit btn-secondary"
                                                 data-id="{{ $reservation->id }}">Hủy</button>
-                                        </form>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Modal hiển thị thông báo -->
+                                    <div id="alertModal" class="modal alertModal" tabindex="-1">
+                                        {{-- <div class="modal-dialog modal-dialog-centered"> --}}
+                                        <div class="modal-dialog modal-content">
+
+                                            <div class="modal-footer">
+
+                                                <p class="alertMessage"></p>
+
+                                                <button type="button" id="closePopup" class=" bg-secondary text-white closePopup"
+                                                    style="border:black">Đóng</button>
+                                                <button type="button" class="btn-primary confirm-submit">Xác
+                                                    nhận</button>
+                                            </div>
+
+                                        </div>
                                     </div>
 
                                     <!-- Popup lỗi khi chọn giờ không hợp lệ -->
@@ -370,7 +380,7 @@
                                             <label for="account_name" class="form-label">Tên tài khoản</label>
                                             <input type="text"
                                                 class="form-control @error('account_name') is-invalid @enderror"
-                                                id="account_name" name="account_name" required>
+                                                id="account_name" name="account_name" >
                                             @error('account_name')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
@@ -379,7 +389,7 @@
                                             <label for="account_number" class="form-label">Số tài khoản</label>
                                             <input type="number"
                                                 class="form-control @error('account_number') is-invalid @enderror"
-                                                id="account_number" name="account_number" required>
+                                                id="account_number" name="account_number" >
                                             @error('account_number')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
@@ -403,7 +413,7 @@
                                             <label for="user_phone" class="form-label">Số điện thoại</label>
                                             <input type="text"
                                                 class="form-control @error('user_phone') is-invalid @enderror"
-                                                id="user_phone" name="user_phone" required>
+                                                id="user_phone" name="user_phone" >
                                             @error('user_phone')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
@@ -412,7 +422,7 @@
                                             <label for="email" class="form-label">Email</label>
                                             <input type="email"
                                                 class="form-control @error('email') is-invalid @enderror" id="email"
-                                                name="email" required>
+                                                name="email" >
                                             @error('email')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
@@ -519,9 +529,16 @@
             }
         }
     </script>
-    {{-- edit thông tin đặt chỗ  --}}
-    <script>
+     {{-- edit thông tin đặt chỗ  --}}
+     <script>
         $(document).ready(function() {
+            var token = $('meta[name="csrf-token"]').attr('content');
+        // Cấu hình cho AJAX để sử dụng CSRF token
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': token
+            }
+        });
             // Khi người dùng thay đổi số lượng khách
             $(".guest_count").on("input", function() {
                 let guestCount = $(this).val();
@@ -558,95 +575,98 @@
                     depositInput.val('');
                 }
             });
-
-            $(document).ready(function() {
-                // Kiểm tra thời gian khi submit form
-                $(".edit-reservation").on("submit", function(e) {
-                    // e.preventDefault(); // Ngừng gửi form
-
-                    const reservationId = $(this).data("id");
-                    const reservationTime = $("input[name='reservation_time']")
-                        .val(); // Lấy giá trị giờ đã chọn
-
-                    // Chuyển giờ và phút thành đối tượng Date
-                    const [hours, minutes] = reservationTime.split(":");
-                    const time = new Date();
-                    time.setHours(hours);
-                    time.setMinutes(minutes);
-
-                    // Kiểm tra giờ có nằm trong khoảng từ 11h đến 20h30
-                    const startTime = new Date();
-                    startTime.setHours(11, 0, 0); // 11:00 AM
-
-                    const endTime = new Date();
-                    endTime.setHours(20, 30, 0); // 20:30
-
-                    if (time < startTime || time > endTime) {
-                        // Hiển thị popup lỗi nếu không hợp lệ
-                        $("#errorPopup").show();
-                    } else {
-                        // Tiến hành gửi form nếu giờ hợp lệ
-                        this.submit();
-                    }
-                });
-
-                // Đóng popup khi nhấn nút close
-                function closePopup() {
-                    $("#errorPopup").hide();
-                }
-            });
-
-
-            // Hiển thị form chỉnh sửa
             $(".edit-reservation-btn").on("click", function() {
+                $("#reservation-edit-form").modal("show");
                 const reservationId = $(this).data('id');
-                $(".reservation-edit-form").hide();
+                // $(".reservation-edit-form").hide();
                 // $(".details-" + reservationId).hide(); // Ẩn thông tin chi tiết
                 $(".reservation-edit-form-" + reservationId).show();
             });
 
-            // // Nút "Chỉnh sửa" để hiển thị form chỉnh sửa
-            // $(".btn-edit").on("click", function() {
-            //     const reservationId = $(this).data('id');
-            //     $("#details-" + reservationId).hide(); // Ẩn thông tin chi tiết
-            //     $(".reservation-edit-form-" + reservationId).show(); // Hiển thị form chỉnh sửa
-            // });
-
-            // Gửi form chỉnh sửa qua AJAX
-            $(".edit-reservation").on("submit", function(e) {
-                // e.preventDefault(); // Ngăn refresh trang
-
-                // Lấy dữ liệu từ form
+            // Hành động khi submit
+            
+            $(document).on("submit", ".edit-reservation", function(e) {
+                e.preventDefault(); // Ngăn form gửi ngay lập tức
                 const form = $(this);
-                const reservationId = form.data('id');
-                const formData = form.serialize();
-                // Gửi thêm reservationId vào dữ liệu
-                const fullData = formData + `&reservationId=${reservationId}`;
+                const reservationId = form.data('id');  // Lấy ID đơn đặt bàn
+                const oldPeopleCount = form.data('old-people-count');  // Số lượng người ban đầu
+                const guest_count = parseInt(form.find('input[name="guest_count"]').val());  // Số lượng khách mới
+                const user_name = form.find('input[name="user_name"]').val();  // Tên khách hàng
+                const user_phone = form.find('input[name="user_phone"]').val();  // Số điện thoại
+                const reservation_date = form.find('input[name="reservation_date"]').val();  // Ngày đặt bàn
+                const reservation_time = form.find('input[name="reservation_time"]').val();  // Giờ đặt bàn
+                const deposit_amount=parseInt(form.find('input[name="deposit_amount"]').val());
+                let depositSection = $(".deposit-section");
+                const qrSection = depositSection.find(".qr-section");
+                const qrCode = qrSection.find(".qr-code");
+                let reservation={reservationId, guest_count, user_name,user_phone,reservation_date,reservation_time,deposit_amount};
 
+        let oldDeposit = oldPeopleCount * 100000;  // Cọc ban đầu
+        let newDeposit = guest_count * 100000;  // Cọc mới
+                 // Kiểm tra số lượng khách và yêu cầu cọc
 
-                $.ajax({
+         if ((guest_count >= 6 && oldPeopleCount < 6) || guest_count >=6) {
+            // Nếu số lượng khách thay đổi từ dưới 6 lên >= 6, yêu cầu cọc
+            $(".alertModal").modal("hide");  // Đảm bảo đóng trước đó
+            $(".modal-backdrop").remove();  // Xóa backdrop nếu có
+            $(".alertModal").modal("show"); // Mở modal
+            const qrPaymentURL =
+                    `https://api.qrserver.com/v1/create-qr-code/?data=Thanh+toan+${newDeposit}+VND&size=200x200`;
+                qrCode.attr("src", qrPaymentURL);
+            qrSection.show();
+            reservation.deposit_amount=newDeposit;
+            // console.log(guest_count);
+            // Xác nhận gửi form
+            $(document).on("click", ".confirm-submit", function() {
+                     $(".alertModal").modal("hide");
+                    UpdateReser(reservation);
+                    //  $(".edit-reservation").off("submit").submit(); // Gửi form
+                 });
+        } else if (guest_count < 5 && oldPeopleCount >= 6) {
+            // Nếu số lượng khách giảm xuống dưới 5 và ban đầu >= 6, xử lý hoàn trả cọc
+            alert('Số lượng khách giảm xuống dưới 5, bạn sẽ được hoàn trả toàn bộ cọc: ' + oldDeposit + ' VNĐ.');
+            // form.find('.deposit-section').hide();  // Ẩn phần cọc vì không còn yêu cầu cọc
+            reservation.deposit_amount=0;  // Cập nhật cọc mới
+            UpdateReser(reservation);
+            // console.log(reservation);
+        } else if (guest_count >= 6 && oldPeopleCount >= 6) {
+            // Nếu số lượng khách thay đổi từ >= 6 xuống <= 6, điều chỉnh cọc
+            if (guest_count !== oldPeopleCount) {
+                let refundAmount = oldDeposit - newDeposit;
+                if (refundAmount > 0) {
+                    alert('Số lượng khách giảm xuống, bạn sẽ được hoàn lại cọc: ' + refundAmount + ' VNĐ.');
+                    reservation.deposit_amount=oldDeposit-refundAmount;  // Cập nhật cọc mới
+                // console.log(reservation);
+                }
+              
+            }
+        } else {
+            // Nếu số lượng khách không thay đổi (>= 6 hoặc dưới 5)
+            // alert('ko cọc')
+            reservation.deposit_amount=0;  // Cập nhật cọc mới
+            UpdateReser(reservation);
+        }
+
+                // hàm nhận thông tin sau khi kiểm tra
+                function UpdateReser(reservation){
+                    console.log(reservation);
+                    $.ajax({
                     url: `/member/reservation/update`, // Đường dẫn cập nhật
                     type: "POST",
-                    data: fullData,
+                    data: reservation,
                     success: function(response) {
                         // console.log(response.message)
                         // Kiểm tra nếu response trả về thông tin đã được cập nhật
                         if (response.success) {
-                            // Cập nhật thông tin hiển thị với dữ liệu mới
-
-
-                            // Ẩn form chỉnh sửa và hiển thị lại thông tin
-                            // $("#reservation-info").show();
-                            // $("#reservation-edit-form").hide();
-
-                            //         // Thông báo thành công
-                            // alert("Cập nhật thông tin thành công!");
                             Swal.fire({
-
-                                text: "Cập nhật thông tin thành công",
-
-
-                            })
+                                    icon: "success",
+                                    title: "Thành công",
+                                    text: "Cập nhật bàn thành công!"
+                                }).then(() => {
+                                    if (response.success) {
+                                        location.reload(); // Tải lại trang
+                                    }
+                                });
                         } else {
                             // Hiển thị lỗi nếu có
                             Swal.fire({
@@ -657,18 +677,34 @@
                             })
                         }
                     },
-                    // error: function(xhr) {
-                    //     // Hiển thị lỗi dưới các trường input
-                    //     let errors = xhr.responseJSON.errors;
-                    //     $(".text-danger").text("");
-                    //     for (let key in errors) {
-                    //         $(`#error-${key}`).text(errors[key][0]);
-                    //     }
-                    // },
+                    error: function(xhr) {
+                        // Hiển thị lỗi dưới các trường input
+                        let errors = xhr.responseJSON.errors;
+                        $(".text-danger").text("");
+                        for (let key in errors) {
+                            $(`#error-${key}`).text(errors[key][0]);
+                        }
+                    },
 
+                }); 
 
+                    
+
+                }
+                
+                // đóng popup cọc
+                $(document).ready(function() {
+                    $('.closePopup').click(function() {
+                        $('.alertModal').hide();
+                        $('.modal-backdrop').hide();
+                    });
                 });
+
+
             });
+
+           
+
 
             document.addEventListener('DOMContentLoaded', function() {
                 const guestCountInput = document.getElementById('guest_count');
@@ -692,36 +728,19 @@
                     }
                 });
 
-                // $(".save-edit").on("click", function() {
-                //     const form = $(this).closest("form"); // Lấy form hiện tại
-                //     const reservationId = form.closest(".reservation-edit-form").data(
-                //     'id'); // Tìm ID từ form
-
-                //     alert("Đang lưu thay đổi...");
-
-                //     // Sau khi thực hiện logic lưu (ví dụ: AJAX), bạn có thể ẩn form chỉnh sửa và hiển thị lại thông tin chi tiết:
-                //     form.closest(".reservation-edit-form").hide(); // Ẩn form chỉnh sửa
-                //     $(".details-" + reservationId).show(); // Hiển thị lại thông tin chi tiết
-                // });
             });
+
 
 
             // Nút "Hủy" để thoát chỉnh sửa
             $(".cancel-edit").on("click", function() {
-                const reservationId = $(this).data('id');
-                $(".reservation-edit-form-" + reservationId).hide();
-                // $("#reservation-info-" + reservationId).show();
-                $(".details-" + reservationId).show(); // Hiển thị lại thông tin chi tiết
+                $("#reservation-edit-form").modal("hide");
+                const reservationId = $(this).data(
+                    'id');
+                // $(".reservation-edit-form-" + reservationId).hide();
+
+                // $(".details-" + reservationId).show();
             });
-
-            // // Nút "Hủy" để thoát chỉnh sửa
-            // $(".cancel-edit").on("click", function() {
-            //     const reservationId = $(this).data('id');
-            //     $(".reservation-edit-form-" + reservationId).hide(); // Ẩn form chỉnh sửa
-            //     $("#details-" + reservationId).show(); // Hiển thị lại thông tin chi tiết
-            // });
-
-
         });
     </script>
     {{-- rating --}}
@@ -739,22 +758,7 @@
                 $(".reservation-rating-form-" + reservationId).show();
             });
 
-            // // Xử lý đánh giá sao
-            // $(".star-rating")
-            //     .on("mouseover", function() {
-            //         let ratingValue = $(this).data("value");
-            //         $(".star-rating").each(function() {
-            //             if ($(this).data("value") <= ratingValue) {
-            //                 $(this).removeClass("bi-star").addClass("bi-star-fill text-warning");
-            //             } else {
-            //                 $(this).removeClass("bi-star-fill text-warning").addClass("bi-star");
-            //             }
-            //         });
-            //     })
-            //     .on("click", function() {
-            //         let ratingValue = $(this).data("value");
-            //         $(".rating-value").val(ratingValue); // Gán giá trị rating
-            //     });
+           
 
             // Xử lý đánh giá sao
             $(".star-rating")
@@ -799,7 +803,7 @@
                         );
                         reviewSummary.find(".rating-number-summary").text(response
                             .rating); // Hiển thị số sao
-                        reviewSummary.find(".review-content-summary").text(response.review);
+                        reviewSummary.find(".review-content-summary").text(response.content);
 
                         // Ẩn form đánh giá
                         $(".reservation-rating-form-" + reservationId).hide();
