@@ -52,7 +52,7 @@ class FeedbackController extends Controller
             $query->orderBy($sort, $direction);
         }
 
-        $feedbacks = $query->paginate(10); 
+        $feedbacks = $query->paginate(10);
 
         $title = 'Phản Hồi';
         return view('admin.feedback.index', compact('feedbacks', 'title'));
