@@ -93,20 +93,17 @@ class PermissionController extends Controller
     }
     public function destroy($id)
     {
-        $permission = Permission::find($id);
-
-        if ($permission === null) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Không có quyền hạn'
-            ]);
+        try {
+            // Tìm và xóa quyền hạn
+            $permission = Permission::findOrFail($id);
+            $permission->delete();
+    
+            // Chuyển hướng về trang danh sách quyền hạn sau khi xóa thành công
+            return redirect()->route('admin.permissions.index')->with('success', 'Quyền hạn đã được xóa thành công!');
+        } catch (\Exception $e) {
+            // Trả về thông báo lỗi nếu không thể xóa
+            return redirect()->route('admin.permissions.index')->with('error', 'Không thể xóa quyền hạn.');
         }
-
-        $permission->delete();
-
-        return response()->json([
-            'status' => true,
-            'message' => 'Xóa quyền hạn thành công'
-        ]);
     }
+    
 }

@@ -12,6 +12,7 @@
     <div class="sidebar-menu">
         <div class="sidebarMenuScroll">
             <ul >
+                @can('Xem thống kê')
                 <li class="sidebar-dropdown">
                     <a href="#">
                         <i class="bi bi-house"></i>
@@ -31,6 +32,7 @@
                         </ul>
                     </div>
                 </li>
+                @endcan
 
 
                 @can('Xem bàn')

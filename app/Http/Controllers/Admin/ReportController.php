@@ -11,6 +11,13 @@ use Illuminate\Support\Facades\DB;
 
 class ReportController extends Controller
 {
+    public function __construct()
+    {
+        // Gán middleware cho các phương thức
+        $this->middleware('permission:Xem thống kê', ['only' => ['index']]);
+        
+    }
+
     public function index(Request $request)
     {
         $title = 'Báo Cáo Thống Kê';
