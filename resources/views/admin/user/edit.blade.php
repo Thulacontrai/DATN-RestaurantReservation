@@ -48,19 +48,19 @@
                                     <div class="invalid-feedback">Vui lòng nhập số điện thoại hợp lệ.</div>
                                 </div>
 
-                                <!-- Thêm các trường mới -->
+                                @if ($type === 'employee') <!-- Chỉ hiển thị nếu là nhân viên -->
                                 <div class="mb-3">
                                     <label for="date_of_birth" class="form-label">Ngày sinh</label>
                                     <input value="{{ old('date_of_birth', $user->date_of_birth) }}" type="date" 
                                            id="date_of_birth" name="date_of_birth" class="form-control">
                                 </div>
-
+                            
                                 <div class="mb-3">
                                     <label for="hire_date" class="form-label">Ngày tuyển dụng</label>
                                     <input value="{{ old('hire_date', $user->hire_date) }}" type="date" 
                                            id="hire_date" name="hire_date" class="form-control">
                                 </div>
-
+                            
                                 <div class="mb-3">
                                     <label for="gender" class="form-label">Giới tính</label>
                                     <select id="gender" name="gender" class="form-control">
@@ -69,6 +69,8 @@
                                         <option value="other" {{ old('gender', $user->gender) == 'other' ? 'selected' : '' }}>Khác</option>
                                     </select>
                                 </div>
+                            @endif
+                            
 
                                
 

@@ -232,7 +232,7 @@ class UserController extends Controller
     }
 
     // Thực hiện xóa người dùng
-    $user->delete();
+    $user->delete();    
 
     // Redirect về danh sách người dùng
     return redirect()->route('admin.user.index')->with('success', 'Người dùng đã được xóa thành công.');

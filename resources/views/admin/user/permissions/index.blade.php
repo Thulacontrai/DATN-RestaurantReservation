@@ -10,7 +10,7 @@
                 <div class="col-sm-12 col-12">
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
-                            <div class="card-title">Danh Sách Quyền Hạn</div>
+                            <div class="card-title">Danh Sách Quyền Hạn</div>   
                             {{-- <form action="{{ route('admin.permissions.index') }}" method="GET" class="d-flex">
                                 <input type="text" name="search" class="form-control form-control-sm"
                                     placeholder="Tìm kiếm quyền hạn..." value="{{ request()->get('search') }}">
@@ -73,14 +73,17 @@
                                                                     <a href="{{ route('admin.permissions.edit', $permission->id) }}">
                                                                         <i class="bi bi-pencil-square text-warning"></i>
                                                                     </a>
+                                                                    <a href="" style="padding-bottom: 5px; padding-left: 3px;">
                                                                     <form action="{{ route('admin.permissions.destroy', $permission->id) }}" method="POST" style="display: inline-block; padding-bottom: 3px">
                                                                         @csrf
                                                                         @method('DELETE')
-                                                                        <button type="submit" class="border-0 bg-transparent">
-                                                                            <i class="bi bi-trash text-danger" style="font-size: 1.2rem;"></i>
-                                                                        </button>
+                                                                         <button type="submit" class="btn btn-link p-0">
+                                                                        <i class="bi bi-trash text-red"></i>
+                                                                    </button>
                                                                     </form>
+                                                                </a>
                                                                 </div>
+                                                                
                                                             </td>
                                                         </tr>
                                                     @endforeach
