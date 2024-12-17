@@ -229,7 +229,13 @@ Route::post('/check-payment-condition', [PosController::class, 'checkPaymentPond
 Route::get('/checkAvailableTables', [PosController::class, 'checkAvailableTables'])->name('checkPaymentPondition');
 
 ///
+Route::get('/get-reservations', [PosController::class, 'getReservations'])->name('get.reservations');
 Route::get('reserToOrder/{reservationId}', [PosController::class, 'reserToOrder'])->name('ReToOr');
+Route::post('retoOrder',[PosController::class,'retoOrder'])->name('retoOrder');
+Route::get('/checkReservationHasTable', [PosController::class, 'checkIfReservationHasTable'])->name('checkReservationHasTable');
+Route::get('/getAvailableTables', [PosController::class, 'AvailableTables'])->name('getAvailableTables');
+Route::post('/reservations/filter', [PosController::class, 'filter']);
+
 
 
 Route::post('/load-more-dishes', [PosController::class, 'loadMoreDishes']);
@@ -310,6 +316,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::patch('table/{id}/restore', [TableController::class, 'restore'])->name('table.restore');
     Route::delete('table/{id}/force-delete', [TableController::class, 'forceDelete'])->name('table.forceDelete');
 
+    Route::get('tableLayout',[ReservationController::class, 'tableLayout'])->name('tableLayout');
+    Route::get('getTable',[ReservationController::class, 'getTable'])->name('getTable');
+    Route::post('/reser-tables/update',[ReservationController::class, 'updateAssignTable'])->name('update-assignTable');
     /// xếp bàn cho khách
     Route::get('reservation/{reservationId}/assign-tables', [ReservationController::class, 'assignTables'])->name('reservation.assignTables');
     Route::get('reservation/assign-table', [ReservationController::class, 'assignTable'])->name('assignTable');
@@ -336,6 +345,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('reservationHistory', ReservationHistoryController::class);
     Route::put('/reservations/calendar/{id}', [ReservationController::class, 'updateCalendar']);
     Route::post('/reservations/cancel/{id}', [ReservationController::class, 'processReservationCancellation']);
+    Route::post('/reservations/confirm/{id}', [ReservationController::class, 'confirmReservation'])->name('confirmReservation');
 
 
 
@@ -438,11 +448,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 
 
-
-
-
-
-
     //permission route
     Route::get('/admin/permission', [PermissionController::class, 'index'])->name('permissions.index');
     Route::get('/admin/permission/create', [PermissionController::class, 'create'])->name('permissions.create');
@@ -481,8 +486,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/member/update-booking', [MemberController::class, 'updateBooking'])->name('member.updateBooking');
     Route::post('/cancel-reservation', [ReservationController::class, 'cancelReservation'])->name('cancel.reservation');
 });
-
-
+Route::post('member/reservation/update', [MemberController::class,'updateReservation']);
+Route::get('/member/reservation/{reservationId}', [MemberController::class, 'getReservationDetails']);
 
 Route::get('/register-client', [CustomerAuthController::class, 'showRegisterForm'])->name('register.form');
 Route::post('/register-client', [CustomerAuthController::class, 'register'])->name('client.register');
