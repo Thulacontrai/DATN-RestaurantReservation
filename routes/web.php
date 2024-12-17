@@ -102,8 +102,8 @@ Route::post('/member/update-booking', [MemberController::class, 'updateBooking']
 Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () {
     Route::get('user', [UserController::class, 'index'])->name('user.index'); // Danh sách người dùng
     Route::get('user/employees', [UserController::class, 'employeeList'])->name('user.employees'); // Danh sách nhân viên
-    Route::get('/users/{user}/edit', [UserController::class, 'edit'])
-    ->name('admin.user.edit');
+    Route::get('admin/user/{user}/edit', [UserController::class, 'edit'])->name('admin.user.edit');
+
     Route::delete('/admin/user/{id}', [UserController::class, 'destroy'])->name('admin.user.destroy');
 
 });
@@ -392,6 +392,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('user-trash', [UserController::class, 'trash'])->name('user.trash');
     Route::patch('user-restore/{id}', [UserController::class, 'restore'])->name('user.restore');
     Route::delete('user-force-delete/{id}', [UserController::class, 'forceDelete'])->name('user.forceDelete');
+    Route::get('users/{id}/show', [UserController::class, 'show'])->name('admin.user.show');
+
 
     //permission role
     Route::resource('role', RoleController::class);

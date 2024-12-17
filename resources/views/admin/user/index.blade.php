@@ -80,8 +80,15 @@
                                                         </td>
                                                     @endif
                                                     <td>{{ $user->created_at }}</td>
+                                                    
                                                     <td>
                                                         <div class="actions">
+                                                            
+                                                                <a href="{{ route('admin.user.show', $user->id) }}"  class="viewRow" data-bs-toggle="tooltip" data-bs-placement="top"
+                                                                title="Chi tiết">
+                                                                <i class="bi bi-list text-green"></i></a>
+                                                         
+                                                            
                                                             <!-- Nút Sửa -->
                                                             <a href="{{ route('admin.user.edit', ['user' => $user->id, 'type' => $type]) }}"
                                                                 class="text-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="Sửa">
@@ -101,6 +108,7 @@
                                                             </a>
                                                         </div>
                                                     </td>
+                                                    
                                                     
                                                                                                    
                                                 </tr>

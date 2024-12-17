@@ -64,40 +64,29 @@
                                                             <td>{{ $permission->id }}</td>
                                                             <td>{{ $permission->name }}</td>
                                                             <td>
-                                                                 <span class="text-success">
-                                                                {{ \Carbon\Carbon::parse($permission->change_date . ' ' . $permission->change_time)->format('H:i:s') }}</span><br>
-                                                                {{ \Carbon\Carbon::parse($permission->change_date)->format('d/m/Y') }}
+                                                                <span class="text-success">
+                                                                    {{ \Carbon\Carbon::parse($permission->change_date . ' ' . $permission->change_time)->format('H:i:s') }}</span><br>
+                                                                    {{ \Carbon\Carbon::parse($permission->change_date)->format('d/m/Y') }}
                                                             </td>
                                                             <td>
                                                                 <div class="actions">
-                                                                    <a
-                                                                        href="{{ route('admin.permissions.edit', $permission->id) }}">
+                                                                    <a href="{{ route('admin.permissions.edit', $permission->id) }}">
                                                                         <i class="bi bi-pencil-square text-warning"></i>
                                                                     </a>
-                                                                    <a href="#">
-                                                                        <form
-                                                                            action="{{ route('admin.permissions.destroy', $permission->id) }}"
-                                                                            method="POST"
-                                                                            style="display: inline-block; padding-bottom: 3px">
-                                                                            @csrf
-                                                                            @method('DELETE')
-                                                                            <button type="submit"
-                                                                                class="border-0 bg-transparent"
-                                                                                onclick="deletePermission({{ $permission->id }})">
-                                                                                <i class="bi bi-trash text-danger"
-                                                                                    style="font-size: 1.2rem;"></i>
-                                                                            </button>
-                                                                        </form>
-                                                                    </a>
+                                                                    <form action="{{ route('admin.permissions.destroy', $permission->id) }}" method="POST" style="display: inline-block; padding-bottom: 3px">
+                                                                        @csrf
+                                                                        @method('DELETE')
+                                                                        <button type="submit" class="border-0 bg-transparent">
+                                                                            <i class="bi bi-trash text-danger" style="font-size: 1.2rem;"></i>
+                                                                        </button>
+                                                                    </form>
                                                                 </div>
                                                             </td>
                                                         </tr>
                                                     @endforeach
                                                 @endif
-
-
-
                                             </tbody>
+                                            
                                         </table>
 
 
