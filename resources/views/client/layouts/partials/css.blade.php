@@ -30,6 +30,19 @@
         margin: 20px 0;
     }
 
+    .status-pending {
+        color: #ffffff; /* Chữ màu trắng */
+        background-color: #87ceeb; /* Nền xanh da trời */
+        padding: 5px 10px; /* Khoảng cách bên trong */
+        border-radius: 5px; /* Bo góc cho ô vuông */
+        font-weight: bold; /* Chữ in đậm */
+        border: none; /* Loại bỏ viền */
+        cursor: pointer; /* Con trỏ dạng nút bấm */
+        display: inline-block; /* Hiển thị dạng inline-block */
+    }
+
+  
+
     .status-pending-refund {
         color: #ffffff; 
         background-color: #87ceeb; 

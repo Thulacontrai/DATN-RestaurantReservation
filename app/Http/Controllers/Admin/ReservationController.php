@@ -285,20 +285,17 @@ class ReservationController extends Controller
         $customers = User::all();
         $coupons = Coupon::all();
 
-
         // Tách ngày và giờ từ reservation_time
         $reservationDate = \Carbon\Carbon::parse($reservation->reservation_date)->format('Y-m-d');
         $reservationTime = \Carbon\Carbon::parse($reservation->reservation_time)->format('H:i');
 
         return view('admin.reservation.edit', compact('reservation', 'customers', 'coupons', 'reservationDate', 'reservationTime', 'title'));
-
     }
 
 
 
 
     public function update(Request $request, $id)
-
     {
         DB::beginTransaction();
         try {
@@ -362,8 +359,6 @@ class ReservationController extends Controller
             return back()->withErrors(['error' => "Đã xảy ra lỗi khi cập nhật đặt bàn: " . $e->getMessage()]);
         }
     }
-}
-
 
     public function cancel(Request $request, $id)
     {
@@ -393,14 +388,13 @@ class ReservationController extends Controller
     public function showTime()
     {
         $now = Carbon::now('Asia/Ho_Chi_Minh')->copy()->addHours(2);
-    
+
         Carbon::setLocale('vi');
         $today = Carbon::today();
         $days = [];
         for ($i = 0; $i < 3; $i++) {
             $days[] = $today->copy()->addDays($i);
         }
-    
         $timeSlots = [];
         $startHour = 11;
         $endHour = 21;
@@ -408,42 +402,8 @@ class ReservationController extends Controller
             $timeSlots[] = Carbon::createFromTime($hour, 0)->format('H:i:s');
             $timeSlots[] = Carbon::createFromTime($hour, 30)->format('H:i:s');
         }
-    
-        // Mảng giới hạn linh hoạt cho từng khung giờ
-        $slotLimits = [
-            '18:00:00' => 150,
-            '19:00:00' => 10, 
-            '19:30:00' => 150,  
-            
-        ];
-    
-        $defaultMaxCapacity = 150; // Giá trị mặc định
-    
-        // Initialize disabled slots array
-        $disabledSlots = [];
-    
-        foreach ($days as $day) {
-            foreach ($timeSlots as $timeSlot) {
-                $timeSlotWithDate = $day->copy()->setTimeFromTimeString($timeSlot);
-    
-                // Lấy giới hạn từ mảng hoặc sử dụng giá trị mặc định
-                $maxCapacity = $slotLimits[$timeSlot] ?? $defaultMaxCapacity;
-    
-                $totalPeople = Reservation::where('status', 'Confirmed')
-                ->where('reservation_date', $day->format('Y-m-d')) // Kiểm tra ngày chính xác
-                ->whereTime('reservation_time', $timeSlot) // Kiểm tra khung giờ
-                ->sum('guest_count');
-            
-    
-                if ($totalPeople >= $maxCapacity) {
-                    $disabledSlots[$day->format('Y-m-d')][] = $timeSlot;
-                }
-            }
-        }
-    
-        return view('client.booking', compact('days', 'timeSlots', 'now', 'disabledSlots'));
+        return view('client.booking', compact('days', 'timeSlots', 'now'));
     }
-    
     public function showInformation(Request $request)
     {
         $data = $request->all();

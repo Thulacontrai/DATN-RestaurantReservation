@@ -350,7 +350,7 @@
                                 mắt như một tác phẩm nghệ thuật. Dịch vụ luôn chu đáo, mang lại cho chúng tôi trải nghiệm ẩm
                                 thực thật sự đáng nhớ. Nhà hàng này chắc chắn là một lựa chọn lý tưởng để bắt đầu ngày mới
                                 đầy năng lượng
-                                <span>Hoàng Hà</span>
+                                {{-- <span>Hoàng Hà</span> --}}
                             </blockquote>
                         </div>
                     </div>
