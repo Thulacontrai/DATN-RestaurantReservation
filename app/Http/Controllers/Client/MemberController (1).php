@@ -104,6 +104,13 @@ class MemberController extends Controller
 
         // Xử lý và validate dữ liệu
         $validated = $request->all();
+
+        // $reservation = Reservation::where('id', $id)
+        //     ->where('customer_id', auth()->id())
+        //     ->firstOrFail();
+
+
+
         // Cập nhật dữ liệu trong cơ sở dữ liệu
         $id = $request->reservationId;
 
@@ -167,8 +174,7 @@ class MemberController extends Controller
 
         return response()->json([
             'message' => 'Đánh giá thành công!',
-            'rating' => $validated['rating'],
-            'content' => $validated['review'],
+            'rating' => $validated['rating']
         ]);
     }
 

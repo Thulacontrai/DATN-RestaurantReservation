@@ -285,17 +285,20 @@ class ReservationController extends Controller
         $customers = User::all();
         $coupons = Coupon::all();
 
+
         // Tách ngày và giờ từ reservation_time
         $reservationDate = \Carbon\Carbon::parse($reservation->reservation_date)->format('Y-m-d');
         $reservationTime = \Carbon\Carbon::parse($reservation->reservation_time)->format('H:i');
 
         return view('admin.reservation.edit', compact('reservation', 'customers', 'coupons', 'reservationDate', 'reservationTime', 'title'));
+
     }
 
 
 
 
     public function update(Request $request, $id)
+
     {
         DB::beginTransaction();
         try {
@@ -359,6 +362,8 @@ class ReservationController extends Controller
             return back()->withErrors(['error' => "Đã xảy ra lỗi khi cập nhật đặt bàn: " . $e->getMessage()]);
         }
     }
+}
+
 
     public function cancel(Request $request, $id)
     {
