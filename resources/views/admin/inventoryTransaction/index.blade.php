@@ -34,36 +34,32 @@
                         <div class="card-body">
 
                             <!-- Search form -->
-                            <form method="GET" action="{{ route('transactions.index') }}" class="mb-3">
-                                <div class="row g-2">
-                                    <div class="col-auto">
-                                        <input type="text" id="search-id" name="id"
-                                            class="form-control form-control-sm" placeholder="Tìm kiếm theo mã phiếu nhập">
-                                    </div>
-                                    <div class="col-auto">
-                                        <select name="status" class="form-select form-select-sm" id="statusFilter">
-                                            <option value="">Chọn trạng thái</option>
-                                            <option value="chờ xử lý"
-                                                {{ request('status') == 'chờ xử lý' ? 'selected' : '' }}>Chờ xử lý</option>
-                                            <option value="hoàn thành"
-                                                {{ request('status') == 'hoàn thành' ? 'selected' : '' }}>Hoàn thành
-                                            </option>
-                                            <option value="hủy" {{ request('status') == 'hủy' ? 'selected' : '' }}>Hủy
-                                            </option>
-                                        </select>
-                                    </div>
-                                    <div class="col-auto">
-                                        <input type="date" name="date" class="form-control form-control-sm"
-                                            value="{{ request('date') }}" id="dateFilter">
-                                    </div>
-                                    <div class="col-auto">
-                                        <button type="submit" class="btn btn-sm btn-primary">Tìm kiếm</button>
-                                        <a href="{{ route('transactions.index') }}" class="btn btn-sm btn-success">
-                                            <i class="bi bi-arrow-repeat"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            </form>
+                                <!-- Search form -->
+<form method="GET" action="{{ route('transactions.index') }}" class="mb-3">
+    <div class="row g-2">
+        <div class="col-auto">
+            <input type="text" id="search-id" name="search" class="form-control form-control-sm" placeholder="Tìm kiếm theo Nhân viên và tên nhà cung cấp" value="{{ request('search') }}">
+        </div>
+        <div class="col-auto">
+            <select name="status" class="form-select form-select-sm" id="statusFilter">
+                <option value="">Chọn trạng thái</option>
+                <option value="chờ xử lý" {{ request('status') == 'chờ xử lý' ? 'selected' : '' }}>Chờ xử lý</option>
+                <option value="hoàn thành" {{ request('status') == 'hoàn thành' ? 'selected' : '' }}>Hoàn thành</option>
+                <option value="hủy" {{ request('status') == 'hủy' ? 'selected' : '' }}>Hủy</option>
+            </select>
+        </div>
+        <div class="col-auto">
+            <input type="date" name="date" class="form-control form-control-sm" value="{{ request('date') }}" id="dateFilter">
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-sm btn-primary">Tìm kiếm</button>
+            <a href="{{ route('transactions.index') }}" class="btn btn-sm btn-success">
+                <i class="bi bi-arrow-repeat"></i>
+            </a>
+        </div>
+    </div>
+</form>
+
 
                             <!-- Table list of transactions -->
                             <div class="table-responsive">
@@ -112,12 +108,13 @@
                                                         <span class="badge bg-success">Hoàn thành</span>
                                                     @elseif ($transaction->status === 'chờ xử lý')
                                                         <span class="badge bg-warning text-dark">Chờ xử lý</span>
-                                                    @elseif ($transaction->status === 'hủy')
+                                                    @elseif ($transaction->status === 'Hủy')
                                                         <span class="badge bg-danger">Đã hủy</span>
                                                     @else
                                                         <span class="badge bg-secondary">Không rõ</span>
                                                     @endif
                                                 </td>
+                                                
 
                                                 <td>
                                                     <span
@@ -131,11 +128,21 @@
                                                             title="Chi tiết">
                                                             <i class="bi bi-list text-green"></i>
                                                         </a>
-                                                        <a href="{{ route('transactions.edit', $transaction->id) }}"
-                                                            class="editRow" data-bs-toggle="tooltip" data-bs-placement="top"
-                                                            title="Sửa">
-                                                            <i class="bi bi-pencil-square text-warning"></i>
-                                                        </a>
+                                                
+                                                        @if ($transaction->status !== 'Hủy')
+                                                            <a href="{{ route('transactions.edit', $transaction->id) }}"
+                                                                class="editRow" data-bs-toggle="tooltip" data-bs-placement="top"
+                                                                title="Sửa">
+                                                                <i class="bi bi-pencil-square text-warning"></i>
+                                                            </a>
+                                                        @else
+                                                            <a href="javascript:void(0);"
+                                                                class="editRow disabled" data-bs-toggle="tooltip" data-bs-placement="top"
+                                                                title="Phiếu nhập đã hủy, không thể sửa">
+                                                                <i class="bi bi-pencil-square text-warning"></i>
+                                                            </a>
+                                                        @endif
+                                                
                                                         <a href="" class="viewRow" data-bs-toggle="tooltip"
                                                             data-bs-placement="top" title="Xóa">
                                                             <form
@@ -152,6 +159,7 @@
                                                         </a>
                                                     </div>
                                                 </td>
+                                                
                                             </tr>
                                         @empty
                                             <tr>

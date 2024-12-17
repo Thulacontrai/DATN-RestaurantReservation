@@ -48,28 +48,49 @@
                                     <div class="invalid-feedback">Vui lòng nhập số điện thoại hợp lệ.</div>
                                 </div>
 
-                                @if ($type === 'employee')
+                                <!-- Thêm các trường mới -->
                                 <div class="mb-3">
-                                    <label class="form-label">Vai Trò</label>
-                                    <div class="grid grid-cols-4">
+                                    <label for="date_of_birth" class="form-label">Ngày sinh</label>
+                                    <input value="{{ old('date_of_birth', $user->date_of_birth) }}" type="date" 
+                                           id="date_of_birth" name="date_of_birth" class="form-control">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="hire_date" class="form-label">Ngày tuyển dụng</label>
+                                    <input value="{{ old('hire_date', $user->hire_date) }}" type="date" 
+                                           id="hire_date" name="hire_date" class="form-control">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="gender" class="form-label">Giới tính</label>
+                                    <select id="gender" name="gender" class="form-control">
+                                        <option value="male" {{ old('gender', $user->gender) == 'male' ? 'selected' : '' }}>Nam</option>
+                                        <option value="female" {{ old('gender', $user->gender) == 'female' ? 'selected' : '' }}>Nữ</option>
+                                        <option value="other" {{ old('gender', $user->gender) == 'other' ? 'selected' : '' }}>Khác</option>
+                                    </select>
+                                </div>
+
+                               
+
+                                @if ($type === 'employee') <!-- Chỉ hiển thị checkbox vai trò nếu là nhân viên -->
+                                <div class="grid grid-cols-4 mb-3">
+                                    @if ($roles->isNotEmpty())
                                         @foreach ($roles as $role)
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" 
-                                                    name="role[]" 
-                                                    value="{{ $role->name }}" 
-                                                    id="role-{{ $role->id }}"
-                                                    {{ $hasRoles->contains($role->id) ? 'checked' : '' }}>
-                                                <label class="form-check-label" for="role-{{ $role->id }}">
-                                                    {{ $role->name }}
-                                                </label>
+                                            <div class="mt-3">
+                                                <input {{ $hasRoles->contains($role->id) ? 'checked' : '' }} 
+                                                       type="checkbox" 
+                                                       name="role[]" 
+                                                       value="{{ $role->name }}" 
+                                                       id="role-{{ $role->id }}" 
+                                                       class="rounded">
+                                                <label for="role-{{ $role->id }}">{{ $role->name }}</label>
                                             </div>
                                         @endforeach
-                                    </div>
-                                    @if ($errors->has('role'))
-                                        <div class="text-danger">{{ $errors->first('role') }}</div>
                                     @endif
+                                    <div class="invalid-feedback">Vui lòng chọn ít nhất một vai trò.</div>
+                                    <div class="valid-feedback">Looks good!</div>
                                 </div>
-                                @endif
+                            @endif
 
                                 <div class="mb-3">
                                     <label for="created_at" class="form-label">Ngày tạo</label>

@@ -57,43 +57,49 @@
                                         <div class="invalid-feedback">Vui lòng nhập số điện thoại hợp lệ.</div>
                                         {{-- <div class="valid-feedback">Looks good!</div> --}}
                                     </div>
+                                    @if ($type == 'employee')
                                     <div class="col-md-6 mb-3">
                                         <label for="address" class="form-label">Địa Chỉ</label>
                                         <textarea id="address" name="address" class="form-control" placeholder="Nhập địa chỉ">{{ old('address') }}</textarea>
                                         <div class="invalid-feedback">Vui lòng nhập địa chỉ.</div>
-                                        {{-- <div class="valid-feedback">Looks good!</div> --}}
                                     </div>
+                                @endif
+                                
                                 </div>
 
                                 <div class="row">
                                     <!-- Ngày Sinh và Giới Tính -->
+                                    @if ($type == 'employee')
                                     <div class="col-md-6 mb-3">
                                         <label for="date_of_birth" class="form-label">Ngày Sinh</label>
                                         <input value="{{ old('date_of_birth') }}" type="date" id="date_of_birth"
                                             name="date_of_birth" class="form-control">
                                     </div>
+                                @endif
+                                
+                                    @if ($type == 'employee')
                                     <div class="col-md-6 mb-3">
                                         <label for="gender" class="form-label">Giới Tính</label>
                                         <select id="gender" name="gender" class="form-select" required>
-                                            <option value="male" {{ old('gender') == 'male' ? 'selected' : '' }}>Nam
-                                            </option>
-                                            <option value="female" {{ old('gender') == 'female' ? 'selected' : '' }}>Nữ
-                                            </option>
-                                            <option value="other" {{ old('gender') == 'other' ? 'selected' : '' }}>Khác
-                                            </option>
+                                            <option value="male" {{ old('gender') == 'male' ? 'selected' : '' }}>Nam</option>
+                                            <option value="female" {{ old('gender') == 'female' ? 'selected' : '' }}>Nữ</option>
+                                            <option value="other" {{ old('gender') == 'other' ? 'selected' : '' }}>Khác</option>
                                         </select>
                                         <div class="invalid-feedback">Vui lòng chọn giới tính.</div>
-                                        {{-- <div class="valid-feedback">Looks good!</div> --}}
                                     </div>
+                                @endif
+                                
                                 </div>
 
                                 <div class="row">
-                                    <!-- Ngày Tuyển Dụng và Chức Vụ -->
+                                    @if ($type == 'employee')
                                     <div class="col-md-6 mb-3">
                                         <label for="hire_date" class="form-label">Ngày Tuyển Dụng</label>
                                         <input value="{{ old('hire_date') }}" type="date" id="hire_date"
                                             name="hire_date" class="form-control">
                                     </div>
+                                @endif
+                                
 
                                 <div class="row">
                                     <!-- Vai Trò và Mật Khẩu -->
@@ -114,23 +120,23 @@
                                         <div class="invalid-feedback">Vui lòng xác nhận mật khẩu.</div>
                                         {{-- <div class="valid-feedback">Looks good!</div> --}}
                                     </div>
+                                    @if ($type == 'employee' && $roles->isNotEmpty())
                                     <div class="col-md-6 mb-3">
                                         <label for="role_id" class="form-label">Vai Trò</label>
-                                        <div class="grid grid-cols-4 mb-3  ">
-                                            @if ($roles->isNotEmpty())
-                                                @foreach ($roles as $role)
-                                                    <div class="mt-3">
-                                                        <input type="checkbox" name="role[]"
-                                                            value="{{ $role->name }}" id="role-{{ $role->id }}"
-                                                            class="rounded">
-                                                        <label for="role-{{ $role->id }}">{{ $role->name }}</label>
-                                                    </div>
-                                                @endforeach
-                                            @endif
+                                        <div class="grid grid-cols-4 mb-3">
+                                            @foreach ($roles as $role)
+                                                <div class="mt-3">
+                                                    <input type="checkbox" name="role[]"
+                                                        value="{{ $role->name }}" id="role-{{ $role->id }}"
+                                                        class="rounded">
+                                                    <label for="role-{{ $role->id }}">{{ $role->name }}</label>
+                                                </div>
+                                            @endforeach
                                         </div>
                                         <div class="invalid-feedback">Vui lòng chọn ít nhất một vai trò.</div>
-                                        {{-- <div class="valid-feedback">Looks good!</div> --}}
                                     </div>
+                                @endif
+                                
                                 </div>
                              
                                 <div class="text-center mt-3">

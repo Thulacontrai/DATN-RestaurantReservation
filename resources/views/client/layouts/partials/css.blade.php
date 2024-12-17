@@ -279,6 +279,54 @@
         /* Màu khi hover */
     }
 
+    /* edit thông tin bàn  */
+    .reservation-details,
+    .reservation-edit-form {
+        transition: all 0.3s ease-in-out;
+    }
+
+    .modal-dialog-centered {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* rating */
+    .rating-stars {
+        display: flex !important;
+        /* Đảm bảo các ngôi sao nằm trên một hàng ngang */
+        gap: 1px !important;
+        /* Điều chỉnh khoảng cách giữa các ngôi sao */
+        align-items: center !important;
+        /* Căn giữa các ngôi sao theo chiều dọc nếu cần */
+    }
+
+    .rating-stars i {
+        font-size: 24px !important;
+        /* Điều chỉnh kích thước của ngôi sao */
+        color: gold !important;
+        /* Màu mặc định của ngôi sao */
+        cursor: pointer !important;
+        /* Làm cho ngôi sao tương tác được */
+        margin: 0 !important;
+        /* Xóa khoảng cách mặc định */
+        padding: 0 !important;
+        /* Xóa phần lề trong nếu có */
+    }
+
+    /* giao diện đồng hồ edit  */
+
+    /* Cải thiện trải nghiệm người dùng trên thiết bị di động */
+    @media (max-width: 767px) {
+        input[type="time"] {
+            font-size: 14px;
+            /* Giảm kích thước font trên màn hình nhỏ */
+            padding: 8px;
+            /* Giảm padding */
+        }
+    }
+
+
 
     /* Profile Info Section */
     .profile-info {
