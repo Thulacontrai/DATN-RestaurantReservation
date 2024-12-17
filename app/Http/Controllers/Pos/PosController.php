@@ -65,6 +65,15 @@ class PosController extends Controller
         ]);
     }
 
+    // ReservationController.php
+    public function getReservations()
+    {
+        $reservations = Reservation::where('status', 'Confirmed')
+            ->with(['orders.tables'])
+            ->paginate(5);
+        // dd($reservations);
+        return response()->json($reservations);
+    }
 
 
     public function convertToOrder(Request $request)
@@ -155,9 +164,13 @@ class PosController extends Controller
             ->get();
 
         // Lấy danh sách các bàn trống (available)
-        $availableTables = Table::where('status', 'available')->get();
+        $availableTables = Table::all();
         //lấy  danh sách đơn đặt bàn đã được xác nhận
-        $reservations = Reservation::where('status', 'Confirmed')->paginate(5);
+        $reservations = Reservation::where('status', 'Confirmed')
+            ->with(['orders.tables'])
+            ->paginate(5);
+        // Truyền dữ liệu tới view
+
         return view('pos.index', [
             'qrCodes' => $qrCodes,
             'tables' => $tables,
@@ -1094,6 +1107,123 @@ class PosController extends Controller
         }
     }
 
+    public function retoOrder(Request $request)
+    {
+        // dd($request->all());
+        // Lấy danh sách đơn hàng liên kết với đơn đặt bàn
+        DB::beginTransaction(); // Bắt đầu transaction
+
+        try {
+            // Lấy tất cả các đơn đặt bàn
+            $orders = Order::where('reservation_id', $request->reservation_id)->get();
+
+            // Lấy các ID của bàn đã xếp cho đơn hàng
+            $tableIds = $orders->flatMap(function ($order) {
+                return $order->tables->pluck('id');
+            })->unique()->values();
+
+            // Kiểm tra nếu không có bàn nào được xếp
+            if ($tableIds->isEmpty()) {
+                DB::rollBack(); // Rollback nếu không có bàn nào
+                return response()->json([
+                    'success' => false,
+                    'type' => 'error',
+                    'message' => 'Vui lòng chọn bàn cho đơn này trước khi gọi món.',
+                ], 400);
+            }
+
+            // Kiểm tra các bàn đang có trạng thái "Occupied"
+            $occupiedTables = Table::whereIn('id', $tableIds)
+                ->where('status', 'Occupied')
+                ->pluck('id');
+
+            // Nếu có bàn đang bị chiếm dụng, trả về thông báo và rollback transaction
+            if ($occupiedTables->isNotEmpty()) {
+                DB::rollBack(); // Rollback nếu có bàn bị chiếm dụng
+                return response()->json([
+                    'success' => false,
+                    'type' => 'error',
+                    'message' => 'Bàn này hiện tại đang được sử dụng.',
+                    'occupied_tables' => $occupiedTables,
+                ], 400);
+            }
+
+            // Cập nhật trạng thái các bàn thành "Occupied"
+            $startTime = Carbon::now();
+            DB::table('orders_tables')
+                ->whereIn('table_id', $tableIds)
+                ->update(['start_time' => $startTime]);
+            Table::whereIn('id', $tableIds)->update(['status' => 'Occupied']);
+
+            // Lấy thông tin các bàn và các đơn hàng liên quan
+            $tables = Table::with([
+                'orders',
+                'orders.orderItems' => function ($query) {
+                    $query->where('status', '!=', 'hủy');
+                },
+                'orders.orderItems.dish',
+                'orders.orderItems.combo',
+            ])->whereIn('id', $tableIds)->get();
+
+            // Thay đổi trạng thái đơn hàng đầu tiên thành "pending"
+            $order = $tables->first()->orders->first();
+            $order->status = 'pending';
+            $order->save();
+            // Thay đổi trạng thái đơn đặt bàn
+            $reservation = Reservation::query()->where('id',$request->reservation_id)->first();
+            $reservation->status = 'Checked-in';
+            $reservation->save();  
+            // Lấy đơn hàng đầu tiên có trạng thái "pending"
+            $order = $tables->flatMap(function ($table) {
+                return $table->orders->where('status', 'pending');
+            })->first();
+
+            // Nếu không tìm thấy đơn hàng đang "pending", rollback transaction
+            if (!$order) {
+                DB::rollBack(); // Rollback nếu không có đơn hàng đang pending
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Không tìm thấy đơn hàng nào đang chờ xử lý.',
+                ], 400);
+            }
+
+            // Lấy thông tin bàn và đơn hàng liên quan
+            $table = Table::with([
+                'orders' => function ($query) {
+                    $query->where('orders.status', '!=', 'completed')
+                        ->where('orders.status', '!=', 'waiting')
+                        ->with([
+                            'reservation' => function ($query) {
+                                $query->select('id', 'user_name');
+                            },
+                            'customer' => function ($query) {
+                                $query->select('id', 'name');
+                            }
+                        ]);
+                }
+            ])->get();
+
+            // Gửi broadcast
+            broadcast(new MessageSent($table))->toOthers();
+
+            // Commit transaction
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'tables' => $tables,
+                'tableId' => $tables->first()->id, // Lấy id của bàn đầu tiên
+                'order' => $order,
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack(); // Rollback nếu có lỗi xảy ra
+            return response()->json([
+                'success' => false,
+                'type' => 'error',
+                'message' => 'Đã có lỗi xảy ra: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
 
     public function reserToOrder($reservationId)
     {
@@ -1115,7 +1245,6 @@ class PosController extends Controller
         // dd($orders,$tableIds,$tables,$order);
 
         return redirect()->route('pos.index');
-
     }
     public function orderDetails($id)
     {
@@ -1269,7 +1398,6 @@ class PosController extends Controller
                 'success' => false
             ]);
         }
-
     }
     public function increaseQuantityy(Request $request)
     {
@@ -1376,7 +1504,6 @@ class PosController extends Controller
                 'err' => $e->getMessage()
             ]);
         }
-
     }
     public function decreaseQuantity(Request $request)
     {
@@ -2209,5 +2336,81 @@ class PosController extends Controller
             ->get(['id', 'table_number']);
         $users = User::where('phone', '!=', null)->get(['id', 'name', 'phone']);
         return response()->json(['tables' => $availableTables, 'users' => $users, 'tableIds' => $tableIds, 'user' => $user, 'phone' => $phone, 'quantity' => $quantity]);
+    }
+
+    public function checkIfReservationHasTable(Request $request)
+    {
+        // dd($request->all());
+        $reservationId = $request->reservation_id;
+        // Tìm đơn đặt bàn theo reservation_id
+        $reservation = Reservation::find($reservationId);
+
+        if (!$reservation) {
+            return response()->json(['success' => false, 'message' => 'Không tìm thấy đơn đặt bàn.'], 404);
+        }
+
+        // Tìm đơn hàng liên quan đến đơn đặt bàn này
+        $order = Order::where('reservation_id', $reservationId)->first();
+
+        if (!$order) {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Chọn bàn'
+                ],
+            );
+        }
+
+        // Kiểm tra xem đơn hàng đã được liên kết với bàn chưa
+        $hasTable = DB::table('orders_tables')
+            ->where('order_id', $order->id)
+            ->exists();
+
+        if ($hasTable) {
+            return response()->json(['success' => true, 'message' => 'Đơn này đã có bàn.']);
+        } else {
+            return response()->json(['success' => false, 'message' => 'Đơn này chưa có bàn.']);
+        }
+    }
+    public function AvailableTables()
+    {
+        $availableTables = Table::where('status', 'Available')->get(['id', 'table_number']);
+        return response()->json([
+            'success' => true,
+            'tables' => $availableTables
+        ]);
+    }
+    public function filter(Request $request)
+    {
+        // dd($request->all());
+        $searchTerm = $request->input('search');
+        $roomTable = $request->input('roomTable');
+        $fromDate = $request->input('fromDate');
+        $toDate = $request->input('toDate');
+        
+        // Xây dựng query
+        $reservations = Reservation::query()
+        ->where('status', 'Confirmed') // Lọc trạng thái đã Confirmed
+        ->with(['orders.tables']) // Lấy dữ liệu liên quan
+        ->where(function ($query) use ($searchTerm) {
+            $query->where('id', $searchTerm)
+                  ->orWhere('user_name', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('user_phone', 'like', '%' . $searchTerm . '%');
+        })
+        ->when($roomTable, function ($query) use ($roomTable) {
+            $query->whereHas('orders.tables', function ($query) use ($roomTable) {
+                $query->where('table_number', $roomTable); // Lọc theo số bàn
+            });
+        })
+        ->get(); 
+        
+        
+        // $reservations = $query->get();
+        // dd($reservations);
+        // Trả về kết quả dưới dạng JSON
+        return response()->json([
+            'success' => true,
+            'reservations' => $reservations
+        ]);
     }
 }

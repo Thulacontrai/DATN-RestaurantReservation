@@ -7,6 +7,7 @@
     }
 
 
+
     /* paginate */
     .my-pagination {
         display: flex;

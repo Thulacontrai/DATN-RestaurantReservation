@@ -93,10 +93,10 @@
                 </li>
             </ul>
         </div>
-
+        
         <!-- Modal Popup Danh Sách Đặt Bàn-->
         <div class="modal fade" id="reservationListModal" tabindex="-1" role="dialog"
-            aria-labelledby="reservationListModalLabel" aria-hidden="true">
+            aria-labelledby="reservationListModalLabel" aria-hidden="true" style="display: none">
             <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -116,70 +116,26 @@
                                 <select id="roomTable">
                                     <option value="">Chọn phòng bàn</option>
                                     @foreach ($availableTables as $table)
-                                        <option value="{{ $table->table_id }}">{{ $table->table_number }}</option>
+                                        <option value="{{ $table->id }}">{{ $table->table_number }}</option>
                                     @endforeach
                                     <!-- Các tùy chọn khác -->
                                 </select>
                             </div>
                         </div>
-                        <div class="time-group" style="flex-basis: 100%;">
-                            <label for="fromDate">Thời Gian</label>
-                            <input type="text" id="fromDate" placeholder="Từ ngày" onfocus="(this.type='date')"
-                                onblur="if(!this.value){this.type='text'}">
-                            <input type="text" id="toDate" placeholder="Đến ngày" onfocus="(this.type='date')"
-                                onblur="if(!this.value){this.type='text'}">
-                        </div>
                         <table class="table table-striped">
                             <thead>
                                 <tr>
                                     <th scope="col">Mã đặt bàn</th>
-                                    {{-- <th scope="col">Phòng/bàn<//th> --}}
+                                    <th scope="col">Phòng/bàn</th>
                                     <th scope="col">Giờ đến</th>
                                     <th scope="col">Khách hàng</th>
                                     <th scope="col">Số điện thoại</th>
                                     <th scope="col">Số khách</th>
-                                    <th scope="col">Trạng thái</th>
                                     <th scope="col">hành động</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <!-- Dữ liệu bảng-->
-                                @forelse ($reservations as $reservation)
-                                    <tr id="reservation-{{ $reservation->id }}">
-                                        <td class="text-center"><button type="button" class="transparent-button"
-                                                data-toggle="modal"
-                                                data-target="#orderDetailModal">{{ $reservation->id }}</button></td>
-
-                                        <td class="text-center">{{ $reservation->reservation_date }} <br>
-                                            {{ $reservation->reservation_time }}</td>
-                                        <td class="text-center">{{ $reservation->user_name ?? 'Không rõ' }}</td>
-                                        <td class="text-center">{{ $reservation->user_phone ?? 'Không rõ' }}</td>
-                                        <td class="text-center">{{ $reservation->guest_count ?? 'N/A' }}</td>
-                                        <td class="text-center">
-                                            @if ($reservation->status === 'Confirmed')
-                                                <span class="badge bg-success">Đã xác nhận</span>
-                                            @elseif ($reservation->status === 'Pending')
-                                                <span class="badge bg-warning">Chờ xử lý</span>
-                                            @elseif ($reservation->status === 'Cancelled')
-                                                <span class="badge bg-danger">Đã hủy</span>
-                                            @elseif ($reservation->status === 'checked-in')
-                                                <span class="badge bg-primary">Đã nhận bàn</span>
-                                            @else
-                                                <span class="badge bg-secondary">Không rõ</span>
-                                            @endif
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="actions">
-                                                <a href="{{ route('ReToOr', $reservation->id) }}">Khách nhận bàn</a>
-                                                <!-- Các hành động khác như Xem, Sửa, Hủy đơn đặt bàn -->
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="10">Không có đặt bàn nào được tìm thấy.</td>
-                                    </tr>
-                                @endforelse
+                            <tbody id="reservationDetailsBody">
+                                <!-- Dữ liệu sẽ được load vào đây qua AJAX -->
                             </tbody>
                         </table>
                     </div>
@@ -418,6 +374,48 @@
     </div>
 
 @endsection
+<script>
+    $(document).ready(function() {
+    // Gửi yêu cầu AJAX khi cần lấy danh sách đặt bàn
+    $.ajax({
+        url: '{{ route('get.reservations') }}',  // Đường dẫn đến route 'get.reservations'
+        method: 'GET',  // Phương thức gửi yêu cầu GET
+        success: function(response) {
+            // Xử lý dữ liệu trả về từ server (danh sách đặt bàn)
+            if (response && response.length > 0) {
+                // Tạo các dòng cho bảng danh sách đặt bàn
+                var tableRows = '';
+                response.forEach(function(reservation) {
+                    var tableNumbers = reservation.orders.map(order => {
+                        return order.tables.map(table => table.table_number).join(', ');
+                    }).join('<br>');
+                    
+                    tableRows += `
+                        <tr>
+                            <td class="text-center">${reservation.id}</td>
+                            <td class="text-center">${tableNumbers || 'Không có bàn nào được xếp'}</td>
+                            <td class="text-center">${reservation.reservation_date} ${reservation.reservation_time}</td>
+                            <td class="text-center">${reservation.user_name || 'Không rõ'}</td>
+                            <td class="text-center">${reservation.user_phone || 'Không rõ'}</td>
+                            <td class="text-center">${reservation.guest_count || 'N/A'}</td>
+                        </tr>
+                    `;
+                });
+
+                // Đổ dữ liệu vào phần tử bảng (tbody) với ID 'reservationDetailsBody'
+                $('#reservationDetailsBody').html(tableRows);
+                $('#reservationListModal').modal('show');  // Hiển thị modal sau khi dữ liệu đã được load
+            } 
+        },
+        error: function(xhr, status, error) {
+            // Xử lý lỗi nếu có sự cố khi gửi yêu cầu
+            console.error('Có lỗi xảy ra: ', error);
+            // alert('Không thể tải danh sách đặt bàn.');
+        }
+    });
+});
+
+</script>
 <script>
     let selectedTableId = null;
     document.addEventListener('DOMContentLoaded', function() {
@@ -965,7 +963,7 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {} else {
-                        console.log(data);
+                        // console.log(data);
 
                         showNotification('Món đã hết nguyên liệu', 'error')
                     }
@@ -1215,7 +1213,7 @@
                         if (data.success) {
                             showNotification('Thêm món thành công')
                         } else {
-                            console.log(data);
+                            // console.log(data);
 
                             showNotification('Món đã hết nguyên liệu', 'error')
                         }
@@ -1445,6 +1443,8 @@
                     return response.json();
                 })
                 .then(data => {
+                    // console.log(data);
+                    
                     highlightTables(data);
                 })
                 .catch(error => {
@@ -1482,9 +1482,170 @@
                         });
                     }
                 }
-            });
+            }); 
         }
 
+        document.addEventListener('click', function(event) {
+    // Kiểm tra nếu phần tử được click là nút với class "reToOrder"
+    if (event.target && event.target.matches('.reToOrder')) {
+        event.preventDefault();  // Ngừng hành động mặc định của button (nếu có)
+        
+        var reservationId = event.target.getAttribute('data-reser-id');  // Lấy id từ data attribute
+        // Gửi yêu cầu POST bằng jQuery Ajax
+        $.ajax({
+            url: '/checkReservationHasTable',  // Địa chỉ URL đến controller trong Laravel
+                    type: 'GET',  
+                    data: { 
+                        reservation_id:reservationId  // Dữ liệu gửi đi (reservation_id)
+                    },
+        success: function(data) {
+            if(data.success){
+                // Chuyển đơn
+               reToOrder(reservationId);
+                
+            }else{
+                // console.log(reservationId);
+                showTableSelectionModal(reservationId);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error:", error); // In lỗi nếu có
+            // alert("Đã có lỗi xảy ra, vui lòng thử lại.");
+        }
+});
+  
+    }
+});
+
+    function showTableSelectionModal(reservationId){
+        // console.log(typeof(parseInt(reservationId, 10)));
+         $.ajax({
+                    url: '/getAvailableTables',  // Địa chỉ URL đến controller trong Laravel
+                    type: 'GET',  // Phương thức HTTP (GET hoặc POST)
+                    data: { 
+                        reservation_id:parseInt(reservationId, 10) // Dữ liệu gửi đi (reservation_id)
+                    },
+                    success: function(data) {
+                    //    console.log(data);
+        const availableTables =Array.isArray(data.tables) ? data.tables : [];
+        // console.log(availableTables.length); 
+                    Swal.fire({
+                        title: 'Nhận gọi món',
+                        html: `
+                            <div class="container">
+                                <div class="mb-3">
+                                    <label for="tableRoom" class="form-label">Phòng/Bàn</label><br>
+                                    <select id="tableRoom" class="form-select" multiple>
+                                        ${availableTables.map(table => `
+                                            <option value="${table.id}">
+                                                Bàn ${table.table_number}
+                                            </option>
+                                        `).join('')}
+                                    </select>
+                                      <input type="hidden" name="reservationId" id="reservationId" value="${data.reservation_id}">
+                                </div>  
+                            </div>
+                        `,
+                        showCancelButton: true,
+                        confirmButtonText: 'Xác nhận',
+                        cancelButtonText: 'Hủy',
+                        didOpen: () => {
+                            const $reservation_id=$('#reservationId');
+                            const $tableRoom = $('#tableRoom');
+                            $tableRoom.select2({
+                                allowClear: true,
+                                dropdownParent: $('.swal2-container')
+                            });
+                        },
+                        preConfirm: () => {
+
+                            const tableRoom = $('#tableRoom').val();
+                            if (!tableRoom.length) {
+                                Swal.showValidationMessage('Vui lòng nhập đầy đủ thông tin');
+                                return false;
+                            }
+
+                            return {
+                                tableRoom,
+                            };
+                        }
+                    }).then((result) => {
+            if (result.isConfirmed) {
+                // showNotification('Tạo đơn thành công');
+                    // alert(reservationId);
+                // console.log(result.value.tableRoom);
+                $.ajax({
+            url: '/admin/reser-tables/update',
+            method: 'POST',
+            data: {
+                reservation_id: reservationId,
+                tables: result.value.tableRoom,
+                _token: $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function (response) {
+                if (response.success) {
+                    // console.log(typeof(response.reservation_id));
+                    reToOrder(response.reservation_id);
+                } else {
+                    Swal.fire({
+                        position: "top-end",
+                        icon:response.type,
+                        toast: true,
+                        title: response.message,
+                        showConfirmButton: false,
+                        timerProgressBar: true,
+                        timer: 2500
+                    })
+                }
+            },
+            error: function () {
+                // alert("Có lỗi xảy ra khi gửi dữ liệu lên server.");
+            }
+        });     
+            } else if (result.isDenied) {
+                showNotification('Tạo đơn thất bại', 'error');  // Thông báo nếu người dùng từ chối
+            }
+        });
+                    },
+                    error: function(xhr, status, error) {
+                        // Xử lý lỗi khi có sự cố với yêu cầu AJAX
+                        // console.error('Có lỗi xảy ra:', error);
+                        // alert('Đã xảy ra lỗi khi lấy dữ liệu!');
+                    }
+                });
+    }
+    function reToOrder(reservationId){
+        //  Gửi yêu cầu POST đến server
+       fetch("/retoOrder/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content"),
+                },
+                body: JSON.stringify({ reservation_id: parseInt(reservationId, 10) }),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if(data.success){
+                    // Xử lý logic khi server trả kết quả
+                    selectedTableId = data.tableId;
+                    showOrderDetails(data.tableId);
+                    
+                    // Đóng modal sau khi nhận bàn thành công
+                    $('#reservationListModal').modal('hide');
+
+                    $('.modal-backdrop').remove();
+                    // Hiển thị thông báo thành công
+                    showNotification('Nhận bàn thành công');
+                    } else {
+                    // Xử lý logic khi server trả kết quả thất bại
+                    showNotification(data.message,data.type);
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                });
+    }
         function showNotification(message, type = 'success') {
             Swal.fire({
                 icon: type,
@@ -1496,12 +1657,80 @@
                 position: 'top-end'
             });
         }
+        $(document).ready(function () {
+    function fetchReservations() {
+        // Lấy dữ liệu từ các trường tìm kiếm
+        const search = $('#search').val().trim();
+        const roomTable = $('#roomTable').val();
+        const fromDate = $('#fromDate').val();
+        const toDate = $('#toDate').val();
+
+        // Gửi yêu cầu AJAX
+        $.ajax({
+            url: '/reservations/filter',
+            type: 'POST',
+            data: {
+                search: search,
+                roomTable: roomTable,
+                fromDate: fromDate,
+                toDate: toDate,
+                _token: $('meta[name="csrf-token"]').attr('content') // Thêm CSRF token
+            },
+            success: function (data) {
+                const reservationDetailsBody = $('#reservationDetailsBody');
+                reservationDetailsBody.empty(); // Làm rỗng bảng trước khi thêm dữ liệu mới
+
+                // Kiểm tra xem dữ liệu có hợp lệ không
+if (data.success) {
+    console.log(data.reservations); // Kiểm tra dữ liệu trả về
+    
+    // Thêm từng hàng dữ liệu vào bảng
+    data.reservations.forEach(function (reservations) {
+        var tableNumbers = reservations.orders.map(order => {
+                        return order.tables.map(table => table.table_number).join(', ');
+                    }).join('<br>');
+        // console.log(reservations);
+        reservationDetailsBody.append(`
+            <tr>
+                <td class="text-center" >${reservations.id || 'N/A'}</td>
+                <td class="text-center" >${tableNumbers || 'Không có bàn nào được xếp'}</td>
+                <td class="text-center" >${reservations.reservation_date || 'N/A'}/${reservations.reservation_time || 'N/A'}</td>
+                <td class="text-center" >${reservations.user_name || 'N/A'}</td>
+                <td class="text-center" >${reservations.user_phone || 'N/A'}</td>
+                <td class="text-center" >${reservations.guest_count || 'N/A'}</td>
+               <td class="text-center">
+               <button class="reToOrder btn-link " data-reser-id="${reservations.id}">Khách nhận bàn</button>
+
+                </td>
+            </tr>
+        `);
+    });
+} else {
+    reservationDetailsBody.append('<tr><td colspan="7" class="text-center">Không tìm thấy kết quả</td></tr>');
+}
+            },
+            error: function (xhr, status, error) {
+                console.error('Lỗi:', error);
+                // alert('Đã xảy ra lỗi khi lấy danh sách đặt bàn.');
+            }
+        });
+    }
+
+    // Lắng nghe các sự kiện thay đổi trên trường tìm kiếm
+    $('#search').on('input', fetchReservations);
+    $('#roomTable').on('change', fetchReservations);
+    $('#fromDate').on('change', fetchReservations);
+    $('#toDate').on('change', fetchReservations);
+});
+
+
 
         function combineTables() {
 
         }
 
         
+
     });
 </script>
 @vite(['resources/js/posTable.js', 'resources/js/orderItem.js', 'resources/js/DishStatusUpdated.js'])
@@ -1835,12 +2064,12 @@
 
         // Notification Badge Animation
         notificationButton.addEventListener('click', function() {
-            alert("Bạn có 3 thông báo mới!");
+            // alert("Bạn có 3 thông báo mới!");
         });
 
         // Print Button
         printButton.addEventListener('click', function() {
-            alert("Đang in...");
+            // alert("Đang in...");
         });
 
         // Search Bar

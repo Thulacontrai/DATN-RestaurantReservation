@@ -95,6 +95,58 @@
 
       // Modal danh sách đặt bàn
       document.getElementById('modalListReservation').addEventListener('click', function() {
-          $('#reservationListModal').modal('show');
-      });
+    // Mở modal
+    $('#reservationListModal').modal('show');
+    
+    // Gửi yêu cầu AJAX để lấy dữ liệu
+    $.ajax({
+        url: '{{ route('get.reservations') }}',  // Đường dẫn route 'get.reservations'
+        method: 'GET',  // Phương thức GET
+        success: function(response) {
+            
+            // Xử lý kết quả trả về từ server
+            // console.log(response);
+            if (response.data && response.data.length > 0) {
+                
+                var tableRows = '';
+                // Lặp qua dữ liệu trả về và tạo các dòng trong bảng
+                response.data.forEach(function(reservations) {
+                    console.log(reservations);
+                    
+                    var tableNumbers = reservations.orders.map(order => {
+                        return order.tables.map(table => table.table_number).join(', ');
+                    }).join('<br>');
+
+                    tableRows += `
+                        <tr id="reservation-${reservations.id}">
+                            <td class="text-center">${reservations.id}</td>
+                            <td class="text-center">${tableNumbers || 'Không có bàn nào được xếp'}</td>
+                            <td class="text-center">${reservations.reservation_date} ${reservations.reservation_time}</td>
+                            <td class="text-center">${reservations.user_name || 'Không rõ'}</td>
+                            <td class="text-center">${reservations.user_phone || 'Không rõ'}</td>
+                            <td class="text-center">${reservations.guest_count || 'N/A'}</td>
+                            <td class="text-center">
+                               <button class="reToOrder btn-link border-0 bg-none " data-reser-id="${reservations.id}">Khách nhận bàn</button>
+
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                // Đổ dữ liệu vào bảng
+                
+                $('#reservationDetailsBody').html(tableRows);
+            } else {
+                $('#reservationDetailsBody').html('<tr><td colspan="7">Không có dữ liệu đặt bàn.</td></tr>');
+            }
+        },
+        error: function(xhr, status, error) {
+            // Xử lý lỗi nếu có sự cố trong khi gọi AJAX
+            console.error('Có lỗi xảy ra: ', error);
+            $('#reservationDetailsBody').html('<tr><td colspan="7">Không thể tải danh sách đặt bàn.</td></tr>');
+        }
+    });
+});
+
+
   </script>
