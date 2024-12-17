@@ -102,6 +102,10 @@ Route::post('/member/update-booking', [MemberController::class, 'updateBooking']
 Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () {
     Route::get('user', [UserController::class, 'index'])->name('user.index'); // Danh sách người dùng
     Route::get('user/employees', [UserController::class, 'employeeList'])->name('user.employees'); // Danh sách nhân viên
+    Route::get('admin/user/{user}/edit', [UserController::class, 'edit'])->name('admin.user.edit');
+
+    Route::delete('/admin/user/{id}', [UserController::class, 'destroy'])->name('admin.user.destroy');
+
 });
 
 
@@ -187,15 +191,10 @@ Route::get('/customerInformation', [ReservationController::class, 'showInformati
 
 
 
-
-
-
 Route::get('/kitchen', [KitchenController::class, 'index'])->name('kitchen.index');
 Route::post('/kitchen/{id}/cook-all', [KitchenController::class, 'cookAll'])->name('order-item.cook-all');
 Route::post('/kitchen/{id}/done-all', [KitchenController::class, 'doneAll'])->name('order-item.cook-all');
 Route::post('/kitchen/{id}/delete', [KitchenController::class, 'delete'])->name('order-item.cook-all');
-
-
 
 
 
@@ -243,7 +242,6 @@ Route::post('/menuOrder/updatee', [OrderController::class, 'updateItemm'])->name
 Route::get('/menuOrder/requestToOrder/{table_number}', [OrderController::class, 'requestToOrder'])->name('requestToOrder.menuOrder');
 
 
-///
 Route::get('reserToOrder/{reservationId}', [PosController::class, 'reserToOrder'])->name('ReToOr');
 
 
@@ -331,18 +329,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('reservation/submit-table', [ReservationController::class, 'submitTable'])->name('submit.tables');
     Route::post('reservation/submit-move-table', [ReservationController::class, 'submitMoveTable'])->name('submit.Movetables');
 
-    /// xếp bàn cho khách
-    Route::get('reservation/{reservationId}/assign-tables', [ReservationController::class, 'assignTables'])->name('reservation.assignTables');
-    Route::get('reservation/assign-table', [ReservationController::class, 'assignTable'])->name('assignTable');
-    Route::post('reservation/submit-table', [ReservationController::class, 'submitTable'])->name('submit.tables');
-    Route::post('reservation/submit-move-table', [ReservationController::class, 'submitMoveTable'])->name('submit.Movetables');
-
-    /// xếp bàn cho khách
-    Route::get('reservation/{reservationId}/assign-tables', [ReservationController::class, 'assignTables'])->name('reservation.assignTables');
-    Route::get('reservation/assign-table', [ReservationController::class, 'assignTable'])->name('assignTable');
-    Route::post('reservation/submit-table', [ReservationController::class, 'submitTable'])->name('submit.tables');
-    Route::post('reservation/submit-move-table', [ReservationController::class, 'submitMoveTable'])->name('submit.Movetables');
-
     Route::resource('reservation', ReservationController::class);
     Route::post('reservation/cancel/{id}', [ReservationController::class, 'cancel'])->name('reservation.cancel');
     Route::post('/reservations', [ReservationController::class, 'store']);
@@ -419,6 +405,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('user-trash', [UserController::class, 'trash'])->name('user.trash');
     Route::patch('user-restore/{id}', [UserController::class, 'restore'])->name('user.restore');
     Route::delete('user-force-delete/{id}', [UserController::class, 'forceDelete'])->name('user.forceDelete');
+    Route::get('users/{id}/show', [UserController::class, 'show'])->name('admin.user.show');
+
 
     //permission role
     Route::resource('role', RoleController::class);

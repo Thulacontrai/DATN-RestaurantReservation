@@ -9,15 +9,20 @@
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <div class="card-title">
-
+                                {{ $type == 'employee' ? 'Danh sách nhân viên' : 'Danh sách người dùng' }}
                             </div>
                             <div>
-                                <a href="{{ route('admin.user.create') }}" class="btn btn-sm btn-primary d-flex align-i">
-                                    <i class="bi bi-plus-circle me-2"></i>
-                                    {{ $type == 'employee' ? 'Thêm Nhân Viên' : 'Thêm Người Dùng' }}
-                                </a>
+                                <div>
+                                    <a href="{{ route('admin.user.create', ['type' => $type]) }}" class="btn btn-sm btn-primary d-flex align-i">
+                                        <i class="bi bi-plus-circle me-2"></i>
+                                        {{ $type == 'employee' ? 'Thêm Nhân Viên' : 'Thêm Người Dùng' }}
+                                    </a>
+                                    
+                                </div>
+                                
                             </div>
                         </div>
+                        
 
                         <div class="card-body">
                             <!-- Tìm kiếm người dùng -->
@@ -75,15 +80,37 @@
                                                         </td>
                                                     @endif
                                                     <td>{{ $user->created_at }}</td>
+                                                    
                                                     <td>
-                                                        <div class="action text-center">
-                                                            <a href="{{ route('admin.user.edit', $user->id) }}"
-                                                                data-bs-toggle="tooltip" data-bs-placement="top"
-                                                                title="Sửa">
-                                                                <i class="bi bi-pencil-square text-warning"></i>
+                                                        <div class="actions">
+                                                            
+                                                                <a href="{{ route('admin.user.show', $user->id) }}"  class="viewRow" data-bs-toggle="tooltip" data-bs-placement="top"
+                                                                title="Chi tiết">
+                                                                <i class="bi bi-list text-green"></i></a>
+                                                         
+                                                            
+                                                            <!-- Nút Sửa -->
+                                                            <a href="{{ route('admin.user.edit', ['user' => $user->id, 'type' => $type]) }}"
+                                                                class="text-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="Sửa">
+                                                                <i class="bi bi-pencil-square"></i>
+                                                            </a>
+                                                    
+                                                            <!-- Nút Xóa -->
+                                                            <a href="" style="padding-bottom: 5px; padding-left: 3px;">
+                                                                <form action="{{ route('admin.user.destroy', $user->id) }}" method="POST"
+                                                                    style="display: inline-block;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa?');">
+                                                                    @csrf
+                                                                    @method('DELETE')
+                                                                    <button type="submit" class="btn btn-link p-0">
+                                                                        <i class="bi bi-trash text-red"></i>
+                                                                    </button>
+                                                                </form>
                                                             </a>
                                                         </div>
                                                     </td>
+                                                    
+                                                    
+                                                                                                   
                                                 </tr>
                                             @endforeach
                                         @else

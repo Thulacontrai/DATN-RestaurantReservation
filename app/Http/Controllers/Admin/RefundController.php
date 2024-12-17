@@ -130,7 +130,7 @@ class RefundController extends Controller
     // XU LY THONG TIN KHI NGUOI DUNG YEU CAU HOAN TIEN
     public function storeCancellation(Request $request)
     {
-        // dd($request->all());
+        // Xác thực thông tin yêu cầu
         $request->validate([
             'account_name' => 'required|string|max:255',
             'account_number' => 'required|numeric',
@@ -139,9 +139,10 @@ class RefundController extends Controller
             'email' => 'required|email',
             'reason' => 'nullable|string|max:500',
         ]);
-
+    
+        // Tạo bản ghi yêu cầu hoàn tiền
         $refund = new Refund();
-        $refund->reservation_id = $request->reservation_id;;
+        $refund->reservation_id = $request->reservation_id;
         $refund->account_name = $request->account_name;
         $refund->account_number = $request->account_number;
         $refund->refund_amount = $request->refund_amount;
@@ -150,34 +151,50 @@ class RefundController extends Controller
         $refund->reason = $request->reason;
         $refund->status = 'Request_Refund';
         $refund->save();
-
+    
+        // Tìm đơn đặt chỗ
         $reservation = Reservation::find($request->reservation_id);
         if ($reservation) {
-            $reservation->status = 'Cancelled';
+            // Nếu có đặt cọc, thay đổi trạng thái thành "Pending Refund" (Chờ hoàn cọc)
+            if ($reservation->deposit_amount > 0) {
+                $reservation->status = 'Pending Refund';  // Chờ hoàn cọc
+            } else {
+                // Nếu không có đặt cọc, chuyển thành "Cancelled"
+                $reservation->status = 'Cancelled';
+            }
             $reservation->save();
         }
+    
+        // Trả về thông báo cho người dùng
         return redirect()->back()->with('status', 'Yêu cầu hủy đã được gửi thành công!');
     }
+    
 
     // XÃ NHAN HOAN TIEN Ở TRANG REFUND
     public function updateStatus($id)
-    {
+{
+    $refund = Refund::findOrFail($id);
 
-        $refund = Refund::findOrFail($id);
+    if ($refund->status == 'Request_Refund') {
+        $refund->status = 'Refund';
+        $refund->confirmed_by = auth()->user()->id;
+        $refund->confirmed_at = now();
+        $refund->save();
 
-
-        if ($refund->status == 'Request_Refund') {
-
-            $refund->status = 'Refund';
-            $refund->confirmed_by = auth()->user()->id;
-            $refund->confirmed_at = now();
-            $refund->save();
-
-            Mail::to($refund->email)->send(new InvoiceRefund($refund));
-
-            return redirect()->route('admin.refunds.index')->with('success', 'Đã xác nhận hoàn tiền và thông báo qua email');
+        // Cập nhật trạng thái bàn về "Đã hủy" sau khi hoàn cọc
+        $reservation = Reservation::find($refund->reservation_id);
+        if ($reservation) {
+            $reservation->status = 'Cancelled'; 
+            $reservation->save();
         }
 
-        return redirect()->route('admin.refunds.index')->with('error', 'Trạng thái không hợp lệ');
+        // Gửi email thông báo hoàn cọc
+        Mail::to($refund->email)->send(new InvoiceRefund($refund));
+
+        return redirect()->route('admin.refunds.index')->with('success', 'Đã xác nhận hoàn tiền, trạng thái bàn đã cập nhật và thông báo qua email.');
     }
+
+    return redirect()->route('admin.refunds.index')->with('error', 'Trạng thái không hợp lệ');
+}
+
 }

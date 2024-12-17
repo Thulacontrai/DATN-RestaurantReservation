@@ -60,7 +60,7 @@
             <!-- Row start -->
             <div class="row">
                 <div class="col-xxl-9 col-sm-12 col-12">
-                    <div class="card">
+                    <div class="card" style="width: 1230px;">
                         <div class="card-body">
                             <!-- Bắt đầu dòng -->
                             <div class="row">
@@ -264,21 +264,26 @@
 
                 </div>
 
-                <!-- Doanh Thu Tháng -->
-                <div class="col-xxl-3 col-sm-12 col-12">
-                    <div class="card shadow-lg border-light rounded">
 
-                        <div class="card-body">
-                            <div id="salesGraph" class="auto-align-graph"></div>
-                            <div class="num-stats text-center">
-                                <h5 id="totalRevenue" style="color: #71ebed; font-size: 20px; font-weight: 600;">0₫.00</h5>
-                                <!-- Tổng doanh thu -->
-                            </div>
-                            <p class="text-center mt-1" style="color: #555e5e">Các Tháng Trong Năm 2024</p>
+            </div>
+            <!-- Row end -->
+
+
+            <div class="row">
+                <div class="card" style="width: 1230px;
+                    margin-left: 14px;">
+                    <div class="card-header">
+                        <div class="card-title"></div>
+                    </div>
+                    <div class="card-body">
+                        <div id="salesGraph" class="auto-align-graph"></div>
+                        <div class="num-stats text-center">
+                            <h5 id="totalRevenue" style="color: #f14f22; font-size: 20px; font-weight: 600;">0₫.00</h5>
+                            <!-- Tổng doanh thu -->
                         </div>
+                        <p class="text-center mt-1" style="color: #555e5e">Các Tháng Trong Năm 2024</p>
                     </div>
                 </div>
-
                 <script>
                     document.addEventListener("DOMContentLoaded", function() {
                         // Dữ liệu được nhúng từ server
@@ -288,15 +293,30 @@
 
                         // Kiểm tra dữ liệu và xử lý
                         if (Array.isArray(data) && data.length > 0) {
-                            const months = data.map(item => `${item.month < 10 ? '0' : ''}${item.month}-2024`);
-                            const revenues = data.map(item => parseFloat(item.total_revenue) || 0); // Đảm bảo giá trị là số
+                            // Sắp xếp dữ liệu theo thứ tự tháng tăng dần
+                            const sortedData = data.sort((a, b) => a.month - b.month);
+
+                            // Tạo danh sách các tháng và doanh thu theo thứ tự
+                            const months = sortedData.map(item => {
+                                const monthNames = ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6",
+                                    "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"
+                                ];
+                                return monthNames[item.month - 1]; // Chuyển số tháng thành tên tháng
+                            });
+                            const revenues = sortedData.map(item => parseFloat(item.total_revenue) ||
+                                0); // Đảm bảo giá trị là số
 
                             // Cập nhật tổng doanh thu
                             const totalRevenue = revenues.reduce((a, b) => a + b, 0);
-                            document.getElementById('totalRevenue').textContent = `₫${totalRevenue.toLocaleString()}`;
+                            document.getElementById('totalRevenue').textContent = `${totalRevenue.toLocaleString()}₫`;
+
+                            // Tính toán các giá trị trục Y
+                            const maxRevenue = Math.max(...revenues);
+                            const roundedMaxRevenue = Math.ceil(maxRevenue / 50000000) *
+                                50000000; // Làm tròn lên bội số 50 triệu
 
                             // Tạo biểu đồ
-                            renderChart(months, revenues);
+                            renderChart(months, revenues, roundedMaxRevenue);
                         } else {
                             // Không có dữ liệu
                             document.getElementById('totalRevenue').textContent = 'Chưa có dữ liệu';
@@ -305,11 +325,11 @@
                     });
 
                     // Hàm tạo biểu đồ cột
-                    function renderChart(months, revenues) {
+                    function renderChart(months, revenues, roundedMaxRevenue) {
                         const options = {
                             chart: {
-                                height: 290,
-                                type: 'bar', // Sử dụng bar chart
+                                height: 350,
+                                type: 'bar',
                                 toolbar: {
                                     show: false
                                 },
@@ -326,7 +346,7 @@
                             plotOptions: {
                                 bar: {
                                     horizontal: false, // Chế độ dọc cho biểu đồ cột
-                                    columnWidth: '50%', // Độ rộng cột
+                                    columnWidth: '60%', // Độ rộng cột
                                     endingShape: 'rounded' // Tạo đường viền mượt cho cột
                                 }
                             },
@@ -337,7 +357,6 @@
                             xaxis: {
                                 categories: months,
                                 title: {
-
                                     style: {
                                         fontSize: '14px',
                                         fontWeight: 'bold',
@@ -355,7 +374,6 @@
                             },
                             yaxis: {
                                 title: {
-
                                     style: {
                                         fontSize: '14px',
                                         fontWeight: 'bold',
@@ -363,18 +381,21 @@
                                     }
                                 },
                                 labels: {
-                                    formatter: function(value) {
-                                        return `₫${value.toLocaleString()}`; // Hiển thị giá trị tiền tệ
+                                    show: true,
+                                    formatter: function(val) {
+                                        return `${Math.round(val / 1000000)}Triệu`; // Hiển thị giá trị đã làm tròn (triệu VND)
                                     }
                                 },
-                                min: 0, // Đặt giá trị tối thiểu của trục Y
-                                max: Math.max(...revenues) * 1.2, // Tăng một chút giới hạn trục Y để tránh vạch cột mốc
-                                tickAmount: 6 // Điều chỉnh số lượng các mốc giá trị trên trục Y
+                                min: 0,
+                                max: roundedMaxRevenue, // Sử dụng giá trị đã làm tròn
+                                tickAmount: Math.ceil(roundedMaxRevenue /
+                                    10000000), // Cập nhật số lượng mốc tick (ví dụ 10M, 20M, 30M,...)
                             },
                             tooltip: {
+                                enabled: true,
                                 y: {
                                     formatter: function(val) {
-                                        return `₫${val.toLocaleString()}`; // Hiển thị giá trị tiền tệ
+                                        return `${val.toLocaleString()}₫`; // Hiển thị giá trị tiền tệ khi nhấp vào cột
                                     }
                                 },
                                 theme: 'dark',
@@ -384,19 +405,19 @@
                                 }
                             },
                             fill: {
-                                type: 'gradient', // Hiệu ứng gradient cho khu vực dưới cột
+                                type: 'gradient',
                                 gradient: {
-                                    shade: 'light',
-                                    type: 'vertical', // Chuyển màu theo chiều dọc
-                                    shadeIntensity: 0.3,
-                                    gradientToColors: ['#00C6AE'], // Màu gradient chuyển đến
+                                    shade: 'dark',
+                                    type: 'horizontal',
+                                    shadeIntensity: 0.5,
+                                    gradientToColors: ['#FF7F50'], // Màu gradient chuyển đến
                                     inverseColors: false,
-                                    opacityFrom: 0.7, // Màu sắc mạnh mẽ
-                                    opacityTo: 0.3, // Màu sắc nhạt dần
+                                    opacityFrom: 1, // Màu sắc mạnh mẽ
+                                    opacityTo: 0.5, // Màu sắc nhạt dần
                                     stops: [0, 100]
                                 }
                             },
-                            colors: ['#0044CC'], // Màu sắc đậm cho các cột
+                            colors: ['#FF4500'], // Màu sắc đậm cho các cột
                             grid: {
                                 show: true,
                                 borderColor: '#e0e6ed',
@@ -424,7 +445,10 @@
                                         }
                                     }
                                 }
-                            }]
+                            }],
+                            dataLabels: {
+                                enabled: false // Tắt hiển thị số trên cột
+                            }
                         };
 
                         // Khởi tạo ApexCharts
@@ -432,26 +456,7 @@
                         chart.render();
                     }
                 </script>
-
             </div>
-            <!-- Row end -->
-
-
-
-            {{-- <div class="row">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title"></div>
-                    </div>
-                    <div class="card-body">
-                        <div></div>
-                    </div>
-                </div>
-
-            </div> --}}
-
-
-
 
 
             <div class="row">
@@ -460,7 +465,7 @@
                         <div class="card-header">
                             {{-- <h5 class="card-title text-center text-secondary">Thống Kê Đặt Bàn</h5> --}}
                         </div>
-                        <div class="card-body">
+                        <div class="card-body" style="height: 350px;">
                             <div class="row justify-content-center text-center">
                                 <!-- Biểu đồ tỷ lệ khách cọc và không cọc -->
                                 <div class="col-md-6">
@@ -482,9 +487,9 @@
                             <div class="row text-center justify-content-center">
                                 <div class="col-md-6">
                                     <h6>Trạng Thái Đặt Bàn</h6>
-                                    <canvas id="tableStatusChart"
-                                        style="max-width: 500px; width: 100%; display: block; margin: auto;"></canvas>
+                                    <div id="basic-pie-graph-gradient"></div>
                                 </div>
+
                             </div>
                         </div>
                     </div>
@@ -494,83 +499,13 @@
 
             <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
             <script>
-                // Hàm tạo gradient
+                // Gradient helper function
                 function createGradient(ctx, color1, color2) {
                     const gradient = ctx.createLinearGradient(0, 0, 0, 300);
                     gradient.addColorStop(0, color1);
                     gradient.addColorStop(1, color2);
                     return gradient;
                 }
-
-                const ctx2 = document.getElementById('tableStatusChart').getContext('2d');
-
-                new Chart(ctx2, {
-                    type: 'radar', // Biểu đồ radar
-                    data: {
-                        labels: ['Đã Xác Nhận', 'Đang Chờ', 'Đang Check-in', 'Bị Hủy', 'Hoàn Tiền'], // Các nhãn của biểu đồ
-                        datasets: [{
-                            label: 'Trạng Thái Đặt Bàn', // Nhãn cho tập dữ liệu
-                            data: [
-                                {{ $confirmed }},
-                                {{ $pending }},
-                                {{ $checkedIn }},
-                                {{ $cancelled ?? 0 }},
-                                {{ $refund ?? 0 }}
-                            ], // Dữ liệu cho từng trạng thái
-                            backgroundColor: [
-                                createGradient(ctx2, '#42A5F5', '#1E88E5'), // Gradient cho 'Đã Xác Nhận'
-                                createGradient(ctx2, '#FFC107', '#FFA000'), // Gradient cho 'Đang Chờ'
-                                createGradient(ctx2, '#66BB6A', '#43A047'), // Gradient cho 'Đang Check-in'
-                                createGradient(ctx2, '#FF5722', '#E64A19'), // Gradient cho 'Bị Hủy'
-                                createGradient(ctx2, '#9C27B0', '#8E24AA') // Gradient cho 'Hoàn Tiền'
-                            ],
-                            borderWidth: 2,
-                            borderColor: '#000', // Màu viền cho biểu đồ radar
-                            hoverOffset: 10 // Khoảng cách khi hover qua các phân đoạn
-                        }]
-                    },
-                    options: {
-                        responsive: true, // Đảm bảo biểu đồ có thể thay đổi kích thước
-                        scales: {
-                            r: {
-                                angleLines: {
-                                    display: true // Hiển thị các đường góc (liên kết giữa tâm và mỗi phân đoạn)
-                                },
-                                suggestedMin: 0, // Giá trị tối thiểu được gợi ý cho thang đo
-                                suggestedMax: 50, // Giá trị tối đa được gợi ý cho thang đo (giúp so sánh dễ dàng hơn)
-                                ticks: {
-                                    backdropColor: 'rgba(0, 0, 0, 0)', // Màu nền trong suốt cho các vạch chia
-                                    color: '#444', // Màu sắc cho các vạch chia
-                                    font: {
-                                        size: 14,
-                                        weight: 'bold' // Kiểu chữ cho các vạch chia
-                                    }
-                                }
-                            }
-                        },
-                        plugins: {
-                            legend: {
-                                position: 'bottom', // Di chuyển legend xuống dưới biểu đồ
-                                labels: {
-                                    font: {
-                                        size: 14,
-                                        weight: 'bold' // Kiểu chữ cho các nhãn trong legend
-                                    },
-                                    color: '#444' // Màu chữ trong legend
-                                }
-                            },
-                            tooltip: {
-                                callbacks: {
-                                    label: (context) =>
-                                        `${context.label}: ${context.raw}` // Tooltip hiển thị nhãn và giá trị thô (số lượng đặt bàn)
-                                }
-                            }
-                        }
-                    }
-                });
-
-
-
 
                 const ctx1 = document.getElementById('depositStatusChart').getContext('2d');
                 new Chart(ctx1, {
@@ -605,6 +540,46 @@
                         }
                     }
                 });
+            </script>
+            <script>
+                // Dữ liệu từ controller
+                var confirmed = {!! json_encode($confirmed) !!};
+                var pending = {!! json_encode($pending) !!};
+                var cancelled = {!! json_encode($cancelled) !!};
+                var refund = {!! json_encode($refund) !!};
+
+                var options = {
+                    chart: {
+                        width: 420,
+                        type: 'pie',
+                    },
+                    labels: ['Confirmed', 'Pending', 'Cancelled', 'Refund'],
+                    series: [confirmed, pending, cancelled, refund], // Dữ liệu biểu đồ từ controller
+                    responsive: [{
+                        breakpoint: 450,
+                        options: {
+                            chart: {
+                                width: 200
+                            },
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }],
+                    stroke: {
+                        width: 0,
+                    },
+                    fill: {
+                        type: 'gradient',
+                    },
+                    colors: ['#435EEF', '#2b86f5', '#63a9ff', '#95c5ff'], // Màu sắc cho các phần trong biểu đồ
+                };
+
+                var chart = new ApexCharts(
+                    document.querySelector("#basic-pie-graph-gradient"),
+                    options
+                );
+                chart.render();
             </script>
             <!-- Row end -->
 

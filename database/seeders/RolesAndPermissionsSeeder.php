@@ -88,7 +88,8 @@ class RolesAndPermissionsSeeder extends Seeder
             'Xóa tồn kho',
             'Xem thống kê',
             'access pos',
-            'Xem bếp'
+            'Xem bếp',
+            'Xem thống kê'
 
         ];
 

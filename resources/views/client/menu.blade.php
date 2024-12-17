@@ -24,14 +24,23 @@
                         <span class="tab-label">Combo</span>
                     </div>
                     @foreach ($categories as $category)
-                        <div class="tab-item" onclick="showCategory('{{ $category->id }}')">
-                            <div class="tab-icon-wrapper">
-                                <img src="https://www.blacksea.es/wp-content/uploads/2023/04/grilled-beef-steak-with-red-wine--1536x1024.jpg"
-                                    alt="{{ $category->name }}" class="tab-icon">
-                            </div>
-                            <span class="tab-label">{{ $category->name }}</span>
+                    <div class="tab-item" onclick="showCategory('{{ $category->id }}')" style="background-size: cover;">
+                        <div class="tab-icon-wrapper" style="background-size: cover;">
+                            @php
+                                // Lấy ảnh từ mảng categoryImages
+                                $image = isset($categoryImages[$category->id]) ? $categoryImages[$category->id] : null;
+                            @endphp
+
+                            @if ($image)
+                                <img src="{{ asset('images/' . $image) }}" alt="{{ $category->name }}" class="tab-icon">
+                            @else
+                                <img src="{{ asset('images/default-placeholder.jpg') }}" alt="{{ $category->name }}" class="tab-icon">
+                            @endif
                         </div>
-                    @endforeach
+                        <span class="tab-label">{{ $category->name }}</span>
+                    </div>
+                @endforeach
+
                 </div>
             </div>
         </section>

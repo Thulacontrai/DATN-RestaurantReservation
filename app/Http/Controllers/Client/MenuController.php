@@ -13,11 +13,22 @@ class MenuController extends Controller
 {
     public function index()
     {
+        // Lấy danh sách các danh mục, món ăn và combo
         $categories = Category::all();
         $dishes = Dishes::paginate(6);
         $combos = Combo::all();
-        return view('client.menu', compact('categories', 'dishes', 'combos'));
+
+        // Mảng ảnh tương ứng với từng category_id
+        $categoryImages = [
+            1 => 'efceca728a56f463c50e172c0104c5ab.jpg',  // Rượu Vang
+            2 => 'bo-beefsteak.jpg',  // Beefsteak
+            3 => 'e3d79194e9623b502aa5f7378455addc.jpg',  // Salad
+        ];
+
+        // Trả về view và truyền các biến cần thiết
+        return view('client.menu', compact('categories', 'dishes', 'combos', 'categoryImages'));
     }
+
 
     // public function filterByCategory(Request $request)
     // {
