@@ -88,6 +88,7 @@
                                             'Cancelled' => 'status-cancelled',
                                             'Refund' => 'status-refund',
                                             'Completed' => 'status-completed',
+                                            'Pending Refund' => 'status-pending-refund', // Thêm class cho trạng thái 'Pending Refund'
                                         ];
 
                                         $statusLabels = [
@@ -96,13 +97,14 @@
                                             'Cancelled' => 'Đã hủy',
                                             'Refund' => 'Đang hoàn tiền',
                                             'Completed' => 'Đã hoàn thành',
+                                            'Pending Refund' => 'Chờ hoàn cọc', // Thêm nhãn cho trạng thái 'Pending Refund'
                                         ];
                                     @endphp
                                     <strong
-                                        class=" text-right {{ $statusClasses[$reservation->status] ?? 'status-pending' }}">
+                                        class="text-right {{ $statusClasses[$reservation->status] ?? 'status-pending' }}">
                                         {{ $statusLabels[$reservation->status] ?? 'Chờ xử lý' }}
                                     </strong>
-
+                                
 
                                     <div class=" mt-3">
                                         @if ($reservation->status == 'Pending' || $reservation->status == 'Confirmed')
@@ -415,88 +417,89 @@
 
         }
         $(document).ready(function() {
-    $('.deleteButton').click(function() {
-        var id = this.getAttribute('data-id'); // Lấy ID từ thuộc tính 'data-id'
+            $('.deleteButton').click(function() {
+                var id = this.getAttribute('data-id'); // Lấy ID từ thuộc tính 'data-id'
 
-        Swal.fire({
-            icon: "question",
-            title: "Xác nhận hủy",
-            text: "Bạn có chắc chắn muốn hủy đặt bàn không?",
-            input: 'text', // Thêm input vào SweetAlert
-            inputPlaceholder: 'Lý do hủy (bắt buộc)', // Placeholder cho input
-            showCancelButton: true,
-            confirmButtonText: "Xác nhận",
-            cancelButtonText: "Hủy",
-            preConfirm: (inputValue) => {
-                // Kiểm tra xem lý do hủy có trống không
-                if (!inputValue || inputValue.trim() === "") {
-                    Swal.showValidationMessage('Vui lòng nhập lý do hủy!'); // Hiển thị thông báo lỗi
-                    return false; // Dừng lại nếu không nhập lý do
-                }
-                return inputValue; // Trả về lý do hủy hợp lệ
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                var reason = result.value; // Lấy lý do từ input
+                Swal.fire({
+                    icon: "question",
+                    title: "Xác nhận hủy",
+                    text: "Bạn có chắc chắn muốn hủy đặt bàn không?",
+                    input: 'text', // Thêm input vào SweetAlert
+                    inputPlaceholder: 'Lý do hủy (bắt buộc)', // Placeholder cho input
+                    showCancelButton: true,
+                    confirmButtonText: "Xác nhận",
+                    cancelButtonText: "Hủy",
+                    preConfirm: (inputValue) => {
+                        // Kiểm tra xem lý do hủy có trống không
+                        if (!inputValue || inputValue.trim() === "") {
+                            Swal.showValidationMessage(
+                            'Vui lòng nhập lý do hủy!'); // Hiển thị thông báo lỗi
+                            return false; // Dừng lại nếu không nhập lý do
+                        }
+                        return inputValue; // Trả về lý do hủy hợp lệ
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        var reason = result.value; // Lấy lý do từ input
 
-                // Gọi AJAX hoặc thực hiện hành động xóa
-                $.ajax({
-                    url: '{{ route('client.cancel.reservationpopup') }}',
-                    type: 'POST',
-                    data: {
-                        id: id,
-                        reason: reason, // Gửi lý do hủy trong data
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function(response) {
-                        Swal.fire({
-                            icon: response.icon,
-                            title: response.title,
-                            text: response.message
-                        }).then(() => {
-                            if (response.success) {
-                                location.reload(); // Tải lại trang
+                        // Gọi AJAX hoặc thực hiện hành động xóa
+                        $.ajax({
+                            url: '{{ route('client.cancel.reservationpopup') }}',
+                            type: 'POST',
+                            data: {
+                                id: id,
+                                reason: reason, // Gửi lý do hủy trong data
+                                _token: '{{ csrf_token() }}'
+                            },
+                            success: function(response) {
+                                Swal.fire({
+                                    icon: response.icon,
+                                    title: response.title,
+                                    text: response.message
+                                }).then(() => {
+                                    if (response.success) {
+                                        location.reload(); // Tải lại trang
+                                    }
+                                });
+                            },
+                            error: function(xhr) {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Lỗi",
+                                    text: "Có lỗi xảy ra!"
+                                });
                             }
                         });
-                    },
-                    error: function(xhr) {
+                    } else {
+                        // Người dùng hủy bỏ hành động
                         Swal.fire({
-                            icon: "error",
-                            title: "Lỗi",
-                            text: "Có lỗi xảy ra!"
+                            icon: "info",
+                            title: "Thông báo",
+                            text: "Hành động đã bị hủy."
                         });
                     }
                 });
-            } else {
-                // Người dùng hủy bỏ hành động
-                Swal.fire({
-                    icon: "info",
-                    title: "Thông báo",
-                    text: "Hành động đã bị hủy."
-                });
-            }
+            });
         });
-    });
-});
 
 
 
 
-//         $(document).ready(function () {
-//     $('.deleteButton').click(function () {
-//         // Lấy ID đặt bàn từ thuộc tính 'data-id'
-//         var id = this.getAttribute('data-id');
+        //         $(document).ready(function () {
+        //     $('.deleteButton').click(function () {
+        //         // Lấy ID đặt bàn từ thuộc tính 'data-id'
+        //         var id = this.getAttribute('data-id');
 
-//         // Hiển thị form và gán ID đặt bàn vào input hidden
-//         $('#reservation_id').val(id); // Gán ID vào input hidden
-//         $('#cancelFormContainer').show(); // Hiển thị form
-//     });
+        //         // Hiển thị form và gán ID đặt bàn vào input hidden
+        //         $('#reservation_id').val(id); // Gán ID vào input hidden
+        //         $('#cancelFormContainer').show(); // Hiển thị form
+        //     });
 
-//     // Sự kiện nút Hủy trong form (ẩn form khi không muốn hủy nữa)
-//     $('#cancelButton').click(function () {
-//         $('#cancelFormContainer').hide(); // Ẩn form
-//     });
-// });
+        //     // Sự kiện nút Hủy trong form (ẩn form khi không muốn hủy nữa)
+        //     $('#cancelButton').click(function () {
+        //         $('#cancelFormContainer').hide(); // Ẩn form
+        //     });
+        // });
 
 
         // modal hủy
