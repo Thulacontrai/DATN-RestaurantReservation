@@ -2,13 +2,30 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Events\CartUpdated;
+use App\Events\ComboStatusUpdated;
+use App\Events\DishStatusUpdated;
+use App\Events\ItemUpdated;
+use App\Events\MenuOrderUpdateItem;
+use App\Events\PosTableUpdated;
+use App\Events\PosTableUpdatedWithNoti;
+use App\Events\UpdateComboStatus;
+use App\Events\UpdateDishStatus;
 use App\Http\Controllers\Controller;
+use App\Models\Category;
+use App\Models\Combo;
+use App\Models\Dishes;
+use App\Models\InventoryStock;
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Table;
 use App\Traits\TraitCRUD;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -212,11 +229,378 @@ class OrderController extends Controller
     public function menuOrder(Request $request)
     {
         try {
-            $encryptedData = $request->input('data');
-            $tableId = Crypt::decryptString($encryptedData);
-            return view('client.menuOrder');
+            $tableId = $request->input('data');
+            $table = Table::findOrFail($tableId);
+            $order = $table->orders->where('status', 'pending')->first();
+            $item = $order->items
+                ->where('status', '==', 'chưa yêu cầu')
+            ;
+            $dishes = Dishes::all();
+            $combo = Combo::all();
+            $cate = Category::all();
+            $total = $item->sum(function ($item) {
+                return $item->price * $item->quantity;
+            });
+            return view('client.menuOrder', compact('total', 'cate', 'table', 'order', 'item', 'dishes', 'combo'));
         } catch (Exception $e) {
-            abort(403, 'Mã QR không hợp lệ.');
+            echo $e->getMessage();
         }
+    }
+    public function menuSelected($id)
+    {
+        $table = Table::findOrFail($id);
+        $order = $table->orders->where('status', 'pending')->first();
+        $item = $order->items
+            ->where('status', '==', 'chưa yêu cầu')
+        ;
+        if ($item->count() == 0) {
+            return redirect()->route('menuHistory', $id);
+        }
+        ;
+        $total = $item->sum(function ($item) {
+            return $item->price * $item->quantity;
+        });
+        $url = route('menuOrder', ['data' => $id]);
+        return view('client.menuSelected', compact('item', 'table', 'order', 'url', 'total'));
+    }
+    public function updateItemm(Request $request)
+    {
+        $item_id = $request->item_id;
+        $action = $request->action;
+        $item_type = $request->item_type;
+        $table = $request->table;
+        DB::transaction(function () use ($item_id, $item_type, $action, $table) {
+            if ($item_type == 'dish') {
+                $item = OrderItem::where('item_id', $item_id)
+                    ->where('item_type', 1)
+                    ->where('status', 'chưa yêu cầu')
+                    ->lockForUpdate()
+                    ->first();
+            } else {
+                $item = OrderItem::where('item_id', $item_id)
+                    ->where('item_type', 2)
+                    ->where('status', 'chưa yêu cầu')
+                    ->lockForUpdate()
+                    ->first();
+            }
+            if ($action === 'increase') {
+                $item->quantity += 1;
+                if ($item_type == 'dish') {
+                    $reciep = Dishes::findOrFail($item_id)->recipes;
+                    foreach ($reciep as $recipe) {
+                        $inventoryStock = InventoryStock::where('ingredient_id', $recipe->ingredient_id)->first();
+                        $inventoryStock->quantity_reserved += $recipe->quantity_need;
+                        if ($inventoryStock->quantity_reserved >= $inventoryStock->quantity_stock) {
+                            DB::rollBack();
+                            $dish = Dishes::find($item_id);
+                            $dish->is_active = 0;
+                            $dish->status = 'out_of_stock';
+                            $dish->save();
+                            broadcast(new DishStatusUpdated($dish));
+                            broadcast(new UpdateDishStatus($dish));
+                            return response()->json([
+                                'success' => false,
+                            ]);
+                        }
+                        $inventoryStock->save();
+                    }
+                } else {
+                    $combos = Combo::findOrFail($item_id)->dishes;
+                    foreach ($combos as $combo) {
+                        $reciep = $combo->recipes;
+                        foreach ($reciep as $recipe) {
+                            $inventoryStock = InventoryStock::where('ingredient_id', $recipe->ingredient_id)->first();
+                            $inventoryStock->quantity_reserved += $recipe->quantity_need * $combo->pivot->quantity;
+                            if ($inventoryStock->quantity_reserved >= $inventoryStock->quantity_stock) {
+                                DB::rollBack();
+                                $combo = Combo::find($item_id);
+                                $combo->is_active = 0;
+                                $combo->save();
+                                broadcast(new ComboStatusUpdated($combo));
+                                broadcast(new UpdateComboStatus($combo));
+                                return response()->json([
+                                    'success' => false
+                                ]);
+                            }
+                            $inventoryStock->save();
+                        }
+                    }
+                }
+            } elseif ($action === 'decrease') {
+                $item->quantity = max(0, $item->quantity - 1);
+                if ($item_type == 'dish') {
+                    $reciep = Dishes::findOrFail($item_id)->recipes;
+                    foreach ($reciep as $recipe) {
+                        $inventoryStock = InventoryStock::where('ingredient_id', $recipe->ingredient_id)->first();
+                        $inventoryStock->quantity_reserved -= $recipe->quantity_need;
+                        $inventoryStock->save();
+                    }
+                    $dish = Dishes::find($item_id);
+                    $dish->is_active = 1;
+                    $dish->status = 'available';
+                    $dish->save();
+                    broadcast(new DishStatusUpdated($dish));
+                    broadcast(new UpdateDishStatus($dish));
+                } else {
+                    $combos = Combo::findOrFail($item_id)->dishes;
+                    foreach ($combos as $combo) {
+                        $reciep = $combo->recipes;
+                        foreach ($reciep as $recipe) {
+                            $inventoryStock = InventoryStock::where('ingredient_id', $recipe->ingredient_id)->first();
+                            $inventoryStock->quantity_reserved -= $recipe->quantity_need * $combo->pivot->quantity;
+                            $inventoryStock->save();
+                        }
+                    }
+                    $combo = Combo::find($item_id);
+                    $combo->is_active = 1;
+                    $combo->save();
+                    broadcast(new ComboStatusUpdated($combo));
+                    broadcast(new UpdateComboStatus($combo));
+                }
+                if ($item->quantity == 0) {
+                    $item->delete();
+                    if ($item_type == 'dish') {
+                        $reciep = Dishes::findOrFail($item_id)->recipes;
+                        foreach ($reciep as $recipe) {
+                            $inventoryStock = InventoryStock::where('ingredient_id', $recipe->ingredient_id)->first();
+                            $inventoryStock->quantity_reserved -= $recipe->quantity_need;
+                            $inventoryStock->save();
+                        }
+                        $dish = Dishes::find($item_id);
+                        $dish->is_active = 1;
+                        $dish->status = 'available';
+                        $dish->save();
+                        broadcast(new DishStatusUpdated($dish));
+                        broadcast(new UpdateDishStatus($dish));
+                    } else {
+                        $combos = Combo::findOrFail($item_id)->dishes;
+                        foreach ($combos as $combo) {
+                            $reciep = $combo->recipes;
+                            foreach ($reciep as $recipe) {
+                                $inventoryStock = InventoryStock::where('ingredient_id', $recipe->ingredient_id)->first();
+                                $inventoryStock->quantity_reserved -= $recipe->quantity_need * $item->quantity * $combo->pivot->quantity;
+                                $inventoryStock->save();
+                            }
+                        }
+                        $combo = Combo::find($item_id);
+                        $combo->is_active = 1;
+                        $combo->save();
+                        broadcast(new ComboStatusUpdated($combo));
+                        broadcast(new UpdateComboStatus($combo));
+                    }
+                    $total = OrderItem::where('item_id', $item_id)
+                        ->where('status', 'chưa yêu cầu')
+                        ->get()
+                        ->sum(function ($item) {
+                            return $item->price * $item->quantity;
+                        });
+                    broadcast(new MenuOrderUpdateItem([
+                        'id' => $item_id,
+                        'deleted' => true,
+                        'type' => $item_type,
+                        'table' => $table,
+                        'total' => $total
+                    ]));
+                    $tableId = Table::find($table)->orders->where('status', 'pending')->first()->id;
+                    $item = OrderItem::where('order_id', $tableId)
+                        ->where('status', 'chưa yêu cầu')
+                        ->get();
+                    $countItems = $item->sum('quantity');
+                    $total = $item->sum(function ($items) {
+                        return $items->price * $items->quantity;
+                    });
+                    broadcast(new CartUpdated($countItems, $total, $table))->toOthers();
+                    return response()->json(['success' => true]);
+                }
+            } elseif ($action === 'remove') {
+                $item->delete();
+                if ($item_type == 'dish') {
+                    $reciep = Dishes::findOrFail($item_id)->recipes;
+                    foreach ($reciep as $recipe) {
+                        $inventoryStock = InventoryStock::where('ingredient_id', $recipe->ingredient_id)->first();
+                        $inventoryStock->quantity_reserved -= $recipe->quantity_need;
+                        $inventoryStock->save();
+                    }
+                    $dish = Dishes::find($item_id);
+                    $dish->is_active = 1;
+                    $dish->status = 'available';
+                    $dish->save();
+                    broadcast(new DishStatusUpdated($dish));
+                    broadcast(new UpdateDishStatus($dish));
+                } else {
+                    $combos = Combo::findOrFail($item_id)->dishes;
+                    foreach ($combos as $combo) {
+                        $reciep = $combo->recipes;
+                        foreach ($reciep as $recipe) {
+                            $inventoryStock = InventoryStock::where('ingredient_id', $recipe->ingredient_id)->first();
+                            $inventoryStock->quantity_reserved -= $recipe->quantity_need * $item->quantity * $combo->pivot->quantity;
+                            $inventoryStock->save();
+                        }
+                    }
+                    $combo = Combo::find($item_id);
+                    $combo->is_active = 1;
+                    $combo->save();
+                    broadcast(new ComboStatusUpdated($combo));
+                    broadcast(new UpdateComboStatus($combo));
+                }
+                $total = OrderItem::where('item_id', $item_id)
+                    ->where('status', 'chưa yêu cầu')
+                    ->get()
+                    ->sum(function ($item) {
+                        return $item->price * $item->quantity;
+                    });
+                broadcast(new MenuOrderUpdateItem([
+                    'id' => $item_id,
+                    'deleted' => true,
+                    'type' => $item_type,
+                    'table' => $table,
+                    'total' => $total
+                ]));
+                $tableId = Table::find($table)->orders->where('status', 'pending')->first()->id;
+                $item = OrderItem::where('order_id', $tableId)
+                    ->where('status', 'chưa yêu cầu')
+                    ->get();
+                $countItems = $item->sum('quantity');
+                $total = $item->sum(function ($items) {
+                    return $items->price * $items->quantity;
+                });
+                broadcast(new CartUpdated($countItems, $total, $table))->toOthers();
+                return response()->json(['success' => true]);
+            }
+
+            $item->save();
+            $total = OrderItem::where('item_id', $item_id)
+                ->where('status', 'chưa yêu cầu')
+                ->get()
+                ->sum(function ($item) {
+                    return $item->price * $item->quantity;
+                });
+            broadcast(new MenuOrderUpdateItem([
+                'id' => $item->item_id,
+                'type' => $item_type,
+                'name' => $item->item_type == 1 ? $item->dish->name : $item->combo->name,
+                'image' => asset('storage/' . $item->dish->image),
+                'price' => $item->price,
+                'quantity' => $item->quantity,
+                'table' => $table,
+                'total' => $total
+            ]));
+            $tableId = Table::find($table)->orders->where('status', 'pending')->first()->id;
+            $item = OrderItem::where('order_id', $tableId)
+                ->where('status', 'chưa yêu cầu')
+                ->get();
+            $countItems = $item->sum('quantity');
+            $total = $item->sum(function ($items) {
+                return $items->price * $items->quantity;
+            });
+            broadcast(new CartUpdated($countItems, $total, $table))->toOthers();
+        });
+        return response()->json(['success' => 'Item updated successfully']);
+    }
+    public function menuHistory($id)
+    {
+        $table = Table::findOrFail($id);
+        $order = $table->orders->where('status', 'pending')->first();
+        $item = $order->items
+            ->where('status', '!=', 'chưa yêu cầu')
+        ;
+        $page = request()->get('page', 1); // Trang hiện tại
+        $perPage = 5; // Số lượng item trên mỗi trang
+        $offset = ($page - 1) * $perPage;
+        $pagedItems = new LengthAwarePaginator(
+            $item->slice($offset, $perPage)->values(), // Dữ liệu của trang hiện tại
+            $item->count(), // Tổng số lượng item
+            $perPage, // Số item trên mỗi trang
+            $page, // Trang hiện tại
+            ['path' => request()->url(), 'query' => request()->query()] // Cấu hình URL phân trang
+        );
+        if ($item->count() == 0) {
+            return redirect("menu-order?data=$id")->with('error', 'Vui lòng gọi món trước!');
+        }
+        ;
+        $total = $order->items
+            ->where('status', '!=', 'chưa yêu cầu')
+            ->filter(function ($item) {
+                return $item->status != 'hủy';
+            })
+            ->sum(function ($item) {
+                return $item->price * $item->quantity;
+            });
+        $url = route('menuOrder', ['data' => $id]);
+        return view('client.menuHistory', compact('pagedItems', 'item', 'table', 'order', 'url', 'total'));
+    }
+    public function requestToOrder($id)
+    {
+        DB::transaction(function () use ($id) {
+            $table = Table::find($id);
+            $order = $table->orders->where('status', 'pending')->first();
+            $waitingItems = $order->items->where('status', 'chưa yêu cầu');
+            $orderItems = $order->items->where('status', '!=', 'hủy')->where('status', '!=', 'chưa yêu cầu');
+            foreach ($waitingItems as $waitingItem) {
+                $existingItem = $orderItems->firstWhere('item_id', $waitingItem->item_id);
+                if ($existingItem) {
+                    $existingItem->quantity += $waitingItem->quantity;
+                    if ($existingItem->status == 'hoàn thành') {
+                        $waitingItem->status = 'đang xử lý';
+                    }
+                    $existingItem->save();
+                    $waitingItem->delete();
+                } else {
+                    $waitingItem->status = 'chờ xử lý';
+                    $waitingItem->save();
+                }
+                $order->total_amount += $waitingItem->price * $waitingItem->quantity;
+                $order->save();
+            }
+            $orderItems = Order::with([
+                'orderItems' => function ($query) {
+                    $query->where('status', '!=', 'hủy')
+                        ->where('status', '!=', 'chưa yêu cầu')
+                    ;
+                },
+                'orderItems.dish:id,name',
+                'orderItems.combo:id,name',
+                'reservation:id,user_name,guest_count',
+                'customer:id,name'
+            ])->findOrFail($order->id);
+            $tableId = Table::with('orders')->findOrFail($id);
+            $orderItem = OrderItem::where('order_id', $order->id)
+                ->where(function ($query) {
+                    $query->where('status', '!=', 'hủy')
+                        ->where('status', '!=', 'chưa yêu cầu')
+                    ;
+                })
+                ->get();
+            $checkoutBtn = false;
+            $countItems = $orderItem->count();
+            if ($countItems > 0) {
+                $checkoutBtn = true;
+            }
+            $notiBtn = false;
+            foreach ($orderItem as $item) {
+                if ($item->quantity > $item->informed) {
+                    $notiBtn = true;
+                    break;
+                } else {
+                    $notiBtn = false;
+                }
+            }
+            broadcast(new PosTableUpdatedWithNoti($orderItems, $tableId, $notiBtn, "Bàn $tableId->table_number đã yêu cầu gọi món!"))->toOthers();
+            $item = OrderItem::where('order_id', $order->id)
+                ->where('status', 'chưa yêu cầu')
+                ->get();
+            $countItems = $item->sum('quantity');
+            $total = $item->sum(function ($items) {
+                return $items->price * $items->quantity;
+            });
+            broadcast(new CartUpdated($countItems, $total, $id))->toOthers();
+            $orderItem = OrderItem::with(['dish:id,name,image', 'combo:id,name,image'])
+                ->where('order_id', $order->id)
+                ->where('status', '!=', 'chưa yêu cầu')
+                ->get();
+            $orderItemArray = $orderItem->toArray();
+            broadcast(new ItemUpdated($orderItemArray, 'Danh sách đã được cập nhật!', $id))->toOthers();
+        });
+        return redirect()->route('menuHistory', $id);
     }
 }

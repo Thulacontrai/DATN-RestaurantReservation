@@ -17,6 +17,7 @@ class Order extends Model
         'reservation_id',
         'staff_id',
         'customer_id',
+        'guest_count',
         'total_amount',
         'order_type',
         'status',

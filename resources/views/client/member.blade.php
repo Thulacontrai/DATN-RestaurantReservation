@@ -88,7 +88,6 @@
                                             </div>
                                         @endif
                                     </div>
-
                                     @php
                                         $statusClasses = [
                                             'Confirmed' => 'status-confirmed',
@@ -521,44 +520,7 @@
 }); --}}
 
 
-    </script>
-    {{-- edit tài khoản  --}}
-    <script>
-        function toggleEdit() {
-            // Cho phép người dùng chỉnh sửa thông tin
-            document.getElementById('name').disabled = false;
-            document.getElementById('phone').disabled = false;
-        }
-
-        function showSaveButton() {
-            // Hiển thị nút "Lưu thay đổi" khi người dùng chỉnh sửa
-            document.getElementById('saveButton').style.display = 'inline-block';
-        }
-
-        async function handleFormSubmit(event) {
-            event.preventDefault(); // Ngăn form reload trang
-
-            // Thu thập dữ liệu từ form
-            const form = event.target;
-            const formData = new FormData(form);
-
-            try {
-                // Gửi dữ liệu qua POST
-                const response = await fetch(form.action, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
-                    },
-                    body: formData
-                });
-
-                // Kiểm tra phản hồi
-                if (response.ok) {
-                    const result = await response.json();
-
-                    // Cập nhật giao diện với dữ liệu mới
-                    document.getElementById('name').value = result.name;
-                    document.getElementById('phone').value = result.phone;
+    {{-- </script>
 
 
                     document.getElementById('saveButton').style.display = 'none';
@@ -572,7 +534,7 @@
                 alert('Đã xảy ra lỗi, vui lòng thử lại sau.');
             }
         }
-    </script>
+    </script> --}}
     {{-- edit thông tin đặt chỗ  --}}
     <script>
         $(document).ready(function() {
@@ -992,70 +954,69 @@
 
         }
         $(document).ready(function() {
-            $('.deleteButton').click(function() {
-                var id = this.getAttribute('data-id'); // Lấy ID từ thuộc tính 'data-id'
+    $('.deleteButton').click(function() {
+        var id = this.getAttribute('data-id'); // Lấy ID từ thuộc tính 'data-id'
 
-                Swal.fire({
-                    icon: "question",
-                    title: "Xác nhận hủy",
-                    text: "Bạn có chắc chắn muốn hủy đặt bàn không?",
-                    input: 'text', // Thêm input vào SweetAlert
-                    inputPlaceholder: 'Lý do hủy (bắt buộc)', // Placeholder cho input
-                    showCancelButton: true,
-                    confirmButtonText: "Xác nhận",
-                    cancelButtonText: "Hủy",
-                    preConfirm: (inputValue) => {
-                        // Kiểm tra xem lý do hủy có trống không
-                        if (!inputValue || inputValue.trim() === "") {
-                            Swal.showValidationMessage(
-                            'Vui lòng nhập lý do hủy!'); // Hiển thị thông báo lỗi
-                            return false; // Dừng lại nếu không nhập lý do
-                        }
-                        return inputValue; // Trả về lý do hủy hợp lệ
-                    }
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        var reason = result.value; // Lấy lý do từ input
+        Swal.fire({
+            icon: "question",
+            title: "Xác nhận hủy",
+            text: "Bạn có chắc chắn muốn hủy đặt bàn không?",
+            input: 'text', // Thêm input vào SweetAlert
+            inputPlaceholder: 'Lý do hủy (bắt buộc)', // Placeholder cho input
+            showCancelButton: true,
+            confirmButtonText: "Xác nhận",
+            cancelButtonText: "Hủy",
+            preConfirm: (inputValue) => {
+                // Kiểm tra xem lý do hủy có trống không
+                if (!inputValue || inputValue.trim() === "") {
+                    Swal.showValidationMessage('Vui lòng nhập lý do hủy!'); // Hiển thị thông báo lỗi
+                    return false; // Dừng lại nếu không nhập lý do
+                }
+                return inputValue; // Trả về lý do hủy hợp lệ
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                var reason = result.value; // Lấy lý do từ input
 
-                        // Gọi AJAX hoặc thực hiện hành động xóa
-                        $.ajax({
-                            url: '{{ route('client.cancel.reservationpopup') }}',
-                            type: 'POST',
-                            data: {
-                                id: id,
-                                reason: reason, // Gửi lý do hủy trong data
-                                _token: '{{ csrf_token() }}'
-                            },
-                            success: function(response) {
-                                Swal.fire({
-                                    icon: response.icon,
-                                    title: response.title,
-                                    text: response.message
-                                }).then(() => {
-                                    if (response.success) {
-                                        location.reload(); // Tải lại trang
-                                    }
-                                });
-                            },
-                            error: function(xhr) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Lỗi",
-                                    text: "Có lỗi xảy ra!"
-                                });
+                // Gọi AJAX hoặc thực hiện hành động xóa
+                $.ajax({
+                    url: '{{ route('client.cancel.reservationpopup') }}',
+                    type: 'POST',
+                    data: {
+                        id: id,
+                        reason: reason, // Gửi lý do hủy trong data
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        Swal.fire({
+                            icon: response.icon,
+                            title: response.title,
+                            text: response.message
+                        }).then(() => {
+                            if (response.success) {
+                                location.reload(); // Tải lại trang
                             }
                         });
-                    } else {
-                        // Người dùng hủy bỏ hành động
+                    },
+                    error: function(xhr) {
                         Swal.fire({
-                            icon: "info",
-                            title: "Thông báo",
-                            text: "Hành động đã bị hủy."
+                            icon: "error",
+                            title: "Lỗi",
+                            text: "Có lỗi xảy ra!"
                         });
                     }
                 });
-            });
+            } else {
+                // Người dùng hủy bỏ hành động
+                Swal.fire({
+                    icon: "info",
+                    title: "Thông báo",
+                    text: "Hành động đã bị hủy."
+                });
+            }
         });
+    });
+});
 
 
 

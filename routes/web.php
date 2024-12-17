@@ -95,17 +95,6 @@ Route::get('/member', [MemberController::class, 'show'])->name('client.member');
 Route::post('/update-member', [MemberController::class, 'update'])->name('member.update');
 Route::post('/change-password', [MemberController::class, 'changePassword'])->name('member.changePassword');
 Route::post('/member/update-booking', [MemberController::class, 'updateBooking'])->name('member.updateBooking');
-// edit thông tin đặt bàn 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/member/reservation/{id}', [MemberController::class, 'editReservation'])->name('member.reservation.edit');
-    Route::post('/member/reservation/update', [MemberController::class, 'updateReservation'])->name('member.reservation.update');
-
-});
-
-Route::post('/member/reservation/{id}/rate', [MemberController::class, 'rateReservation'])->name('member.reservation.rate');
-
-
-
 
 
 // web.php
@@ -125,10 +114,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
 
 Route::get('/home', [HomeController::class, 'index'])->middleware('auth');
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login.client');
-// chỉnh sửa thông tin đặt bàn 
 
-// Route::get('/reservation/edit/{id}', [ReservationController::class, 'edit'])->name('reservation.edit');
-// Route::post('/reservation/update/{id}', [ReservationController::class, 'update'])->name('reservation.update');
 
 
 
@@ -225,9 +211,12 @@ Route::post('/reservation/cancel', [ReservationController::class, 'cancel'])->na
 
 Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
 Route::post('/create-order', [PosController::class, 'createOrder']);
+Route::post('/edit-order/{tableId}', [PosController::class, 'editOrder']);
 Route::post('/order-details/{tableId}', [PosController::class, 'orderDetails'])->name('order-details');
 Route::post('/add-dish-to-order', [PosController::class, 'addDishToOrder']);
 Route::post('/add-combo-to-order', [PosController::class, 'addComboToOrder']);
+Route::post('/add-dish-waiting', [PosController::class, 'addDishWaiting']);
+Route::post('/add-combo-waiting', [PosController::class, 'addComboWaiting']);
 Route::post('/deleteItem', [PosController::class, 'deleteItem']);
 Route::post('/deleteItemm', [PosController::class, 'deleteItemm']);
 Route::post('/increaseQuantity', [PosController::class, 'increaseQuantity']);
@@ -240,8 +229,18 @@ Route::post('/canelItemm', [PosController::class, 'canelItemm']);
 Route::get('/Ppayment/{table_number}', [PosController::class, 'Ppayment'])->name('Ppayment');
 Route::get('/viewCheckOut/{table_number}', [PosController::class, 'viewCheckOut'])->name('viewCheckOut');
 Route::post('/check-payment-condition', [PosController::class, 'checkPaymentPondition'])->name('checkPaymentPondition');
-Route::get('/checkAvailableTables', [PosController::class, 'checkAvailableTables'])->name('checkPaymentPondition');
-Route::get('/menu-order', [OrderController::class, 'menuOrder'])->name('menuOrder');
+Route::get('/checkAvailableTables', [PosController::class, 'checkAvailableTables']);
+Route::post('/checkTables', [PosController::class, 'checkTables']);
+Route::middleware(['checkTableAndUser'])->group(function () {
+    Route::get('/menu-order', [OrderController::class, 'menuOrder'])->name('menuOrder');
+});
+Route::middleware(['checkUser'])->group(function () {
+    Route::get('/menu-selected/{table_number}', [OrderController::class, 'menuSelected'])->name('menuSelected');
+    Route::get('/menu-history/{table_number}', [OrderController::class, 'menuHistory'])->name('menuHistory');
+});
+Route::post('/menuOrder/updatee', [OrderController::class, 'updateItemm'])->name('updateItem.menuOrder');
+Route::get('/menuOrder/requestToOrder/{table_number}', [OrderController::class, 'requestToOrder'])->name('requestToOrder.menuOrder');
+
 
 Route::get('reserToOrder/{reservationId}', [PosController::class, 'reserToOrder'])->name('ReToOr');
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Events\MessageSent;
 use App\Events\MessageSentt;
+use App\Events\NotifyUserEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreReservationRquest;
 use App\Models\Coupon;
@@ -360,25 +361,20 @@ class ReservationController extends Controller
         }
     }
 
-
     public function cancel(Request $request, $id)
     {
         // Tìm đơn đặt chỗ
         $reservation = Reservation::findOrFail($id);
-    
+
         // Cập nhật trạng thái và lý do hủy
         $reservation->status = 'Cancelled';
         $reservation->cancelled_reason = $request->input('cancelled_reason');
         $reservation->save();
-    
+
         return redirect()->route('admin.reservation.index')->with('success', 'Đơn đặt bàn đã được hủy thành công.');
     }
 
     
-
-
-
-    public function show($id)
     {
         $title = 'Chi Tiết Đặt Bàn';
         $reservation = Reservation::with('customer')->findOrFail($id);
@@ -698,6 +694,12 @@ class ReservationController extends Controller
 
     public function createReservation(StoreReservationRquest $request)
     {
+        $lastReservation = Reservation::where('customer_id', auth()->id())
+            ->latest('created_at')
+            ->first();
+        if ($lastReservation && now()->diffInMinutes($lastReservation->created_at) < 5) {
+            return back()->with('err', 'Mỗi đơn đặt bàn cần cách nhau 5 phút!');
+        }
         // Kiểm tra số lượng khách, nếu >= 6 thì chuyển hướng đến trang đặt cọc
         if ($request->guest_count >= 6) {
             // Lưu thông tin khách hàng tạm thời để sử dụng ở trang cọc
@@ -915,6 +917,7 @@ class ReservationController extends Controller
                 }
             ])->get();
             broadcast(new MessageSent($tables))->toOthers();
+            broadcast(new NotifyUserEvent('Đơn đặt bàn của bạn đã được thanh toán thành công!'));
         });
         return redirect(route('pos.index'));
     }
@@ -956,6 +959,7 @@ class ReservationController extends Controller
                 }
             ])->get();
             broadcast(new MessageSentt($tables))->toOthers();
+            broadcast(new NotifyUserEvent('Đơn đặt bàn của bạn đã được thanh toán thành công!'));
         });
         return response()->json([
             'success' => true,
@@ -1225,6 +1229,7 @@ class ReservationController extends Controller
             ->first();
         $items = OrderItem::where('order_id', $orderId)
             ->where('status', '!=', 'hủy')
+            ->where('status', '!=', 'chưa yêu cầu')
             ->get();
         $item = $items->all();
         $dishIds = $items->pluck('item_id')->toArray();

@@ -1,6 +1,17 @@
 @extends('client.layouts.master')
 @section('title', 'Trang chủ')
 @section('content')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @if (session('err'))
+        <script>
+            Swal.fire({
+                title: "Có lỗi xảy ra",
+                html: "{{ session('err') }}", 
+                timer: 4000,
+                timerProgressBar: true,
+            })
+        </script>
+    @endif
     <!-- nội dung bắt đầu -->
     <div id="content" class="no-bottom no-top">
 
@@ -53,7 +64,8 @@
                     <li data-transition="fade" data-slotamount="10" data-masterspeed="default" data-thumb="">
                         <!--  ẢNH NỀN -->
                         <img src="client/03_images/slider/slide-1.jpg" alt="" data-bgposition="center center"
-                            data-bgfit="cover" data-bgrepeat="no-repeat" data-bgparallax="10" style="filter: brightness(30%); width: 100%; height: auto;">
+                            data-bgfit="cover" data-bgrepeat="no-repeat" data-bgparallax="10"
+                            style="filter: brightness(30%); width: 100%; height: auto;">
 
                         <div class="tp-caption tp-teaser-1" data-x="center" data-y="160" data-width="none"
                             data-height="none" data-whitespace="nowrap"
