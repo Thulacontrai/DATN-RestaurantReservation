@@ -16,11 +16,12 @@ window.Echo.channel('order')
         } else {
             notification.disabled = false;
         };
+        console.log(selectedTableId + '3');
         if (selectedTableId == e.tableId.id) {
             layoutTable.innerHTML = `
             <div style="display: flex; flex-direction: column; overflow-x: hidden;">
     <div style="display: flex; justify-content: center;">
-        <h3>Chi tiết đơn hàng</h3>
+        <h3>Đơn đặt bàn: ${e.orderItems?.reservation?.id ?? e.orderItems.id}</h3>
     </div>
 
     <div class="row">
@@ -28,8 +29,9 @@ window.Echo.channel('order')
             <p><strong>Bàn:</strong> ${e.tableId.table_number}</p>
         </div>
         <div class="col">
-            <p><strong>Mã đơn hàng:</strong> ${e.orderItems?.reservation?.id ?? e.orderItems.id}</p>
-        </div>
+            <p><strong>Số người:</strong> ${e.orderItems?.reservation?.guest_count ?? e.orderItems?.guest_count ?? 'Khách lẻ'
+                }</p >
+        </div >
     </div>
 
     <div class="row">
@@ -41,10 +43,8 @@ window.Echo.channel('order')
         </div>
     </div>
     <div class="row">
-        <div class="col">
-            <p><strong>Số người:</strong> ${e.orderItems?.reservation?.guest_count ?? e.orderItems?.guest_count ?? 'Khách lẻ'
-                }</p >
-        </div >
+        <div class="col"><button class="btn btn-primary" id="editInformation">Sửa thông tin</button> </div>
+        <div class="col"><button class="btn btn-primary" id="combineTables">Gộp đơn</button> </div>
     </div >
 </div >
             <h4>Danh sách món</h4>
@@ -179,7 +179,7 @@ window.Echo.channel('orders')
             layoutTable.innerHTML = `
             <div style="display: flex; flex-direction: column; overflow-x: hidden;">
     <div style="display: flex; justify-content: center;">
-        <h3>Chi tiết đơn hàng</h3>
+        <h3>Đơn đặt bàn: ${e.orderItems?.reservation?.id ?? e.orderItems.id}</h3>
     </div>
 
     <div class="row">
@@ -187,8 +187,9 @@ window.Echo.channel('orders')
             <p><strong>Bàn:</strong> ${e.tableId.table_number}</p>
         </div>
         <div class="col">
-            <p><strong>Mã đơn hàng:</strong> ${e.orderItems?.reservation?.id ?? e.orderItems.id}</p>
-        </div>
+            <p><strong>Số người:</strong> ${e.orderItems?.reservation?.guest_count ?? e.orderItems?.guest_count ?? 'Khách lẻ'
+                }</p >
+        </div >
     </div>
 
     <div class="row">
@@ -200,11 +201,11 @@ window.Echo.channel('orders')
         </div>
     </div>
     <div class="row">
-        <div class="col">
-            <p><strong>Số người:</strong> ${e.orderItems?.reservation?.guest_count ?? 'Khách lẻ'}</p>
-        </div>
-    </div>
-</div>
+        <div class="col"><button class="btn btn-primary" id="editInformation">Sửa thông tin</button> </div>
+        <div class="col"><button class="btn btn-primary" id="switchTables">Chuyển bàn</button> </div>
+        <div class="col"><button class="btn btn-primary" id="combineTables">Gộp đơn</button> </div>
+    </div >
+</div >
             <h4>Danh sách món</h4>
         `;
             e.orderItems.order_items.forEach(item => {
@@ -214,96 +215,96 @@ window.Echo.channel('orders')
                 }).format(item.total_price)
                 if (item.status == 'chờ xử lý') {
                     layoutTable.innerHTML += `
-                <div class="item-list" data-dish-id="${item.item_id}" data-dish-order="${item.order_id}" data-dish-status="${item.status}" data-dish-type="${item.item_type}">
-                    <div class="item-name d-flex justify-content-around">
-                        <span class="text-dark" title="${item.status}">${item.item_type == 1 ? item.dish.name : item.combo.name}</span>
-                        <div>
-                            <span>${item.informed}</span>
-                            <i class="fa-regular fa-hourglass-half text-dark" title="${item.status}"></i>
-                        </div>
-                    </div>
-                    <div class="item-action">
-                        <div class="item-quantity">
-                            <span class="text-dark" >Số Lượng:</span>  
-                            <div class="quantity-control">
-                                <button class="quantity-btn minus-item" title="Giảm số lượng món">-</button>
-                                <span class="quantity">${item.quantity}</span>
-                                <button class="quantity-btn plus-item" title="Tăng số lượng món">+</button>
+                    <div class="item-list" data-dish-id="${item.item_id}" data-dish-order="${item.order_id}" data-dish-status="${item.status}" data-dish-type="${item.item_type}">
+                        <div class="item-name d-flex justify-content-around">
+                            <span class="text-dark" title="${item.status}">${item.item_type == 1 ? item.dish.name : item.combo.name}</span>
+                            <div>
+                                <span>${item.informed}</span>
+                                <i class="fa-regular fa-hourglass-half text-dark" title="${item.status}"></i>
                             </div>
                         </div>
-                        <div class="item-price">
-                            Giá: ${item.total_price}
+                        <div class="item-action">
+                            <div class="item-quantity">
+                                <span class="text-dark" >Số Lượng:</span>  
+                                <div class="quantity-control">
+                                    <button class="quantity-btn minus-item" title="Giảm số lượng món">-</button>
+                                    <span class="quantity">${item.quantity}</span>
+                                    <button class="quantity-btn plus-item" title="Tăng số lượng món">+</button>
+                                </div>
+                            </div>
+                            <div class="item-price">
+                                Giá: ${item.total_price}
+                            </div>
+                            <div class="item-cancel">
+                                <button class="delette-item" title="Hủy món">Hủy</button>
+                            </div>
                         </div>
-                        <div class="item-cancel">
-                            <button class="delette-item" title="Hủy món">Hủy</button>
-                        </div>
-                    </div>
-                    
-                </div >
+                        
+                    </div >
 
-        `;
+            `;
                 } else if (item.status == 'đang xử lý') {
                     layoutTable.innerHTML += `
-                <div class="item-list" data-dish-id="${item.item_id}" data-dish-order="${item.order_id}" data-dish-status="${item.status}" data-dish-informed="${item.informed}" data-dish-processing="${item.processing}" data-dish-quantity="${item.quantity}" data-dish-type="${item.item_type}">
-                    <div class="item-name">
-                        <div class="item-name d-flex justify-content-around">
-                            <span class="text-danger" title="${item.status}">${item.item_type == 1 ? item.dish.name : item.combo.name}</span>
-                            <div>
-                                <span class="text-danger">${item.processing}</span>
-                                <i class="fa-solid fa-fire-burner text-danger" title="${item.status}"></i> 
-                            </div> 
-                        </div>
-                    </div>
-                    <div class="item-action">
-                        <div class="item-quantity">
-                            <span class="text-dark">Số Lượng:</span>  
-                            <div class="quantity-control">
-                                <button class="quantity-btn minus-item" title="Giảm số lượng món">-</button>
-                                <span class="quantity">${item.quantity}</span>
-                                <button class="quantity-btn plus-item" title="Tăng số lượng món">+</button>
+                    <div class="item-list" data-dish-id="${item.item_id}" data-dish-order="${item.order_id}" data-dish-status="${item.status}" data-dish-informed="${item.informed}" data-dish-processing="${item.processing}" data-dish-quantity="${item.quantity}" data-dish-type="${item.item_type}">
+                        <div class="item-name">
+                            <div class="item-name d-flex justify-content-around">
+                                <span class="text-danger" title="${item.status}">${item.item_type == 1 ? item.dish.name : item.combo.name}</span>
+                                <div>
+                                    <span class="text-danger">${item.processing}</span>
+                                    <i class="fa-solid fa-fire-burner text-danger" title="${item.status}"></i> 
+                                </div> 
                             </div>
                         </div>
-                        <div class="item-price">
-                            Giá: ${item.total_price}
+                        <div class="item-action">
+                            <div class="item-quantity">
+                                <span class="text-dark">Số Lượng:</span>  
+                                <div class="quantity-control">
+                                    <button class="quantity-btn minus-item" title="Giảm số lượng món">-</button>
+                                    <span class="quantity">${item.quantity}</span>
+                                    <button class="quantity-btn plus-item" title="Tăng số lượng món">+</button>
+                                </div>
+                            </div>
+                            <div class="item-price">
+                                Giá: ${item.total_price}
+                            </div>
+                            <div class="item-cancel">
+                                <button class="delete-item" title="Hủy món">Hủy</button>
+                            </div>
                         </div>
-                        <div class="item-cancel">
-                            <button class="delete-item" title="Hủy món">Hủy</button>
-                        </div>
-                    </div>
-                    
-                </div >
-        `;
+                        
+                    </div >
+            `;
                 } else if (item.status == 'hoàn thành') {
                     layoutTable.innerHTML += `
-                <div class="item-list" data-dish-id="${item.item_id}" data-dish-order="${item.order_id}" data-dish-status="${item.status}">
-                    <div class="item-name">
-                        <div class="item-name d-flex justify-content-around">
-                            <span class="text-success" title="${item.status}">${item.item_type == 1 ? item.dish.name : item.combo.name}</span>  
-                            <div>
-                                <span class="text-success">${item.completed}</span>
-                                <i class="fa-solid fa-square-check text-success" title="${item.status}"></i>
+                    <div class="item-list" data-dish-id="${item.item_id}" data-dish-order="${item.order_id}" data-dish-status="${item.status}" data-dish-type="${item.item_type}">
+                        <div class="item-name">
+                            <div class="item-name d-flex justify-content-around">
+                                <span class="text-success" title="${item.status}">${item.item_type == 1 ? item.dish.name : item.combo.name}</span>  
+                                <div>
+                                    <span class="text-success">${item.completed}</span>
+                                    <i class="fa-solid fa-square-check text-success" title="${item.status}"></i>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="item-action">
-                        <div class="item-quantity">
-                            <span class="text-dark">Số Lượng:</span>  
-                            <div class="quantity-control">
-                                <button class="quantity-btn minus-item" title="Giảm số lượng món">-</button>
-                                <span class="quantity">${item.quantity}</span>
-                                <button class="quantity-btn plus-item" title="Tăng số lượng món">+</button>
+                        <div class="item-action">
+                            <div class="item-quantity">
+                                <span class="text-dark">Số Lượng:</span>  
+                                <div class="quantity-control">
+                                    <button class="quantity-btn minus-item" title="Giảm số lượng món">-</button>
+                                    <span class="quantity">${item.quantity}</span>
+                                    <button class="quantity-btn plus-item" title="Tăng số lượng món">+</button>
+                                </div>
+                            </div>
+                            <div class="item-price">
+                                Giá: ${item.total_price}
+                            </div>
+                            <div class="item-cancel">
+                                <button class="delete-item" title="Hủy món">Hủy</button>
                             </div>
                         </div>
-                        <div class="item-price">
-                            Giá: ${item.total_price}
-                        </div>
-                        <div class="item-cancel">
-                            <button class="delete-item" title="Hủy món">Hủy</button>
-                        </div>
-                    </div>
-                    
-                </div >
-        `;
+                        
+                    </div >
+            `;
                 }
             });
 

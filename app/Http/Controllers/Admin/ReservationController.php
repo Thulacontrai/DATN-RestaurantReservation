@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Events\MessageSent;
 use App\Events\MessageSentt;
+use App\Events\NotifyUserEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreReservationRquest;
 use App\Models\Coupon;
@@ -885,6 +886,7 @@ class ReservationController extends Controller
                 }
             ])->get();
             broadcast(new MessageSent($tables))->toOthers();
+            broadcast(new NotifyUserEvent('Đơn đặt bàn của bạn đã được thanh toán thành công!'));
         });
         return redirect(route('pos.index'));
     }
@@ -926,6 +928,7 @@ class ReservationController extends Controller
                 }
             ])->get();
             broadcast(new MessageSentt($tables))->toOthers();
+            broadcast(new NotifyUserEvent('Đơn đặt bàn của bạn đã được thanh toán thành công!'));
         });
         return response()->json([
             'success' => true,

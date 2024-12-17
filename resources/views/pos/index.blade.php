@@ -681,15 +681,15 @@
                                     $adults.attr('min', 1);
                                     $adults.attr('max', MAX_GUESTS_PER_TABLE);
                                     $adults.val(
-                                    1); 
+                                        1);
                                     return;
                                 }
 
                                 const maxGuests = selectedTables *
-                                MAX_GUESTS_PER_TABLE; 
+                                    MAX_GUESTS_PER_TABLE;
                                 const minGuests = selectedTables === 1 ? 1 : (
-                                    selectedTables - 1) * MAX_GUESTS_PER_TABLE +
-                                1; 
+                                        selectedTables - 1) * MAX_GUESTS_PER_TABLE +
+                                    1;
 
                                 $adults.attr('max', maxGuests);
                                 $adults.attr('min', minGuests);
@@ -765,6 +765,12 @@
         }
         const orderDetails = document.getElementById('order-details');
         orderDetails.addEventListener("click", function(event) {
+            if (event.target.id === 'editInformation') {
+                editInformation(selectedTableId);
+            }
+            if (event.target.id === 'combineTables') {
+                combineTables();
+            }
             const dishElement = event.target.closest(".item-list");
             if (dishElement) {
                 const dishId = dishElement.dataset.dishId;
@@ -1219,8 +1225,213 @@
                 showNotification('Hãy chọn bàn trước khi thêm món', 'error')
             }
         }
+        function editInformation(selectedTableId) {
+            fetch('/checkTables', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector(
+                                'meta[name="csrf-token"]')
+                            .getAttribute('content'),
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        table_id: selectedTableId
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error('Failed to fetch available tables');
+                    return response.json();
+                })
+                .then(data => {
+                    const availableTables = data.tables || [];
+                    const tableIds = data.tableIds || [];
+                    const users = data.users || [];
+                    const user = data.user || [];
+                    const phone = data.phone || [];
+                    const quantity = data.quantity || [];
+                    Swal.fire({
+                        title: 'Chỉnh sửa thông tin bàn',
+                        html: `
+          <div class="container">
+            <div class="mb-3">
+                <label for="customer" class="form-label">Khách hàng</label>
+                <select id="customer" class="form-select">
+                    <option value="${user}" selected>${user}</option>
+                    ${users.map(user => `
+                        <option value="${user.name}" data-phone="${user.phone}">
+                            ${user.name}
+                        </option>
+                        `).join('')}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="phone" class="form-label">Số điện thoại</label>
+                <input type="text" value="${phone}" id="phone" class="form-control" placeholder="Số điện thoại">
+            </div>
+            <div class="mb-3">
+              <label for="tableRoom" class="form-label">Phòng/Bàn</label><br>
+              <select id="tableRoom" class="form-select" multiple>
+                    ${availableTables.map(table => `
+                        <option value="${table.id}" ${tableIds.includes(table.id) ? 'selected' : ''}>
+                            Bàn ${table.table_number}
+                        </option>
+                    `).join('')}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Số khách</label>
+                <input type="number" id="adults" class="form-control" placeholder="Số khách" min="1" max="6" value="${quantity}">
+            </div>
+          </div>
+        `,
+                        showCancelButton: true,
+                        confirmButtonText: 'Xác nhận',
+                        cancelButtonText: 'Hủy',
+                        didOpen: () => {
+                            const MAX_GUESTS_PER_TABLE = 4;
+                            const $tableRoom = $('#tableRoom');
+                            const $adults = $('#adults');
+                            const $customer = $('#customer');
+                            const $phone = $('#phone');
 
+                            $customer.select2({
+                                placeholder: 'Tìm khách hàng',
+                                tags: true,
+                                dropdownParent: $('.swal2-container'),
+                                createTag: function(params) {
+                                    const term = $.trim(params.term);
+                                    if (term === '') {
+                                        return null;
+                                    }
+                                    return {
+                                        id: term,
+                                        text: term,
+                                        isNew: true
+                                    };
+                                }
+                            });
+
+                            $tableRoom.select2({
+                                placeholder: 'Chọn Phòng/Bàn',
+                                allowClear: true,
+                                dropdownParent: $('.swal2-container')
+                            });
+
+                            $customer.on('change', function() {
+                                const selectedOption = $(this).find(':selected');
+                                const phone = selectedOption.data('phone') || '';
+                                $phone.val(phone);
+                            });
+
+                            $phone.on('input', function() {
+                                const newPhone = $(this).val();
+                                let matchedCustomer = null;
+                                $customer.find('option').each(function() {
+                                    if ($(this).data('phone') === newPhone) {
+                                        matchedCustomer = $(this).val();
+                                        return false;
+                                    }
+                                });
+
+                                if (matchedCustomer) {
+                                    $customer.val(matchedCustomer).trigger('change');
+                                }
+                            });
+
+                            const updateGuestLimits = () => {
+                                const selectedTables = $tableRoom.val().length;
+                                if (selectedTables === 0) {
+                                    $adults.attr('min', 1);
+                                    $adults.attr('max', MAX_GUESTS_PER_TABLE);
+                                    $adults.val(
+                                        1);
+                                    return;
+                                }
+
+                                const maxGuests = selectedTables *
+                                    MAX_GUESTS_PER_TABLE;
+                                const minGuests = selectedTables === 1 ? 1 : (
+                                        selectedTables - 1) * MAX_GUESTS_PER_TABLE +
+                                    1;
+
+                                $adults.attr('max', maxGuests);
+                                $adults.attr('min', minGuests);
+
+                                const currentValue = parseInt($adults.val(), 10);
+                                if (currentValue < minGuests) {
+                                    $adults.val(minGuests);
+                                } else if (currentValue > maxGuests) {
+                                    $adults.val(maxGuests);
+                                }
+                            };
+                            $tableRoom.on('change', updateGuestLimits);
+                            $adults.on('input', () => {
+                                const maxGuests = parseInt($adults.attr('max'), 10);
+                                const minGuests = parseInt($adults.attr('min'), 10);
+                                const currentValue = parseInt($adults.val(), 10);
+
+                                if (currentValue > maxGuests) {
+                                    $adults.val(maxGuests);
+                                } else if (currentValue < minGuests || isNaN(
+                                        currentValue)) {
+                                    $adults.val(minGuests);
+                                }
+                            });
+                            updateGuestLimits();
+                        },
+                        preConfirm: () => {
+                            const customer = $('#customer').val();
+                            const phone = $('#phone').val();
+                            const tableRoom = $('#tableRoom').val();
+                            const adults = $('#adults').val();
+                            if (!customer || !tableRoom.length || !phone) {
+                                Swal.showValidationMessage('Vui lòng nhập đầy đủ thông tin');
+                                return false;
+                            }
+                            return {
+                                customer,
+                                phone,
+                                tableRoom,
+                                adults,
+                            };
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            showNotification('Chỉnh sửa thành công');
+                            fetch(`/edit-order/${selectedTableId}`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'X-CSRF-TOKEN': document.querySelector(
+                                                'meta[name="csrf-token"]')
+                                            .getAttribute('content'),
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({
+                                        table_id: result.value.tableRoom,
+                                        phone: result.value.phone,
+                                        user: result.value.customer,
+                                        quantity: result.value.adults,
+                                    })
+                                })
+                                .then(response => {
+                                    if (!response.ok) throw new Error(
+                                        'Network response was not ok');
+                                    return response.json();
+                                })
+                                .then(data => {
+                                    selectedTableId = data.tableId;
+                                    console.log(selectedTableId + '1');
+                                    showOrderDetails(data.tableId);
+                                })
+                                .catch(() => showNotification('Lỗi khi tạo đơn', 'error'));
+                        } else if (result.isDenied) {
+                            showNotification('Tạo đơn thất bại', 'error');
+                        }
+                    });
+                })
+        }
         function showOrderDetails(tableId) {
+            selectedTableId = tableId;
             fetch('/order-details/' + tableId, {
                     method: 'POST',
                     headers: {
@@ -1285,6 +1496,12 @@
                 position: 'top-end'
             });
         }
+
+        function combineTables() {
+
+        }
+
+        
     });
 </script>
 @vite(['resources/js/posTable.js', 'resources/js/orderItem.js', 'resources/js/DishStatusUpdated.js'])

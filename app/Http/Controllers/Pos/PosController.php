@@ -255,7 +255,55 @@ class PosController extends Controller
             'table_status' => $table->status,
         ]);
     }
-
+    public function editOrder(Request $request, $id)
+    {
+        $user = User::where('phone', $request->phone)
+            ->where('name', $request->user)->first();
+        if (!$user) {
+            $user = User::create([
+                'phone' => $request->phone,
+                'name' => $request->user,
+                'password' => bcrypt(Str::random(10)),
+                'status' => 'inactive',
+            ]);
+        }
+        $order = Table::find($id)->orders->where('status', 'pending')->first();
+        $order->customer_id = $user->id;
+        $order->guest_count = (int) $request->quantity;
+        foreach ($order->tables as $table) {
+            $table->pivot->delete();
+            $table->status = 'Available';
+            $table->save();
+        }
+        $order->save();
+        foreach ($request->table_id as $id) {
+            $table = Table::findOrFail($id);
+            $order->tables()->attach(
+                $id,
+                ['start_time' => now()]
+            );
+            $table->update(['status' => 'Occupied']);
+        }
+        $tables = Table::with([
+            'orders' => function ($query) {
+                $query->where('orders.status', '!=', 'completed')
+                    ->where('orders.status', '!=', 'waiting')
+                    ->with([
+                        'reservation' => function ($query) {
+                            $query->select('id', 'user_name');
+                        },
+                        'customer' => function ($query) {
+                            $query->select('id', 'name');
+                        }
+                    ]);
+            }
+        ])->get();
+        broadcast(new MessageSent($tables))->toOthers();
+        return response()->json([
+            'success' => 'success',
+            'tableId' => $table->id,
+        ]);
+    }
 
     // Thêm món vào order_items
     public function addDishToOrder(Request $request)
@@ -1428,11 +1476,11 @@ class PosController extends Controller
             ->get();
         broadcast(new ProcessingDishes($items, "Bàn $tableId->table_number gửi yêu cầu chế biến"))->toOthers();
         $orderItem = OrderItem::with(['dish:id,name,image', 'combo:id,name,image'])
-                ->where('order_id', $orderId)
-                ->where('status', '!=', 'chưa yêu cầu')
-                ->get();
-            $orderItemArray = $orderItem->toArray();
-            broadcast(new ItemUpdated($orderItemArray, 'Danh sách đã được Nhân viên POS cập nhật!', $request->table_id))->toOthers();
+            ->where('order_id', $orderId)
+            ->where('status', '!=', 'chưa yêu cầu')
+            ->get();
+        $orderItemArray = $orderItem->toArray();
+        broadcast(new ItemUpdated($orderItemArray, 'Danh sách đã được Nhân viên POS cập nhật!', $request->table_id))->toOthers();
         return response()->json([
             'success' => true,
         ]);
@@ -1539,11 +1587,11 @@ class PosController extends Controller
             ->get();
         broadcast(new ProcessingDishes($items, "Bàn $tableId->table_number gửi yêu cầu chế biến"))->toOthers();
         $orderItem = OrderItem::with(['dish:id,name,image', 'combo:id,name,image'])
-                ->where('order_id', $orderId)
-                ->where('status', '!=', 'chưa yêu cầu')
-                ->get();
-            $orderItemArray = $orderItem->toArray();
-            broadcast(new ItemUpdated($orderItemArray, 'Danh sách đã được Nhân viên POS cập nhật!', $request->table_id))->toOthers();
+            ->where('order_id', $orderId)
+            ->where('status', '!=', 'chưa yêu cầu')
+            ->get();
+        $orderItemArray = $orderItem->toArray();
+        broadcast(new ItemUpdated($orderItemArray, 'Danh sách đã được Nhân viên POS cập nhật!', $request->table_id))->toOthers();
         return response()->json([
             'success' => true,
         ]);
@@ -2141,5 +2189,25 @@ class PosController extends Controller
         $availableTables = Table::where('status', 'Available')->get(['id', 'table_number']);
         $user = User::where('phone', '!=', null)->get(['id', 'name', 'phone']);
         return response()->json(['tables' => $availableTables, 'users' => $user]);
+    }
+    public function checkTables(Request $request)
+    {
+        $table = Table::find($request->table_id);
+        $tables = $table->orders->where('status', 'pending')->first()->tables;
+        $tableIds = $tables->pluck('id')->toArray();
+        if ($table->orders->where('status', 'pending')->first()->reservation?->user_name == null) {
+            $user = $table->orders->where('status', 'pending')->first()->customer->name;
+            $phone = $table->orders->where('status', 'pending')->first()->customer->phone;
+            $quantity = $table->orders->where('status', 'pending')->first()->guest_count;
+        } else {
+            $user = $table->orders->where('status', 'pending')->first()->reservation?->user_name;
+            $phone = $table->orders->where('status', 'pending')->first()->reservation?->user_phone;
+            $quantity = $table->orders->where('status', 'pending')->first()->reservation?->guest_count;
+        }
+        $availableTables = Table::where('status', 'Available')
+            ->orwhereIn('id', $tableIds)
+            ->get(['id', 'table_number']);
+        $users = User::where('phone', '!=', null)->get(['id', 'name', 'phone']);
+        return response()->json(['tables' => $availableTables, 'users' => $users, 'tableIds' => $tableIds, 'user' => $user, 'phone' => $phone, 'quantity' => $quantity]);
     }
 }

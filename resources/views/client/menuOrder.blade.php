@@ -12,9 +12,9 @@
         <script>
             Swal.fire({
                 title: "Bạn chưa gọi món",
-                text: "{{ sesstion('error') }}",
+                text: "{{ session('error') }}",
                 icon: "warning",
-                timer: 2000,
+                timer: 4000,
                 timerProgressBar: true,
                 showCloseButton: true
             });
@@ -91,7 +91,7 @@
         <span id="cart-total">Tổng số lượng ({{ $item->sum('quantity') }})</span>
         <span id="cart-quantity">{{ number_format($total, 0, ',', '.') }}đ</span>
     </a>
-    @vite(['resources/js/menuOrder.js', 'resources/js/DishStatus.js'])
+    @vite(['resources/js/menuOrder.js', 'resources/js/DishStatus.js', 'resources/js/notiRedirect.js'])
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>

@@ -515,12 +515,17 @@ class OrderController extends Controller
             ['path' => request()->url(), 'query' => request()->query()] // Cấu hình URL phân trang
         );
         if ($item->count() == 0) {
-            return redirect()->back()->with('error', 'Vui lòng gọi món trước!');
+            return redirect("menu-order?data=$id")->with('error', 'Vui lòng gọi món trước!');
         }
         ;
-        $total = $item->sum(function ($item) {
-            return $item->price * $item->quantity;
-        });
+        $total = $order->items
+            ->where('status', '!=', 'chưa yêu cầu')
+            ->filter(function ($item) {
+                return $item->status != 'hủy';
+            })
+            ->sum(function ($item) {
+                return $item->price * $item->quantity;
+            });
         $url = route('menuOrder', ['data' => $id]);
         return view('client.menuHistory', compact('pagedItems', 'item', 'table', 'order', 'url', 'total'));
     }
