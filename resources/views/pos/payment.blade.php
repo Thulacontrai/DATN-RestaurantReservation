@@ -11,8 +11,28 @@
                     <h5 class="text-muted text-center mb-4">Thông tin đặt bàn</h5>
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-user"></i> <strong>Tên khách hàng:</strong></span>
+                            @if (isset($order->reservation->user_name))
+                                <span>{{ $order->reservation->user_name }}</span>
+                            @elseif (isset($order->reservation->customer->name))
+                                <span>{{ $order->reservation->customer->name }}</span>
+                            @elseif(isset($order->customer->name))
+                                <span>{{ $order->customer->name }}</span>
+                            @else
+                                <span>Khách lẻ </span>
+                            @endif
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
                             <span><i class="fas fa-chair"></i> <strong>Số bàn:</strong></span>
                             <span>{{ $table->table_number }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-pen-to-square"></i> <strong>Mã đơn:</strong></span>
+                            @if (isset($order->reservation->id))
+                                <span>{{ $order->reservation->id }}</span>
+                            @else
+                                <span>{{ $order->id }}</span>
+                            @endif
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <span><i class="fas fa-crown"></i> <strong>Loại bàn:</strong></span>
@@ -54,7 +74,11 @@
                         <tbody>
                             @foreach ($order_items as $item)
                                 <tr>
-                                    <td>{{ $item->dish->name }}</td>
+                                    @if ($item->item_type == 1)
+                                        <td>{{ $item->dish->name }}</td>
+                                    @else
+                                        <td>{{ $item->combo->name }}</td>
+                                    @endif
                                     <td class="text-center">{{ $item->quantity }}</td>
                                     <td class="text-end">{{ number_format($item->price) }} VND</td>
                                     <td class="text-end">{{ number_format($item->total_price) }} VND</td>
@@ -62,13 +86,15 @@
                             @endforeach
                         </tbody>
                         <tfoot>
-                            <tr>
-                                <td colspan="3" class="text-end"><strong>Khách đã cọc:</strong></td>
-                                <td class="text-end text-success">
-                                    <strong>{{ number_format($order->reservation->deposit_amount ?? 0) }}
-                                        VND</strong>
-                                </td>
-                            </tr>
+                            @if (isset($order->reservation->deposit_amount))
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Khách đã cọc:</strong></td>
+                                    <td class="text-end text-success">
+                                        <strong>{{ number_format($order->reservation->deposit_amount ?? 0) }}
+                                            VND</strong>
+                                    </td>
+                                </tr>
+                            @endif
                             <tr>
                                 <td colspan="3" class="text-end"><strong>Tổng cộng:</strong></td>
                                 <td class="text-end text-success">
@@ -300,7 +326,7 @@
                         Swal.fire({
                             title: 'Đang chờ thanh toán',
                             html: 'Vui lòng quét mã thanh toán...',
-                            imageUrl: 'https://img.vietqr.io/image/MB-0964236835-compact2.png?amount={{ $order->total_amount - ($order->reservation->deposit_amount??0) }}&addInfo=Thanh Toan Don Hang {{ $order->id }}',
+                            imageUrl: 'https://img.vietqr.io/image/MB-0964236835-compact2.png?amount={{ $order->total_amount - ($order->reservation->deposit_amount ?? 0) }}&addInfo=Thanh Toan Don Hang {{ $order->id }}',
                             imageWidth: 400,
                             imageHeight: 450,
                             showConfirmButton: false,
@@ -323,7 +349,7 @@
 
                     var checkInterval = 1000;
                     var delayBeforeStart = 5000;
-                    var desiredAmount = totalAmount;
+                    var desiredAmount = totalAmount - depositAmount;
                     var desiredDescription = 'Thanh Toan Don Hang ' + {{ $order->id }};
                     var transactionFound = false;
                     var intervalId;
@@ -397,8 +423,7 @@
                                         transactionFound = true;
                                         clearInterval(intervalId);
                                     } else {
-                                        $('#status').text(
-                                            'Chưa tìm thấy giao dịch phù hợp.');
+                                        // console.log('Chưa tìm thấy giao dịch phù hợp.');
                                     }
                                 });
                             },

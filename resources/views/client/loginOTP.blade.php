@@ -167,7 +167,7 @@
 
     <div class="background-overlay"></div>
     <div class="login-container">
-        <img src="{{ asset('images/11b25f74-1f72-44cf-8b1b-d4bf2e3c0999.jpg') }}" alt="Logo" loading="lazy">
+        <img class="logo" src="client/03_images/logo.png" alt="">
         <h1>Đăng Nhập</h1>
         <div id="timeout-message">Hết thời gian nhập mã OTP hãy Đăng Nhập lại.</div>
         <!-- Thông báo đăng nhập lại ở đây -->

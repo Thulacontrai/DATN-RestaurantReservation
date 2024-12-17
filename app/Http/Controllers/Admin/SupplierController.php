@@ -23,7 +23,6 @@ class SupplierController extends Controller
         $this->middleware('permission:Tạo mới nhà cung cấp', ['only' => ['create']]);
         $this->middleware('permission:Sửa nhà cung cấp', ['only' => ['edit']]);
         $this->middleware('permission:Xóa nhà cung cấp', ['only' => ['destroy']]);
-        
     }
     use TraitCRUD;
 
@@ -34,12 +33,28 @@ class SupplierController extends Controller
 
     public function index(Request $request)
     {
+        $title = 'Nhà Cung Cấp';
+
+        // Lấy tham số tìm kiếm
         $suppliers = Supplier::when($request->name, function ($query) use ($request) {
             $query->where('name', 'like', '%' . $request->name . '%');
-        })->paginate(10);
+        });
 
-        return view('admin.ingredientType.supplier.index', compact('suppliers'));
+        // Xử lý sắp xếp
+        if ($request->has('sort') && $request->has('direction')) {
+            $suppliers->orderBy($request->get('sort'), $request->get('direction'));
+        } else {
+            // Nếu không có tham số sắp xếp, mặc định sắp xếp theo ID giảm dần
+            $suppliers->orderBy('id', 'desc');
+        }
+
+        // Phân trang kết quả
+        $suppliers = $suppliers->paginate(10);
+
+        return view('admin.ingredientType.supplier.index', compact('suppliers', 'title'));
     }
+
+
 
 
     /**
@@ -48,7 +63,8 @@ class SupplierController extends Controller
      */
     public function create()
     {
-        return view('admin.ingredientType.supplier.create');
+        $title = 'Thêm Mới Nhà Cung Cấp';
+        return view('admin.ingredientType.supplier.create', compact('title'));
     }
 
 
@@ -75,12 +91,14 @@ class SupplierController extends Controller
 
     public function edit($id)
     {
+        $title = 'Chỉnh Sửa Nhà Cung Cấp';
         $supplier = Supplier::findOrFail($id);
-        return view('admin.ingredientType.supplier.edit', compact('supplier'));
+        return view('admin.ingredientType.supplier.edit', compact('supplier', 'title'));
     }
 
     public function update(Request $request, $id)
     {
+
         $request->validate([
             'name' => 'required|string|max:255',
             'phone' => 'required|string|max:20',
@@ -98,7 +116,7 @@ class SupplierController extends Controller
 
         return redirect()->route('admin.supplier.index')->with('success', 'Cập nhật nhà cung cấp thành công.');
     }
-    
+
 
     public function destroy($id)
     {
@@ -117,95 +135,95 @@ class SupplierController extends Controller
         return view('admin.ingredientType.supplier.import');
     }
     public function import(Request $request)
-{
-    // Xác thực file upload
-    $request->validate([
-        'file' => 'required|mimes:xlsx,xls',
-    ], [
-        'file.required' => 'Vui lòng chọn file.',
-        'file.mimes' => 'File phải là định dạng Excel (.xlsx, .xls).',
-    ]);
+    {
+        // Xác thực file upload
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls',
+        ], [
+            'file.required' => 'Vui lòng chọn file.',
+            'file.mimes' => 'File phải là định dạng Excel (.xlsx, .xls).',
+        ]);
 
-    // Đọc file Excel
-    $file = $request->file('file');
-    $spreadsheet = IOFactory::load($file->getPathname());
+        // Đọc file Excel
+        $file = $request->file('file');
+        $spreadsheet = IOFactory::load($file->getPathname());
 
-    // Lấy dữ liệu từ sheet đầu tiên
-    $sheetData = $spreadsheet->getActiveSheet()->toArray();
+        // Lấy dữ liệu từ sheet đầu tiên
+        $sheetData = $spreadsheet->getActiveSheet()->toArray();
 
-    // Định nghĩa các cột cần thiết
-    $requiredColumns = ['name', 'phone', 'email', 'address'];
-    $numRequiredColumns = count($requiredColumns);
+        // Định nghĩa các cột cần thiết
+        $requiredColumns = ['name', 'phone', 'email', 'address'];
+        $numRequiredColumns = count($requiredColumns);
 
-    $headerRow = true;
-    $errors = [];
+        $headerRow = true;
+        $errors = [];
 
-    foreach ($sheetData as $index => $row) {
-        // Kiểm tra số lượng cột trong dòng đầu tiên (giả định dòng đầu tiên là header)
-        if ($headerRow) {
-            $headerRow = false;
+        foreach ($sheetData as $index => $row) {
+            // Kiểm tra số lượng cột trong dòng đầu tiên (giả định dòng đầu tiên là header)
+            if ($headerRow) {
+                $headerRow = false;
 
-            // Nếu số lượng cột không khớp, thông báo lỗi và dừng lại
-            if (count($row) !== $numRequiredColumns) {
-                $errors[] = "File không đúng, vui lòng kiểm tra lại file của bạn. Số cột yêu cầu: " . $numRequiredColumns;
-                break;
+                // Nếu số lượng cột không khớp, thông báo lỗi và dừng lại
+                if (count($row) !== $numRequiredColumns) {
+                    $errors[] = "File không đúng, vui lòng kiểm tra lại file của bạn. Số cột yêu cầu: " . $numRequiredColumns;
+                    break;
+                }
+
+                continue;
             }
 
-            continue;
+            // Nếu số lượng cột không khớp, thêm thông báo lỗi cho dòng hiện tại
+            if (count($row) !== $numRequiredColumns) {
+                $errors[] = "Dòng " . ($index + 1) . ": Không đúng số cột. Yêu cầu " . $numRequiredColumns . " cột.";
+                continue;
+            }
+
+            // Thực hiện validation cho từng dòng
+            $validator = Validator::make([
+                'name'    => $row[0],
+                'phone'   => $row[1],
+                'email'   => $row[2],
+                'address' => $row[3],
+            ], [
+                'name'    => 'required|string|max:255',
+                'phone'   => 'required|numeric|digits_between:10,15',
+                'email'   => 'required|email|unique:suppliers,email',
+                'address' => 'nullable|string|max:255',
+            ]);
+
+            // Kiểm tra nếu dữ liệu không hợp lệ
+            if ($validator->fails()) {
+                $errors[] = "Dòng " . ($index + 1) . ": " . implode(', ', $validator->errors()->all());
+                continue;
+            }
+
+            // Kiểm tra trùng lặp dựa trên 'name' và 'email'
+            $existingSupplier = Supplier::where('name', $row[0])
+                ->where('email', $row[2])
+                ->first();
+
+            if ($existingSupplier) {
+                $errors[] = "Dòng " . ($index + 1) . ": Nhà cung cấp đã tồn tại.";
+                continue;
+            }
+
+            // Nếu dữ liệu hợp lệ và không bị trùng, tạo nhà cung cấp mới
+            Supplier::create([
+                'name'    => $row[0],
+                'phone'   => $row[1],
+                'email'   => $row[2],
+                'address' => $row[3],
+            ]);
         }
 
-        // Nếu số lượng cột không khớp, thêm thông báo lỗi cho dòng hiện tại
-        if (count($row) !== $numRequiredColumns) {
-            $errors[] = "Dòng " . ($index + 1) . ": Không đúng số cột. Yêu cầu " . $numRequiredColumns . " cột.";
-            continue;
+        // Kiểm tra nếu có lỗi trong quá trình import
+        if (!empty($errors)) {
+            return redirect()->back()->withErrors(['errors' => $errors]);
         }
 
-        // Thực hiện validation cho từng dòng
-        $validator = Validator::make([
-            'name'    => $row[0],
-            'phone'   => $row[1],
-            'email'   => $row[2],
-            'address' => $row[3],
-        ], [
-            'name'    => 'required|string|max:255',
-            'phone'   => 'required|numeric|digits_between:10,15',
-            'email'   => 'required|email|unique:suppliers,email',
-            'address' => 'nullable|string|max:255',
-        ]);
-
-        // Kiểm tra nếu dữ liệu không hợp lệ
-        if ($validator->fails()) {
-            $errors[] = "Dòng " . ($index + 1) . ": " . implode(', ', $validator->errors()->all());
-            continue;
-        }
-
-        // Kiểm tra trùng lặp dựa trên 'name' và 'email'
-        $existingSupplier = Supplier::where('name', $row[0])
-            ->where('email', $row[2])
-            ->first();
-
-        if ($existingSupplier) {
-            $errors[] = "Dòng " . ($index + 1) . ": Nhà cung cấp đã tồn tại.";
-            continue;
-        }
-
-        // Nếu dữ liệu hợp lệ và không bị trùng, tạo nhà cung cấp mới
-        Supplier::create([
-            'name'    => $row[0],
-            'phone'   => $row[1],
-            'email'   => $row[2],
-            'address' => $row[3],
-        ]);
+        // Sau khi import thành công, quay lại trang danh sách nhà cung cấp
+        return redirect()->route('admin.supplier.index')->with('success', 'Import thành công!');
     }
-
-    // Kiểm tra nếu có lỗi trong quá trình import
-    if (!empty($errors)) {
-        return redirect()->back()->withErrors(['errors' => $errors]);
-    }
-
-    // Sau khi import thành công, quay lại trang danh sách nhà cung cấp
-    return redirect()->route('admin.supplier.index')->with('success', 'Import thành công!');
-}
 
 
     public function downloadTemplate()
@@ -238,5 +256,4 @@ class SupplierController extends Controller
         $writer->save('php://output');
         exit;
     }
-
 }

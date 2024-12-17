@@ -4,57 +4,87 @@
 
 @section('content')
 
+    @include('admin.layouts.messages')
+
+
+
     <!-- Content wrapper scroll start -->
     <div class="content-wrapper-scroll">
-
-        <!-- Content wrapper start -->
         <div class="content-wrapper">
-
-            <!-- Row start -->
             <div class="row">
                 <div class="col-sm-12 col-12">
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <div class="card-title">Danh sách phản hồi</div>
-
-                            <!-- Nút Thêm Mới và Khôi Phục -->
-                            <div class="d-flex gap-2">
-                                <a href="" class="btn btn-sm btn-secondary d-flex align-items-center">
-                                    <i class="bi bi-trash3 me-2"></i> Khôi Phục
-                                </a>
-                            </div>
                         </div>
                         <div class="card-body">
+                            <div class="row g-2">
+                                <div class="col-auto">
+                                    <!-- Input with search icon inside -->
+                                    <div class="input-group">
+                                        <form method="GET" action="{{ route('admin.feedback.index') }}" class="mb-3">
+                                            <div class="row g-2">
+                                                <div class="col-auto">
+                                                    <input type="text" id="search" name="search"
+                                                        class="form-control form-control-sm"
+                                                        placeholder="Tìm kiếm tên khách hàng"
+                                                        value="{{ request('search') }}">
+                                                </div>
+                                                <div class="col-auto">
+                                                    <button type="submit" class="btn btn-sm btn-primary">Tìm kiếm</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
 
-                            <!-- Table list of feedbacks -->
+                                </div>
+                                <div class="col-auto">
+
+                                </div>
+                            </div>
                             <div class="table-responsive">
                                 <table class="table v-middle m-0">
                                     <thead>
                                         <tr>
-                                            <th>ID</th>
-                                            <th>Mã Đặt Chỗ</th>
-                                            <th>Mã Khách Hàng</th>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.feedback.index', array_merge(request()->query(), ['sort' => 'reservation_id', 'direction' => request('sort') === 'reservation_id' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}">
+                                                    Mã Đơn Hàng
+                                                    <i
+                                                        class="bi bi-arrow-{{ request('sort') === 'reservation_id' ? (request('direction') === 'asc' ? 'up' : 'down') : '' }}"></i>
+                                                </a>
+                                            </th>
+                                            <th>Tên Khách Hàng</th>
                                             <th>Nội Dung</th>
-                                            <th>Xếp Hạng</th>
+                                            <th> <a
+                                                    href="{{ route('admin.feedback.index', array_merge(request()->query(), ['sort' => 'rating', 'direction' => request('sort') === 'rating' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}">
+                                                    Xếp Hạng
+                                                    <i
+                                                        class="bi bi-arrow-{{ request('sort') === 'rating' ? (request('direction') === 'asc' ? 'up' : 'down') : '' }}"></i>
+                                                </a></th>
                                             <th>Hành Động</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @forelse ($feedbacks as $feedback)
                                             <tr>
-                                                <td>{{ $feedback->id }}</td>
                                                 <td>{{ $feedback->reservation_id }}</td>
-                                                <td>{{ $feedback->customer_id }}</td>
-                                                <td>{{ $feedback->content }}</td>
-                                                <td>{{ $feedback->rating }}</td>
+                                                <td>{{ $feedback->customer->name ?? 'Khách hàng không tồn tại' }}</td>
+                                                <td id="content_{{ $feedback->id }}">{{ $feedback->content }}</td>
+                                                <td id="rating_{{ $feedback->id }}">
+                                                    @for ($i = 1; $i <= 5; $i++)
+                                                        @if ($i <= $feedback->rating)
+                                                            <i class="fa fa-star" style="color: gold;"></i>
+                                                        @else
+                                                            <i class="fa fa-star-o" style="color: gold;"></i>
+                                                        @endif
+                                                    @endfor
+                                                </td>
                                                 <td>
                                                     <div class="actions d-flex">
-                                                        <a href="#" class="editRow me-2">
+                                                        <a href="{{ route('admin.feedback.show', $feedback->id) }}"
+                                                            data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight">
                                                             <i class="bi bi-list text-green"></i>
-                                                        </a>
-                                                        <a href="{{ route('admin.feedback.edit', $feedback->id) }}"
-                                                            class="editRow me-2">
-                                                            <i class="bi bi-pencil-square text-warning"></i>
                                                         </a>
                                                         <a href="">
                                                             <form
@@ -63,7 +93,6 @@
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button type="submit" class="btn btn-link p-0"
-                                                                    style="margin-top: 15px;"
                                                                     onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
                                                                     <i class="bi bi-trash text-red"></i>
                                                                 </button>
@@ -80,124 +109,20 @@
                                     </tbody>
                                 </table>
                             </div>
-
-                            <!-- Pagination -->
-                            <div class="pagination justify-content-center mt-3">
-                                {{-- {{ $feedbacks->links() }} --}}
-                            </div>
-                            <!-- Kết thúc Pagination -->
-
                         </div>
                     </div>
                 </div>
+
+                <div class="d-flex justify-content-center">
+
+                    {{ $feedbacks->links('pagination::client-paginate') }}
+
+                </div>
             </div>
-            <!-- Row end -->
-
         </div>
     </div>
-    <!-- Content wrapper scroll end -->
-    <div id="notification" class="notification d-none">
-        <div class="notification-icon">
-            <i class="bi"></i>
-        </div>
-        <div class="notification-content">
-            <strong id="notification-title"></strong>
-            <p id="notification-message"></p>
-        </div>
+    </div>
     </div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // Hàm hiển thị thông báo
-            function showNotification(message, type = "success") {
-                const notification = document.getElementById("notification");
-                const notificationIcon = notification.querySelector(".notification-icon i");
-                const notificationTitle = document.getElementById("notification-title");
-                const notificationMessage = document.getElementById("notification-message");
-
-                // Cập nhật nội dung thông báo
-                notificationMessage.textContent = message;
-
-                // Đặt kiểu thông báo
-                if (type === "success") {
-                    notification.style.background = "linear-gradient(90deg, #58ade8, #48d1cc)";
-                    notification.style.color = "#ffffff";
-                    notificationIcon.className = "bi bi-check-circle-fill icon-animate";
-                    notificationTitle.textContent = "Thành công!";
-                } else if (type === "error") {
-                    notification.style.background = "linear-gradient(90deg, #f44336, #ff6347)";
-                    notification.style.color = "#ffffff";
-                    notificationIcon.className = "bi bi-x-circle-fill icon-animate";
-                    notificationTitle.textContent = "Lỗi!";
-                }
-
-                // Hiển thị thông báo
-                notification.classList.remove("d-none");
-                notification.classList.add("show");
-
-                // Ẩn thông báo sau 3 giây
-                setTimeout(() => {
-                    notification.classList.remove("show");
-                    notification.classList.add("hide");
-
-                    // Reset sau khi ẩn
-                    setTimeout(() => {
-                        notification.classList.add("d-none");
-                        notification.classList.remove("hide");
-                        notificationIcon.classList.remove("icon-animate");
-                    }, 300);
-                }, 3000);
-            }
-
-            // Hiển thị thông báo từ session
-            @if (session('success'))
-                showNotification("{{ session('success') }}", "success");
-            @endif
-
-            @if (session('error'))
-                showNotification("{{ session('error') }}", "error");
-            @endif
-        });
-    </script>
 
 @endsection
-
-<style>
-    .notification {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        max-width: 300px;
-        background: #ffffff;
-        color: #333;
-        border-radius: 8px;
-        padding: 12px 16px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-size: 14px;
-        font-weight: 500;
-        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-        opacity: 0;
-        pointer-events: none;
-        transform: translateY(-10px);
-        transition: opacity 0.3s ease, transform 0.3s ease;
-    }
-
-    .notification.show {
-        opacity: 1;
-        pointer-events: all;
-        transform: translateY(0);
-    }
-
-    .notification.hide {
-        opacity: 0;
-        pointer-events: none;
-        transform: translateY(-10px);
-    }
-
-    .notification i {
-        font-size: 20px;
-        color: inherit;
-    }
-</style>

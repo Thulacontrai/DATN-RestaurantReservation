@@ -49,13 +49,15 @@
                             <div class="col position-relative">
                                 <label for="guest_count">Số người đặt bàn*</label>
                                 <input type="number" class="form-control" id="guest_count" name="guest_count"
-                                    value="{{ old('guest_count') ?? ($data['guest_count'] ?? 1) }}" min="1" max="50" required>
-                                <div class="invalid-feedback position-absolute">Số người đặt bàn phải nằm trong khoảng từ 1 đến 50 và không được âm.</div>
+                                    value="{{ old('guest_count') ?? ($data['guest_count'] ?? 1) }}" min="1"
+                                    max="50" required>
+                                <div class="invalid-feedback position-absolute">Số người phải từ 1
+                                    đến 50 và không được âm.</div>
                                 @error('guest_count')
                                     <div class="text-danger position-absolute">{{ $message }}</div>
                                 @enderror
                             </div>
-                            
+
                         </div>
                         <div class="row m-4 d-flex justify-content-center">
                             <div>
@@ -76,8 +78,6 @@
 
 
                         <div class="row m-4 d-flex justify-content-center">
-                            <!-- Căn chỉnh reCAPTCHA ra giữa -->
-                            <div id="recaptcha-container" class="mt-3"></div>
                             <div class="col-2">
                                 <a href="{{ route('booking.client') }}" class="text-secondary">Quay lại</a>
                             </div>
@@ -182,6 +182,15 @@
         .button-container .btn-danger:hover {
             background-color: #b21f2d;
             /* Màu khi hover */
+        }
+        @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+        20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        .shake-element {
+            animation: shake 0.5s;
         }
 
         #recaptcha-container {
@@ -359,7 +368,7 @@
         if (phoneValue === '') {
             errorMessage = 'Số điện thoại không được để trống.';
         } else if (!/^(0[1-9][0-9]{8})$/.test(phoneValue)) {
-            errorMessage = 'Số điện thoại không hợp lệ. Phải là 10 chữ số và bắt đầu bằng 0.';
+            errorMessage = 'Số điện thoại. Phải là 10 chữ số và bắt đầu bằng 0.';
         }
 
         // Tạo hoặc cập nhật thông báo lỗi
@@ -396,43 +405,75 @@
     }
 
     // Validation khi nhấn nút Xác nhận
-    window.sendOTP = function() {
-        const isNameValid = validateName();
-        const isPhoneValid = validatePhone();
-        const isGuestCountValid = validateGuestCount();
+window.sendOTP = function() {
+    const isNameValid = validateName();
+    const isPhoneValid = validatePhone();
+    const isGuestCountValid = validateGuestCount();
 
-        // Nếu có bất kỳ trường nào không hợp lệ
-        if (!isNameValid) {
-            userNameInput.focus();
-            return;
+    // Nếu có bất kỳ trường nào không hợp lệ
+    if (!isNameValid) {
+        userNameInput.focus();
+        return;
+    }
+
+    if (!isPhoneValid) {
+        userPhoneInput.focus();
+        return;
+    }
+
+    if (!isGuestCountValid) {
+        guestCountInput.focus();
+        return;
+    }
+
+    // Kiểm tra xem reCAPTCHA đã được verify chưa
+    if (grecaptcha && grecaptcha.getResponse().length === 0) {
+        // Xóa bất kỳ thông báo lỗi hiện tại nào
+        const existingErrorElement = document.getElementById('recaptcha-error-message');
+        if (existingErrorElement) {
+            existingErrorElement.remove();
         }
 
-        if (!isPhoneValid) {
-            userPhoneInput.focus();
-            return;
-        }
-
-        if (!isGuestCountValid) {
-            guestCountInput.focus();
-            return;
-        }
-
-        // Tiếp tục logic gửi OTP
-        let phoneNumber = userPhoneInput.value.trim();
-        phoneNumber = phoneNumber.startsWith('0') ? '+84' + phoneNumber.slice(1) : phoneNumber;
+        // Tạo phần tử thông báo lỗi mới
+        const recaptchaContainer = document.getElementById('recaptcha-container');
+        const errorElement = document.createElement('div');
+        errorElement.id = 'recaptcha-error-message';
+        errorElement.classList.add('text-danger', 'text-center', 'mb-2', 'shake-element');
+        errorElement.textContent = 'Vui lòng xác thực reCAPTCHA trước khi tiếp tục.';
         
-        const appVerifier = window.recaptchaVerifier;
+        // Chèn thông báo lỗi ngay trước hoặc sau container reCAPTCHA
+        recaptchaContainer.parentNode.insertBefore(errorElement, recaptchaContainer);
 
-        signInWithPhoneNumber(auth, phoneNumber, appVerifier)
-            .then((confirmationResult) => {
-                window.confirmationResult = confirmationResult;
-                document.getElementById("otp-popup").style.display = "flex";
-                startOTPTimer();
-            }).catch(error => {
-                console.error("Error sending OTP:", error);
-                showOTPError("Có lỗi xảy ra khi gửi OTP! Vui lòng thử lại.");
-            });
-    };
+        // Thêm hiệu ứng nhấp nháy
+        setTimeout(() => {
+            errorElement.classList.remove('shake-element');
+        }, 500);
+        
+        return;
+    }
+
+    // Tiếp tục logic gửi OTP
+    let phoneNumber = userPhoneInput.value.trim();
+    phoneNumber = phoneNumber.startsWith('0') ? '+84' + phoneNumber.slice(1) : phoneNumber;
+    
+    const appVerifier = window.recaptchaVerifier;
+
+    signInWithPhoneNumber(auth, phoneNumber, appVerifier)
+        .then((confirmationResult) => {
+            // Xóa thông báo lỗi nếu có
+            const existingErrorElement = document.getElementById('recaptcha-error-message');
+            if (existingErrorElement) {
+                existingErrorElement.remove();
+            }
+
+            window.confirmationResult = confirmationResult;
+            document.getElementById("otp-popup").style.display = "flex";
+            startOTPTimer();
+        }).catch(error => {
+            console.error("Error sending OTP:", error);
+            showOTPError("Có lỗi xảy ra khi gửi OTP! Vui lòng thử lại.");
+        });
+};
 
     // Thêm sự kiện input để validation liên tục
     userNameInput.addEventListener('input', validateName);
@@ -466,24 +507,37 @@
     };
 
     // Khởi động bộ đếm thời gian OTP
-    function startOTPTimer() {
-        let timeLeft = 60;
+    
+    let otpStartTime; 
+
+function startOTPTimer() {
+    // Lưu thời điểm bắt đầu
+    otpStartTime = Date.now();
+    let timeLeft = 60;
+    document.getElementById("otp-timer").innerText = `Thời gian còn lại: ${timeLeft} giây`;
+
+    // Clear timer cũ nếu tồn tại
+    if (otpTimer) {
+        clearInterval(otpTimer);
+    }
+
+    otpTimer = setInterval(() => {
+        // Tính toán thời gian còn lại dựa trên thời gian bắt đầu
+        const currentTime = Date.now();
+        const elapsedTime = Math.floor((currentTime - otpStartTime) / 1000);
+        timeLeft = Math.max(60 - elapsedTime, 0);
+
         document.getElementById("otp-timer").innerText = `Thời gian còn lại: ${timeLeft} giây`;
 
-        otpTimer = setInterval(() => {
-            timeLeft--;
-            document.getElementById("otp-timer").innerText = `Thời gian còn lại: ${timeLeft} giây`;
-
-            if (timeLeft <= 0) {
-                clearInterval(otpTimer);
-                document.getElementById("otp-timer").innerText = "Hết thời gian! Vui lòng gửi lại mã OTP.";
-                document.getElementById("resendOtpButton").style.display =
-                "block"; // Hiển thị nút "Gửi lại mã OTP"
-                document.querySelector(".btn-success").style.display = "none"; // Ẩn nút "Xác thực OTP"
-                disableOTPInputs(true); // Vô hiệu hóa các ô nhập OTP
-            }
-        }, 1000);
-    }
+        if (timeLeft <= 0) {
+            clearInterval(otpTimer);
+            document.getElementById("otp-timer").innerText = "Hết thời gian! Vui lòng gửi lại mã OTP.";
+            document.getElementById("resendOtpButton").style.display = "block";
+            document.querySelector(".btn-success").style.display = "none";
+            disableOTPInputs(true);
+        }
+    }, 1000);
+}
 
     // Vô hiệu hóa hoặc kích hoạt lại các ô nhập OTP
     function disableOTPInputs(disable) {
@@ -549,23 +603,50 @@
     };
 
     // Đóng popup OTP
-    function closePopup() {
-        clearInterval(otpTimer); // Dừng bộ đếm thời gian nếu popup bị đóng
-        document.getElementById("otp-popup").style.display = "none";
+   // Đóng popup OTP và reset toàn bộ trạng thái
+function closePopup() {
+    // Dừng bộ đếm thời gian
+    if (otpTimer) {
+        clearInterval(otpTimer);
     }
 
-    // Tự động chuyển ô khi nhập OTP
-    document.querySelectorAll('.otp-input').forEach((input, index, inputs) => {
-        input.addEventListener('input', () => {
-            if (input.value.length === 1 && index < inputs.length - 1) {
-                inputs[index + 1].focus();
-            }
-        });
+    // Ẩn popup
+    document.getElementById("otp-popup").style.display = "none";
 
-        input.addEventListener('keydown', (event) => {
-            if (event.key === 'Backspace' && index > 0 && input.value === '') {
-                inputs[index - 1].focus();
-            }
-        });
+    // Reset các ô nhập OTP
+    const otpInputs = document.querySelectorAll('.otp-input');
+    otpInputs.forEach(input => {
+        input.value = ''; // Xóa giá trị
+        input.disabled = false; // Bảo đảm các ô input được kích hoạt
     });
+
+    // Reset thời gian và thông báo
+    const otpTimerElement = document.getElementById("otp-timer");
+    if (otpTimerElement) {
+        otpTimerElement.innerText = ""; // Xóa thời gian
+    }
+
+    // Ẩn thông báo lỗi
+    const errorMessageElement = document.getElementById('otp-error-message');
+    if (errorMessageElement) {
+        errorMessageElement.style.display = 'none';
+        errorMessageElement.innerText = '';
+    }
+
+    // Khôi phục trạng thái ban đầu của các nút
+    const resendOtpButton = document.getElementById('resendOtpButton');
+    const verifyButton = document.querySelector('.btn-success');
+    
+    if (resendOtpButton) {
+        resendOtpButton.style.display = 'none';
+    }
+    
+    if (verifyButton) {
+        verifyButton.style.display = 'inline-block';
+        verifyButton.disabled = false;
+    }
+}
+
+// Thêm sự kiện cho nút Đóng
+document.getElementById('closePopupButton').addEventListener('click', closePopup);
 </script>

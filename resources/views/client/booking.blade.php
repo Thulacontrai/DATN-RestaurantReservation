@@ -4,10 +4,10 @@
 @section('content')
     @include('client.layouts.component.subheader', [
         'backgroundImage' => 'client/03_images/background/bg-2.jpg',
-        // 'subtitle' => 'Make a',
         'title' => 'Đặt bàn',
         'currentPage' => 'Đặt bàn',
     ])
+
     @if (session('err'))
         <script>
             Swal.fire({
@@ -55,17 +55,25 @@
                             @foreach ($timeSlots as $timeSlot)
                                 @php
                                     $timeSlotWithDate = Carbon\Carbon::today('Asia/Ho_Chi_Minh')->setTimeFromTimeString($timeSlot);
+                                    $isDisabled = isset($disabledSlots[$day->format('Y-m-d')]) && in_array($timeSlot, $disabledSlots[$day->format('Y-m-d')]);
                                 @endphp
 
                                 @if ($day->isToday() && $now->greaterThan($timeSlotWithDate))
                                     <div class="text-muted col p-2 rounded border d-flex justify-content-center mb-2">
-                                        <p class="py-2 m-0 timeText" >{{ $timeSlot }}</p>
+                                        <p class="py-2 m-0 timeText">{{ $timeSlot }}</p>
                                     </div>
+                                    @elseif ($isDisabled)
+                                    <div class="text-muted col p-2 rounded border d-flex justify-content-center align-items-center mb-2">
+                                        <p class="py-2 m-0 timeText">{{ $timeSlot }} 
+                                            <span class="text-danger small">(Đã đầy)</span>
+                                        </p>
+                                    </div>
+                                
                                 @else
                                     <div class="col p-2 rounded border d-flex justify-content-center time-slot mb-2"
                                         style="cursor: pointer;" data-time="{{ $timeSlot }}"
                                         data-date="{{ $day->format('Y-m-d') }}">
-                                        <p class="text-warning py-2 m-0 timeText" >{{ $timeSlot }}</p>
+                                        <p class="text-warning py-2 m-0 timeText">{{ $timeSlot }}</p>
                                     </div>
                                 @endif
                             @endforeach
@@ -88,7 +96,6 @@
     font-size:30px;
 }
 
-
 @media (max-width: 426px) {
     html {
         font-size: 15px;
@@ -97,7 +104,6 @@
     .timeText{
         font-size:15px;
     }
-
 
     .time-slot {
         font-size: 1.8rem; 
@@ -108,6 +114,7 @@
         text-align: center;
         margin-bottom: 1rem;
     }
+    
 }
 
 </style>

@@ -3,7 +3,7 @@
 @section('title', 'Chi Tiết Món Ăn')
 
 @section('content')
-
+    @include('admin.layouts.messages')
     <!-- Content wrapper scroll start -->
     <div class="content-wrapper-scroll">
 
@@ -53,17 +53,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
                             <div class="row mb-4">
                                 <div class="col-md-12">
                                     <div class="detail-box p-4 shadow-sm rounded bg-white">
@@ -77,10 +66,10 @@
                                                     </li>
                                                 @endforeach
                                             </ul>
-                                            <button class="btn btn-primary" onclick="window.location='{{ route('admin.dishes.updateIngredients', $dish->id) }}'">
+                                            <button class="btn btn-primary"
+                                                onclick="window.location='{{ route('admin.dishes.updateIngredients', $dish->id) }}'">
                                                 <i class="bi bi-pencil-square me-1"></i> Cập Nhật
                                             </button>
-
                                         @else
                                             <p>Không có nguyên liệu cho món ăn này.</p>
                                         @endif
@@ -89,21 +78,23 @@
                             </div>
 
 
-
-
-
                             <div class="col-md-6">
                                 <div class="detail-box p-4 shadow-sm rounded bg-white">
                                     <h6 class="text-primary">Trạng Thái:</h6>
-                                    <span
-                                        class="badge
-                                            @if ($dish->status == 'available') bg-success
-                                            @elseif($dish->status == 'out_of_stock') bg-danger
-                                            @elseif($dish->status == 'reserved') bg-warning
-                                            @elseif($dish->status == 'in_use') bg-info
-                                            @elseif($dish->status == 'completed') bg-primary
-                                            @elseif($dish->status == 'cancelled') bg-secondary @endif">
-                                        {{ ucfirst($dish->status) }}
+                                    <span>
+                                        @if ($dish->status == 'available')
+                                            <span class="badge bg-success">Có sẵn</span>
+                                        @elseif($dish->status == 'out_of_stock')
+                                            <span class="badge bg-danger">Hết hàng</span>
+                                        @elseif($dish->status == 'reserved')
+                                            <span class="badge bg-warning">Đã đặt trước</span>
+                                        @elseif($dish->status == 'in_use')
+                                            <span class="badge bg-info">Đang sử dụng</span>
+                                        @elseif($dish->status == 'completed')
+                                            <span class="badge bg-primary">Hoàn thành</span>
+                                        @elseif($dish->status == 'cancelled')
+                                            <span class="badge bg-secondary">Đã hủy</span>
+                                        @endif
                                     </span>
                                 </div>
                             </div>

@@ -21,40 +21,44 @@
 
 
 <style>
-    /* paginate */
-    .my-pagination {
-        display: flex;
-        justify-content: center;
-        list-style: none;
-        padding: 0;
-        margin: 20px 0;
-    }
+       /* paginate */
+       .my-pagination {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+}
 
-    .my-pagination li {
-        margin: 0 5px;
-    }
+input{
+    background-color: white !important;
+}
 
-    .my-pagination a {
-        padding: 10px 15px;
-        color: #f1c40f;
-        background-color: #1b1b1b;
-        border: 1px solid #f1c40f;
-        text-decoration: none;
-        border-radius: 5px;
-        transition: all 0.3s ease;
-    }
+.my-pagination li {
+    margin: 0 5px;
+}
 
-    .my-pagination a:hover {
-        background-color: #f1c40f;
-        color: #1b1b1b;
-    }
+.my-pagination a {
+    padding: 10px 15px;
+    color: #f1c40f;
+    background-color: #1b1b1b;
+    border: 1px solid #f1c40f;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
 
-    .my-pagination .active span {
-        background-color: #f1c40f;
-        color: #1b1b1b;
-        padding: 10px 15px;
-        border-radius: 5px;
-    }
+.my-pagination a:hover {
+    background-color: #f1c40f;
+    color: #1b1b1b;
+}
+
+.my-pagination .active span {
+    background-color: #f1c40f;
+    color: #1b1b1b;
+    padding: 10px 15px;
+    border-radius: 5px;
+}
 
     /* Trạng thái của đơn đặt bàn  */
     .status-confirmed {

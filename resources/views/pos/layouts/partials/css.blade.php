@@ -1364,7 +1364,7 @@
     color: #007bff;
     cursor: pointer;
     font-size: 14px;
-    padding: 5px 10px;/
+    padding: 5px 10px;
     text-decoration: none;
     border: none;
 }

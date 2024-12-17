@@ -33,47 +33,70 @@ class DishesController extends Controller
     public function index(Request $request)
     {
         $query = Dishes::query();
+        $title = 'Món Ăn';
 
-        if ($request->filled('dish_name')) {
+        // Lọc theo tên món ăn nếu có
+        $query->when($request->filled('dish_name'), function ($query) use ($request) {
             $query->where('name', 'like', '%' . $request->dish_name . '%');
-        }
+        });
 
-        if ($request->filled('category_id')) {
+        // Lọc theo loại món ăn nếu có
+        $query->when($request->filled('category_id'), function ($query) use ($request) {
             $query->where('category_id', $request->category_id);
-        }
+        });
 
-        if ($request->filled('status')) {
+        // Lọc theo trạng thái món ăn nếu có
+        $query->when($request->filled('status'), function ($query) use ($request) {
             $query->where('status', $request->status);
-        }
+        });
 
-         // Kiểm tra và áp dụng trạng thái active/inactive nếu có
-         if ($request->filled('is_active')) {
-            $isActive = $request->is_active;
-            $query->where('is_active', $isActive); // Lọc theo trạng thái
-        } else {
-            // Nếu không có tham số, lấy cả active và inactive dish
-            // Mặc định sẽ lấy cả hai
-        }
+        // Lọc theo trạng thái is_active nếu có
+        $query->when($request->filled('is_active'), function ($query) use ($request) {
+            $query->where('is_active', $request->is_active);
+        });
 
+        // Kiểm tra tham số sort và direction từ request
+        $sort = $request->input('sort', 'price'); // Mặc định sắp xếp theo 'price'
+        $direction = $request->input('direction', 'asc'); // Mặc định sắp xếp tăng dần
+
+        // Xác nhận cột sắp xếp hợp lệ
+        $allowedSorts = ['price', 'name']; // Các cột được phép sắp xếp
+        $sort = in_array($sort, $allowedSorts) ? $sort : 'price';
+
+        // Xác nhận thứ tự sắp xếp hợp lệ
+        $direction = in_array($direction, ['asc', 'desc']) ? $direction : 'asc';
+
+        // Áp dụng sắp xếp vào query
+        $query->orderBy($sort, $direction);
+
+        // Lấy danh sách món ăn và phân trang
         $dishes = $query->paginate(10);
 
+
+
+        // Kiểm tra nếu yêu cầu là ajax
         if ($request->ajax()) {
             return response()->json([
                 'html' => view('admin.dish.dishes.partials.dishes_table', compact('dishes'))->render(),
             ]);
         }
 
+        // Lấy tất cả các danh mục món ăn
         $categories = Category::all();
-        return view('admin.dish.dishes.index', compact('dishes', 'categories'));
+        return view('admin.dish.dishes.index', compact('dishes', 'categories', 'title'));
     }
+
+
+
 
 
     public function create()
     {
+        $title = 'Thêm Mới Món Ăn';
         $categories = Category::all(); // Lấy tất cả các loại món ăn
         $ingredients = Ingredient::all(); // Lấy tất cả nguyên liệu
 
-        return view('admin.dish.dishes.create', compact('categories', 'ingredients')); // Truyền cả hai biến vào view
+        return view('admin.dish.dishes.create', compact('categories', 'ingredients', 'title')); // Truyền cả hai biến vào view
     }
 
 
@@ -157,45 +180,80 @@ class DishesController extends Controller
 
     public function edit($id)
     {
+        $title = 'Chỉnh Sửa Món Ăn';
         $dish = Dishes::findOrFail($id);
         $categories = Category::all();
-        return view('admin.dish.dishes.edit', compact('dish', 'categories'));
+        return view('admin.dish.dishes.edit', compact('dish', 'categories', 'title'));
     }
 
 
     public function update(Request $request, $id)
     {
-        $request->validate([
+        // Xác thực dữ liệu
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'category_id' => 'required|integer',
+            'category_id' => 'required|integer|exists:categories,id',
             'price' => 'required|numeric|min:0',
-
-            'description' => 'nullable|string',
-            'status' => 'required|string|in:available,out_of_stock,reserved,in_use,completed,cancelled',
+            'status' => 'required|string|in:available,out_of_stock,reserved,inactive',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'description' => 'nullable|string|max:1000',
         ]);
 
         $dish = Dishes::findOrFail($id);
 
-        // Kiểm tra tên món ăn đã tồn tại chưa, ngoại trừ món ăn hiện tại
-        if (Dishes::where('name', $request->name)->where('id', '!=', $id)->exists()) {
-            return redirect()->route('admin.dishes.edit', $id)->with('error', 'Tên món ăn đã tồn tại. Vui lòng đặt tên khác.');
+        // Lấy trạng thái hiện tại và trạng thái mới
+        $currentStatus = $dish->status;
+        $newStatus = $validated['status'];
+
+        // Danh sách các trạng thái không hợp lệ khi chuyển đổi
+        $invalidTransitions = [
+            'reserved' => ['available', 'out_of_stock', 'inactive'], // Không thể chuyển "reserved" sang các trạng thái khác
+            'out_of_stock' => ['reserved'], // "out_of_stock" không thể được đặt chỗ
+            'inactive' => ['available', 'reserved', 'out_of_stock'], // "inactive" là trạng thái cuối
+            'available' => ['inactive'], // "available" không thể chuyển trực tiếp sang "inactive"
+        ];
+
+        // Xử lý logic trạng thái ngược (nếu xảy ra lỗi)
+        if (isset($invalidTransitions[$currentStatus]) && in_array($newStatus, $invalidTransitions[$currentStatus])) {
+            $message = "Không thể chuyển trạng thái từ '$currentStatus' sang '$newStatus'. Các trạng thái hợp lệ là:";
+            $validTransitions = array_diff(['available', 'out_of_stock', 'reserved', 'inactive'], $invalidTransitions[$currentStatus]);
+            $message .= " " . implode(', ', $validTransitions);
+
+            return redirect()->route('admin.dishes.edit', $id)
+                ->with('error', $message);
         }
 
-        // Kiểm tra xem ảnh món ăn đã tồn tại hay chưa (nếu có tải lên ảnh)
-        if ($request->hasFile('image') && Dishes::where('image', $request->file('image')->hashName())->where('id', '!=', $id)->exists()) {
-            return redirect()->route('admin.dishes.edit', $id)->with('error', 'Ảnh món ăn đã tồn tại. Vui lòng tải lên hình ảnh khác.');
+        // Kiểm tra tên món ăn đã tồn tại, ngoại trừ món hiện tại
+        $existingDish = Dishes::where('name', $validated['name'])->where('id', '!=', $id)->first();
+        if ($existingDish) {
+            return redirect()->route('admin.dishes.edit', $id)
+                ->with('error', 'Tên món ăn đã tồn tại. Vui lòng đặt tên khác.');
         }
 
-        // Cập nhật món ăn
+        // Kiểm tra xem ảnh món ăn đã tồn tại (nếu có tải lên)
+        if ($request->hasFile('image')) {
+            $existingImage = Dishes::where('image', $request->file('image')->hashName())->where('id', '!=', $id)->first();
+            if ($existingImage) {
+                return redirect()->route('admin.dishes.edit', $id)
+                    ->with('error', 'Ảnh món ăn đã tồn tại. Vui lòng tải lên hình ảnh khác.');
+            }
+        }
+
+        // Lưu trữ ảnh nếu có tải lên
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('dish_images', 'public');
+        } else {
+            $imagePath = $dish->image;
+        }
+
+        // Cập nhật dữ liệu món ăn
         $dish->update([
-            'name' => $request->input('name'),
-            'category_id' => $request->input('category_id'),
-            'price' => $request->input('price'),
-
-            'description' => $request->input('description'),
-            'status' => $request->input('status'),
-            'image' => $request->hasFile('image') ? $request->file('image')->store('dish_images', 'public') : $dish->image,
+            'name' => $validated['name'],
+            'category_id' => $validated['category_id'],
+            'price' => $validated['price'],
+            'description' => $validated['description'] ?? $dish->description,
+            'status' => $newStatus,
+            'image' => $imagePath,
         ]);
 
         return redirect()->route('admin.dishes.index')->with('success', 'Món ăn đã được cập nhật thành công!');
@@ -203,10 +261,16 @@ class DishesController extends Controller
 
 
 
+
+
+
+
+
     public function show($id)
     {
+        $title = 'Chi Tiết Món Ăn';
         $dish = Dishes::with('recipes.ingredient')->findOrFail($id);
-        return view('admin.dish.dishes.detail', compact('dish'));
+        return view('admin.dish.dishes.detail', compact('dish', 'title'));
     }
 
 
@@ -257,31 +321,31 @@ class DishesController extends Controller
 
 
     public function addIngredient(Request $request, $dishId)
-{
-    // Xác thực dữ liệu đầu vào
-    $request->validate([
-        'new_ingredient' => 'required|array',
-        'new_quantity' => 'required|array',
-        // 'new_unit' => 'required|array',
-    ]);
-
-    // Tìm món ăn cần thêm nguyên liệu
-    $dish = Dishes::findOrFail($dishId);
-
-    // Thêm từng nguyên liệu mới vào món ăn
-    foreach ($request->new_ingredient as $index => $ingredientId) {
-        $quantity = $request->new_quantity[$index];
-        // $unit = $request->new_unit[$index];
-
-        // Tạo một công thức mới cho món ăn, chỉ lưu ingredient_id và quantity_need
-        $dish->recipes()->create([
-            'ingredient_id' => $ingredientId,
-            'quantity_need' => $quantity,
+    {
+        // Xác thực dữ liệu đầu vào
+        $request->validate([
+            'new_ingredient' => 'required|array',
+            'new_quantity' => 'required|array',
+            // 'new_unit' => 'required|array',
         ]);
-    }
 
-    return redirect()->route('admin.dishes.show', $dish->id)->with('success', 'Nguyên liệu đã được thêm thành công.');
-}
+        // Tìm món ăn cần thêm nguyên liệu
+        $dish = Dishes::findOrFail($dishId);
+
+        // Thêm từng nguyên liệu mới vào món ăn
+        foreach ($request->new_ingredient as $index => $ingredientId) {
+            $quantity = $request->new_quantity[$index];
+            // $unit = $request->new_unit[$index];
+
+            // Tạo một công thức mới cho món ăn, chỉ lưu ingredient_id và quantity_need
+            $dish->recipes()->create([
+                'ingredient_id' => $ingredientId,
+                'quantity_need' => $quantity,
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Nguyên liệu đã được thêm thành công.!');
+    }
 
 
 
@@ -337,8 +401,9 @@ class DishesController extends Controller
 
     public function trash()
     {
+        $title = 'Khôi Phục Danh Sách Món Ăn';
         $dishes = Dishes::onlyTrashed()->paginate(10); // Lấy tất cả món ăn bị xóa mềm
-        return view('admin.dish.dishes.trash', compact('dishes'));
+        return view('admin.dish.dishes.trash', compact('dishes', 'title'));
     }
 
     public function restore($id)

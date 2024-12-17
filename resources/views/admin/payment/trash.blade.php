@@ -3,7 +3,7 @@
 @section('title', 'Thùng Rác Thanh Toán')
 
 @section('content')
-
+    @include('admin.layouts.messages')
 
     <div class="content-wrapper-scroll">
         <div class="content-wrapper">

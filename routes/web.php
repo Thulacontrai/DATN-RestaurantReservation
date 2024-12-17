@@ -34,6 +34,7 @@ use App\Http\Controllers\Client\MenuController;
 use App\Http\Controllers\Pos\PosController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\InventoryController;
+use App\Http\Controllers\Admin\InventoryDBController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
@@ -107,8 +108,17 @@ Route::post('/member/reservation/{id}/rate', [MemberController::class, 'rateRese
 
 
 
-Route::get('/admin/users', [UserController::class, 'index'])->name('admin.user.index');
-Route::get('/admin/employees', [UserController::class, 'employeeList'])->name('admin.user.employees');
+// web.php
+// web.php
+Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () {
+    Route::get('user', [UserController::class, 'index'])->name('user.index'); // Danh sách người dùng
+    Route::get('user/employees', [UserController::class, 'employeeList'])->name('user.employees'); // Danh sách nhân viên
+    Route::get('admin/user/{user}/edit', [UserController::class, 'edit'])->name('admin.user.edit');
+
+    Route::delete('/admin/user/{id}', [UserController::class, 'destroy'])->name('admin.user.destroy');
+
+});
+
 
 
 // login
@@ -195,15 +205,10 @@ Route::get('/customerInformation', [ReservationController::class, 'showInformati
 
 
 
-
-
-
 Route::get('/kitchen', [KitchenController::class, 'index'])->name('kitchen.index');
 Route::post('/kitchen/{id}/cook-all', [KitchenController::class, 'cookAll'])->name('order-item.cook-all');
 Route::post('/kitchen/{id}/done-all', [KitchenController::class, 'doneAll'])->name('order-item.cook-all');
 Route::post('/kitchen/{id}/delete', [KitchenController::class, 'delete'])->name('order-item.cook-all');
-
-
 
 
 
@@ -216,22 +221,28 @@ Route::patch('/refunds/{id}/updateStatus', [RefundController::class, 'updateStat
 
 Route::get('/admin/refunds', [RefundController::class, 'index'])->name('admin.refunds.index');
 Route::post('client/cancel-reservationpopup', [ReservationController::class, 'cancelReservationPopUp'])->name('client.cancel.reservationpopup');
-
+Route::post('/reservation/cancel', [ReservationController::class, 'cancel'])->name('client.cancel.reservation');
 
 Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
-Route::post('/create-order/{tableId}', [PosController::class, 'createOrder']);
+Route::post('/create-order', [PosController::class, 'createOrder']);
 Route::post('/order-details/{tableId}', [PosController::class, 'orderDetails'])->name('order-details');
 Route::post('/add-dish-to-order', [PosController::class, 'addDishToOrder']);
+Route::post('/add-combo-to-order', [PosController::class, 'addComboToOrder']);
 Route::post('/deleteItem', [PosController::class, 'deleteItem']);
+Route::post('/deleteItemm', [PosController::class, 'deleteItemm']);
 Route::post('/increaseQuantity', [PosController::class, 'increaseQuantity']);
+Route::post('/increaseQuantityy', [PosController::class, 'increaseQuantityy']);
 Route::post('/decreaseQuantity', [PosController::class, 'decreaseQuantity']);
+Route::post('/decreaseQuantityy', [PosController::class, 'decreaseQuantityy']);
 Route::post('/notification-button/{tableId}', [PosController::class, 'notificatioButton']);
 Route::post('/canelItem', [PosController::class, 'canelItem']);
+Route::post('/canelItemm', [PosController::class, 'canelItemm']);
 Route::get('/Ppayment/{table_number}', [PosController::class, 'Ppayment'])->name('Ppayment');
 Route::get('/viewCheckOut/{table_number}', [PosController::class, 'viewCheckOut'])->name('viewCheckOut');
 Route::post('/check-payment-condition', [PosController::class, 'checkPaymentPondition'])->name('checkPaymentPondition');
+Route::get('/checkAvailableTables', [PosController::class, 'checkAvailableTables'])->name('checkPaymentPondition');
+Route::get('/menu-order', [OrderController::class, 'menuOrder'])->name('menuOrder');
 
-///
 Route::get('reserToOrder/{reservationId}', [PosController::class, 'reserToOrder'])->name('ReToOr');
 
 
@@ -247,7 +258,6 @@ Route::delete('/order/{order_id}/item/{item_id}', [PosController::class, 'delete
 
 
 Route::post('/reservation/check-table', [PosController::class, 'checkTable'])->name('reservation.checkTable');
-
 
 
 
@@ -320,18 +330,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('reservation/submit-table', [ReservationController::class, 'submitTable'])->name('submit.tables');
     Route::post('reservation/submit-move-table', [ReservationController::class, 'submitMoveTable'])->name('submit.Movetables');
 
-    /// xếp bàn cho khách
-    Route::get('reservation/{reservationId}/assign-tables', [ReservationController::class, 'assignTables'])->name('reservation.assignTables');
-    Route::get('reservation/assign-table', [ReservationController::class, 'assignTable'])->name('assignTable');
-    Route::post('reservation/submit-table', [ReservationController::class, 'submitTable'])->name('submit.tables');
-    Route::post('reservation/submit-move-table', [ReservationController::class, 'submitMoveTable'])->name('submit.Movetables');
-
-    /// xếp bàn cho khách
-    Route::get('reservation/{reservationId}/assign-tables', [ReservationController::class, 'assignTables'])->name('reservation.assignTables');
-    Route::get('reservation/assign-table', [ReservationController::class, 'assignTable'])->name('assignTable');
-    Route::post('reservation/submit-table', [ReservationController::class, 'submitTable'])->name('submit.tables');
-    Route::post('reservation/submit-move-table', [ReservationController::class, 'submitMoveTable'])->name('submit.Movetables');
-
     Route::resource('reservation', ReservationController::class);
     Route::post('reservation/cancel/{id}', [ReservationController::class, 'cancel'])->name('reservation.cancel');
     Route::post('/reservations', [ReservationController::class, 'store']);
@@ -396,6 +394,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('coupon-trash', [CouponController::class, 'trash'])->name('coupon.trash');
     Route::patch('coupon-restore/{id}', [CouponController::class, 'restore'])->name('coupon.restore');
     Route::delete('coupon-force-delete/{id}', [CouponController::class, 'forceDelete'])->name('coupon.forceDelete');
+    Route::get('/coupon/check', [CouponController::class, 'checkCoupon'])->name('coupon.check');
+
 
 
     route::resource('feedback', FeedbackController::class);
@@ -406,6 +406,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('user-trash', [UserController::class, 'trash'])->name('user.trash');
     Route::patch('user-restore/{id}', [UserController::class, 'restore'])->name('user.restore');
     Route::delete('user-force-delete/{id}', [UserController::class, 'forceDelete'])->name('user.forceDelete');
+    Route::get('users/{id}/show', [UserController::class, 'show'])->name('admin.user.show');
+
 
     //permission role
     Route::resource('role', RoleController::class);
@@ -419,11 +421,21 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Route::resource('recipes', RecipesController::class);
 
     Route::resource('ingredient', IngredientController::class);
+
+    // Route::get('/dashboard/revenue', [DashboardController::class, 'getRevenue'])->name('dashboard.revenue');
+
     Route::resource('dashboard', DashboardController::class);
+
+
+
+
+
+
     Route::resource('report', ReportController::class);
 
     Route::resource('accountSetting', SettingController::class);
     Route::resource('inventory', InventoryController::class);
+    Route::resource('inventoryDashboard', InventoryDBController::class);
 
     // Lịch
     Route::resource('calendar', CalendarController::class);

@@ -3,7 +3,7 @@
 @section('title', 'Chỉnh Sửa Quyền Hạn')
 
 @section('content')
-
+    @include('admin.layouts.messages')
     <div class="content-wrapper-scroll">
         <div class="content-wrapper">
             <div class="row">
@@ -19,7 +19,8 @@
 
                                 <div class="mb-3">
                                     <label class="form-label">Tên Quyền Hạn</label>
-                                    <input type="text" name="permission_name" class="form-control" value="{{ old('permission_name', $permission->permission_name) }}" required>
+                                    <input type="text" name="permission_name" class="form-control"
+                                        value="{{ old('permission_name', $permission->permission_name) }}" required>
                                 </div>
 
                                 <div class="mb-3">

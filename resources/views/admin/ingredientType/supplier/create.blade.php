@@ -3,57 +3,90 @@
 @section('title', 'Thêm Nhà Cung Cấp Mới')
 
 @section('content')
+@include('admin.layouts.messages')
     <div class="content-wrapper-scroll">
         <div class="content-wrapper">
             <div class="row">
                 <div class="col-sm-12 col-12">
                     <div class="card">
                         <div class="card-header">
-                            <div class="card-title">Thêm Nhà Cung Cấp Mới</div>
+                            <div class="card-title text-primary">Thêm Nhà Cung Cấp Mới</div>
                         </div>
                         <div class="card-body">
                             <form action="{{ route('admin.supplier.store') }}" method="POST">
                                 @csrf
 
-                                <div class="mb-3">
-                                    <label for="name" class="form-label">Tên Nhà Cung Cấp</label>
-                                    <input type="text" name="name" id="name" class="form-control"
-                                        placeholder="Nhập tên nhà cung cấp" required>
-                                    @error('name')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="name" class="form-label">Tên Nhà Cung Cấp <span
+                                                    class="text-danger required">*</span></label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-primary text-white"><i
+                                                        class="bi bi-shop text-white"></i></span>
+                                                <input type="text" name="name" id="name" class="form-control"
+                                                    placeholder="Nhập tên nhà cung cấp" required>
+                                            </div>
+                                            @error('name')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
 
-                                <div class="mb-3">
-                                    <label for="phone" class="form-label">Số Điện Thoại</label>
-                                    <input type="number" name="phone" id="phone" class="form-control"
-                                        placeholder="Nhập số điện thoại" required maxlength="10">
-                                    <div class="invalid-feedback">Số điện thoại phải có 10 số và bắt đầu bằng số 0.</div>
-                                    @error('phone')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="phone" class="form-label">Số Điện Thoại <span
+                                                    class="text-danger required">*</span></label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-success text-white"><i
+                                                        class="bi bi-telephone text-white"></i></span>
+                                                <input type="number" name="phone" id="phone" class="form-control"
+                                                    placeholder="Nhập số điện thoại" required maxlength="10">
+                                            </div>
+                                            <div class="invalid-feedback">Số điện thoại phải có 10 số và bắt đầu bằng số 0.
+                                            </div>
+                                            @error('phone')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
 
-                                <div class="mb-3">
-                                    <label for="email" class="form-label">Email</label>
-                                    <input type="email" name="email" id="email" class="form-control"
-                                        placeholder="Nhập địa chỉ email">
-                                    @error('email')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="email" class="form-label">Email <span
+                                                    class="text-danger required">*</span></label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-info text-white"><i
+                                                        class="bi bi-envelope text-white"></i></span>
+                                                <input type="email" name="email" id="email" class="form-control"
+                                                    placeholder="Nhập địa chỉ email">
+                                            </div>
+                                            @error('email')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
 
-                                <div class="mb-3">
-                                    <label for="address" class="form-label">Địa Chỉ</label>
-                                    <input type="text" name="address" id="address" class="form-control"
-                                        placeholder="Nhập địa chỉ nhà cung cấp">
-                                    @error('address')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="address" class="form-label">Địa Chỉ <span
+                                                    class="text-danger required">*</span></label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-danger"><i
+                                                        class="bi bi-geo-alt text-white"></i></span>
+                                                <input type="text" name="address" id="address" class="form-control"
+                                                    placeholder="Nhập địa chỉ nhà cung cấp">
+                                            </div>
+                                            @error('address')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
                                 </div>
-
-                                <button type="submit" class="btn btn-success">Lưu Nhà Cung Cấp</button>
-                                <a href="{{ route('admin.supplier.index') }}" class="btn btn-secondary">Hủy</a>
+                                <div class="text-end">
+                                    <button type="submit" class="btn btn-primary">Thêm mới</button>
+                                    <a href="{{ route('admin.supplier.index') }}" class="btn btn-secondary">Quay lại</a>
+                                </div>
                             </form>
                         </div>
                     </div>
@@ -61,6 +94,7 @@
             </div>
         </div>
     </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const phoneInput = document.getElementById('phone');

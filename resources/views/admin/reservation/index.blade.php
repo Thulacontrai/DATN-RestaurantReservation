@@ -3,8 +3,7 @@
 @section('title', 'Danh Sách Đặt Bàn')
 
 @section('content')
-
-
+    @include('admin.layouts.messages')
     <!-- Content wrapper scroll start -->
     <div class="content-wrapper-scroll">
 
@@ -86,25 +85,11 @@
                                             value="{{ request('date') }}" id="dateFilter">
                                     </div>
 
-                                    <!-- New filter for notifications -->
-                                    <div class="col-auto">
-                                        <select name="notification_type" class="form-select form-select-sm"
-                                            id="notificationTypeFilter">
-                                            <option value="">Chọn thông báo</option>
-                                            <option value="upcoming"
-                                                {{ request('notification_type') == 'upcoming' ? 'selected' : '' }}>Sắp đến
-                                                hạn </option>
-                                            <option value="waiting"
-                                                {{ request('notification_type') == 'waiting' ? 'selected' : '' }}>Chờ khách
-                                                đến </option>
-                                            <option value="overdue"
-                                                {{ request('notification_type') == 'overdue' ? 'selected' : '' }}>Quá hạn
-                                            </option>
-                                        </select>
-                                    </div>
-
                                     <div class="col-auto">
                                         <button type="submit" class="btn btn-sm btn-primary">Tìm kiếm</button>
+                                        <a href="{{ route('admin.reservation.index') }}" class="btn btn-sm btn-success">
+                                            <i class="bi bi-arrow-repeat"></i>
+                                        </a>
                                     </div>
                                 </div>
                             </form>
@@ -114,13 +99,34 @@
                                 <table class="table v-middle m-0">
                                     <thead>
                                         <tr>
-                                            <th><input type="checkbox" id="select-all"></th>
-                                            <th>Mã Đặt Chỗ</th>
+
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.reservation.index', array_merge(request()->query(), ['sort' => 'id', 'direction' => request('sort') === 'id' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}">
+                                                    Mã Đặt Chỗ
+                                                    <i
+                                                        class="bi bi-arrow-{{ request('sort') === 'id' ? (request('direction') === 'asc' ? 'up' : 'down') : '' }}"></i>
+                                                </a>
+                                            </th>
                                             <th>Tên Khách Hàng</th>
-                                            <th>Số Lượng Khách</th>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.reservation.index', array_merge(request()->query(), ['sort' => 'guest_count', 'direction' => request('sort') === 'guest_count' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}">
+                                                    Số Lượng Khách
+                                                    <i
+                                                        class="bi bi-arrow-{{ request('sort') === 'guest_count' ? (request('direction') === 'asc' ? 'up' : 'down') : '' }}"></i>
+                                                </a>
+                                            </th>
                                             <th>Thời Gian Đặt</th>
-                                            {{-- <th>Bàn</th> --}}
-                                            <th>Tiền cọc</th>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.reservation.index', array_merge(request()->query(), ['sort' => 'deposit_amount', 'direction' => request('sort') === 'deposit_amount' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}">
+                                                    Tiền Cọc
+                                                    <i
+                                                        class="bi bi-arrow-{{ request('sort') === 'deposit_amount' ? (request('direction') === 'asc' ? 'up' : 'down') : '' }}"></i>
+                                                </a>
+                                            </th>
+
                                             <th>Ghi Chú</th>
                                             <th>Trạng Thái</th>
                                             <th>Hành Động</th>
@@ -129,13 +135,12 @@
                                     <tbody>
                                         @forelse ($reservations as $reservation)
                                             <tr id="reservation-{{ $reservation->id }}">
-                                                <td><input type="checkbox" name="selected_reservations[]"
-                                                        value="{{ $reservation->id }}"></td>
                                                 <td>{{ $reservation->id }}</td>
                                                 <td>{{ $reservation->customer->name ?? 'Không rõ' }}</td>
                                                 <td>{{ $reservation->guest_count ?? 'N/A' }}</td>
                                                 <td style="text-align: center">
-                                                   <span> {{ \Carbon\Carbon::parse($reservation->reservation_date . ' ' . $reservation->reservation_time)->format('H:i:s') }}<br>
+                                                    <span class="text-success">
+                                                        {{ \Carbon\Carbon::parse($reservation->reservation_date . ' ' . $reservation->reservation_time)->format('H:i:s') }}</span><br>
                                                     {{ \Carbon\Carbon::parse($reservation->reservation_date)->format('d/m/Y') }}
                                                 </td>
 
@@ -155,7 +160,7 @@
                                                     @elseif ($reservation->status === 'Refund')
                                                         <span class="badge bg-info">Đã hoàn cọc</span>
                                                     @elseif($reservation->status === 'Completed')
-                                                    <span class="badge shade-primary min-70">Hoàn thành</span>
+                                                        <span class="badge shade-primary min-70">Hoàn thành</span>
                                                     @else
                                                         <span class="badge shade-gray min-70">Không rõ</span>
                                                     @endif
@@ -163,39 +168,60 @@
 
 
                                                 <td>
+
                                                     <div class="actions">
                                                         <a href="{{ route('admin.reservation.show', $reservation->id) }}"
-                                                            class="editRow" data-id="{{ $reservation->id }}" data-bs-toggle="tooltip"
-                                                            data-bs-placement="top" title="Chi Tiết">
+                                                            class="editRow" data-id="{{ $reservation->id }}"
+                                                            data-bs-toggle="tooltip" data-bs-placement="top"
+                                                            title="Chi Tiết">
                                                             <i class="bi bi-list text-green"></i>
                                                         </a>
                                                         <a href="{{ route('admin.reservation.edit', $reservation->id) }}"
                                                             class="editRow" data-id="{{ $reservation->id }}"
-                                                            data-bs-toggle="tooltip"
-                                                            data-bs-placement="top" title="Sửa">
+                                                            data-bs-toggle="tooltip" data-bs-placement="top"
+                                                            title="Sửa">
                                                             <i class="bi bi-pencil-square text-warning"></i>
 
                                                         </a>
                                                         <a href="{{ route('admin.reservation.assignTables', $reservation->id) }}"
                                                             class="editRow" data-id="{{ $reservation->id }}"
-                                                            data-bs-toggle="tooltip"
-                                                            data-bs-placement="top" title="Chuyển Bàn">
+                                                            data-bs-toggle="tooltip" data-bs-placement="top"
+                                                            title="Chuyển Bàn">
                                                             <i class="bi bi-box-arrow-in-right"></i>
                                                         </a>
-                                                        {{-- Nút hủy đặt bàn --> --}}
-                                                        <form
-                                                            action="{{ route('admin.reservation.cancel', $reservation->id) }}"
-                                                            method="POST" style="display:inline-block;">
+                                                        {{-- Nút hủy đặt bàn --}}
+                                                        <form id="cancelReservationForm{{ $reservation->id }}" action="{{ route('admin.reservation.cancel', $reservation->id) }}" method="POST" style="display:inline-block;">
                                                             @csrf
                                                             @method('POST')
-                                                            <a href="#" style="margin-top: 15px" data-bs-toggle="tooltip"
-                                                            data-bs-placement="top" title="Huỷ">
-                                                                <button type="submit" class="btn btn-link p-0"
-                                                                    onclick="return confirm('Bạn có chắc chắn muốn hủy đơn này?');">
-                                                                    <i class="bi bi-x-circle text-danger"></i>
-                                                                </button></a>
 
+                                                            <a href="#" style="margin-top: 15px" data-bs-toggle="tooltip" data-bs-placement="top" title="Hủy">
+                                                                <button type="button" class="btn btn-link p-0" data-bs-toggle="modal" data-bs-target="#cancelModal{{ $reservation->id }}">
+
+                                                                    <i class="bi bi-x-circle text-danger"></i>
+                                                                </button>
+                                                            </a>
                                                         </form>
+
+                                                        <!-- Modal -->
+                                                        <div class="modal fade" id="cancelModal{{ $reservation->id }}" tabindex="-1" aria-labelledby="cancelModalLabel{{ $reservation->id }}" aria-hidden="true">
+                                                            <div class="modal-dialog">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title" id="cancelModalLabel{{ $reservation->id }}">Xác nhận hủy đặt bàn</h5>
+                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <label for="cancelReason{{ $reservation->id }}" class="form-label">Lý do hủy</label>
+                                                                        <textarea class="form-control" id="cancelReason{{ $reservation->id }}" name="cancelled_reason" rows="3" required></textarea>
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                                                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="submitCancelForm({{ $reservation->id }})">Xác nhận hủy</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
                                                         {{-- Hoàn cọc --}}
                                                         {{-- <form action="" method="POST"
                                                       style="display:inline-block;">
@@ -212,8 +238,9 @@
                                                             method="POST" style="display:inline-block;">
                                                             @csrf
                                                             @method('DELETE')
-                                                            <a href="#" style="margin-top: 18px;" data-bs-toggle="tooltip"
-                                                            data-bs-placement="top" title="Xoá">
+                                                            <a href="#" style="margin-top: 18px;"
+                                                                data-bs-toggle="tooltip" data-bs-placement="top"
+                                                                title="Xoá">
                                                                 <button type="submit" class="btn btn-link p-0"
                                                                     onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
                                                                     <i class="bi bi-trash text-red"></i>
@@ -233,12 +260,13 @@
 
 
                             <!-- Pagination -->
-                            <div class="pagination justify-content-center mt-3">
-                                {{ $reservations->links() }}
-                            </div>
-                        </div>
 
-                        <!-- End Pagination -->
+                        </div>
+                        <div class="d-flex justify-content-center">
+
+                            {{ $reservations->links('pagination::client-paginate') }}
+
+                        </div>
 
                     </div>
                 </div>
@@ -252,70 +280,8 @@
 
     </div>
 
-    <div id="notification" class="notification d-none">
-        <div class="notification-icon">
-            <i class="bi"></i>
-        </div>
-        <div class="notification-content">
-            <strong id="notification-title"></strong>
-            <p id="notification-message"></p>
-        </div>
-    </div>
 
     <!-- Content wrapper scroll end -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // Hàm hiển thị thông báo
-            function showNotification(message, type = "success") {
-                const notification = document.getElementById("notification");
-                const notificationIcon = notification.querySelector(".notification-icon i");
-                const notificationTitle = document.getElementById("notification-title");
-                const notificationMessage = document.getElementById("notification-message");
-
-                // Cập nhật nội dung thông báo
-                notificationMessage.textContent = message;
-
-                // Đặt kiểu thông báo
-                if (type === "success") {
-                    notification.style.background = "linear-gradient(90deg, #58ade8, #48d1cc)";
-                    notification.style.color = "#ffffff";
-                    notificationIcon.className = "bi bi-check-circle-fill icon-animate";
-                    notificationTitle.textContent = "Thành công!";
-                } else if (type === "error") {
-                    notification.style.background = "linear-gradient(90deg, #f44336, #ff6347)";
-                    notification.style.color = "#ffffff";
-                    notificationIcon.className = "bi bi-x-circle-fill icon-animate";
-                    notificationTitle.textContent = "Lỗi!";
-                }
-
-                // Hiển thị thông báo
-                notification.classList.remove("d-none");
-                notification.classList.add("show");
-
-                // Ẩn thông báo sau 3 giây
-                setTimeout(() => {
-                    notification.classList.remove("show");
-                    notification.classList.add("hide");
-
-                    // Reset sau khi ẩn
-                    setTimeout(() => {
-                        notification.classList.add("d-none");
-                        notification.classList.remove("hide");
-                        notificationIcon.classList.remove("icon-animate");
-                    }, 300);
-                }, 3000);
-            }
-
-            // Hiển thị thông báo từ session
-            @if (session('success'))
-                showNotification("{{ session('success') }}", "success");
-            @endif
-
-            @if (session('error'))
-                showNotification("{{ session('error') }}", "error");
-            @endif
-        });
-    </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const toastElList = [].slice.call(document.querySelectorAll('.toast'));
@@ -354,6 +320,23 @@
 
             });
         });
+    </script>
+    <script>
+        function submitCancelForm(reservationId) {
+            var cancelReason = document.getElementById('cancelReason' + reservationId).value;
+
+            var form = document.getElementById('cancelReservationForm' + reservationId);
+
+            var hiddenField = document.createElement('input');
+            hiddenField.type = 'hidden';
+            hiddenField.name = 'cancelled_reason';
+            hiddenField.value = cancelReason;
+            
+            form.appendChild(hiddenField);
+
+            form.submit();
+        }
+
     </script>
 @endsection
 
@@ -398,43 +381,5 @@
         padding: 0.5em 1em;
         border-radius: 0.25rem;
 
-    }
-
-    .notification {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        max-width: 300px;
-        background: #ffffff;
-        color: #333;
-        border-radius: 8px;
-        padding: 12px 16px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-size: 14px;
-        font-weight: 500;
-        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-        opacity: 0;
-        pointer-events: none;
-        transform: translateY(-10px);
-        transition: opacity 0.3s ease, transform 0.3s ease;
-    }
-
-    .notification.show {
-        opacity: 1;
-        pointer-events: all;
-        transform: translateY(0);
-    }
-
-    .notification.hide {
-        opacity: 0;
-        pointer-events: none;
-        transform: translateY(-10px);
-    }
-
-    .notification i {
-        font-size: 20px;
-        color: inherit;
     }
 </style>

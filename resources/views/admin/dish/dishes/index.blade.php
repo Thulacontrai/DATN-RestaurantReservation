@@ -3,6 +3,7 @@
 @section('title', 'Danh Sách Món Ăn')
 
 @section('content')
+    @include('admin.layouts.messages')
 
     <!-- Content wrapper scroll start -->
     <div class="content-wrapper-scroll">
@@ -39,7 +40,7 @@
                                     </div>
                                     <div class="col-auto">
                                         <select name="category_id" class="form-control form-control-sm">
-                                            <option value="">Chọn loại món ăn</option>
+                                            <option value="">Tất Cả</option>
                                             @foreach ($categories as $category)
                                                 <option value="{{ $category->id }}"
                                                     {{ request('category_id') == $category->id ? 'selected' : '' }}>
@@ -50,7 +51,7 @@
                                     </div>
                                     <div class="col-auto">
                                         <select name="status" class="form-control form-control-sm">
-                                            <option value="">Chọn trạng thái</option>
+                                            <option value="">Chọn Trạng Thái</option>
                                             <option value="available"
                                                 {{ request('status') == 'available' ? 'selected' : '' }}>Có sẵn</option>
                                             <option value="out_of_stock"
@@ -59,30 +60,51 @@
                                             <option value="reserved"
                                                 {{ request('status') == 'reserved' ? 'selected' : '' }}>Đã đặt trước
                                             </option>
-                                            <option value="in_use" {{ request('status') == 'in_use' ? 'selected' : '' }}>
-                                                Đang sử dụng</option>
-                                            <option value="completed"
-                                                {{ request('status') == 'completed' ? 'selected' : '' }}>Hoàn thành
+                                            <option value="inactive"
+                                                {{ request('status') == 'inactive' ? 'selected' : '' }}>Không hoạt động
                                             </option>
-                                            <option value="cancelled"
-                                                {{ request('status') == 'cancelled' ? 'selected' : '' }}>Đã hủy</option>
                                         </select>
                                     </div>
+
                                     <div class="col-auto">
                                         <button type="submit" class="btn btn-sm btn-primary">Tìm kiếm</button>
+                                        <a href="{{ route('admin.dishes.index') }}" class="btn btn-sm btn-success">
+                                            <i class="bi bi-arrow-repeat"></i>
+                                        </a>
                                     </div>
                                 </div>
                             </form>
+
+
 
                             <div class="table-responsive">
                                 <table class="table v-middle m-0">
                                     <thead>
                                         <tr>
-                                            <th>Tên Món Ăn</th>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.dishes.index', array_merge(request()->query(), ['sort' => 'name', 'direction' => request('direction') === 'asc' && request('sort') === 'name' ? 'desc' : 'asc'])) }}">
+                                                    Tên Món Ăn
+                                                    <i
+                                                        class="bi bi-arrow-{{ request('sort') === 'name' ? (request('direction') === 'asc' ? 'up' : 'down') : 'up-down' }}"></i>
+                                                </a>
+                                            </th>
+
                                             <th>Loại Món Ăn</th>
-                                            <th>Giá</th>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.dishes.index', array_merge(request()->query(), ['sort' => 'price', 'direction' => request('direction') === 'asc' && request('sort') === 'price' ? 'desc' : 'asc'])) }}">
+                                                    Giá Món Ăn
+                                                    <i
+                                                        class="bi bi-arrow-{{ request('sort') === 'price' ? (request('direction') === 'asc' ? 'up' : 'down') : 'up-down' }}">
+                                                    </i>
+                                                </a>
+                                            </th>
+
+
                                             <th>Hình Ảnh</th>
                                             <th>Trạng Thái</th>
+                                            <th>Tính Năng</th>
                                             <th>Hành Động</th>
                                         </tr>
                                     </thead>
@@ -153,8 +175,8 @@
                                                 <td>
                                                     <div class="actions">
                                                         <a href="{{ route('admin.dishes.show', $dish->id) }}"
-                                                            class="viewRow" data-bs-toggle="tooltip"
-                                                            data-bs-placement="top" title="Chi tiết">
+                                                            class="viewRow" data-bs-toggle="tooltip" data-bs-placement="top"
+                                                            title="Chi tiết">
                                                             <i class="bi bi-list text-green"></i>
                                                         </a>
 
@@ -164,7 +186,7 @@
                                                             <i class="bi bi-pencil-square text-warning"></i>
                                                         </a>
                                                         <a href="#" class="deleteRow" data-bs-toggle="tooltip"
-                                                        data-bs-placement="top" title="Xoá">
+                                                            data-bs-placement="top" title="Xoá">
                                                             <form action="{{ route('admin.dishes.destroy', $dish->id) }}"
                                                                 method="POST" style="display:inline-block;"
                                                                 onsubmit="return confirm('Bạn có chắc chắn muốn xóa?');">
@@ -190,10 +212,12 @@
                                 </table>
                             </div>
 
-                            <!-- Pagination -->
-                            <div class="pagination justify-content-center mt-3">
-                                {{ $dishes->links() }}
-                            </div>
+
+
+                        </div>
+                        <div class="d-flex justify-content-center">
+
+                            {{ $dishes->links('pagination::client-paginate') }}
 
                         </div>
                     </div>
@@ -203,68 +227,6 @@
 
         </div>
     </div>
-    <div id="notification" class="notification d-none">
-        <div class="notification-icon">
-            <i class="bi"></i>
-        </div>
-        <div class="notification-content">
-            <strong id="notification-title"></strong>
-            <p id="notification-message"></p>
-        </div>
-    </div>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // Hàm hiển thị thông báo
-            function showNotification(message, type = "success") {
-                const notification = document.getElementById("notification");
-                const notificationIcon = notification.querySelector(".notification-icon i");
-                const notificationTitle = document.getElementById("notification-title");
-                const notificationMessage = document.getElementById("notification-message");
-
-                // Cập nhật nội dung thông báo
-                notificationMessage.textContent = message;
-
-                // Đặt kiểu thông báo
-                if (type === "success") {
-                    notification.style.background = "linear-gradient(90deg, #58ade8, #48d1cc)";
-                    notification.style.color = "#ffffff";
-                    notificationIcon.className = "bi bi-check-circle-fill icon-animate";
-                    notificationTitle.textContent = "Thành công!";
-                } else if (type === "error") {
-                    notification.style.background = "linear-gradient(90deg, #f44336, #ff6347)";
-                    notification.style.color = "#ffffff";
-                    notificationIcon.className = "bi bi-x-circle-fill icon-animate";
-                    notificationTitle.textContent = "Lỗi!";
-                }
-
-                // Hiển thị thông báo
-                notification.classList.remove("d-none");
-                notification.classList.add("show");
-
-                // Ẩn thông báo sau 3 giây
-                setTimeout(() => {
-                    notification.classList.remove("show");
-                    notification.classList.add("hide");
-
-                    // Reset sau khi ẩn
-                    setTimeout(() => {
-                        notification.classList.add("d-none");
-                        notification.classList.remove("hide");
-                        notificationIcon.classList.remove("icon-animate");
-                    }, 300);
-                }, 3000);
-            }
-
-            // Hiển thị thông báo từ session
-            @if (session('success'))
-                showNotification("{{ session('success') }}", "success");
-            @endif
-
-            @if (session('error'))
-                showNotification("{{ session('error') }}", "error");
-            @endif
-        });
-    </script>
 
     <script>
         $(document).on('change', '.toggle-status', function() {
@@ -297,44 +259,6 @@
 
 @endsection
 <style>
-    .notification {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        max-width: 300px;
-        background: #ffffff;
-        color: #333;
-        border-radius: 8px;
-        padding: 12px 16px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-size: 14px;
-        font-weight: 500;
-        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-        opacity: 0;
-        pointer-events: none;
-        transform: translateY(-10px);
-        transition: opacity 0.3s ease, transform 0.3s ease;
-    }
-
-    .notification.show {
-        opacity: 1;
-        pointer-events: all;
-        transform: translateY(0);
-    }
-
-    .notification.hide {
-        opacity: 0;
-        pointer-events: none;
-        transform: translateY(-10px);
-    }
-
-    .notification i {
-        font-size: 20px;
-        color: inherit;
-    }
-
     /* From Uiverse.io by Galahhad */
     .switch {
         /* switch */
@@ -476,5 +400,28 @@
         left: calc(100% - var(--circle-diameter) - var(--switch-offset));
         -webkit-box-shadow: var(--circle-checked-shadow);
         box-shadow: var(--circle-checked-shadow);
+    }
+
+    /* Làm nổi bật mũi tên khi được chọn */
+    .bi-arrow-up-short,
+    .bi-arrow-down-short {
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+
+    .bi-arrow-up-short.text-primary {
+        color: #007bff;
+        /* Màu sắc nổi bật cho mũi tên lên */
+    }
+
+    .bi-arrow-down-short.text-primary {
+        color: #dc3545;
+        /* Màu sắc nổi bật cho mũi tên xuống */
+    }
+
+    /* Thêm hiệu ứng mượt mà khi nhấn vào mũi tên */
+    .bi-arrow-up-short:hover,
+    .bi-arrow-down-short:hover {
+        transform: scale(1.2);
     }
 </style>

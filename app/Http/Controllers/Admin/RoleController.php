@@ -21,7 +21,6 @@ class RoleController extends Controller
         $this->middleware('permission:Tạo mới vai trò', ['only' => ['create']]);
         $this->middleware('permission:Sửa vai trò', ['only' => ['edit']]);
         $this->middleware('permission:Xóa vai trò', ['only' => ['destroy']]);
-       
     }
 
     protected $model = Role::class;
@@ -32,9 +31,11 @@ class RoleController extends Controller
 
     public function index()
     {
+        $title = 'Vai Trò';
         $roles = Role::orderBy('name', 'ASC')->paginate(10);
         return view('admin.user.role.index', [
-            'roles' => $roles
+            'roles' => $roles,
+            'title' => $title
         ]);
     }
     public function create()
@@ -96,7 +97,7 @@ class RoleController extends Controller
 
             if (!empty($request->permission)) {
                 $role->syncPermissions($request->permission);
-            }else{
+            } else {
                 $role->syncPermissions([]);
             }
 
@@ -105,16 +106,39 @@ class RoleController extends Controller
             return redirect()->route('admin.role.edit', $id)->withInput()->withErrors($validator);
         }
     }
-    public function destroy(Role $role) {
-        if ($role == null) {
-            return response()->json(['status' => false, 'message' => 'Không có vai trò.']);
+    public function destroy($id)
+    {
+        $role = Role::find($id);
+        if (!$role) {
+            return redirect()->back()->with('error', 'Vai trò không tồn tại.');
         }
-    
-        $role->delete();
-        session()->flash('success', 'Xóa thành công.');
-    
-        return response()->json(['status' => true, 'message' => 'Xóa thành công.']);
-    }
-    
 
+        if ($role->delete()) {
+            return redirect()->back()->with('success', 'Xóa mềm thành công.');
+        } else {
+            return redirect()->back()->with('error', 'Không thể xóa.');
+        }
+    }
+
+
+    public function trash()
+    {
+        $title = 'Khôi Phục Danh Sách Vai Trò';
+        $roles = Role::onlyTrashed()->paginate(10);
+        return view('admin.role.trash', compact('roles','title')); // Sửa 'role' thành 'roles'
+    }
+
+    public function restore($id)
+    {
+        $role = Role::withTrashed()->findOrFail($id);
+        $role->restore();
+        return redirect()->route('admin.role.trash')->with('success', 'đã được khôi phục thành công!');
+    }
+
+    public function forceDelete($id)
+    {
+        $role = Role::withTrashed()->findOrFail($id);
+        $role->forceDelete();
+        return redirect()->route('admin.role.trash')->with('success', ' đã được xóa vĩnh viễn!');
+    }
 }

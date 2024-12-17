@@ -158,7 +158,7 @@
                     <div class="col-lg-6">
                         <h5 class="uptitle wow fadeInUp">Khám phá</h5>
                         <h2 class="wow fadeInUp">Câu chuyện của chúng tôi</h2>
-<<<<<<< HEAD
+
                         <p class="lead wow fadeInUp">Tại "Steak House", chúng tôi tự hào mang đến trải nghiệm ẩm thực đỉnh
                             cao với món bò beefsteak tuyệt hảo. Hành trình của chúng tôi bắt đầu với mong muốn tạo nên một
                             không gian ấm cúng và sang trọng, nơi thực khách có thể thưởng thức những món ăn tinh tế, đậm đà
@@ -172,9 +172,6 @@
                             thành điểm đến lý tưởng cho những ai yêu thích hương vị bò beefsteak tuyệt hảo.
                         </p>
 
-=======
-
->>>>>>> 5b9649d8707f7e30ce48e31610a5e8e9fe8fe632
 
                     </div>
 
@@ -374,33 +371,33 @@
 
                             <div class="text-center">
                                 <h5 class="uptitle wow fadeInUp">Chúng tôi</h5>
-                                <h2 class="wow fadeInUp">Mở cửa</h2>
+                                <h2 class="wow fadeInUp">Thời gian phục vụ</h2>
                             </div>
                         </div>
                         <div class="col-lg-4 wow fadeInRight" data-wow-delay="0s">
                             <div class="text-center">
-                                <span class="id-color-2 bold">Thứ 2 - Thứ 5</span>
-                                <div class="fs20">10:30AM - 9:30PM</div>
+                                <span class="id-color-2 bold">Ngày mở cửa</span>
+                                <div class="fs20">Thứ 2 - Chủ nhật</div>
                             </div>
                         </div>
                         <div class="col-lg-4 wow fadeInRight" data-wow-delay=".1s">
                             <div class="text-center">
-                                <span class="id-color-2 bold">Thứ 6</span>
-                                <div class="fs20">10:00AM - 10:30PM</div>
+                                <span class="id-color-2 bold">Giờ mở cửa</span>
+                                <div class="fs20">11:00AM</div>
                             </div>
                         </div>
                         <div class="col-lg-4 wow fadeInRight" data-wow-delay=".2s">
                             <div class="text-center">
-                                <span class="id-color-2 bold">Thứ 7 - Chủ nhật</span>
-                                <div class="fs20">09:30AM - 11:00PM</div>
+                                <span class="id-color-2 bold">Giờ đóng cửa</span>
+                                <div class="fs20">08:30PM</div>
                             </div>
                         </div>
 
-                        <div class="col-lg-9 text-lg-start text-sm-center wow fadeIn" style="margin-top: 15%">
-                            <h3><i class="id-color fa fa-phone mr10"></i>Đặt bàn ngay và nhận ưu đãi đặc biệt!</h3>
+                        <div class="col-lg-9 text-lg-start text-sm-center wow fadeIn" style="margin-top: 7%">
+                            <h3><i class="id-color fa fa-phone mr10"></i>Đặt bàn ngay và nhận ưu đãi đặc biệt !</h3>
                         </div>
                         <div class="col-lg-3 text-lg-end text-sm-center wow fadeIn" data-wow-delay=".2s"
-                            style="margin-top: 15%">
+                            style="margin-top: 7%">
                             <a href="{{ route('booking.client') }}" class="btn-line">Đặt bàn ngay</a>
                         </div>
 

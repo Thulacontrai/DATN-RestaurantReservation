@@ -3,6 +3,8 @@
 @section('title', 'Danh Mục Bàn')
 
 @section('content')
+    @include('admin.layouts.messages')
+
 
     <!-- Content wrapper scroll start -->
     <div class="content-wrapper-scroll">
@@ -15,7 +17,7 @@
                 <div class="col-sm-12 col-12">
                     <div class="card shadow-sm">
                         <div class="card-header d-flex justify-content-between align-items-center">
-                            <div class="card-title">Danh Mục Bàn</div>
+                            <div class="card-title ">Danh Mục Bàn</div>
 
                             <!-- Thêm nút Thêm Mới -->
                             <div class="d-flex gap-2">
@@ -38,49 +40,65 @@
                             <div class="filter-form">
                                 <form method="GET" action="{{ route('admin.table.index') }}" class="mb-3">
                                     <div class="row g-2">
+                                        <!-- Tìm kiếm theo số bàn -->
                                         <div class="col-auto">
                                             <input type="text" id="search-name" name="name"
                                                 class="form-control form-control-sm" placeholder="Tìm kiếm bàn"
                                                 value="{{ request('name') }}">
                                         </div>
-                                        <div class="col-auto">
-                                            <select name="table_type" id="search-table-type"
-                                                class="form-select form-select-sm">
-                                                <option value="">-- Loại bàn --</option>
-                                                <option value="Thường"
-                                                    {{ request('table_type') == 'Thường' ? 'selected' : '' }}>Thường
-                                                </option>
-                                                <option value="VIP"
-                                                    {{ request('table_type') == 'VIP' ? 'selected' : '' }}>VIP</option>
-                                            </select>
-                                        </div>
+
+                                        <!-- Lọc theo trạng thái bàn -->
                                         <div class="col-auto">
                                             <select name="status" id="search-status" class="form-select form-select-sm">
-                                                <option value="">-- Trạng thái --</option>
+                                                <option value="">Tất Cả</option>
                                                 <option value="Available"
                                                     {{ request('status') == 'Available' ? 'selected' : '' }}>Có sẵn</option>
                                                 <option value="Reserved"
                                                     {{ request('status') == 'Reserved' ? 'selected' : '' }}>Đã đặt trước
                                                 </option>
-                                                <option value="In Use"
-                                                    {{ request('status') == 'In Use' ? 'selected' : '' }}>Đang sử dụng
+                                                <option value="Occupied"
+                                                    {{ request('status') == 'Occupied' ? 'selected' : '' }}>Đang sử dụng
                                                 </option>
                                             </select>
                                         </div>
+
+
+
+                                        <!-- Nút Tìm kiếm và làm mới -->
                                         <div class="col-auto">
                                             <button type="submit" class="btn btn-sm btn-primary">Tìm kiếm</button>
+                                            <a href="{{ route('admin.table.index') }}" class="btn btn-sm btn-success">
+                                                <i class="bi bi-arrow-repeat"></i>
+                                            </a>
                                         </div>
                                     </div>
                                 </form>
                             </div>
 
+
+
                             <div class="table-responsive">
                                 <table class="table v-middle table-hover m-0">
                                     <thead>
                                         <tr>
-                                            <th>Khu Vực</th>
-                                            <th>Số Bàn</th>
-                                            <th>Loại Bàn</th>
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.table.index', array_merge(request()->query(), ['sort' => 'area', 'direction' => request('sort') === 'area' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}">
+                                                    Khu Vực
+                                                    <i
+                                                        class="bi bi-arrow-{{ request('sort') === 'area' ? (request('direction') === 'asc' ? 'up' : 'down') : '' }}"></i>
+                                                </a>
+                                            </th>
+
+                                            <th>
+                                                <a
+                                                    href="{{ route('admin.table.index', array_merge(request()->query(), ['sort' => 'table_number', 'direction' => request('sort') === 'table_number' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}">
+                                                    Số Bàn
+                                                    <i
+                                                        class="bi bi-arrow-{{ request('sort') === 'table_number' ? (request('direction') === 'asc' ? 'up' : 'down') : '' }}"></i>
+                                                </a>
+                                            </th>
+
                                             <th>Trạng Thái</th>
                                             <th>Hành Động</th>
                                         </tr>
@@ -90,7 +108,6 @@
                                             <tr>
                                                 <td>{{ $table->area }}</td>
                                                 <td>{{ $table->table_number }}</td>
-                                                <td>{{ $table->table_type }}</td>
                                                 <td>
                                                     <span
                                                         class="badge {{ $table->status == 'Available' ? 'bg-success' : ($table->status == 'Reserved' ? 'bg-warning' : 'bg-danger') }} min-70">
@@ -98,7 +115,7 @@
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    <div class="actions" >
+                                                    <div class="actions">
                                                         <a href="{{ route('admin.table.edit', $table->id) }}"
                                                             class="text-warning" data-bs-toggle="tooltip"
                                                             data-bs-placement="top" title="Sửa">
@@ -127,20 +144,24 @@
                                     </tbody>
                                 </table>
                             </div>
+                        </div>
 
-                            <!-- Pagination -->
-                            <div class="pagination justify-content-center mt-3">
-                                {{ $tables->links() }}
-                            </div>
-                            <!-- End Pagination -->
+
+                        <!-- Pagination -->
+                        <div class="d-flex justify-content-center">
+
+                            {{ $tables->links('pagination::client-paginate') }}
 
                         </div>
 
                     </div>
 
+
                 </div>
+
             </div>
             <!-- Row end -->
+
 
         </div>
         <!-- Content wrapper end -->
@@ -148,31 +169,4 @@
     </div>
     <!-- Content wrapper scroll end -->
 
-@endsection
-
-@section('scripts')
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
-
-    <script>
-        // Function to display alerts based on session messages
-        function showAlert(title, icon) {
-            Swal.fire({
-                position: "top",
-                title: title,
-                icon: icon,
-                showConfirmButton: false,
-                timerProgressBar: true,
-                timer: 1500
-            });
-        }
-
-        @if (session('success'))
-            showAlert("{{ session('success') }}", "success");
-        @endif
-
-        @if (session('error'))
-            showAlert("{{ session('error') }}", "error");
-        @endif
-    </script>
 @endsection

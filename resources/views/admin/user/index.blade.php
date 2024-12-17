@@ -1,8 +1,7 @@
 @extends('admin.master')
 
-@section('title', $type == 'employee' ? 'Danh Sách Nhân Viên' : 'Danh Sách Người Dùng')
-
 @section('content')
+    @include('admin.layouts.messages')
     <div class="content-wrapper-scroll">
         <div class="content-wrapper">
             <div class="row">
@@ -10,26 +9,21 @@
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <div class="card-title">
-                                <div class="btn-group" role="group">
-                                    <a href="{{ route('admin.user.index') }}"
-                                        class="btn btn-{{ $type == 'user' ? 'primary' : 'secondary' }}">
-                                        Người Dùng
-                                    </a>
-                                    <a href="{{ route('admin.user.employees') }}"
-                                        class="btn btn-{{ $type == 'employee' ? 'primary' : 'secondary' }}">
-                                        Nhân Viên
-                                    </a>
-                                </div>
+                                {{ $type == 'employee' ? 'Danh sách nhân viên' : 'Danh sách người dùng' }}
                             </div>
-
                             <div>
-                                <a href="{{ route('admin.user.create') }}"
-                                    class="btn btn-sm btn-primary d-flex align-items-center">
-                                    <i class="bi bi-plus-circle me-2"></i>
-                                    {{ $type == 'employee' ? 'Thêm Nhân Viên' : 'Thêm Người Dùng' }}
-                                </a>
+                                <div>
+                                    <a href="{{ route('admin.user.create', ['type' => $type]) }}" class="btn btn-sm btn-primary d-flex align-i">
+                                        <i class="bi bi-plus-circle me-2"></i>
+                                        {{ $type == 'employee' ? 'Thêm Nhân Viên' : 'Thêm Người Dùng' }}
+                                    </a>
+                                    
+                                </div>
+                                
                             </div>
                         </div>
+                        
+
                         <div class="card-body">
                             <!-- Tìm kiếm người dùng -->
                             <form method="GET"
@@ -42,14 +36,14 @@
                                     </div>
                                     <div class="col-auto">
                                         <button type="submit" class="btn btn-sm btn-primary">
-                                            <i class=""></i> Tìm kiếm
+                                            Tìm kiếm
                                         </button>
                                     </div>
-                                    @if (!empty($search))
+                                    @if (!empty($request->search))
                                         <div class="col-auto">
                                             <a href="{{ $type == 'employee' ? route('admin.user.employees') : route('admin.user.index') }}"
                                                 class="btn btn-sm btn-secondary">
-                                                <i class="bi bi-x-circle me-1"></i> Xóa bộ lọc
+                                                Xóa bộ lọc
                                             </a>
                                         </div>
                                     @endif
@@ -68,7 +62,6 @@
                                             @if ($type == 'employee')
                                                 <th>Vai Trò</th>
                                             @endif
-                                            <th>Trạng Thái</th>
                                             <th>Ngày tạo</th>
                                             <th>Hành Động</th>
                                         </tr>
@@ -86,31 +79,55 @@
                                                             {{ $user->roles ? $user->roles->pluck('name')->implode(', ') : 'Không có vai trò' }}
                                                         </td>
                                                     @endif
-                                                    <td>
-                                                        @if ($user->status == 'active')
-                                                            <span class="badge shade-green">Hoạt Động</span>
-                                                        @else
-                                                            <span class="badge shade-red">Ngừng Hoạt Động</span>
-                                                        @endif
-                                                    </td>
                                                     <td>{{ $user->created_at }}</td>
+                                                    
                                                     <td>
-                                                        <div class="action text-center">
-                                                            <a href="{{ route('admin.user.edit', $user->id) }}" data-bs-toggle="tooltip"
-                                                                 data-bs-placement="top" title="Sửa">
-     
-                                                                 <i class="bi bi-pencil-square text-warning"></i>
-                                                             </a></div>
+                                                        <div class="actions">
+                                                            
+                                                                <a href="{{ route('admin.user.show', $user->id) }}"  class="viewRow" data-bs-toggle="tooltip" data-bs-placement="top"
+                                                                title="Chi tiết">
+                                                                <i class="bi bi-list text-green"></i></a>
+                                                         
+                                                            
+                                                            <!-- Nút Sửa -->
+                                                            <a href="{{ route('admin.user.edit', ['user' => $user->id, 'type' => $type]) }}"
+                                                                class="text-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="Sửa">
+                                                                <i class="bi bi-pencil-square"></i>
+                                                            </a>
+                                                    
+                                                            <!-- Nút Xóa -->
+                                                            <a href="" style="padding-bottom: 5px; padding-left: 3px;">
+                                                                <form action="{{ route('admin.user.destroy', $user->id) }}" method="POST"
+                                                                    style="display: inline-block;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa?');">
+                                                                    @csrf
+                                                                    @method('DELETE')
+                                                                    <button type="submit" class="btn btn-link p-0">
+                                                                        <i class="bi bi-trash text-red"></i>
+                                                                    </button>
+                                                                </form>
+                                                            </a>
+                                                        </div>
                                                     </td>
+                                                    
+                                                    
+                                                                                                   
                                                 </tr>
                                             @endforeach
+                                        @else
+                                            <tr>
+                                                <td colspan="{{ $type == 'employee' ? 6 : 5 }}" class="text-center">
+                                                    Không có dữ liệu.
+                                                </td>
+                                            </tr>
                                         @endif
                                     </tbody>
                                 </table>
                             </div>
 
-                            <div class="pagination justify-content-center mt-3">
-                                {{ $users->links() }}
+                            <div class="d-flex justify-content-center">
+
+                                {{ $users->links('pagination::client-paginate') }}
+
                             </div>
                         </div>
                     </div>

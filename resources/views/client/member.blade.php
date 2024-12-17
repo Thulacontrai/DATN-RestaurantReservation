@@ -61,6 +61,7 @@
                             @foreach ($bookingData as $reservation)
                                 <div
                                     class="reservation-card details-{{ $reservation->id }}  mb-3 p-3 bg-dark text-light rounded">
+
                                     <h5>Mã đặt bàn: {{ $reservation->id }} - {{ $reservation->user_name }}</h5>
                                     <div class="row">
                                         <div class="col-4">
@@ -349,6 +350,7 @@
 
 
 
+
                         <div id="accountDetailsSection" class="content-section" style="display:none;">
                             <h3>Thông tin cá nhân</h3>
                             <form action="{{ route('member.update') }}" method="POST"
@@ -370,6 +372,7 @@
                                     đổi</button>
                                 <button type="button" onclick="toggleEdit()" id="editButton" class="btn-line">Chỉnh sửa
                                     thông tin</button>
+
                             </form>
                         </div>
                     </div>
@@ -471,6 +474,20 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Form hủy (ẩn mặc định) -->
+                    <div id="cancelFormContainer" style="display: none;">
+                        <form id="cancelForm" method="POST" action="{{ route('client.cancel.reservation') }}">
+                            @csrf
+                            <input type="hidden" name="reservation_id" id="reservation_id">
+                            <label for="cancelled_reason">Lý do hủy:</label>
+                            <textarea name="cancelled_reason" id="cancelled_reason" rows="4" required></textarea>
+                            <br>
+                            <button type="submit">Xác nhận hủy</button>
+                            <button type="button" id="cancelButton">Hủy</button>
+                        </form>
+                    </div>
+
 
 
 
@@ -971,45 +988,49 @@
             return refundAmount;
 
         }
-
         $(document).ready(function() {
-            $('.deleteButton').click(function() {
-                var id = this.getAttribute('data-id'); // Lấy ID từ thuộc tính 'data-id'
 
-                Swal.fire({
-                    icon: "question",
-                    title: "Xác nhận hủy",
-                    text: "Bạn có chắc chắn muốn hủy đặt bàn không?",
-                    showCancelButton: true,
-                    confirmButtonText: "Xác nhận",
-                    cancelButtonText: "Hủy"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Gọi AJAX hoặc thực hiện hành động xóa
-                        $.ajax({
-                            url: '{{ route('client.cancel.reservationpopup') }}',
-                            type: 'POST',
-                            data: {
-                                id: id,
-                                _token: '{{ csrf_token() }}'
-                            },
-                            success: function(response) {
-                                Swal.fire({
-                                    icon: "success",
-                                    title: "Thành công",
-                                    text: "Hủy bàn thành công!"
-                                }).then(() => {
-                                    if (response.success) {
-                                        location.reload(); // Tải lại trang
-                                    }
-                                });
-                            },
-                            error: function(xhr) {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Lỗi",
-                                    text: "Có lỗi xảy ra!"
-                                });
+    $('.deleteButton').click(function() {
+        var id = this.getAttribute('data-id'); // Lấy ID từ thuộc tính 'data-id'
+
+        Swal.fire({
+            icon: "question",
+            title: "Xác nhận hủy",
+            text: "Bạn có chắc chắn muốn hủy đặt bàn không?",
+            input: 'text', // Thêm input vào SweetAlert
+            inputPlaceholder: 'Lý do hủy (bắt buộc)', // Placeholder cho input
+            showCancelButton: true,
+            confirmButtonText: "Xác nhận",
+            cancelButtonText: "Hủy",
+            preConfirm: (inputValue) => {
+                // Kiểm tra xem lý do hủy có trống không
+                if (!inputValue || inputValue.trim() === "") {
+                    Swal.showValidationMessage('Vui lòng nhập lý do hủy!'); // Hiển thị thông báo lỗi
+                    return false; // Dừng lại nếu không nhập lý do
+                }
+                return inputValue; // Trả về lý do hủy hợp lệ
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                var reason = result.value; // Lấy lý do từ input
+
+                // Gọi AJAX hoặc thực hiện hành động xóa
+                $.ajax({
+                    url: '{{ route('client.cancel.reservationpopup') }}',
+                    type: 'POST',
+                    data: {
+                        id: id,
+                        reason: reason, // Gửi lý do hủy trong data
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        Swal.fire({
+                            icon: response.icon,
+                            title: response.title,
+                            text: response.message
+                        }).then(() => {
+                            if (response.success) {
+                                location.reload(); // Tải lại trang
                             }
                         });
                     } else {
@@ -1023,6 +1044,26 @@
                 });
             });
         });
+
+
+
+
+//         $(document).ready(function () {
+//     $('.deleteButton').click(function () {
+//         // Lấy ID đặt bàn từ thuộc tính 'data-id'
+//         var id = this.getAttribute('data-id');
+
+//         // Hiển thị form và gán ID đặt bàn vào input hidden
+//         $('#reservation_id').val(id); // Gán ID vào input hidden
+//         $('#cancelFormContainer').show(); // Hiển thị form
+//     });
+
+//     // Sự kiện nút Hủy trong form (ẩn form khi không muốn hủy nữa)
+//     $('#cancelButton').click(function () {
+//         $('#cancelFormContainer').hide(); // Ẩn form
+//     });
+// });
+
 
         // modal hủy
         function openCancelModal(reservationId, depositAmount, reservationDateStr, reservationTimeStr) {
