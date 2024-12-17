@@ -64,7 +64,8 @@
                                 </thead>
                                 <tbody>
                                     @foreach ($items as $item)
-                                        <tr data-item-id="{{ $item->id }}" data-table-id="{{ $item->order->tables['0']->id }}">
+                                    <tr data-item-id="{{ $item->id }}" data-item-type="{{ $item->item_type }}"
+                                        data-table-id="{{ $item->order->tables['0']->id }}">
                                             <td>
                                                 <strong>
                                                     @if ($item->item_type == 1)
@@ -93,7 +94,8 @@
                                         @if ($item->count_cancel != 0)
                                             <tr>
                                                 <td colspan="5">
-                                                    <p>Hủy <span class="text-danger">{{ $item->count_cancel }}</span> vào lúc {{ $item->updated_at }}</p>
+                                                <p>Hủy <span class="text-danger">{{ $item->count_cancel }}</span>
+                                                vào lúc {{ $item->updated_at }}</p>
                                                 </td>
                                             </tr>
                                         @endif
@@ -116,7 +118,8 @@
                                 </thead>
                                 <tbody>
                                     @foreach ($items as $item)
-                                        <tr data-item-id="{{ $item->id }}" data-table-id="{{ $item->order->tables['0']->id }}">
+                                    <tr data-item-id="{{ $item->id }}"data-item-type="{{ $item->item_type }}"
+                                        data-table-id="{{ $item->order->tables['0']->id }}">
                                             <td>
                                                 <strong>{{ $item->dish->name }}</strong>
                                             </td>
@@ -128,14 +131,16 @@
                                                     <button class="btn btn-danger cook-all" title="Chế biến toàn bộ"><i
                                                             class="fa-solid fa-forward"></i></button>
                                                 @else
-                                                    <button class="btn btn-secondary delete" title="Xóa"><i class="fa-solid fa-trash"></i></button>
+                                                <button class="btn btn-secondary delete" title="Xóa"><i
+                                                    class="fa-solid fa-trash"></i></button>
                                                 @endif
                                             </td>
                                         </tr>
                                         @if ($item->count_cancel != 0)
                                             <tr>
                                                 <td colspan="5">
-                                                    <p>Hủy <span class="text-danger">{{ $item->count_cancel }}</span> vào lúc {{ $item->updated_at }}</p>
+                                                <p>Hủy <span class="text-danger">{{ $item->count_cancel }}</span>
+                                                    vào lúc {{ $item->updated_at }}</p>
                                                 </td>
                                             </tr>
                                         @endif
@@ -191,10 +196,11 @@
                                         <th>Hành động</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="ChoCungUng">
                                     @foreach ($items1 as $item)
                                         @if ($item->status == 'chờ cung ứng' || $item->status == 'đã xong')
-                                            <tr data-item-id="{{ $item->id }}" data-table-id="{{ $item->order->tables['0']->id }}">
+                                        <tr data-item-id="{{ $item->id }}"
+                                            data-table-id="{{ $item->order->tables['0']->id }}">
                                                 <td>
                                                     <strong>{{ $item->dish->name }}</strong>
                                                 </td>
@@ -203,20 +209,17 @@
                                                 <td>{{ $item->order->tables['0']->table_number }}</td>
                                                 <td class="text-center">
                                                     @if ($item->quantity != 0)
-                                                        <button class="btn btn-success done-all" title="Cung ứng toàn bộ"><i class="fa-solid fa-forward"></i></button>
+                                                        <button class="btn btn-success done-all"
+                                                            title="Cung ứng toàn bộ"><i
+                                                                class="fa-solid fa-forward"></i></button>
                                                     @else
-                                                        <button class="btn btn-secondary delete" title="Xóa"><i class="fa-solid fa-trash"></i></button>
+                                                        <button class="btn btn-secondary delete" title="Xóa"><i
+                                                                class="fa-solid fa-trash"></i></button>
                                                     @endif
                                                 </td>
                                             </tr>
 
-                                            @if ($item->count_cancel != 0)
-                                                <tr>
-                                                    <td colspan="5">
-                                                        <p>Hủy <span class="text-danger">{{ $item->count_cancel }}</span> vào lúc {{ $item->updated_at }}</p>
-                                                    </td>
-                                                </tr>
-                                            @endif
+                            
                                         @endif
                                     @endforeach
                                 </tbody>
@@ -237,6 +240,7 @@
 
 
         const itemId = orderRow.dataset.itemId;
+        const itemType = orderRow.dataset.itemType;
         const tableId = orderRow.dataset.tableId;
 
         if (event.target.closest(".cook-all")) {
@@ -251,78 +255,93 @@
                 choCungUngContainer.appendChild(orderRow); // Di chuyển dòng vào container
             }
 
-            handleCookAll(itemId, tableId);
+            handleCookAll(itemId, tableId, itemType);
         } else if (event.target.closest(".delete")) {
+            const orderRow = event.target.closest("tr[data-item-id]");
+            const itemId = orderRow.dataset.itemId;
+            const itemType = orderRow.dataset.itemType;
+
+            // Tìm dòng thông báo hủy (nếu có) dưới dòng món ăn
+            const notificationRow = orderRow.nextElementSibling;
+            if (notificationRow && notificationRow.querySelector('.text-danger')) {
+                notificationRow.remove(); // Xóa dòng thông báo
+            }
+
+            // Xóa dòng món ăn
             orderRow.remove();
-            handleDelete(itemId);
+
+            // Gửi request xóa món
+            handleDelete(itemId, itemType);
         } else if (event.target.closest(".done-all")) {
             orderRow.remove();
-            handleDoneAll(itemId, tableId);
+            handleDoneAll(itemId, tableId, itemType);
         }
     });
 });
 // Hàm xử lý cook-all
-function handleCookAll(itemId, tableId) {
-    fetch(`/kitchen/${itemId}/cook-all`, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                tableId: tableId
-            }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                console.log('Món đã được chế biến!');
-            }
-        })
-        .catch(error => console.error('Lỗi:', error));
-}
+function handleCookAll(itemId, tableId, itemType) {
+            fetch(`/kitchen/${itemId}/cook-all`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        tableId: tableId,
+                        itemType: itemType
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        console.log('Món đã được chế biến!');
+                    }
+                })
+                .catch(error => console.error('Lỗi:', error));
+        }
 
-// Hàm xử lý delete
-function handleDelete(itemId) {
-    fetch(`/kitchen/${itemId}/delete`, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({}),
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                console.log('Mục đã được xóa!');
-            }
-        })
-        .catch(error => console.error('Lỗi:', error));
-}
+        // Hàm xử lý delete
+        function handleDelete(itemId, itemType) {
+            fetch(`/kitchen/${itemId}/delete`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        itemType
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        console.log('Mục đã được xóa!');
+                    }
+                })
+                .catch(error => console.error('Lỗi:', error));
+        }
 
-// Hàm xử lý done-all
-function handleDoneAll(itemId, tableId) {
-    fetch(`/kitchen/${itemId}/done-all`, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                tableId: tableId
-            }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                console.log('Món đã được cung ứng!');
-            }
-        })
-        .catch(error => console.error('Lỗi:', error));
-}
-
-
+        // Hàm xử lý done-all
+        function handleDoneAll(itemId, tableId, itemType) {
+            fetch(`/kitchen/${itemId}/done-all`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        tableId: tableId,
+                        itemType
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        console.log('Món đã được cung ứng!');
+                    }
+                })
+                .catch(error => console.error('Lỗi:', error));
+        }
     </script>
 
     <script>
