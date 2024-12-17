@@ -362,7 +362,7 @@ class ReservationController extends Controller
             return back()->withErrors(['error' => "Đã xảy ra lỗi khi cập nhật đặt bàn: " . $e->getMessage()]);
         }
     }
-}
+
 
 
     public function cancel(Request $request, $id)
@@ -377,6 +377,7 @@ class ReservationController extends Controller
     
         return redirect()->route('admin.reservation.index')->with('success', 'Đơn đặt bàn đã được hủy thành công.');
     }
+
     
 
 
@@ -412,7 +413,7 @@ class ReservationController extends Controller
         // Mảng giới hạn linh hoạt cho từng khung giờ
         $slotLimits = [
             '18:00:00' => 150,
-            '19:00:00' => 10, 
+            '19:00:00' => 150, 
             '19:30:00' => 150,  
             
         ];
