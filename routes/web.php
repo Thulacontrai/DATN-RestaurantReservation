@@ -95,7 +95,7 @@ Route::get('/member', [MemberController::class, 'show'])->name('client.member');
 Route::post('/update-member', [MemberController::class, 'update'])->name('member.update');
 Route::post('/change-password', [MemberController::class, 'changePassword'])->name('member.changePassword');
 Route::post('/member/update-booking', [MemberController::class, 'updateBooking'])->name('member.updateBooking');
-
+Route::post('/member/reservation/update', [MemberController::class, 'updateReservation'])->name('member.reservation.update');
 
 // web.php
 // web.php

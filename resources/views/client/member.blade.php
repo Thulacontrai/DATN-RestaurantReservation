@@ -107,14 +107,14 @@
                                             'Pending Refund' => 'Chờ hoàn cọc', // Thêm nhãn cho trạng thái 'Pending Refund'
                                         ];
                                     @endphp
-                                       <strong
-                                       class="text-right {{ $statusClasses[$reservation->status] ?? 'status-pending' }}">
-                                       {{ $statusLabels[$reservation->status] ?? 'Chờ xử lý' }}
-                                   </strong>
+                                    <strong
+                                        class="text-right {{ $statusClasses[$reservation->status] ?? 'status-pending' }}">
+                                        {{ $statusLabels[$reservation->status] ?? 'Chờ xử lý' }}
+                                    </strong>
 
                                     <div class=" mt-3">
-                                  
-                                
+
+
                                         @if ($reservation->status == 'Pending' || $reservation->status == 'Confirmed')
                                             <button class="btn btn-secondary edit-reservation-btn"
                                                 data-id="{{ $reservation->id }}">Chỉnh sửa</button>
@@ -621,22 +621,70 @@
                 // Kiểm tra số lượng khách và yêu cầu cọc
 
                 if ((guest_count >= 6 && oldPeopleCount < 6) || guest_count >= 6) {
-                    // Nếu số lượng khách thay đổi từ dưới 6 lên >= 6, yêu cầu cọc
-                    $(".alertModal").modal("hide"); // Đảm bảo đóng trước đó
-                    $(".modal-backdrop").remove(); // Xóa backdrop nếu có
-                    $(".alertModal").modal("show"); // Mở modal
-                    const qrPaymentURL =
-                        `https://api.qrserver.com/v1/create-qr-code/?data=Thanh+toan+${newDeposit}+VND&size=200x200`;
-                    qrCode.attr("src", qrPaymentURL);
-                    qrSection.show();
                     reservation.deposit_amount = newDeposit;
-                    // console.log(guest_count);
-                    // Xác nhận gửi form
-                    $(document).on("click", ".confirm-submit", function() {
-                        $(".alertModal").modal("hide");
-                        UpdateReser(reservation);
-                        //  $(".edit-reservation").off("submit").submit(); // Gửi form
+                    Swal.fire({
+                        title: 'Đang chờ thanh toán',
+                        html: 'Vui lòng quét mã thanh toán...',
+                        imageUrl: `https://img.vietqr.io/image/MB-0964236835-compact2.png?amount=${reservation.deposit_amount}&addInfo=Thanh Toan Coc Don Dat Bat ${reservationId}`,
+                        imageWidth: 400,
+                        imageHeight: 450,
+                        showConfirmButton: false,
+                        showCloseButton: true,
+                        didOpen: () => {
+                            Swal.showLoading();
+                            setTimeout(() => {}, 3000);
+                        }
                     });
+                    var checkInterval = 1000;
+                    var delayBeforeStart = 5000;
+                    var desiredAmount = reservation.deposit_amount;
+                    var desiredDescription = `Thanh Toan Coc Don Dat Bat ${reservationId}`;
+                    var transactionFound = false;
+                    var intervalId;
+
+                    setTimeout(function() {
+                        intervalId = setInterval(function() {
+                            if (!transactionFound) {
+                                checkTransaction();
+                            }
+                        }, checkInterval);
+                    }, delayBeforeStart);
+
+                    function checkTransaction() {
+                        const url =
+                            'https://script.google.com/macros/s/AKfycbwsNblgurg5Wig7qUO0TNmDmwlJocExVGzMR5wCacLO1vJvRe9Zq9MW4sjrY0fdIdFv/exec';
+
+                        fetch(url)
+                            .then(response => response.json())
+                            .then(data => {
+                                const transactions = data.data;
+                                let foundTransaction = false;
+                                transactions.forEach(transaction => {
+                                    if (transaction['Giá trị'] == desiredAmount &&
+                                        transaction['Mô tả'].includes(desiredDescription)) {
+                                        foundTransaction = true;
+                                        Swal.fire({
+                                            position: "center",
+                                            icon: "success",
+                                            title: "Thanh toán thành công",
+                                            showConfirmButton: false,
+                                            timer: 2000
+                                        }).then(() => {
+                                            UpdateReser(reservation);
+                                        });
+                                        clearInterval(intervalId);
+                                    }
+                                });
+
+                                if (!foundTransaction) {
+                                    console.log('Chưa tìm thấy giao dịch phù hợp.');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Có lỗi xảy ra:', error);
+                            });
+                    }
+
                 } else if (guest_count < 5 && oldPeopleCount >= 6) {
                     // Nếu số lượng khách giảm xuống dưới 5 và ban đầu >= 6, xử lý hoàn trả cọc
                     alert('Số lượng khách giảm xuống dưới 5, bạn sẽ được hoàn trả toàn bộ cọc: ' +
@@ -666,47 +714,37 @@
 
                 // hàm nhận thông tin sau khi kiểm tra
                 function UpdateReser(reservation) {
-                    console.log(reservation);
-                    $.ajax({
-                        url: `/member/reservation/update`, // Đường dẫn cập nhật
-                        type: "POST",
-                        data: reservation,
-                        success: function(response) {
-                            // console.log(response.message)
-                            // Kiểm tra nếu response trả về thông tin đã được cập nhật
+                    // CSRF Token từ meta tag
+                    const csrfToken = document.querySelector('meta[name="csrf-token"]')
+                        .getAttribute("content");
+
+                    // Gửi request bằng Fetch API
+                    fetch(`/member/reservation/update`, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "X-CSRF-TOKEN": csrfToken
+                            },
+                            body: JSON.stringify(reservation)
+                        })
+                        .then(response => response.json())
+                        .then(response => {
                             if (response.success) {
-                                Swal.fire({
-                                    icon: "success",
-                                    title: "Thành công",
-                                    text: "Cập nhật bàn thành công!"
-                                }).then(() => {
-                                    if (response.success) {
-                                        location.reload(); // Tải lại trang
-                                    }
-                                });
+                                location.reload();
                             } else {
-                                // Hiển thị lỗi nếu có
                                 Swal.fire({
-
-                                    text: "Có lỗi xảy ra vui lòng thử lại!",
-
-
-                                })
+                                    icon: "error",
+                                    text: "Có lỗi xảy ra vui lòng thử lại!"
+                                });
                             }
-                        },
-                        error: function(xhr) {
-                            // Hiển thị lỗi dưới các trường input
-                            let errors = xhr.responseJSON.errors;
-                            $(".text-danger").text("");
-                            for (let key in errors) {
-                                $(`#error-${key}`).text(errors[key][0]);
-                            }
-                        },
-
-                    });
-
-
-
+                        })
+                        .catch(error => {
+                            console.log("Lỗi:", error);
+                            Swal.fire({
+                                icon: "error",
+                                text: "Có lỗi xảy ra vui lòng thử lại!"
+                            });
+                        });
                 }
 
                 // đóng popup cọc
@@ -954,69 +992,70 @@
 
         }
         $(document).ready(function() {
-    $('.deleteButton').click(function() {
-        var id = this.getAttribute('data-id'); // Lấy ID từ thuộc tính 'data-id'
+            $('.deleteButton').click(function() {
+                var id = this.getAttribute('data-id'); // Lấy ID từ thuộc tính 'data-id'
 
-        Swal.fire({
-            icon: "question",
-            title: "Xác nhận hủy",
-            text: "Bạn có chắc chắn muốn hủy đặt bàn không?",
-            input: 'text', // Thêm input vào SweetAlert
-            inputPlaceholder: 'Lý do hủy (bắt buộc)', // Placeholder cho input
-            showCancelButton: true,
-            confirmButtonText: "Xác nhận",
-            cancelButtonText: "Hủy",
-            preConfirm: (inputValue) => {
-                // Kiểm tra xem lý do hủy có trống không
-                if (!inputValue || inputValue.trim() === "") {
-                    Swal.showValidationMessage('Vui lòng nhập lý do hủy!'); // Hiển thị thông báo lỗi
-                    return false; // Dừng lại nếu không nhập lý do
-                }
-                return inputValue; // Trả về lý do hủy hợp lệ
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                var reason = result.value; // Lấy lý do từ input
+                Swal.fire({
+                    icon: "question",
+                    title: "Xác nhận hủy",
+                    text: "Bạn có chắc chắn muốn hủy đặt bàn không?",
+                    input: 'text', // Thêm input vào SweetAlert
+                    inputPlaceholder: 'Lý do hủy (bắt buộc)', // Placeholder cho input
+                    showCancelButton: true,
+                    confirmButtonText: "Xác nhận",
+                    cancelButtonText: "Hủy",
+                    preConfirm: (inputValue) => {
+                        // Kiểm tra xem lý do hủy có trống không
+                        if (!inputValue || inputValue.trim() === "") {
+                            Swal.showValidationMessage(
+                                'Vui lòng nhập lý do hủy!'); // Hiển thị thông báo lỗi
+                            return false; // Dừng lại nếu không nhập lý do
+                        }
+                        return inputValue; // Trả về lý do hủy hợp lệ
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        var reason = result.value; // Lấy lý do từ input
 
-                // Gọi AJAX hoặc thực hiện hành động xóa
-                $.ajax({
-                    url: '{{ route('client.cancel.reservationpopup') }}',
-                    type: 'POST',
-                    data: {
-                        id: id,
-                        reason: reason, // Gửi lý do hủy trong data
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function(response) {
-                        Swal.fire({
-                            icon: response.icon,
-                            title: response.title,
-                            text: response.message
-                        }).then(() => {
-                            if (response.success) {
-                                location.reload(); // Tải lại trang
+                        // Gọi AJAX hoặc thực hiện hành động xóa
+                        $.ajax({
+                            url: '{{ route('client.cancel.reservationpopup') }}',
+                            type: 'POST',
+                            data: {
+                                id: id,
+                                reason: reason, // Gửi lý do hủy trong data
+                                _token: '{{ csrf_token() }}'
+                            },
+                            success: function(response) {
+                                Swal.fire({
+                                    icon: response.icon,
+                                    title: response.title,
+                                    text: response.message
+                                }).then(() => {
+                                    if (response.success) {
+                                        location.reload(); // Tải lại trang
+                                    }
+                                });
+                            },
+                            error: function(xhr) {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Lỗi",
+                                    text: "Có lỗi xảy ra!"
+                                });
                             }
                         });
-                    },
-                    error: function(xhr) {
+                    } else {
+                        // Người dùng hủy bỏ hành động
                         Swal.fire({
-                            icon: "error",
-                            title: "Lỗi",
-                            text: "Có lỗi xảy ra!"
+                            icon: "info",
+                            title: "Thông báo",
+                            text: "Hành động đã bị hủy."
                         });
                     }
                 });
-            } else {
-                // Người dùng hủy bỏ hành động
-                Swal.fire({
-                    icon: "info",
-                    title: "Thông báo",
-                    text: "Hành động đã bị hủy."
-                });
-            }
+            });
         });
-    });
-});
 
 
 
