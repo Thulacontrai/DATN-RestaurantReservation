@@ -10,7 +10,7 @@
                 <div class="col-sm-12 col-12">
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
-                            <div class="card-title">Danh Sách Quyền Hạn</div>
+                            <div class="card-title">Danh Sách Quyền Hạn</div>   
                             {{-- <form action="{{ route('admin.permissions.index') }}" method="GET" class="d-flex">
                                 <input type="text" name="search" class="form-control form-control-sm"
                                     placeholder="Tìm kiếm quyền hạn..." value="{{ request()->get('search') }}">
@@ -64,40 +64,32 @@
                                                             <td>{{ $permission->id }}</td>
                                                             <td>{{ $permission->name }}</td>
                                                             <td>
-                                                                 <span class="text-success">
-                                                                {{ \Carbon\Carbon::parse($permission->change_date . ' ' . $permission->change_time)->format('H:i:s') }}</span><br>
-                                                                {{ \Carbon\Carbon::parse($permission->change_date)->format('d/m/Y') }}
+                                                                <span class="text-success">
+                                                                    {{ \Carbon\Carbon::parse($permission->change_date . ' ' . $permission->change_time)->format('H:i:s') }}</span><br>
+                                                                    {{ \Carbon\Carbon::parse($permission->change_date)->format('d/m/Y') }}
                                                             </td>
                                                             <td>
                                                                 <div class="actions">
-                                                                    <a
-                                                                        href="{{ route('admin.permissions.edit', $permission->id) }}">
+                                                                    <a href="{{ route('admin.permissions.edit', $permission->id) }}">
                                                                         <i class="bi bi-pencil-square text-warning"></i>
                                                                     </a>
-                                                                    <a href="#">
-                                                                        <form
-                                                                            action="{{ route('admin.permissions.destroy', $permission->id) }}"
-                                                                            method="POST"
-                                                                            style="display: inline-block; padding-bottom: 3px">
-                                                                            @csrf
-                                                                            @method('DELETE')
-                                                                            <button type="submit"
-                                                                                class="border-0 bg-transparent"
-                                                                                onclick="deletePermission({{ $permission->id }})">
-                                                                                <i class="bi bi-trash text-danger"
-                                                                                    style="font-size: 1.2rem;"></i>
-                                                                            </button>
-                                                                        </form>
-                                                                    </a>
+                                                                    <a href="" style="padding-bottom: 5px; padding-left: 3px;">
+                                                                    <form action="{{ route('admin.permissions.destroy', $permission->id) }}" method="POST" style="display: inline-block; padding-bottom: 3px">
+                                                                        @csrf
+                                                                        @method('DELETE')
+                                                                         <button type="submit" class="btn btn-link p-0">
+                                                                        <i class="bi bi-trash text-red"></i>
+                                                                    </button>
+                                                                    </form>
+                                                                </a>
                                                                 </div>
+                                                                
                                                             </td>
                                                         </tr>
                                                     @endforeach
                                                 @endif
-
-
-
                                             </tbody>
+                                            
                                         </table>
 
 

@@ -17,6 +17,7 @@ class Order extends Model
         'reservation_id',
         'staff_id',
         'customer_id',
+        'guest_count',
         'total_amount',
         'order_type',
         'status',
@@ -44,7 +45,7 @@ class Order extends Model
     // Quan hệ với bảng Table (Bàn mà đơn hàng thuộc về)
     public function tables()
     {
-        return $this->belongsToMany(Table::class, 'orders_tables')
+        return $this->belongsToMany(Table::class, 'orders_tables','order_id', 'table_id')
             ->withPivot('start_time', 'end_time', 'status');
     }
     public function items()

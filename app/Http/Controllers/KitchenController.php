@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\CartUpdated;
+use App\Events\ItemUpdated;
 use App\Events\PosTableUpdated;
 use App\Events\PosTableUpdatedWithNoti;
 use App\Events\ProcessingDishes;
@@ -91,6 +93,7 @@ class KitchenController extends Controller
             $orderItem = OrderItem::where('item_id', $item->item_id)
                 ->where('order_id', $item->order_id)
                 ->where('status', '!=', 'hủy')
+                ->where('status', '!=', 'chưa yêu cầu')
                 ->where('item_type', $request->itemType)
                 ->first();
             $orderItem->processing += $item->quantity;
@@ -101,7 +104,9 @@ class KitchenController extends Controller
             $item = Kitchen::find($id);
             $orderItems = Order::with([
                 'orderItems' => function ($query) {
-                    $query->where('status', '!=', 'hủy');
+                    $query->where('status', '!=', 'hủy')
+                        ->where('status', '!=', 'chưa yêu cầu')
+                    ;
                 },
                 'orderItems.dish:id,name',
                 'orderItems.combo:id,name',
@@ -137,6 +142,12 @@ class KitchenController extends Controller
             }
             $order = Order::with(['reservation', 'tables', 'customer'])->findOrFail($orderId);
             broadcast(new PosTableUpdatedWithNoti($orderItems, $tableId, $notiBtn, "Bàn $tableId->table_number đang được chế biến món $itemName"))->toOthers();
+            $orderItem = OrderItem::with(['dish:id,name,image', 'combo:id,name,image'])
+                ->where('order_id', $orderId)
+                ->where('status', '!=', 'chưa yêu cầu')
+                ->get();
+            $orderItemArray = $orderItem->toArray();
+            broadcast(new ItemUpdated($orderItemArray, "Món đang được nhà bếp chế biến!", $request->tableId))->toOthers();
         });
         return response()->json(['status' => 'success']);
     }
@@ -150,7 +161,9 @@ class KitchenController extends Controller
             if ($item->item_type == 2) {
                 $orderItem = $orderItem->where('item_type', $request->item_type);
             }
-            $orderItem = $orderItem->where('status', '!=', 'hủy')->first();
+            $orderItem = $orderItem->where('status', '!=', 'hủy')
+                ->where('status', '!=', 'chưa yêu cầu')
+                ->first();
             if ($orderItem) {
                 $orderItem->completed += $item->quantity;
                 if ($orderItem->completed == $orderItem->quantity) {
@@ -162,7 +175,9 @@ class KitchenController extends Controller
             $item = Kitchen::find($id);
             $orderItems = Order::with([
                 'orderItems' => function ($query) {
-                    $query->where('status', '!=', 'hủy');
+                    $query->where('status', '!=', 'hủy')
+                        ->where('status', '!=', 'chưa yêu cầu')
+                    ;
                 },
                 'orderItems.dish:id,name',
                 'orderItems.combo:id,name',
@@ -198,6 +213,12 @@ class KitchenController extends Controller
             }
             $order = Order::with(['reservation', 'tables', 'customer'])->findOrFail($orderId);
             broadcast(new PosTableUpdatedWithNoti($orderItems, $tableId, $notiBtn, "Bàn $tableId->table_number đã được cung ứng món $itemName"))->toOthers();
+            $orderItem = OrderItem::with(['dish:id,name,image', 'combo:id,name,image'])
+                ->where('order_id', $orderId)
+                ->where('status', '!=', 'chưa yêu cầu')
+                ->get();
+            $orderItemArray = $orderItem->toArray();
+            broadcast(new ItemUpdated($orderItemArray, 'Món đã được nhà bếp hoàn thành!', $request->tableId))->toOthers();
         });
         return response()->json(['status' => 'success']);
     }

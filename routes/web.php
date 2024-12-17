@@ -95,15 +95,15 @@ Route::get('/member', [MemberController::class, 'show'])->name('client.member');
 Route::post('/update-member', [MemberController::class, 'update'])->name('member.update');
 Route::post('/change-password', [MemberController::class, 'changePassword'])->name('member.changePassword');
 Route::post('/member/update-booking', [MemberController::class, 'updateBooking'])->name('member.updateBooking');
-
+Route::post('/member/reservation/update', [MemberController::class, 'updateReservation'])->name('member.reservation.update');
 
 // web.php
 // web.php
 Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () {
     Route::get('user', [UserController::class, 'index'])->name('user.index'); // Danh sách người dùng
     Route::get('user/employees', [UserController::class, 'employeeList'])->name('user.employees'); // Danh sách nhân viên
-    Route::get('/users/{user}/edit', [UserController::class, 'edit'])
-    ->name('admin.user.edit');
+    Route::get('admin/user/{user}/edit', [UserController::class, 'edit'])->name('admin.user.edit');
+
     Route::delete('/admin/user/{id}', [UserController::class, 'destroy'])->name('admin.user.destroy');
 
 });
@@ -211,9 +211,12 @@ Route::post('/reservation/cancel', [ReservationController::class, 'cancel'])->na
 
 Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
 Route::post('/create-order', [PosController::class, 'createOrder']);
+Route::post('/edit-order/{tableId}', [PosController::class, 'editOrder']);
 Route::post('/order-details/{tableId}', [PosController::class, 'orderDetails'])->name('order-details');
 Route::post('/add-dish-to-order', [PosController::class, 'addDishToOrder']);
 Route::post('/add-combo-to-order', [PosController::class, 'addComboToOrder']);
+Route::post('/add-dish-waiting', [PosController::class, 'addDishWaiting']);
+Route::post('/add-combo-waiting', [PosController::class, 'addComboWaiting']);
 Route::post('/deleteItem', [PosController::class, 'deleteItem']);
 Route::post('/deleteItemm', [PosController::class, 'deleteItemm']);
 Route::post('/increaseQuantity', [PosController::class, 'increaseQuantity']);
@@ -226,10 +229,27 @@ Route::post('/canelItemm', [PosController::class, 'canelItemm']);
 Route::get('/Ppayment/{table_number}', [PosController::class, 'Ppayment'])->name('Ppayment');
 Route::get('/viewCheckOut/{table_number}', [PosController::class, 'viewCheckOut'])->name('viewCheckOut');
 Route::post('/check-payment-condition', [PosController::class, 'checkPaymentPondition'])->name('checkPaymentPondition');
-Route::get('/checkAvailableTables', [PosController::class, 'checkAvailableTables'])->name('checkPaymentPondition');
-Route::get('/menu-order', [OrderController::class, 'menuOrder'])->name('menuOrder');
+Route::get('/checkAvailableTables', [PosController::class, 'checkAvailableTables']);
+Route::post('/checkTables', [PosController::class, 'checkTables']);
+Route::middleware(['checkTableAndUser'])->group(function () {
+    Route::get('/menu-order', [OrderController::class, 'menuOrder'])->name('menuOrder');
+});
+Route::middleware(['checkUser'])->group(function () {
+    Route::get('/menu-selected/{table_number}', [OrderController::class, 'menuSelected'])->name('menuSelected');
+    Route::get('/menu-history/{table_number}', [OrderController::class, 'menuHistory'])->name('menuHistory');
+});
+Route::post('/menuOrder/updatee', [OrderController::class, 'updateItemm'])->name('updateItem.menuOrder');
+Route::get('/menuOrder/requestToOrder/{table_number}', [OrderController::class, 'requestToOrder'])->name('requestToOrder.menuOrder');
 
+
+
+Route::get('/get-reservations', [PosController::class, 'getReservations'])->name('get.reservations');
 Route::get('reserToOrder/{reservationId}', [PosController::class, 'reserToOrder'])->name('ReToOr');
+Route::post('retoOrder',[PosController::class,'retoOrder'])->name('retoOrder');
+Route::get('/checkReservationHasTable', [PosController::class, 'checkIfReservationHasTable'])->name('checkReservationHasTable');
+Route::get('/getAvailableTables', [PosController::class, 'AvailableTables'])->name('getAvailableTables');
+Route::post('/reservations/filter', [PosController::class, 'filter']);
+
 
 
 Route::post('/load-more-dishes', [PosController::class, 'loadMoreDishes']);
@@ -310,6 +330,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::patch('table/{id}/restore', [TableController::class, 'restore'])->name('table.restore');
     Route::delete('table/{id}/force-delete', [TableController::class, 'forceDelete'])->name('table.forceDelete');
 
+    Route::get('tableLayout',[ReservationController::class, 'tableLayout'])->name('tableLayout');
+    Route::get('getTable',[ReservationController::class, 'getTable'])->name('getTable');
+    Route::post('/reser-tables/update',[ReservationController::class, 'updateAssignTable'])->name('update-assignTable');
     /// xếp bàn cho khách
     Route::get('reservation/{reservationId}/assign-tables', [ReservationController::class, 'assignTables'])->name('reservation.assignTables');
     Route::get('reservation/assign-table', [ReservationController::class, 'assignTable'])->name('assignTable');
@@ -324,6 +347,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('reservationHistory', ReservationHistoryController::class);
     Route::put('/reservations/calendar/{id}', [ReservationController::class, 'updateCalendar']);
     Route::post('/reservations/cancel/{id}', [ReservationController::class, 'processReservationCancellation']);
+    Route::post('/reservations/confirm/{id}', [ReservationController::class, 'confirmReservation'])->name('confirmReservation');
 
 
 
@@ -392,6 +416,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('user-trash', [UserController::class, 'trash'])->name('user.trash');
     Route::patch('user-restore/{id}', [UserController::class, 'restore'])->name('user.restore');
     Route::delete('user-force-delete/{id}', [UserController::class, 'forceDelete'])->name('user.forceDelete');
+    Route::get('users/{id}/show', [UserController::class, 'show'])->name('admin.user.show');
+
 
     //permission role
     Route::resource('role', RoleController::class);
@@ -425,11 +451,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('calendar', CalendarController::class);
 
     //inventoy
-
-
-
-
-
 
 
 
@@ -472,8 +493,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/member/update-booking', [MemberController::class, 'updateBooking'])->name('member.updateBooking');
     Route::post('/cancel-reservation', [ReservationController::class, 'cancelReservation'])->name('cancel.reservation');
 });
-
-
+Route::post('member/reservation/update', [MemberController::class,'updateReservation']);
+Route::get('/member/reservation/{reservationId}', [MemberController::class, 'getReservationDetails']);
 
 Route::get('/register-client', [CustomerAuthController::class, 'showRegisterForm'])->name('register.form');
 Route::post('/register-client', [CustomerAuthController::class, 'register'])->name('client.register');

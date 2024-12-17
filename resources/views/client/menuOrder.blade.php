@@ -1,156 +1,225 @@
 @extends('client.layouts.master')
 @section('title', 'Menu')
-
 @section('content')
-    <style>
-        .menu-item {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            overflow: hidden;
-            text-align: center;
-            margin-bottom: 1rem;
-        }
-
-        .menu-item img {
-            width: 100%;
-            height: auto;
-        }
-
-        .menu-item .item-info {
-            padding: 10px;
-        }
-
-        .menu-item .item-info h6 {
-            font-size: 16px;
-            font-weight: bold;
-            margin: 0;
-        }
-
-        .menu-item .item-info .price {
-            font-size: 14px;
-            color: #888;
-        }
-
-        .menu-item .btn-add {
-            background-color: #f5a623;
-            color: #fff;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .menu-item .btn-add:hover {
-            background-color: #e5941f;
-        }
-
-        .fixed-bottom-bar {
-            position: fixed;
-            border: none;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background-color: #ff8c00;
-            color: #fff;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-            z-index: 1000;
-        }
-
-        .fixed-bottom-bar button {
-            background-color: #fff;
-            color: #ff8c00;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .fixed-bottom-bar button:hover {
-            background-color: #ffae42;
-            color: #fff;
-        }
-
-        .top-buttons {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 15px;
-        }
-
-        .top-buttons button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            margin: 0 5px;
-            font-size: 14px;
-            cursor: pointer;
-        }
-
-        .top-buttons .btn-combo {
-            background-color: #ff8c00;
-            color: white;
-        }
-
-        .top-buttons .btn-combo:hover {
-            background-color: #e57a00;
-        }
-
-        .top-buttons .btn-other {
-            background-color: #fff;
-            color: #ff8c00;
-            border: 1px solid #ff8c00;
-        }
-
-        .top-buttons .btn-other:hover {
-            background-color: #ff8c00;
-            color: white;
-        }
-    </style>
+    @include('client.layouts.partials.menuOrder')
     @include('client.layouts.component.subheader', [
         'backgroundImage' => 'client/03_images/background/bg-1.jpg',
-        'subtitle' => 'Menu Order',
-        'title' => 'Steak House',
-        'currentPage' => 'Bàn',
+        'subtitle' => 'Steak House',
+        'title' => 'Bàn ' . $table->table_number,
+        'currentPage' => 'Menu Order',
     ])
+    @if (session('error'))
+        <script>
+            Swal.fire({
+                title: "Bạn chưa gọi món",
+                text: "{{ session('error') }}",
+                icon: "warning",
+                timer: 4000,
+                timerProgressBar: true,
+                showCloseButton: true
+            });
+        </script>
+    @endif
     <div class="container mt-4">
-        <div class="top-buttons">
-            <button class="btn-combo">Combo</button>
-            <button class="btn-other">Món Khác</button>
+        <div class="mx-2 my-3">
+            <div class="row ">
+                <div class="col">
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="Tìm món ăn" aria-label="Username"
+                            aria-describedby="basic-addon1">
+                        <span class="input-group-text" id="basic-addon1"><i class="bi bi-search"></i></span>
+                    </div>
+                </div>
+                <div class="col">
+                    <select name="" id="" class="form-select">
+                        <option value="all" selected>Tất cả</option>
+                        <option value="combo">Combo({{ $combo->count() }})</option>
+                        @foreach ($cate as $cate)
+                            <option value="{{ $cate->id }}">{{ $cate->name }} ({{ $cate->dishes->count() }})</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
         </div>
 
-        <div class="row">
-            <!-- Item 1 -->
-            <div class="col-6">
-                <div class="menu-item">
-                    <img src="https://via.placeholder.com/150" alt="Cuốn thanh cua">
-                    <div class="item-info">
-                        <h6>Cuốn Thanh Cua</h6>
-                        <p class="price">0đ/đĩa</p>
-                        <button class="btn-add">+</button>
+        <div class="row" id="dish-list">
+            @foreach ($dishes as $dish)
+                <div class="col-6">
+                    <div class="menu-item {{ $dish->is_active == 0 || $dish->status == 'out_of_stock' ? 'disabled' : '' }}"
+                        data-category="{{ $dish->category->id }}" style="padding: 10px;"
+                        @if ($dish->is_active && $dish->status != 'out_of_stock') data-dish-id="{{ $dish->id }}" 
+                                data-dish-price="{{ $dish->price }}" @endif>
+                        <img src="storage/{{ $dish->image }}"
+                            style="object-fit: cover; height: 200px; width: 100%; max-height: 200px; {{ $dish->is_active == 0 || $dish->status == 'out_of_stock' ? 'filter: grayscale(100%); opacity: 0.6;' : '' }}">
+                        <div class="item-info">
+                            <h6>{{ $dish->name }}</h6>
+                            @if ($dish->is_active == 0 || $dish->status == 'out_of_stock')
+                                <p class="price">Hết hàng</p>
+                            @else
+                                <p class="price">{{ number_format($dish->price) }}đ</p>
+                                <button class="btn-add">Thêm món</button>
+                            @endif
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Item 2 -->
-            <div class="col-6">
-                <div class="menu-item">
-                    <img src="https://via.placeholder.com/150" alt="Dẻ sườn bò sốt">
-                    <div class="item-info">
-                        <h6>Dẻ Sườn Bò Sốt</h6>
-                        <p class="price">0đ/đĩa</p>
-                        <button class="btn-add">+</button>
+            @endforeach
+            @foreach ($combo as $combo)
+                <div class="col-6">
+                    <div class="menu-item {{ $combo->is_active == 0 ? 'disabled' : '' }}" data-category="combo"
+                        style="padding: 10px;"
+                        @if ($combo->is_active != 'out_of_stock') data-combo-id="{{ $combo->id }}" 
+                            data-combo-price="{{ $combo->price }}" @endif>
+                        <img src="storage/{{ $combo->image }}"
+                            style="object-fit: cover; height: 200px; width: 100%; max-height: 200px; {{ $combo->is_active == 0 ? 'filter: grayscale(100%); opacity: 0.6;' : '' }}">
+                        <div class="item-info">
+                            <h6>{{ $combo->name }}</h6>
+                            @if ($combo->is_active == 0)
+                                <p class="price">Hết hàng</p>
+                            @else
+                                <p class="price">{{ number_format($combo->price) }}đ</p>
+                                <button class="btn-add">Thêm Combo</button>
+                            @endif
+                        </div>
                     </div>
                 </div>
-            </div>
+            @endforeach
         </div>
     </div>
 
     <!-- Fixed Bottom Bar -->
-    <button class="fixed-bottom-bar mx-4 mb-1 rounded">
-        <span>Gọi món (0)</span>
-        <span>0đ</span>
-    </button>
+    <a href="{{ route('menuSelected', ['table_number' => $table->id]) }}" class="fixed-bottom-bar mx-4 mb-1 rounded">
+        <span id="cart-total">Tổng số lượng ({{ $item->sum('quantity') }})</span>
+        <span id="cart-quantity">{{ number_format($total, 0, ',', '.') }}đ</span>
+    </a>
+    @vite(['resources/js/menuOrder.js', 'resources/js/DishStatus.js', 'resources/js/notiRedirect.js'])
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script>
+        let TableId = "{{ $table->id }}";
+        document.addEventListener("DOMContentLoaded", () => {
+            function showNotification(message, type = 'success') {
+                Swal.fire({
+                    icon: type,
+                    title: 'Thông báo',
+                    text: message,
+                    timer: 3000,
+                    showConfirmButton: false,
+                    toast: true,
+                    position: 'top-end'
+                });
+            }
+
+            document.body.addEventListener("click", (e) => {
+                if (e.target.classList.contains("btn-add")) {
+                    const parent = e.target.closest(".menu-item");
+                    if (!parent || parent.classList.contains("disabled")) return;
+                    const dishId = parent.getAttribute("data-dish-id");
+                    const comboId = parent.getAttribute("data-combo-id");
+
+                    let url = "";
+                    let bodyData = {
+                        table_id: TableId
+                    };
+
+                    if (dishId) {
+                        url = "/add-dish-waiting";
+                        bodyData.dish_id = dishId;
+                    } else if (comboId) {
+                        url = "/add-combo-waiting";
+                        bodyData.combo_id = comboId;
+                    }
+
+                    if (url) {
+                        fetch(url, {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')
+                                        .getAttribute("content"),
+                                },
+                                body: JSON.stringify(bodyData),
+                            })
+                            .then((response) => response.json())
+                            .then((data) => {
+                                showNotification(data.message || "Thêm món thành công!");
+                            })
+                            .catch(() => {
+                                showNotification("Đã xảy ra lỗi, vui lòng thử lại.", "warning");
+                            });
+                    }
+                }
+            });
+            document.body.addEventListener("click", (e) => {
+                if (
+                    e.target.matches(".menu-item img, .menu-item h6, .menu-item .price")
+                ) {
+                    const parent = e.target.closest(".menu-item");
+                    if (!parent) return;
+
+                    const dishName = parent.querySelector("h6").innerText;
+                    const price = parent.querySelector(".price").innerText;
+                    const imageSrc = parent.querySelector("img").getAttribute("src");
+                    const isDisabled = parent.classList.contains("disabled");
+
+                    Swal.fire({
+                        title: dishName,
+                        text: isDisabled ? "Món này hiện không có sẵn." : `Giá: ${price}`,
+                        imageUrl: imageSrc,
+                        imageWidth: 400,
+                        imageHeight: 200,
+                        showCloseButton: true,
+                        confirmButtonText: isDisabled ? "OK" : "Gọi món",
+                    }).then((result) => {
+                        if (result.isConfirmed && !isDisabled) {
+                            parent.querySelector(".btn-add").click();
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            $(".form-control").on("input", function() {
+                let searchValue = $(this).val().toLowerCase();
+                let selectedCategory = $(".form-select").val();
+                $("#dish-list .menu-item").each(function() {
+                    let dishName = $(this).find("h6").text().toLowerCase();
+                    let dishPrice = $(this).data("dish-price") || $(this).data("combo-price") || 0;
+                    let dishCategory = $(this).data("category");
+                    let matchesName = dishName.includes(searchValue);
+                    let matchesPrice = dishPrice.toString().includes(searchValue);
+                    let matchesCategory = selectedCategory === "all" || dishCategory ===
+                        selectedCategory;
+                    if ((matchesName || matchesPrice) && matchesCategory) {
+                        $(this).closest(".col-6").show();
+                    } else {
+                        $(this).closest(".col-6").hide();
+                    }
+                });
+            });
+            $(".form-select").on("change", function() {
+                $(".form-control").trigger("input");
+            });
+        });
+
+        $(document).ready(function() {
+            $("select").on("change", function() {
+                let selectedCategory = $(this).val();
+                $("#dish-list .menu-item").each(function() {
+                    let dishCategory = $(this).attr("data-category");
+                    if (selectedCategory === "all") {
+                        $(this).closest(".col-6").show();
+                    } else {
+                        if (dishCategory === selectedCategory) {
+                            $(this).closest(".col-6").show();
+                        } else {
+                            $(this).closest(".col-6").hide();
+                        }
+                    }
+                });
+            });
+        });
+    </script>
 @endsection

@@ -100,6 +100,9 @@ class UserController extends Controller
             'name' => 'required|min:3',
             'email' => 'required|email|unique:users,email',
             'phone' => 'nullable|digits_between:10,15',
+            'date_of_birth' => 'nullable|date', 
+            'gender' => 'nullable|in:male,female,other', 
+            'hire_date' => 'nullable|date',
             'password' => 'required|min:5|same:confirm_password',
             'confirm_password' => 'required',
         ]);
@@ -113,6 +116,9 @@ class UserController extends Controller
         $user->name = $request->name;
         $user->email = $request->email;
         $user->phone = $request->phone;
+        $user->date_of_birth = $request->date_of_birth;
+        $user->gender = $request->gender;
+        $user->hire_date = $request->hire_date;
         $user->password = Hash::make($request->password);
         $user->save();
     
@@ -121,8 +127,11 @@ class UserController extends Controller
             $user->syncRoles($request->role);
         }
     
-        return redirect()->route('admin.user.index')->with('success', 'Thêm mới thành công');
+        // Redirect về trang chi tiết người dùng vừa tạo
+        return redirect()->route('admin.user.show', $user->id)->with('success', 'Thêm mới thành công');
     }
+    
+    
     
     
 
@@ -130,10 +139,17 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
-    {
-        //
-    }
+    public function show($id)
+{
+    // Lấy thông tin người dùng kèm vai trò
+    $user = User::with('roles')->findOrFail($id); 
+
+    // Kiểm tra xem người dùng có vai trò nhân viên hay không
+    $type = $user->roles->isEmpty() ? 'user' : 'employee'; 
+
+    return view('admin.user.show', compact('user', 'type'));
+}
+
 
     /**
      * Show the form for editing the specified resource.
@@ -169,11 +185,12 @@ class UserController extends Controller
     
         if ($validator->fails()) {
             return redirect()->route('admin.user.edit', [
-                    'id' => $id,
-                    'type' => $request->type, // Truyền type để quay lại đúng tab
-                ])
-                ->withInput()
-                ->withErrors($validator);
+                'user' => $id, // Đúng tên tham số như định nghĩa route
+                'type' => $request->type, // Truyền type để quay lại đúng tab
+            ])
+            ->withInput()
+            ->withErrors($validator);
+            
         }
     
         // Cập nhật thông tin người dùng
@@ -186,11 +203,10 @@ class UserController extends Controller
     
         $user->syncRoles($request->role);
     
-        // Chuyển hướng về danh sách đúng
-        return redirect()->route('admin.user.index', [
-                'type' => $request->type, // Truyền type để quay lại đúng danh sách
-            ])->with('success', 'Chỉnh sửa thành công!');
+        // Chuyển hướng về trang chi tiết người dùng sau khi sửa
+        return redirect()->route('admin.user.show', $user->id)->with('success', 'Chỉnh sửa thành công!');
     }
+    
     
     
     
@@ -216,7 +232,7 @@ class UserController extends Controller
     }
 
     // Thực hiện xóa người dùng
-    $user->delete();
+    $user->delete();    
 
     // Redirect về danh sách người dùng
     return redirect()->route('admin.user.index')->with('success', 'Người dùng đã được xóa thành công.');

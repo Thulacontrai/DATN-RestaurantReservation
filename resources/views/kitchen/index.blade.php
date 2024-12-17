@@ -64,8 +64,7 @@
                                 </thead>
                                 <tbody>
                                     @foreach ($items as $item)
-                                    <tr data-item-id="{{ $item->id }}" data-item-type="{{ $item->item_type }}"
-                                        data-table-id="{{ $item->order->tables['0']->id }}">
+                                        <tr data-item-id="{{ $item->id }}" data-table-id="{{ $item->order->tables['0']->id }}">
                                             <td>
                                                 <strong>
                                                     @if ($item->item_type == 1)
@@ -94,8 +93,7 @@
                                         @if ($item->count_cancel != 0)
                                             <tr>
                                                 <td colspan="5">
-                                                <p>Hủy <span class="text-danger">{{ $item->count_cancel }}</span>
-                                                vào lúc {{ $item->updated_at }}</p>
+                                                    <p>Hủy <span class="text-danger">{{ $item->count_cancel }}</span> vào lúc {{ $item->updated_at }}</p>
                                                 </td>
                                             </tr>
                                         @endif
@@ -118,8 +116,7 @@
                                 </thead>
                                 <tbody>
                                     @foreach ($items as $item)
-                                    <tr data-item-id="{{ $item->id }}"data-item-type="{{ $item->item_type }}"
-                                        data-table-id="{{ $item->order->tables['0']->id }}">
+                                        <tr data-item-id="{{ $item->id }}" data-table-id="{{ $item->order->tables['0']->id }}">
                                             <td>
                                                 <strong>{{ $item->dish->name }}</strong>
                                             </td>
@@ -131,16 +128,14 @@
                                                     <button class="btn btn-danger cook-all" title="Chế biến toàn bộ"><i
                                                             class="fa-solid fa-forward"></i></button>
                                                 @else
-                                                <button class="btn btn-secondary delete" title="Xóa"><i
-                                                    class="fa-solid fa-trash"></i></button>
+                                                    <button class="btn btn-secondary delete" title="Xóa"><i class="fa-solid fa-trash"></i></button>
                                                 @endif
                                             </td>
                                         </tr>
                                         @if ($item->count_cancel != 0)
                                             <tr>
                                                 <td colspan="5">
-                                                <p>Hủy <span class="text-danger">{{ $item->count_cancel }}</span>
-                                                    vào lúc {{ $item->updated_at }}</p>
+                                                    <p>Hủy <span class="text-danger">{{ $item->count_cancel }}</span> vào lúc {{ $item->updated_at }}</p>
                                                 </td>
                                             </tr>
                                         @endif
@@ -199,8 +194,7 @@
                                 <tbody id="ChoCungUng">
                                     @foreach ($items1 as $item)
                                         @if ($item->status == 'chờ cung ứng' || $item->status == 'đã xong')
-                                        <tr data-item-id="{{ $item->id }}"
-                                            data-table-id="{{ $item->order->tables['0']->id }}">
+                                            <tr data-item-id="{{ $item->id }}" data-table-id="{{ $item->order->tables['0']->id }}">
                                                 <td>
                                                     <strong>{{ $item->dish->name }}</strong>
                                                 </td>
@@ -219,7 +213,13 @@
                                                 </td>
                                             </tr>
 
-                            
+                                            @if ($item->count_cancel != 0)
+                                                <tr>
+                                                    <td colspan="5">
+                                                        <p>Hủy <span class="text-danger">{{ $item->count_cancel }}</span> vào lúc {{ $item->updated_at }}</p>
+                                                    </td>
+                                                </tr>
+                                            @endif
                                         @endif
                                     @endforeach
                                 </tbody>
@@ -232,73 +232,57 @@
         </div>
     </div>
     <script>
-
-       document.addEventListener("DOMContentLoaded", function() {
-    document.addEventListener("click", function(event) {
-        const orderRow = event.target.closest("tr[data-item-id]"); // Thay .order-card bằng tr
-        if (!orderRow) return;
+        document.addEventListener("DOMContentLoaded", function() {
+            document.addEventListener("click", function(event) {
+                const orderRow = event.target.closest("tr[data-item-id]"); // Thay .order-card bằng tr
+                if (!orderRow) return;
 
 
         const itemId = orderRow.dataset.itemId;
-        const itemType = orderRow.dataset.itemType;
         const tableId = orderRow.dataset.tableId;
 
-        if (event.target.closest(".cook-all")) {
-            const button = orderRow.querySelector(".cook-all");
-            button.classList.remove("btn-danger", "cook-all");
-            button.classList.add("btn-success", "done-all");
-            button.title = "Cung ứng toàn bộ";
+                if (event.target.closest(".cook-all")) {
+                    const button = orderRow.querySelector(".cook-all");
+                    button.classList.remove("btn-danger", "cook-all");
+                    button.classList.add("btn-success", "done-all");
+                    button.title = "Cung ứng toàn bộ";
 
-            // Di chuyển phần tử vào container #ChoCungUng nếu tồn tại
-            const choCungUngContainer = document.getElementById("ChoCungUng");
-            if (choCungUngContainer) {
-                choCungUngContainer.appendChild(orderRow); // Di chuyển dòng vào container
-            }
+                    // Di chuyển phần tử vào container #ChoCungUng nếu tồn tại
+                    const choCungUngContainer = document.getElementById("ChoCungUng");
+                    if (choCungUngContainer) {
+                        choCungUngContainer.appendChild(orderRow); // Di chuyển dòng vào container
+                    }
 
-            handleCookAll(itemId, tableId, itemType);
+            handleCookAll(itemId, tableId);
         } else if (event.target.closest(".delete")) {
-            const orderRow = event.target.closest("tr[data-item-id]");
-            const itemId = orderRow.dataset.itemId;
-            const itemType = orderRow.dataset.itemType;
-
-            // Tìm dòng thông báo hủy (nếu có) dưới dòng món ăn
-            const notificationRow = orderRow.nextElementSibling;
-            if (notificationRow && notificationRow.querySelector('.text-danger')) {
-                notificationRow.remove(); // Xóa dòng thông báo
-            }
-
-            // Xóa dòng món ăn
             orderRow.remove();
-
-            // Gửi request xóa món
-            handleDelete(itemId, itemType);
+            handleDelete(itemId);
         } else if (event.target.closest(".done-all")) {
             orderRow.remove();
-            handleDoneAll(itemId, tableId, itemType);
+            handleDoneAll(itemId, tableId);
         }
     });
 });
 // Hàm xử lý cook-all
-function handleCookAll(itemId, tableId, itemType) {
-            fetch(`/kitchen/${itemId}/cook-all`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        tableId: tableId,
-                        itemType: itemType
-                    }),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        console.log('Món đã được chế biến!');
-                    }
-                })
-                .catch(error => console.error('Lỗi:', error));
-        }
+function handleCookAll(itemId, tableId) {
+    fetch(`/kitchen/${itemId}/cook-all`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                tableId: tableId
+            }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                console.log('Món đã được chế biến!');
+            }
+        })
+        .catch(error => console.error('Lỗi:', error));
+}
 
         // Hàm xử lý delete
         function handleDelete(itemId, itemType) {

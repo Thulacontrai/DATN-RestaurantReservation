@@ -8,7 +8,19 @@
         'title' => 'Reservation',
         'currentPage' => 'Booking',
     ])
-
+    @if (session('err'))
+        <script>
+            Swal.fire({
+                title: "Có lỗi xảy ra!",
+                text: "{{ session('err') }}",
+                icon: "warning",
+                showCloseButton: true,
+                showConfirmButton: false,
+                timer: 4000,
+                timerProgressBar: true,
+            })
+        </script>
+    @endif
     <div id="content" class="no-bottom no-top">
         <section id="section-book-form">
             <div class="container border">
@@ -183,10 +195,28 @@
             background-color: #b21f2d;
             /* Màu khi hover */
         }
+
         @keyframes shake {
-        0%, 100% { transform: translateX(0); }
-        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-        20%, 40%, 60%, 80% { transform: translateX(5px); }
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            10%,
+            30%,
+            50%,
+            70%,
+            90% {
+                transform: translateX(-5px);
+            }
+
+            20%,
+            40%,
+            60%,
+            80% {
+                transform: translateX(5px);
+            }
         }
 
         .shake-element {
