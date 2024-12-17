@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\Kitchen;
 use App\Models\Order;
+use App\Models\Refund;
 use App\Models\Reservation;
 use App\Models\Table;
 use App\Models\User;
@@ -49,8 +51,6 @@ class DashboardController extends Controller
         $totalCustomers = Reservation::whereYear('created_at', Carbon::now()->year) // Lọc theo năm hiện tại
             ->sum('guest_count'); // Tính tổng số khách
 
-
-
         $salesThisMonth = number_format($totalRevenue);
         $previousMonthRevenue = Reservation::whereMonth('created_at', Carbon::now()->subMonth()->month)->sum('deposit_amount');
         $salesGrowth = $previousMonthRevenue > 0 ? (($totalRevenue - $previousMonthRevenue) / $previousMonthRevenue) * 100 : 0;
@@ -90,9 +90,33 @@ class DashboardController extends Controller
         // Tính toán trạng thái đặt bàn với các trạng thái mới: Confirmed, Pending, checked-in, Cancelled, Refund
         $confirmed = Reservation::whereMonth('created_at', Carbon::now()->month)->where('status', 'Confirmed')->count();
         $pending = Reservation::whereMonth('created_at', Carbon::now()->month)->where('status', 'Pending')->count();
-        $checkedIn = Reservation::whereMonth('created_at', Carbon::now()->month)->where('status', 'Checked-in')->count();  // Chỉnh lại tên 'checked-in' đúng chính tả
         $cancelled = Reservation::whereMonth('created_at', Carbon::now()->month)->where('status', 'Cancelled')->count();
-        $refund = Reservation::whereMonth('created_at', Carbon::now()->month)->where('status', 'Refund')->count();  // Chỉnh lại tên biến 'Refund' không viết hoa đầu
+        $refund = Reservation::whereMonth('created_at', Carbon::now()->month)->where('status', 'refund')->count();  // Chỉnh lại tên biến 'refund' không viết hoa đầu
+
+        // Lấy dữ liệu từ bảng Kitchen
+        $kitchens = Kitchen::all(); // Lấy tất cả dữ liệu từ bảng Kitchen
+
+        $orderCounts = Kitchen::select('status', DB::raw('count(*) as count'))
+            ->whereIn('status', ['đang chế biến', 'chờ cung ứng', 'hoàn thành'])
+            ->groupBy('status')
+            ->get()
+            ->keyBy('status');
+
+        // Lấy số lượng đơn hàng theo từng trạng thái
+
+        $newOrders = $orderCounts->get('đang chế biến', collect(['count' => 0]))->count();
+        $cookingOrders = $orderCounts->get('chờ cung ứng', collect(['count' => 0]))->count();
+        $completedOrders = $orderCounts->get('hoàn thành', collect(['count' => 0]))->count();
+
+
+
+        // Tính tổng tiền hoàn lại chỉ khi trạng thái là 'Refund'
+        $totalRefund = Refund::where('status', 'Refund')
+            ->sum(DB::raw('COALESCE(refund_amount, 0)'));
+
+        // Tính tổng tiền hoàn lại của cả hai trạng thái 'Refund' và 'Request_Refund' để tính % hoàn lại
+        $totalRefundAll = Refund::whereIn('status', ['Refund', 'Request_Refund'])
+            ->sum(DB::raw('COALESCE(refund_amount, 0)'));
 
 
 
@@ -118,13 +142,19 @@ class DashboardController extends Controller
             'depositData', // Pass dữ liệu khách cọc và không cọc cho biểu đồ
             'confirmed',
             'pending',
-            'checkedIn',
+           
             'cancelled',
             'refund',
             'coc',
-            'khongCoc' // Pass thêm các biến này
+            'khongCoc', // Pass thêm các biến này
+            'newOrders',
+            'cookingOrders',
+            'completedOrders',
+            'orderCounts',
+            'kitchens' // Pass dữ liệu cho danh sách nhà bếp để hiển thị trên dashboard
         ));
     }
+
 
 
 

@@ -34,46 +34,63 @@
                         <div class="card-body">
 
                             <!-- Search form -->
-                            <form method="GET" action="{{ route('transactions.index') }}" class="mb-3">
-                                <div class="row g-2">
-                                    <div class="col-auto">
-                                        <input type="text" id="search-id" name="id"
-                                            class="form-control form-control-sm" placeholder="Tìm kiếm theo mã phiếu nhập">
-                                    </div>
-                                    <div class="col-auto">
-                                        <select name="status" class="form-select form-select-sm" id="statusFilter">
-                                            <option value="">Chọn trạng thái</option>
-                                            <option value="chờ xử lý"
-                                                {{ request('status') == 'chờ xử lý' ? 'selected' : '' }}>Chờ xử lý</option>
-                                            <option value="hoàn thành"
-                                                {{ request('status') == 'hoàn thành' ? 'selected' : '' }}>Hoàn thành
-                                            </option>
-                                            <option value="hủy" {{ request('status') == 'hủy' ? 'selected' : '' }}>Hủy
-                                            </option>
-                                        </select>
-                                    </div>
-                                    <div class="col-auto">
-                                        <input type="date" name="date" class="form-control form-control-sm"
-                                            value="{{ request('date') }}" id="dateFilter">
-                                    </div>
-                                    <div class="col-auto">
-                                        <button type="submit" class="btn btn-sm btn-primary">Tìm kiếm</button>
-                                        <a href="{{ route('transactions.index') }}" class="btn btn-sm btn-success">
-                                            <i class="bi bi-arrow-repeat"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            </form>
+                                <!-- Search form -->
+<form method="GET" action="{{ route('transactions.index') }}" class="mb-3">
+    <div class="row g-2">
+        <div class="col-auto">
+            <input type="text" id="search-id" name="search" class="form-control form-control-sm" placeholder="Tìm kiếm theo Nhân viên và tên nhà cung cấp" value="{{ request('search') }}">
+        </div>
+        <div class="col-auto">
+            <select name="status" class="form-select form-select-sm" id="statusFilter">
+                <option value="">Chọn trạng thái</option>
+                <option value="chờ xử lý" {{ request('status') == 'chờ xử lý' ? 'selected' : '' }}>Chờ xử lý</option>
+                <option value="hoàn thành" {{ request('status') == 'hoàn thành' ? 'selected' : '' }}>Hoàn thành</option>
+                <option value="hủy" {{ request('status') == 'hủy' ? 'selected' : '' }}>Hủy</option>
+            </select>
+        </div>
+        <div class="col-auto">
+            <input type="date" name="date" class="form-control form-control-sm" value="{{ request('date') }}" id="dateFilter">
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-sm btn-primary">Tìm kiếm</button>
+            <a href="{{ route('transactions.index') }}" class="btn btn-sm btn-success">
+                <i class="bi bi-arrow-repeat"></i>
+            </a>
+        </div>
+    </div>
+</form>
+
 
                             <!-- Table list of transactions -->
                             <div class="table-responsive">
                                 <table class="table v-middle m-0">
                                     <thead>
                                         <tr>
-                                            <th>Mã Phiếu Nhập</th>
-                                            <th>Nhân Viên</th>
-                                            <th>Nhà Cung Cấp</th>
-                                            <th>Tổng Tiền</th>
+                                            <th> <a
+                                                    href="{{ route('transactions.index', array_merge(request()->query(), ['sort' => 'id', 'direction' => request('sort') === 'id' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}">
+                                                    ID
+                                                    <i
+                                                        class="bi bi-arrow-{{ request('sort') === 'id' ? (request('direction') === 'asc' ? 'up' : 'down') : '' }}"></i>
+                                                </a></th>
+                                            <th> <a
+                                                    href="{{ route('transactions.index', array_merge(request()->query(), ['sort' => 'staff_name', 'direction' => request('sort') === 'staff_name' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}">
+                                                    Nhân Viên
+                                                    <i
+                                                        class="bi bi-arrow-{{ request('sort') === 'staff_name' ? (request('direction') === 'asc' ? 'up' : 'down') : '' }}"></i>
+                                                </a></th>
+                                            <th> <a
+                                                    href="{{ route('transactions.index', array_merge(request()->query(), ['sort' => 'name', 'direction' => request('sort') === 'name' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}">
+                                                    Nhà Cung Cấp
+                                                    <i
+                                                        class="bi bi-arrow-{{ request('sort') === 'name' ? (request('direction') === 'asc' ? 'up' : 'down') : '' }}"></i>
+                                                </a></th>
+                                            <th> <a
+                                                    href="{{ route('transactions.index', array_merge(request()->query(), ['sort' => 'total_amount', 'direction' => request('sort') === 'total_amount' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}">
+                                                    Tổng Tiền
+                                                    <i
+                                                        class="bi bi-arrow-{{ request('sort') === 'total_amount' ? (request('direction') === 'asc' ? 'up' : 'down') : '' }}"></i>
+                                                </a></th>
+
                                             <th>Trạng Thái</th>
                                             <th>Ngày Tạo</th>
                                             <th>Hành Động</th>
@@ -91,15 +108,17 @@
                                                         <span class="badge bg-success">Hoàn thành</span>
                                                     @elseif ($transaction->status === 'chờ xử lý')
                                                         <span class="badge bg-warning text-dark">Chờ xử lý</span>
-                                                    @elseif ($transaction->status === 'hủy')
+                                                    @elseif ($transaction->status === 'Hủy')
                                                         <span class="badge bg-danger">Đã hủy</span>
                                                     @else
                                                         <span class="badge bg-secondary">Không rõ</span>
                                                     @endif
                                                 </td>
+                                                
 
                                                 <td>
-                                                    {{ \Carbon\Carbon::parse($transaction->change_date . ' ' . $transaction->change_time)->format('H:i:s') }}<br>
+                                                    <span
+                                                        class="text-success">{{ \Carbon\Carbon::parse($transaction->change_date . ' ' . $transaction->change_time)->format('H:i:s') }}</span><br>
                                                     {{ \Carbon\Carbon::parse($transaction->change_date)->format('d/m/Y') }}
                                                 </td>
                                                 <td>
@@ -109,11 +128,21 @@
                                                             title="Chi tiết">
                                                             <i class="bi bi-list text-green"></i>
                                                         </a>
-                                                        <a href="{{ route('transactions.edit', $transaction->id) }}"
-                                                            class="editRow" data-bs-toggle="tooltip" data-bs-placement="top"
-                                                            title="Sửa">
-                                                            <i class="bi bi-pencil-square text-warning"></i>
-                                                        </a>
+                                                
+                                                        @if ($transaction->status !== 'Hủy')
+                                                            <a href="{{ route('transactions.edit', $transaction->id) }}"
+                                                                class="editRow" data-bs-toggle="tooltip" data-bs-placement="top"
+                                                                title="Sửa">
+                                                                <i class="bi bi-pencil-square text-warning"></i>
+                                                            </a>
+                                                        @else
+                                                            <a href="javascript:void(0);"
+                                                                class="editRow disabled" data-bs-toggle="tooltip" data-bs-placement="top"
+                                                                title="Phiếu nhập đã hủy, không thể sửa">
+                                                                <i class="bi bi-pencil-square text-warning"></i>
+                                                            </a>
+                                                        @endif
+                                                
                                                         <a href="" class="viewRow" data-bs-toggle="tooltip"
                                                             data-bs-placement="top" title="Xóa">
                                                             <form
@@ -130,6 +159,7 @@
                                                         </a>
                                                     </div>
                                                 </td>
+                                                
                                             </tr>
                                         @empty
                                             <tr>
@@ -143,57 +173,9 @@
 
 
                         </div>
-                        <!-- Pagination -->
-                        <div class="d-flex justify-content-between align-items-center bg-white p-4">
-                            <!-- Phần hiển thị phân trang bên trái -->
-                            <div class="mb-4 flex sm:mb-0 text-center">
-                                <span style="font-size: 15px">
-                                    <i class="bi bi-chevron-compact-left"></i>
+                        <div class="d-flex justify-content-center">
 
-                                    <span class="text-sm font-normal text-gray-500 dark:text-gray-400">
-                                        Hiển thị <strong
-                                            class="font-semibold text-secondary ">{{ $transactions->firstItem() }}-{{ $transactions->lastItem() }}</strong>
-                                        trong tổng số <strong
-                                            class="font-semibold text-secondary ">{{ $transactions->total() }}</strong>
-                                    </span> <i class="bi bi-chevron-compact-right"></i>
-                                </span>
-                            </div>
-
-                            <!-- Phần hiển thị phân trang bên phải -->
-                            <div class="flex items-center space-x-3">
-                                <!-- Nút Previous -->
-                                @if ($transactions->onFirstPage())
-                                    <button class="inline-flex  p-1 pl-2 bg-success text-white  cursor-not-allowed"
-                                        style="border-radius: 5px; border: 2px solid rgb(136, 243, 136);">
-                                        <span style="font-size: 15px"><i class="bi bi-chevron-compact-left"></i>Trước</span>
-                                    </button>
-                                @else
-                                    <a href="{{ $transactions->previousPageUrl() }}">
-                                        <button class="inline-flex  p-1 pl-2  bg-success text-white "
-                                            style="border-radius: 5px;    border: 2px solid rgb(136, 243, 136);">
-                                            <span style="font-size: 15px"><i class="bi bi-chevron-double-left"></i>
-                                                Trước</span>
-                                        </button>
-                                    </a>
-                                @endif
-
-                                <!-- Nút Next -->
-                                @if ($transactions->hasMorePages())
-                                    <a href="{{ $transactions->nextPageUrl() }}">
-                                        <button class="inline-flex  p-1 pl-2 bg-success text-white"
-                                            style="border-radius: 5px;    border: 2px solid rgb(136, 243, 136);">
-                                            <span style="font-size: 15px"> Sau <i
-                                                    class="bi bi-chevron-compact-right"></i></span>
-                                        </button>
-                                    </a>
-                                @else
-                                    <button class="inline-flex  p-1 pl-2 bg-primary text-white cursor-not-allowed"
-                                        style="border-radius: 5px;    border: 2px solid rgb(83, 150, 216);">
-                                        <span style="font-size: 15px">
-                                            Trang Cuối</i></span>
-                                    </button>
-                                @endif
-                            </div>
+                            {{ $transactions->links('pagination::client-paginate') }}
 
                         </div>
                     </div>

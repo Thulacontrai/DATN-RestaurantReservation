@@ -32,14 +32,32 @@ class FeedbackController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $feedbacks = Feedback::all();
-        $feedbacks = Feedback::latest()->paginate(10);
-        // $feedbacks = Feedback::with('customer');
+        $search = $request->input('search');
+        $sort = $request->input('sort', 'created_at'); // Mặc định sắp xếp theo 'created_at'
+        $direction = $request->input('direction', 'desc'); // Mặc định sắp xếp giảm dần
+
+        $query = Feedback::query();
+
+        // Tìm kiếm theo tên khách hàng
+        if ($search) {
+            $query->whereHas('customer', function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%');
+            });
+        }
+
+        // Áp dụng sắp xếp
+        if (in_array($sort, ['reservation_id', 'rating', 'created_at']) && in_array($direction, ['asc', 'desc'])) {
+            $query->orderBy($sort, $direction);
+        }
+
+        $feedbacks = $query->paginate(10);
+
         $title = 'Phản Hồi';
         return view('admin.feedback.index', compact('feedbacks', 'title'));
     }
+
 
 
     public function create()
@@ -68,7 +86,7 @@ class FeedbackController extends Controller
     {
         return view('admin.feedback.detail', compact('feedback'));
     }
-    
+
 
 
     public function edit(Feedback $feedback)

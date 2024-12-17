@@ -51,139 +51,104 @@
                 <div class="tab-content flex-grow-1" id="myTabContent">
                     <div class="tab-pane fade show active" id="priority" role="tabpanel"
                         aria-labelledby="priority-tab">
-                        <div class="bg-white m-2 p-2 rounded flex-grow-1 d-flex flex-column" id="DangCheBien">
-                            @foreach ($items as $item)
-                                @if ($item->item_type == 1)
-                                    <div class="order-card row" data-item-id="{{ $item->id }}"
-                                        data-item-type="{{ $item->item_type }}"
-                                        data-table-id="{{ $item->order->tables['0']->id }}">
-                                        <div class="col-md-6">
-                                            <strong>{{ $item->dish->name }}</strong>
-                                            <p>{{ $item->created_at->format('d-m-Y H:i') }}</p>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <strong>Số lượng</strong>
-                                                    <p>{{ $item->quantity }}</p>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <strong>Bàn</strong>
-                                                    <p>{{ $item->order->tables['0']->table_number }}</p>
-                                                </div>
+                        <div class="bg-white m-2 p-2 rounded flex-grow-1" id="DangCheBien">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Món ăn</th>
+                                        <th>Ngày tạo</th>
+                                        <th>Số lượng</th>
+                                        <th>Bàn</th>
+                                        <th>Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($items as $item)
+                                        <tr data-item-id="{{ $item->id }}" data-item-type="{{ $item->item_type }}"
+                                            data-table-id="{{ $item->order->tables['0']->id }}">
+                                            <td>
+                                                <strong>
+                                                    @if ($item->item_type == 1)
+                                                        {{ $item->dish->name }}
+                                                    @else
+                                                        {{ $item->combo->name }}
+                                                    @endif
+                                                </strong>
+                                            </td>
+                                            <td>{{ $item->created_at->format('d-m-Y H:i') }}</td>
+                                            <td>{{ $item->quantity }}</td>
+                                            <td>{{ $item->order->tables['0']->table_number }}</td>
+                                            <td class="text-center">
+
                                                 @if ($item->quantity != 0)
-                                                    <div class="col-md-4 btn-group-custom">
-                                                        <button class="btn btn-danger cook-all"
-                                                            title="Chế biến toàn bộ"><i
-                                                                class="fa-solid fa-forward"></i></button>
-                                                    </div>
+                                                    <button class="btn btn-danger cook-all" title="Chế biến toàn bộ">
+                                                        <i class="fa-solid fa-forward"></i>
+                                                    </button>
                                                 @else
-                                                    <div class="col-md-4 btn-group-custom">
-                                                        <button class="btn btn-secondary delete" title="Xóa"><i
-                                                                class="fa-solid fa-trash"></i></button>
-                                                    </div>
+                                                    <button class="btn btn-secondary delete" title="Xóa">
+                                                        <i class="fa-solid fa-trash"></i>
+                                                    </button>
                                                 @endif
-                                            </div>
-                                            @if ($item->count_cancel != 0)
-                                                <div class="row">
+                                            </td>
+                                        </tr>
+                                        @if ($item->count_cancel != 0)
+                                            <tr>
+                                                <td colspan="5">
                                                     <p>Hủy <span class="text-danger">{{ $item->count_cancel }}</span>
-                                                        vào
-                                                        lúc {{ $item->updated_at }}</p>
-                                                </div>
-                                            @endif
-                                        </div>
-                                    </div>
-                                @else
-                                    <div class="order-card row" data-item-id="{{ $item->id }}"
-                                        data-item-type="{{ $item->item_type }}"
-                                        data-table-id="{{ $item->order->tables['0']->id }}">
-                                        <div class="col-md-6">
-                                            <strong>{{ $item->combo->name }}</strong>
-                                            <p>{{ $item->created_at->format('d-m-Y H:i') }}</p>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <strong>Số lượng</strong>
-                                                    <p>{{ $item->quantity }}</p>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <strong>Bàn</strong>
-                                                    <p>{{ $item->order->tables['0']->table_number }}</p>
-                                                </div>
-                                                @if ($item->quantity != 0)
-                                                    <div class="col-md-4 btn-group-custom">
-                                                        <button class="btn btn-danger cook-all"
-                                                            title="Chế biến toàn bộ"><i
-                                                                class="fa-solid fa-forward"></i></button>
-                                                    </div>
-                                                @else
-                                                    <div class="col-md-4 btn-group-custom">
-                                                        <button class="btn btn-secondary delete" title="Xóa"><i
-                                                                class="fa-solid fa-trash"></i></button>
-                                                    </div>
-                                                @endif
-                                            </div>
-                                            @if ($item->count_cancel != 0)
-                                                <div class="row">
-                                                    <p>Hủy <span class="text-danger">{{ $item->count_cancel }}</span>
-                                                        vào
-                                                        lúc {{ $item->updated_at }}</p>
-                                                </div>
-                                            @endif
-                                        </div>
-                                    </div>
-                                @endif
-                            @endforeach
+                                                        vào lúc {{ $item->updated_at }}</p>
+                                                </td>
+                                            </tr>
+                                        @endif
+                                    @endforeach
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                     <div class="tab-pane fade" id="by-room" role="tabpanel" aria-labelledby="by-room-tab">
-                        <div class="bg-white m-2 p-2 rounded flex-grow-1 d-flex flex-column">
-                            @foreach ($items as $item)
-                                <div class="order-card row" data-item-id="{{ $item->id }}"
-                                    data-item-type="{{ $item->item_type }}"
-                                    data-table-id="{{ $item->order->tables['0']->id }}">
-                                    <div class="col-md-6">
-                                        @if ($item->item_type == 1)
-                                            <strong>{{ $item->dish->name }}</strong>
-                                        @else
-                                            <strong>{{ $item->combo->name }}</strong>
-                                        @endif
-                                        <p>{{ $item->created_at->format('d-m-Y H:i') }}</p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <strong>Số lượng</strong>
-                                                <p>{{ $item->quantity }}</p>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <strong>Bàn</strong>
-                                                <p>{{ $item->order->tables['0']->table_number }}</p>
-                                            </div>
-                                            @if ($item->quantity != 0)
-                                                <div class="col-md-4 btn-group-custom">
-                                                    <button class="btn btn-danger cook-all"
-                                                        title="Chế biến toàn bộ"><i
+                        <div class="bg-white m-2 p-2 rounded flex-grow-1">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Món ăn</th>
+                                        <th>Ngày tạo</th>
+                                        <th>Số lượng</th>
+                                        <th>Bàn</th>
+                                        <th>Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($items as $item)
+                                        <tr data-item-id="{{ $item->id }}"data-item-type="{{ $item->item_type }}"
+                                            data-table-id="{{ $item->order->tables['0']->id }}">
+                                            <td>
+                                                <strong>{{ $item->dish->name }}</strong>
+                                            </td>
+                                            <td>{{ $item->created_at->format('d-m-Y H:i') }}</td>
+                                            <td>{{ $item->quantity }}</td>
+                                            <td>{{ $item->order->tables['0']->table_number }}</td>
+                                            <td class="text-center">
+                                                @if ($item->quantity != 0)
+                                                    <button class="btn btn-danger cook-all" title="Chế biến toàn bộ"><i
                                                             class="fa-solid fa-forward"></i></button>
-                                                </div>
-                                            @else
-                                                <div class="col-md-4 btn-group-custom">
+                                                @else
                                                     <button class="btn btn-secondary delete" title="Xóa"><i
                                                             class="fa-solid fa-trash"></i></button>
-                                                </div>
-                                            @endif
-                                        </div>
+                                                @endif
+                                            </td>
+                                        </tr>
                                         @if ($item->count_cancel != 0)
-                                            <div class="row">
-                                                <p>Hủy <span class="text-danger">{{ $item->count_cancel }}</span> vào
-                                                    lúc {{ $item->updated_at }}</p>
-                                            </div>
+                                            <tr>
+                                                <td colspan="5">
+                                                    <p>Hủy <span class="text-danger">{{ $item->count_cancel }}</span>
+                                                        vào lúc {{ $item->updated_at }}</p>
+                                                </td>
+                                            </tr>
                                         @endif
-                                    </div>
-                                </div>
-                            @endforeach
+                                    @endforeach
+                                </tbody>
+                            </table>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -220,54 +185,55 @@
                 </div>
                 <div class="tab-content flex-grow-1" id="myTabContent">
                     <div class="tab-pane fade show active">
-                        <div class="bg-white m-2 p-2 rounded flex-grow-1 d-flex flex-column" id="ChoCungUng">
-                            @foreach ($items1 as $item)
-                                @if ($item->status == 'chờ cung ứng' || $item->status == 'đã xong')
-                                    <div class="order-card row" data-item-id="{{ $item->id }}"
-                                        data-table-id="{{ $item->order->tables['0']->id }}">
-                                        <div class="col-md-6">
-                                            @if ($item->item_type == 1)
-                                                <strong>{{ $item->dish->name }}</strong>
-                                            @else
-                                                <strong>{{ $item->combo->name }}</strong>
-                                            @endif
-                                            <p>{{ $item->created_at->format('d-m-Y H:i') }}</p>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <strong>Số lượng</strong>
-                                                    <p>{{ $item->quantity }}</p>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <strong>Bàn</strong>
-                                                    <p>{{ $item->order->tables['0']->table_number }}</p>
-                                                </div>
-                                                @if ($item->quantity != 0)
-                                                    <div class="col-md-4 btn-group-custom">
+                        <div class="bg-white m-2 p-2 rounded flex-grow-1">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Món ăn</th>
+                                        <th>Ngày tạo</th>
+                                        <th>Số lượng</th>
+                                        <th>Bàn</th>
+                                        <th>Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ChoCungUng">
+                                    @foreach ($items1 as $item)
+                                        @if ($item->status == 'chờ cung ứng' || $item->status == 'đã xong')
+                                            <tr data-item-id="{{ $item->id }}"
+                                                data-table-id="{{ $item->order->tables['0']->id }}">
+                                                <td>
+                                                    <strong>{{ $item->dish->name }}</strong>
+                                                </td>
+                                                <td>{{ $item->created_at->format('d-m-Y H:i') }}</td>
+                                                <td>{{ $item->quantity }}</td>
+                                                <td>{{ $item->order->tables['0']->table_number }}</td>
+                                                <td class="text-center">
+                                                    @if ($item->quantity != 0)
                                                         <button class="btn btn-success done-all"
                                                             title="Cung ứng toàn bộ"><i
                                                                 class="fa-solid fa-forward"></i></button>
-                                                    </div>
-                                                @else
-                                                    <div class="col-md-4 btn-group-custom">
+                                                    @else
                                                         <button class="btn btn-secondary delete" title="Xóa"><i
                                                                 class="fa-solid fa-trash"></i></button>
-                                                    </div>
-                                                @endif
-                                            </div>
+                                                    @endif
+                                                </td>
+                                            </tr>
+
                                             @if ($item->count_cancel != 0)
-                                                <div class="row">
-                                                    <p>Hủy <span class="text-danger">{{ $item->count_cancel }}</span>
-                                                        vào
-                                                        lúc {{ $item->updated_at }}</p>
-                                                </div>
+                                                <tr>
+                                                    <td colspan="5">
+                                                        <p>Hủy <span
+                                                                class="text-danger">{{ $item->count_cancel }}</span>
+                                                            vào lúc {{ $item->updated_at }}</p>
+                                                    </td>
+                                                </tr>
                                             @endif
-                                        </div>
-                                    </div>
-                                @endif
-                            @endforeach
+                                        @endif
+                                    @endforeach
+                                </tbody>
+                            </table>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -276,42 +242,43 @@
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             document.addEventListener("click", function(event) {
-                const orderCard = event.target.closest(".order-card");
-                if (!orderCard) return;
+                const orderRow = event.target.closest("tr[data-item-id]"); // Thay .order-card bằng tr
+                if (!orderRow) return;
 
-                const itemId = orderCard.dataset.itemId;
-                const itemType = orderCard.dataset.itemType;
-                const tableId = orderCard.dataset.tableId;
+
+                const itemId = orderRow.dataset.itemId;
+                const itemType = orderRow.dataset.itemType;
+
+                const tableId = orderRow.dataset.tableId;
 
                 if (event.target.closest(".cook-all")) {
-                    const btnGroup = orderCard.querySelector(".btn-group-custom");
-                    const button = btnGroup.querySelector("button");
+                    const button = orderRow.querySelector(".cook-all");
                     button.classList.remove("btn-danger", "cook-all");
                     button.classList.add("btn-success", "done-all");
                     button.title = "Cung ứng toàn bộ";
 
+                    // Di chuyển phần tử vào container #ChoCungUng nếu tồn tại
                     const choCungUngContainer = document.getElementById("ChoCungUng");
                     if (choCungUngContainer) {
-                        choCungUngContainer.appendChild(orderCard);
+                        choCungUngContainer.appendChild(orderRow); // Di chuyển dòng vào container
                     }
+
                     handleCookAll(itemId, tableId, itemType);
                 } else if (event.target.closest(".delete")) {
-                    orderCard.remove();
+                    orderRow.remove();
                     handleDelete(itemId, itemType);
                 } else if (event.target.closest(".done-all")) {
-                    orderCard.remove();
+                    orderRow.remove();
                     handleDoneAll(itemId, tableId, itemType);
                 }
             });
         });
-
         // Hàm xử lý cook-all
         function handleCookAll(itemId, tableId, itemType) {
             fetch(`/kitchen/${itemId}/cook-all`, {
                     method: 'POST',
                     headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-                            'content'),
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
@@ -333,12 +300,11 @@
             fetch(`/kitchen/${itemId}/delete`, {
                     method: 'POST',
                     headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-                            'content'),
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        itemType: itemType
+                        itemType
                     }),
                 })
                 .then(response => response.json())
@@ -355,13 +321,12 @@
             fetch(`/kitchen/${itemId}/done-all`, {
                     method: 'POST',
                     headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-                            'content'),
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
                         tableId: tableId,
-                        itemType: itemType
+                        itemType
                     }),
                 })
                 .then(response => response.json())

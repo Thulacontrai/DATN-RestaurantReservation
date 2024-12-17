@@ -388,22 +388,22 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            window.location.href = "{{ route('client.index') }}";
+                            window.location.href = data.redirect_url;
                         } else {
                             // Hiển thị lỗi nếu OTP không đúng
                             document.getElementById("error").innerHTML = data.message;
                             document.getElementById("error").style.display = "block";
                             document.getElementById("sentMessage").style.display =
-                            "none"; // Ẩn thông báo OTP đã gửi
+                                "none"; // Ẩn thông báo OTP đã gửi
                             console.log("Verification failed:", data
-                            .message); // Ghi log khi xác minh thất bại
+                                .message); // Ghi log khi xác minh thất bại
                         }
                     })
                     .catch(error => {
                         document.getElementById("error").innerHTML = "Có lỗi xảy ra. Vui lòng thử lại.";
                         document.getElementById("error").style.display = "block";
                         document.getElementById("sentMessage").style.display =
-                        "none"; // Ẩn thông báo OTP đã gửi
+                            "none"; // Ẩn thông báo OTP đã gửi
                         console.error("Error during verification:", error); // Ghi log lỗi khi xác minh
                     });
             }).catch((error) => {
@@ -414,7 +414,7 @@
                 console.error("Invalid OTP:", error); // Ghi log khi mã OTP không đúng
             });
         };
-        
+
 
         const otpInputs = document.querySelectorAll('.otp-input');
         otpInputs.forEach((input, index) => {

@@ -84,8 +84,10 @@
                                 </tbody>
                             </table>
 
-                            <div class="mt-3">
-                                {{ $roles->links() }}
+                            <div class="d-flex justify-content-center">
+
+                                {{ $roles->links('pagination::client-paginate') }}
+
                             </div>
                         </div>
                     </div>

@@ -8,7 +8,7 @@ window.Echo.channel('table')
                 return `
             <div class="table-card ${item.status}"
             data-table-id="${item.id}" data-status="${item.status}"
-            data-order-id="${item.orders.map(order => order.reservation?.user_name)}">
+            data-order-id="${item.orders.map(order => order.reservation?.user_name ?? order.customer?.name).join('')}">
             <span class="table-number">Bàn ${item.table_number}</span>
                 <div class="table-o" style="width: 100%;
     height: 100%;
@@ -27,7 +27,7 @@ window.Echo.channel('table')
                 return `
                 <div class="table-card ${item.status}" style="background-color: rgb(0, 123, 255);"
      data-table-id="${item.id}" data-status="${item.status}"
-     data-order-id="${item.orders.map(order => order.reservation?.user_name ?? null)}">
+     data-order-id="${item.orders.map(order => order.reservation?.user_name ?? order.customer?.name).join('')}">
     <span class="table-number" style="color:white">Bàn ${item.table_number}</span>
     <div class="table-o" style="color:white" style="width: 100%;
     height: 100%;
@@ -65,7 +65,7 @@ window.Echo.channel('tablee')
             return `
             <div class="table-card ${item.status}"
             data-table-id="${item.id}" data-status="${item.status}"
-            data-order-id="${item.orders.map(order => order.reservation?.user_name ?? null)}">
+            data-order-id="${item.orders.map(order => order.reservation?.user_name ?? order.customer?.name).join('')}">
             <span class="table-number">Bàn ${item.table_number}</span>
             <div class="table-o" style="width: 100%;
     height: 100%;

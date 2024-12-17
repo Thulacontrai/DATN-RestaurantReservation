@@ -1,3 +1,4 @@
+
 <style>
     html,
     body {
@@ -5,6 +6,46 @@
         font-size: 15px;
     }
 
+
+
+    /* paginate */
+    .my-pagination {
+        display: flex;
+        justify-content: center;
+        list-style: none;
+        padding: 0;
+        margin: 20px 0;
+    }
+
+    input {
+        background-color: white !important;
+    }
+
+    .my-pagination li {
+        margin: 0 5px;
+    }
+
+    .my-pagination a {
+        padding: 10px 15px;
+        color: #f1c40f;
+        background-color: #ffffff;
+        border: 1px solid #f1c40f;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+    }
+
+    .my-pagination a:hover {
+        background-color: #f1c40f;
+        color: #1b1b1b;
+    }
+
+    .my-pagination .active span {
+        background-color: #f1c40f;
+        color: #1b1b1b;
+        padding: 10px 15px;
+        border-radius: 5px;
+    }
     .heart-btn {
         width: 70px;
         height: 40px;

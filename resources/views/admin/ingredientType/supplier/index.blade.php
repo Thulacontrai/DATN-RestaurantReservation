@@ -46,10 +46,30 @@
                                 <table class="table v-middle m-0">
                                     <thead>
                                         <tr>
-                                            <th>ID</th>
-                                            <th>Tên Nhà Cung Cấp</th>
-                                            <th>Số Điện Thoại</th>
-                                            <th>Email</th>
+                                            <th> <a
+                                                href="{{ route('admin.supplier.index', array_merge(request()->query(), ['sort' => 'id', 'direction' => request('sort') === 'id' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}">
+                                                ID
+                                                <i
+                                                    class="bi bi-arrow-{{ request('sort') === 'id' ? (request('direction') === 'asc' ? 'up' : 'down') : '' }}"></i>
+                                            </a></th>
+                                            <th> <a
+                                                href="{{ route('admin.supplier.index', array_merge(request()->query(), ['sort' => 'name', 'direction' => request('sort') === 'name' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}">
+                                                Tên Nhà Cung Cấp
+                                                <i
+                                                    class="bi bi-arrow-{{ request('sort') === 'name' ? (request('direction') === 'asc' ? 'up' : 'down') : '' }}"></i>
+                                            </a></th>
+                                            <th> <a
+                                                href="{{ route('admin.supplier.index', array_merge(request()->query(), ['sort' => 'phone', 'direction' => request('sort') === 'phone' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}">
+                                                Số Điện Thoại
+                                                <i
+                                                    class="bi bi-arrow-{{ request('sort') === 'phone' ? (request('direction') === 'asc' ? 'up' : 'down') : '' }}"></i>
+                                            </a></th>
+                                            <th> <a
+                                                href="{{ route('admin.supplier.index', array_merge(request()->query(), ['sort' => 'email', 'direction' => request('sort') === 'email' && request('direction') === 'asc' ? 'desc' : 'asc'])) }}">
+                                                Email
+                                                <i
+                                                    class="bi bi-arrow-{{ request('sort') === 'email' ? (request('direction') === 'asc' ? 'up' : 'down') : '' }}"></i>
+                                            </a></th>
                                             <th>Địa Chỉ</th>
                                             <th>Hành Động</th>
                                         </tr>
@@ -98,56 +118,9 @@
 
                         </div>
                         <!-- Pagination -->
-                        <div class="d-flex justify-content-between align-items-center bg-white p-4">
-                            <!-- Phần hiển thị phân trang bên trái -->
-                            <div class="mb-4 flex sm:mb-0 text-center">
-                                <span style="font-size: 15px">
-                                    <i class="bi bi-chevron-compact-left"></i>
+                        <div class="d-flex justify-content-center">
 
-                                    <span class="text-sm font-normal text-gray-500 dark:text-gray-400">
-                                        Hiển thị <strong
-                                            class="font-semibold text-secondary ">{{ $suppliers->firstItem() }}-{{ $suppliers->lastItem() }}</strong>
-                                        trong tổng số <strong
-                                            class="font-semibold text-secondary ">{{ $suppliers->total() }}</strong>
-                                    </span> <i class="bi bi-chevron-compact-right"></i>
-                                </span>
-                            </div>
-
-                            <!-- Phần hiển thị phân trang bên phải -->
-                            <div class="flex items-center space-x-3">
-                                <!-- Nút Previous -->
-                                @if ($suppliers->onFirstPage())
-                                    <button class="inline-flex  p-1 pl-2 bg-success text-white  cursor-not-allowed"
-                                        style="border-radius: 5px; border: 2px solid rgb(136, 243, 136);">
-                                        <span style="font-size: 15px"><i class="bi bi-chevron-compact-left"></i>Trước</span>
-                                    </button>
-                                @else
-                                    <a href="{{ $suppliers->previousPageUrl() }}">
-                                        <button class="inline-flex  p-1 pl-2  bg-success text-white "
-                                            style="border-radius: 5px;    border: 2px solid rgb(136, 243, 136);">
-                                            <span style="font-size: 15px"><i class="bi bi-chevron-double-left"></i>
-                                                Trước</span>
-                                        </button>
-                                    </a>
-                                @endif
-
-                                <!-- Nút Next -->
-                                @if ($suppliers->hasMorePages())
-                                    <a href="{{ $suppliers->nextPageUrl() }}">
-                                        <button class="inline-flex  p-1 pl-2 bg-success text-white"
-                                            style="border-radius: 5px;    border: 2px solid rgb(136, 243, 136);">
-                                            <span style="font-size: 15px"> Sau <i
-                                                    class="bi bi-chevron-compact-right"></i></span>
-                                        </button>
-                                    </a>
-                                @else
-                                    <button class="inline-flex  p-1 pl-2 bg-primary text-white cursor-not-allowed"
-                                        style="border-radius: 5px;    border: 2px solid rgb(83, 150, 216);">
-                                        <span style="font-size: 15px">
-                                            Trang Cuối</i></span>
-                                    </button>
-                                @endif
-                            </div>
+                            {{ $suppliers->links('pagination::client-paginate') }}
 
                         </div>
                     </div>

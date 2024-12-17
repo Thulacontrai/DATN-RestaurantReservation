@@ -11,6 +11,45 @@
     .swal2-container .select2-container--default .select2-selection--multiple {
         width: 100%;
     }
+
+    .table-container {
+        position: relative;
+        max-height: 600px;
+        overflow-y: auto;
+        z-index: 1;
+    }
+
+    .table-card {
+        position: relative;
+        padding: 15px;
+        margin: 10px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        transition: transform 0.2s;
+        z-index: 2;
+    }
+
+    .table-card:hover {
+        transform: scale(1.05);
+        z-index: 3;
+    }
+
+    .qr-code-container {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #fff;
+        padding: 10px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        z-index: 4;
+    }
+
+    .table-card:hover .qr-code-container {
+        display: block;
+    }
 </style>
 @section('content')
     @if (session('error'))
@@ -195,7 +234,6 @@
                 </div>
             </div>
         </div>
-
     </header>
     <div class="wrapper">
         <div class="container-fluid d-flex flex-grow-1 px-0">
@@ -220,7 +258,7 @@
                         @foreach ($tables as $table)
                             <div class="table-card {{ strtolower(trim($table->status)) }}"
                                 data-table-id="{{ $table->id }}" data-status="{{ $table->status }}"
-                                data-order-id="@foreach ($table->orders as $column) {{ $column->reservation->user_name ?? null }} @endforeach">
+                                data-order-id="@foreach ($table->orders as $column) {{ $column->reservation?->user_name ?? ($column->customer?->name ?? null) }} @endforeach">
                                 <span class="table-number">Bàn {{ $table->table_number }}</span>
                                 <div class="table-o">
                                     @foreach ($table->orders as $column)
@@ -228,9 +266,18 @@
                                             {{ $column->reservation->id ?? ($column->id ?? null) }}</span>
                                     @endforeach
                                 </div>
+                                <div class="qr-code-container">
+                                    <h5 class="text-dark">Bàn {{ $table->table_number }}</h5>
+                                    <p>
+                                        <b
+                                            class="text-dark">{{ $table->status == 'Available' ? 'Bàn mở' : 'Đang sử dụng' }}</b>
+                                    </p>
+                                    {!! $qrCodes[$table->id] ?? '' !!}
+                                </div>
                             </div>
                         @endforeach
                     </div>
+
                 </div>
 
                 <!-- Phần hiển thị Thực đơn -->
@@ -246,41 +293,57 @@
                         @endforeach
                     </div>
 
-                    <!-- Phần Danh sách Món ăn -->
                     <div class="row" id="dish-list" style="max-height: 600px; overflow-y: auto;">
                         @foreach ($dishes as $dish)
-                            <div class="col-md-3 dish-item" data-category="{{ $dish->category->id }}"
-                                data-dish-id="{{ $dish->id }}" data-dish-price="{{ $dish->price }}">
-                                <div class="card menu-item">
+                            <div class="col-6 col-sm-4 col-md-3 col-lg-3 dish-item {{ $dish->is_active == 0 || $dish->status == 'out_of_stock' ? 'disabled' : '' }}"
+                                data-category="{{ $dish->category->id }}" style="padding: 10px;"
+                                @if ($dish->is_active && $dish->status != 'out_of_stock') data-dish-id="{{ $dish->id }}" 
+                                data-dish-price="{{ $dish->price }}" @endif>
+
+                                <div class="card menu-item col">
                                     <img class="btn btn-add-dish" data-dish-id="{{ $dish->id }}"
                                         src="{{ asset($dish->image ? 'storage/' . $dish->image : 'images/placeholder.jpg') }}"
                                         alt="{{ $dish->name }}" class="img-fluid rounded"
-                                        style="height: 200px; object-fit: cover;" />
+                                        style="object-fit: cover; height: 200px; width: 100%; max-height: 200px; {{ $dish->is_active == 0 || $dish->status == 'out_of_stock' ? 'filter: grayscale(100%); opacity: 0.6;' : '' }}" />
                                     <div class="card-body text-center">
-                                        <h5 class="card-price text-primary">{{ number_format($dish->price, 0, ',', '.') }}
-                                            VND</h5>
+                                        @if ($dish->is_active == 0 || $dish->status == 'out_of_stock')
+                                            <p class="text-danger">Không khả dụng</p>
+                                        @else
+                                            <h5 class="card-price text-primary">
+                                                {{ number_format($dish->price, 0, ',', '.') }}
+                                                VND</h5>
+                                        @endif
                                         <p class="card-title">{{ \Str::limit($dish->name, 20, '...') }}</p>
                                     </div>
                                 </div>
                             </div>
                         @endforeach
+
                         @foreach ($combo as $combo)
-                            <div class="col-md-3 dish-combo" data-category="combo" data-combo-id="{{ $combo->id }}"
-                                data-combo-price="{{ $combo->price }}">
-                                <div class="card menu-item">
-                                    <img class="btn btn-add-combo" data-combo-id="{{ $combo->id }}"
+                            <div class="col-6 col-sm-4 col-md-3 col-lg-3 dish-combo {{ $combo->is_active == 0 || $combo->status == 'out_of_stock' ? 'disabled' : '' }}"
+                                data-category="combo"
+                                @if ($combo->is_active) data-combo-id="{{ $combo->id }}"
+                                data-combo-price="{{ $combo->price }}" @endif
+                                style="padding: 10px;">
+                                <div class="card menu-item col">
+                                    <img class="btn btn-add-dish"
                                         src="{{ asset($combo->image ? 'storage/' . $combo->image : 'images/placeholder.jpg') }}"
                                         alt="{{ $combo->name }}" class="img-fluid rounded"
-                                        style="height: 200px; object-fit: cover;" />
+                                        style="object-fit: cover; height: 200px; width: 100%; max-height: 200px; {{ $combo->is_active == 0 || $combo->status == 'out_of_stock' ? 'filter: grayscale(100%); opacity: 0.6;' : '' }}" />
                                     <div class="card-body text-center">
-                                        <h5 class="card-price text-primary">
-                                            {{ number_format($combo->price, 0, ',', '.') }}
-                                            VND</h5>
+                                        @if ($combo->is_active == 0 || $combo->status == 'out_of_stock')
+                                            <p class="text-danger">Không khả dụng</p>
+                                        @else
+                                            <h5 class="card-price text-primary">
+                                                {{ number_format($combo->price, 0, ',', '.') }} VND
+                                            </h5>
+                                        @endif
                                         <p class="card-title">{{ \Str::limit($combo->name, 20, '...') }}</p>
                                     </div>
                                 </div>
                             </div>
                         @endforeach
+
                     </div>
                 </div>
             </div>
@@ -368,11 +431,12 @@
             const card = event.target.closest('.dish-item');
             const combo = event.target.closest('.dish-combo');
 
-            if (card) {
+            if (card && !card.classList.contains('disabled')) {
                 const dishId = card.dataset.dishId;
                 addDishToOrder(dishId, selectedTableId);
             }
-            if (combo) {
+
+            if (combo && !combo.classList.contains('disabled')) {
                 const comboId = combo.dataset.comboId;
                 addComboToOrder(comboId, selectedTableId);
             }
@@ -519,19 +583,39 @@
                 })
                 .then(data => {
                     const availableTables = data.tables || [];
+                    const users = data.users || [];
                     Swal.fire({
                         title: 'Nhận gọi món',
                         html: `
           <div class="container">
             <div class="mb-3">
+                <label for="customer" class="form-label">Khách hàng</label>
+                <select id="customer" class="form-select">
+                    <option value="" disabled selected hidden>Tìm khách hàng</option>
+                    ${users.map(user => `
+                        <option value="${user.name}" data-phone="${user.phone}">
+                            ${user.name}
+                        </option>
+                        `).join('')}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="phone" class="form-label">Số điện thoại</label>
+                <input type="text" id="phone" class="form-control" placeholder="Số điện thoại">
+            </div>
+            <div class="mb-3">
               <label for="tableRoom" class="form-label">Phòng/Bàn</label><br>
               <select id="tableRoom" class="form-select" multiple>
-${availableTables.map(table => `
-  <option value="${table.id}" ${table.id == tableId ? 'selected' : ''}>
-    Bàn ${table.table_number}
-  </option>
-`).join('')}
+                    ${availableTables.map(table => `
+                        <option value="${table.id}" ${table.id == tableId ? 'selected' : ''}>
+                            Bàn ${table.table_number}
+                        </option>
+                        `).join('')}
                 </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Số khách</label>
+                <input type="number" id="adults" class="form-control" placeholder="Số khách" min="1" max="6" value="1">
             </div>
           </div>
         `,
@@ -539,21 +623,111 @@ ${availableTables.map(table => `
                         confirmButtonText: 'Xác nhận',
                         cancelButtonText: 'Hủy',
                         didOpen: () => {
+                            const MAX_GUESTS_PER_TABLE = 4;
                             const $tableRoom = $('#tableRoom');
+                            const $adults = $('#adults');
+                            const $customer = $('#customer');
+                            const $phone = $('#phone');
+
+                            $customer.select2({
+                                placeholder: 'Tìm khách hàng',
+                                tags: true,
+                                dropdownParent: $('.swal2-container'),
+                                createTag: function(params) {
+                                    const term = $.trim(params.term);
+                                    if (term === '') {
+                                        return null;
+                                    }
+                                    return {
+                                        id: term,
+                                        text: term,
+                                        isNew: true
+                                    };
+                                }
+                            });
+
                             $tableRoom.select2({
+                                placeholder: 'Chọn Phòng/Bàn',
                                 allowClear: true,
                                 dropdownParent: $('.swal2-container')
                             });
+
+                            $customer.on('change', function() {
+                                const selectedOption = $(this).find(':selected');
+                                const phone = selectedOption.data('phone') || '';
+                                $phone.val(phone);
+                            });
+
+                            $phone.on('input', function() {
+                                const newPhone = $(this).val();
+                                let matchedCustomer = null;
+                                $customer.find('option').each(function() {
+                                    if ($(this).data('phone') === newPhone) {
+                                        matchedCustomer = $(this).val();
+                                        return false;
+                                    }
+                                });
+
+                                if (matchedCustomer) {
+                                    $customer.val(matchedCustomer).trigger('change');
+                                }
+                            });
+
+                            const updateGuestLimits = () => {
+                                const selectedTables = $tableRoom.val().length;
+                                if (selectedTables === 0) {
+                                    $adults.attr('min', 1);
+                                    $adults.attr('max', MAX_GUESTS_PER_TABLE);
+                                    $adults.val(
+                                        1);
+                                    return;
+                                }
+
+                                const maxGuests = selectedTables *
+                                    MAX_GUESTS_PER_TABLE;
+                                const minGuests = selectedTables === 1 ? 1 : (
+                                        selectedTables - 1) * MAX_GUESTS_PER_TABLE +
+                                    1;
+
+                                $adults.attr('max', maxGuests);
+                                $adults.attr('min', minGuests);
+
+                                const currentValue = parseInt($adults.val(), 10);
+                                if (currentValue < minGuests) {
+                                    $adults.val(minGuests);
+                                } else if (currentValue > maxGuests) {
+                                    $adults.val(maxGuests);
+                                }
+                            };
+                            $tableRoom.on('change', updateGuestLimits);
+                            $adults.on('input', () => {
+                                const maxGuests = parseInt($adults.attr('max'), 10);
+                                const minGuests = parseInt($adults.attr('min'), 10);
+                                const currentValue = parseInt($adults.val(), 10);
+
+                                if (currentValue > maxGuests) {
+                                    $adults.val(maxGuests);
+                                } else if (currentValue < minGuests || isNaN(
+                                        currentValue)) {
+                                    $adults.val(minGuests);
+                                }
+                            });
+                            updateGuestLimits();
                         },
                         preConfirm: () => {
+                            const customer = $('#customer').val();
+                            const phone = $('#phone').val();
                             const tableRoom = $('#tableRoom').val();
-                            if (!tableRoom.length) {
+                            const adults = $('#adults').val();
+                            if (!customer || !tableRoom.length || !phone) {
                                 Swal.showValidationMessage('Vui lòng nhập đầy đủ thông tin');
                                 return false;
                             }
-
                             return {
+                                customer,
+                                phone,
                                 tableRoom,
+                                adults,
                             };
                         }
                     }).then((result) => {
@@ -569,6 +743,9 @@ ${availableTables.map(table => `
                                     },
                                     body: JSON.stringify({
                                         table_id: result.value.tableRoom,
+                                        phone: result.value.phone,
+                                        user: result.value.customer,
+                                        quantity: result.value.adults,
                                     })
                                 })
                                 .then(response => {
@@ -586,6 +763,12 @@ ${availableTables.map(table => `
         }
         const orderDetails = document.getElementById('order-details');
         orderDetails.addEventListener("click", function(event) {
+            if (event.target.id === 'editInformation') {
+                editInformation(selectedTableId);
+            }
+            if (event.target.id === 'combineTables') {
+                combineTables();
+            }
             const dishElement = event.target.closest(".item-list");
             if (dishElement) {
                 const dishId = dishElement.dataset.dishId;
@@ -649,7 +832,16 @@ ${availableTables.map(table => `
                 inputPlaceholder: 'Nhập lý do...',
                 showCancelButton: true,
                 confirmButtonText: 'Xác nhận',
-                cancelButtonText: 'Hủy'
+                cancelButtonText: 'Hủy',
+                preConfirm: () => {
+                    const reason = Swal.getInput().value.trim();
+                    if (!reason) {
+                        Swal.showValidationMessage(
+                            'Vui lòng nhập lý do hủy');
+                        return false;
+                    }
+                    return reason;
+                }
             }).then((result) => {
                 if (result.isConfirmed) {
                     const reason = result.value;
@@ -689,7 +881,16 @@ ${availableTables.map(table => `
                 inputPlaceholder: 'Nhập lý do...',
                 showCancelButton: true,
                 confirmButtonText: 'Xác nhận',
-                cancelButtonText: 'Hủy'
+                cancelButtonText: 'Hủy',
+                preConfirm: () => {
+                    const reason = Swal.getInput().value.trim();
+                    if (!reason) {
+                        Swal.showValidationMessage(
+                            'Vui lòng nhập lý do hủy');
+                        return false;
+                    }
+                    return reason;
+                }
             }).then((result) => {
                 if (result.isConfirmed) {
                     const reason = result.value;
@@ -1022,8 +1223,213 @@ ${availableTables.map(table => `
                 showNotification('Hãy chọn bàn trước khi thêm món', 'error')
             }
         }
+        function editInformation(selectedTableId) {
+            fetch('/checkTables', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector(
+                                'meta[name="csrf-token"]')
+                            .getAttribute('content'),
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        table_id: selectedTableId
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error('Failed to fetch available tables');
+                    return response.json();
+                })
+                .then(data => {
+                    const availableTables = data.tables || [];
+                    const tableIds = data.tableIds || [];
+                    const users = data.users || [];
+                    const user = data.user || [];
+                    const phone = data.phone || [];
+                    const quantity = data.quantity || [];
+                    Swal.fire({
+                        title: 'Chỉnh sửa thông tin bàn',
+                        html: `
+          <div class="container">
+            <div class="mb-3">
+                <label for="customer" class="form-label">Khách hàng</label>
+                <select id="customer" class="form-select">
+                    <option value="${user}" selected>${user}</option>
+                    ${users.map(user => `
+                        <option value="${user.name}" data-phone="${user.phone}">
+                            ${user.name}
+                        </option>
+                        `).join('')}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="phone" class="form-label">Số điện thoại</label>
+                <input type="text" value="${phone}" id="phone" class="form-control" placeholder="Số điện thoại">
+            </div>
+            <div class="mb-3">
+              <label for="tableRoom" class="form-label">Phòng/Bàn</label><br>
+              <select id="tableRoom" class="form-select" multiple>
+                    ${availableTables.map(table => `
+                        <option value="${table.id}" ${tableIds.includes(table.id) ? 'selected' : ''}>
+                            Bàn ${table.table_number}
+                        </option>
+                    `).join('')}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Số khách</label>
+                <input type="number" id="adults" class="form-control" placeholder="Số khách" min="1" max="6" value="${quantity}">
+            </div>
+          </div>
+        `,
+                        showCancelButton: true,
+                        confirmButtonText: 'Xác nhận',
+                        cancelButtonText: 'Hủy',
+                        didOpen: () => {
+                            const MAX_GUESTS_PER_TABLE = 4;
+                            const $tableRoom = $('#tableRoom');
+                            const $adults = $('#adults');
+                            const $customer = $('#customer');
+                            const $phone = $('#phone');
 
+                            $customer.select2({
+                                placeholder: 'Tìm khách hàng',
+                                tags: true,
+                                dropdownParent: $('.swal2-container'),
+                                createTag: function(params) {
+                                    const term = $.trim(params.term);
+                                    if (term === '') {
+                                        return null;
+                                    }
+                                    return {
+                                        id: term,
+                                        text: term,
+                                        isNew: true
+                                    };
+                                }
+                            });
+
+                            $tableRoom.select2({
+                                placeholder: 'Chọn Phòng/Bàn',
+                                allowClear: true,
+                                dropdownParent: $('.swal2-container')
+                            });
+
+                            $customer.on('change', function() {
+                                const selectedOption = $(this).find(':selected');
+                                const phone = selectedOption.data('phone') || '';
+                                $phone.val(phone);
+                            });
+
+                            $phone.on('input', function() {
+                                const newPhone = $(this).val();
+                                let matchedCustomer = null;
+                                $customer.find('option').each(function() {
+                                    if ($(this).data('phone') === newPhone) {
+                                        matchedCustomer = $(this).val();
+                                        return false;
+                                    }
+                                });
+
+                                if (matchedCustomer) {
+                                    $customer.val(matchedCustomer).trigger('change');
+                                }
+                            });
+
+                            const updateGuestLimits = () => {
+                                const selectedTables = $tableRoom.val().length;
+                                if (selectedTables === 0) {
+                                    $adults.attr('min', 1);
+                                    $adults.attr('max', MAX_GUESTS_PER_TABLE);
+                                    $adults.val(
+                                        1);
+                                    return;
+                                }
+
+                                const maxGuests = selectedTables *
+                                    MAX_GUESTS_PER_TABLE;
+                                const minGuests = selectedTables === 1 ? 1 : (
+                                        selectedTables - 1) * MAX_GUESTS_PER_TABLE +
+                                    1;
+
+                                $adults.attr('max', maxGuests);
+                                $adults.attr('min', minGuests);
+
+                                const currentValue = parseInt($adults.val(), 10);
+                                if (currentValue < minGuests) {
+                                    $adults.val(minGuests);
+                                } else if (currentValue > maxGuests) {
+                                    $adults.val(maxGuests);
+                                }
+                            };
+                            $tableRoom.on('change', updateGuestLimits);
+                            $adults.on('input', () => {
+                                const maxGuests = parseInt($adults.attr('max'), 10);
+                                const minGuests = parseInt($adults.attr('min'), 10);
+                                const currentValue = parseInt($adults.val(), 10);
+
+                                if (currentValue > maxGuests) {
+                                    $adults.val(maxGuests);
+                                } else if (currentValue < minGuests || isNaN(
+                                        currentValue)) {
+                                    $adults.val(minGuests);
+                                }
+                            });
+                            updateGuestLimits();
+                        },
+                        preConfirm: () => {
+                            const customer = $('#customer').val();
+                            const phone = $('#phone').val();
+                            const tableRoom = $('#tableRoom').val();
+                            const adults = $('#adults').val();
+                            if (!customer || !tableRoom.length || !phone) {
+                                Swal.showValidationMessage('Vui lòng nhập đầy đủ thông tin');
+                                return false;
+                            }
+                            return {
+                                customer,
+                                phone,
+                                tableRoom,
+                                adults,
+                            };
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            showNotification('Chỉnh sửa thành công');
+                            fetch(`/edit-order/${selectedTableId}`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'X-CSRF-TOKEN': document.querySelector(
+                                                'meta[name="csrf-token"]')
+                                            .getAttribute('content'),
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({
+                                        table_id: result.value.tableRoom,
+                                        phone: result.value.phone,
+                                        user: result.value.customer,
+                                        quantity: result.value.adults,
+                                    })
+                                })
+                                .then(response => {
+                                    if (!response.ok) throw new Error(
+                                        'Network response was not ok');
+                                    return response.json();
+                                })
+                                .then(data => {
+                                    selectedTableId = data.tableId;
+                                    console.log(selectedTableId + '1');
+                                    showOrderDetails(data.tableId);
+                                })
+                                .catch(() => showNotification('Lỗi khi tạo đơn', 'error'));
+                        } else if (result.isDenied) {
+                            showNotification('Tạo đơn thất bại', 'error');
+                        }
+                    });
+                })
+        }
         function showOrderDetails(tableId) {
+            selectedTableId = tableId;
             fetch('/order-details/' + tableId, {
                     method: 'POST',
                     headers: {
@@ -1317,10 +1723,22 @@ if (data.success) {
     $('#toDate').on('change', fetchReservations);
 });
 
+
+
+        function combineTables() {
+
+        }
+
+        
+
     });
 </script>
-@vite(['resources\js\posTable.js', 'resources\js\orderItem.js'])
+@vite(['resources/js/posTable.js', 'resources/js/orderItem.js', 'resources/js/DishStatusUpdated.js'])
 <style>
+    .card {
+        height: 320px !important;
+    }
+
     .wrapper {
         display: flex;
         flex-direction: row;
@@ -1364,11 +1782,23 @@ if (data.success) {
         transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
     }
 
+    .dish-item {
+        height: 100%;
+    }
+
+    .dish-combo {
+        height: 100%;
+    }
+
     /* Responsive cho các màn hình nhỏ */
     @media (max-width: 768px) {
         .table-card {
             width: 80px;
             height: 100px;
+        }
+
+        .card {
+            height: 420px;
         }
     }
 
@@ -1405,6 +1835,10 @@ if (data.success) {
             padding: 8px 10px;
             font-size: 12px;
             /* Giảm kích thước nút trên thiết bị nhỏ */
+        }
+
+        .card {
+            height: 330px;
         }
     }
 
@@ -1504,6 +1938,8 @@ if (data.success) {
         transform: scale(0.9);
     }
 
+
+
     .garbage {
         position: absolute;
         width: 14px;
@@ -1583,6 +2019,41 @@ if (data.success) {
         display: flex;
         justify-content: center;
         align-items: center;
+    }
+
+
+    #dish-list .dish-item {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+
+    #dish-list .dish-combo {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+
+    @media (min-width: 850px) and (max-width: 1199px) {
+        #dish-list .dish-item {
+            flex: 0 0 33.3333%;
+            max-width: 33.3333%;
+        }
+
+        #dish-list .dish-combo {
+            flex: 0 0 33.3333%;
+            max-width: 33.3333%;
+        }
+    }
+
+    @media (min-width: 1200px) {
+        #dish-list .dish-item {
+            flex: 0 0 25%;
+            max-width: 25%;
+        }
+
+        #dish-list .dish-combo {
+            flex: 0 0 25%;
+            max-width: 25%;
+        }
     }
 </style>
 

@@ -9,15 +9,20 @@
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <div class="card-title">
-
+                                {{ $type == 'employee' ? 'Danh sách nhân viên' : 'Danh sách người dùng' }}
                             </div>
                             <div>
-                                <a href="{{ route('admin.user.create') }}" class="btn btn-sm btn-primary d-flex align-i">
-                                    <i class="bi bi-plus-circle me-2"></i>
-                                    {{ $type == 'employee' ? 'Thêm Nhân Viên' : 'Thêm Người Dùng' }}
-                                </a>
+                                <div>
+                                    <a href="{{ route('admin.user.create', ['type' => $type]) }}" class="btn btn-sm btn-primary d-flex align-i">
+                                        <i class="bi bi-plus-circle me-2"></i>
+                                        {{ $type == 'employee' ? 'Thêm Nhân Viên' : 'Thêm Người Dùng' }}
+                                    </a>
+                                    
+                                </div>
+                                
                             </div>
                         </div>
+                        
 
                         <div class="card-body">
                             <!-- Tìm kiếm người dùng -->
@@ -75,15 +80,37 @@
                                                         </td>
                                                     @endif
                                                     <td>{{ $user->created_at }}</td>
+                                                    
                                                     <td>
-                                                        <div class="action text-center">
-                                                            <a href="{{ route('admin.user.edit', $user->id) }}"
-                                                                data-bs-toggle="tooltip" data-bs-placement="top"
-                                                                title="Sửa">
-                                                                <i class="bi bi-pencil-square text-warning"></i>
+                                                        <div class="actions">
+                                                            
+                                                                <a href="{{ route('admin.user.show', $user->id) }}"  class="viewRow" data-bs-toggle="tooltip" data-bs-placement="top"
+                                                                title="Chi tiết">
+                                                                <i class="bi bi-list text-green"></i></a>
+                                                         
+                                                            
+                                                            <!-- Nút Sửa -->
+                                                            <a href="{{ route('admin.user.edit', ['user' => $user->id, 'type' => $type]) }}"
+                                                                class="text-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="Sửa">
+                                                                <i class="bi bi-pencil-square"></i>
+                                                            </a>
+                                                    
+                                                            <!-- Nút Xóa -->
+                                                            <a href="" style="padding-bottom: 5px; padding-left: 3px;">
+                                                                <form action="{{ route('admin.user.destroy', $user->id) }}" method="POST"
+                                                                    style="display: inline-block;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa?');">
+                                                                    @csrf
+                                                                    @method('DELETE')
+                                                                    <button type="submit" class="btn btn-link p-0">
+                                                                        <i class="bi bi-trash text-red"></i>
+                                                                    </button>
+                                                                </form>
                                                             </a>
                                                         </div>
                                                     </td>
+                                                    
+                                                    
+                                                                                                   
                                                 </tr>
                                             @endforeach
                                         @else
@@ -97,60 +124,11 @@
                                 </table>
                             </div>
 
-                            <!-- Pagination -->
-                            <div class="d-flex justify-content-between align-items-center bg-white p-4">
-                                <!-- Phần hiển thị phân trang bên trái -->
-                                <div class="mb-4 flex sm:mb-0 text-center">
-                                    <span style="font-size: 15px">
-                                        <i class="bi bi-chevron-compact-left"></i>
+                            <div class="d-flex justify-content-center">
 
-                                        <span class="text-sm font-normal text-gray-500 dark:text-gray-400">
-                                            Hiển thị <strong
-                                                class="font-semibold text-secondary ">{{ $users->firstItem() }}-{{ $users->lastItem() }}</strong>
-                                            trong tổng số <strong
-                                                class="font-semibold text-secondary ">{{ $users->total() }}</strong>
-                                        </span> <i class="bi bi-chevron-compact-right"></i>
-                                    </span>
-                                </div>
+                                {{ $users->links('pagination::client-paginate') }}
 
-
-
-                             <!-- Phần hiển thị phân trang bên phải -->
-                                <div class="flex items-center space-x-3">
-                                    <!-- Nút Previous -->
-                                    @if ($users->onFirstPage())
-                                        <button class="inline-flex  p-1 pl-2 bg-success text-white  cursor-not-allowed"
-                                            style="border-radius: 5px; border: 2px solid rgb(136, 243, 136);">
-                                            <span style="font-size: 15px"><i
-                                                    class="bi bi-chevron-compact-left"></i>Trước</span>
-                                        </button>
-                                    @else
-                                        <a href="{{ $users->previousPageUrl() }}">
-                                            <button class="inline-flex  p-1 pl-2  bg-success text-white "
-                                                style="border-radius: 5px;    border: 2px solid rgb(136, 243, 136);">
-                                                <span style="font-size: 15px"><i class="bi bi-chevron-double-left"></i>
-                                                    Trước</span>
-                                            </button>
-                                        </a>
-                                    @endif
-
-                                    <!-- Nút Next -->
-                                    @if ($users->hasMorePages())
-                                        <a href="{{ $users->nextPageUrl() }}">
-                                            <button class="inline-flex  p-1 pl-2 bg-success text-white"
-                                                style="border-radius: 5px;    border: 2px solid rgb(136, 243, 136);">
-                                                <span style="font-size: 15px"> Sau <i
-                                                        class="bi bi-chevron-compact-right"></i></span>
-                                            </button>
-                                        </a>
-                                    @else
-                                        <button class="inline-flex  p-1 pl-2 bg-primary text-white cursor-not-allowed"
-                                            style="border-radius: 5px;    border: 2px solid rgb(83, 150, 216);">
-                                            <span style="font-size: 15px">
-                                                Trang Cuối</i></span>
-                                        </button>
-                                    @endif
-                                </div></div>
+                            </div>
                         </div>
                     </div>
                 </div>
