@@ -374,12 +374,6 @@ class ReservationController extends Controller
         return redirect()->route('admin.reservation.index')->with('success', 'Đơn đặt bàn đã được hủy thành công.');
     }
 
-    
-    {
-        $title = 'Chi Tiết Đặt Bàn';
-        $reservation = Reservation::with('customer')->findOrFail($id);
-        return view('admin.reservation.show', compact('reservation', 'title'));
-    }
 
 
 
@@ -697,8 +691,8 @@ class ReservationController extends Controller
         $lastReservation = Reservation::where('customer_id', auth()->id())
             ->latest('created_at')
             ->first();
-        if ($lastReservation && now()->diffInMinutes($lastReservation->created_at) < 5) {
-            return back()->with('err', 'Mỗi đơn đặt bàn cần cách nhau 5 phút!');
+        if ($lastReservation && now()->diffInMinutes($lastReservation->created_at) < 1) {
+            return back()->with('err', 'Mỗi đơn đặt bàn cần cách nhau 1 phút!');
         }
         // Kiểm tra số lượng khách, nếu >= 6 thì chuyển hướng đến trang đặt cọc
         if ($request->guest_count >= 6) {
