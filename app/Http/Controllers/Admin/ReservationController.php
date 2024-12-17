@@ -285,20 +285,17 @@ class ReservationController extends Controller
         $customers = User::all();
         $coupons = Coupon::all();
 
-
         // Tách ngày và giờ từ reservation_time
         $reservationDate = \Carbon\Carbon::parse($reservation->reservation_date)->format('Y-m-d');
         $reservationTime = \Carbon\Carbon::parse($reservation->reservation_time)->format('H:i');
 
         return view('admin.reservation.edit', compact('reservation', 'customers', 'coupons', 'reservationDate', 'reservationTime', 'title'));
-
     }
 
 
 
 
     public function update(Request $request, $id)
-
     {
         DB::beginTransaction();
         try {
@@ -364,7 +361,6 @@ class ReservationController extends Controller
     }
 
 
-
     public function cancel(Request $request, $id)
     {
         // Tìm đơn đặt chỗ
@@ -394,14 +390,13 @@ class ReservationController extends Controller
     public function showTime()
     {
         $now = Carbon::now('Asia/Ho_Chi_Minh')->copy()->addHours(2);
-    
+
         Carbon::setLocale('vi');
         $today = Carbon::today();
         $days = [];
         for ($i = 0; $i < 3; $i++) {
             $days[] = $today->copy()->addDays($i);
         }
-    
         $timeSlots = [];
         $startHour = 11;
         $endHour = 21;
@@ -443,8 +438,8 @@ class ReservationController extends Controller
         }
     
         return view('client.booking', compact('days', 'timeSlots', 'now', 'disabledSlots'));
+
     }
-    
     public function showInformation(Request $request)
     {
         $data = $request->all();

@@ -183,8 +183,10 @@ a:focus {
   outline: 0 none;
 }
 img {
-  max-width: 100%;
-  height: auto;
+
+  height: 168px;
+  width: 168px;
+  /* height: 150; */
 }
 ul {
   list-style: outside none none;
@@ -17466,3 +17468,12 @@ ul {
 .fxt-template-layout36 .fxt-btn-ghost:focus {
   outline: none;
 }
+
+    .fxt-header {
+        margin-bottom: 1px; /* Giảm khoảng cách dưới của logo */
+    }
+
+    .fxt-content {
+        margin-top: 0; /* Đảm bảo không có khoảng cách trên của form */
+    }
+

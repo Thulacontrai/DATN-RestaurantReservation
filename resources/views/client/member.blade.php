@@ -108,15 +108,16 @@
                                             'Pending Refund' => 'Chờ hoàn cọc', // Thêm nhãn cho trạng thái 'Pending Refund'
                                         ];
                                     @endphp
-                                    <strong
-                                        class="text-right {{ $statusClasses[$reservation->status] ?? 'status-pending' }}">
-                                        {{ $statusLabels[$reservation->status] ?? 'Chờ xử lý' }}
-                                    </strong>
-                                
+                                       <strong
+                                       class="text-right {{ $statusClasses[$reservation->status] ?? 'status-pending' }}">
+                                       {{ $statusLabels[$reservation->status] ?? 'Chờ xử lý' }}
+                                   </strong>
 
                                     <div class=" mt-3">
+                                  
+                                
                                         @if ($reservation->status == 'Pending' || $reservation->status == 'Confirmed')
-                                            <button class="btn-warning edit-reservation-btn"
+                                            <button class="btn btn-secondary edit-reservation-btn"
                                                 data-id="{{ $reservation->id }}">Chỉnh sửa</button>
                                             @if ($reservation->deposit_amount > 0)
                                                 <button class="text-danger cancel-btn-new" data-toggle="modal"
