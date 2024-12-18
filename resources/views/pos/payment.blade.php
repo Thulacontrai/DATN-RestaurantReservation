@@ -40,7 +40,7 @@
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <span><i class="fas fa-users"></i> <strong>Số lượng khách:</strong></span>
-                            <span>{{ $order->reservation->guest_count ?? 'Khách lẻ' }}</span>
+                            <span>{{ $order->reservation->guest_count ?? ($order->guest_count ?? 'Khách lẻ') }}</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <span><i class="fas fa-calendar-day"></i> <strong>Ngày:</strong></span>
@@ -134,10 +134,13 @@
             @csrf
             <input type="hidden" name="end_time" value="{{ date('H:i:s') }}">
         </form>
+        @vite(['resources/js/notiRedirectAdmin.js'])
+
         <iframe id="printFrame" style="display:none;"></iframe>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
+            tableId = "{{ $table->id }}";
             document.addEventListener("DOMContentLoaded", function() {
                 // Hiển thị ngày và giờ hiện tại
                 function updateTime() {
@@ -166,13 +169,13 @@
                     Swal.fire({
                         title: 'Thanh toán bằng tiền mặt',
                         html: `
-                        <div class="text-muted mb-3">Tổng tiền: <strong id="deposit">${totalAmount.toLocaleString('vi-VN')}</strong> VND</div>
-                        <div class="text-muted mb-3">Tiền cọc: <strong id="deposit">${depositAmount.toLocaleString('vi-VN')}</strong> VND</div>
-                        <p>Khách cần trả: <strong id="total-amount">${(totalAmount-depositAmount).toLocaleString('vi-VN')>=0?(totalAmount-depositAmount).toLocaleString('vi-VN'):0}</strong> VND</p>
+                        <div class="text-muted mb-3">Tổng tiền: <strong id="deposit">${totalAmount.toLocaleString('vi-VN').replace(/\./g, ',')}</strong> VND</div>
+                        <div class="text-muted mb-3">Tiền cọc: <strong id="deposit">${depositAmount.toLocaleString('vi-VN').replace(/\./g, ',')}</strong> VND</div>
+                        <p>Khách cần trả: <strong id="total-amount">${(totalAmount-depositAmount)>=0?(totalAmount-depositAmount).toLocaleString('vi-VN').replace(/\./g, ','):0}</strong> VND</p>
                         <label>Số tiền khách trả: </label>
                         <input type="text" class="form-control text-dark border border-secondary form-control-lg mb-3" id="cashGiven" placeholder="Nhập số tiền..." maxlength="12">
                         <div id="denominationButtons" class="d-flex justify-content-center flex-wrap"></div>
-                        <div id="cashChange" class="text-muted mb-3">Tiền thừa trả khách: <strong id="changeAmount">${(depositAmount-totalAmount).toLocaleString('vi-VN')>=0?(depositAmount-totalAmount).toLocaleString('vi-VN'):0}</strong>VND</div>`,
+                        <div id="cashChange" class="text-muted mb-3">Tiền thừa trả khách: <strong id="changeAmount">${(depositAmount-totalAmount)>=0?(depositAmount-totalAmount).toLocaleString('vi-VN').replace(/\./g, ','):0}</strong>VND</div>`,
                         showCancelButton: true,
                         confirmButtonText: 'Xác nhận thanh toán',
                         didOpen: () => {
@@ -218,18 +221,20 @@
 
                                 const button = document.createElement('button');
                                 button.classList.add('btn', 'btn-outline-primary', 'm-1');
-                                button.textContent = denominationValue.toLocaleString('vi-VN') +
+                                button.textContent = denominationValue.toLocaleString('vi-VN')
+                                    .replace(/\./g, ',') +
                                     ' VND';
 
                                 button.addEventListener('click', () => {
                                     cashGivenInput.value = denominationValue.toLocaleString(
-                                        'vi-VN'); // Sử dụng giá trị cục bộ
+                                        'vi-VN').replace(/\./g,
+                                        ','); // Sử dụng giá trị cục bộ
                                     let cashGiven =
                                         denominationValue; // Lấy giá trị từ biến cục bộ
                                     let change = (cashGiven + depositAmount) -
                                         totalAmount; // Tính tiền thừa
                                     changeAmount.textContent = change >= 0 ? change
-                                        .toLocaleString('vi-VN') :
+                                        .toLocaleString('vi-VN').replace(/\./g, ',') :
                                         "0"; // Cập nhật hiển thị tiền thừa
                                     toggleSubmitButton(
                                         cashGiven

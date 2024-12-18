@@ -27,6 +27,22 @@
             font-weight: bold;
         }
 
+        .delete-button {
+            background-color: #DC3545;
+            color: #ffffff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .delete-button:hover {
+            background-color: #C82333;
+        }
+
         .order-header {
             padding: 10px 20px;
             background-color: #3b3b3b;
@@ -243,19 +259,19 @@
                         break;
                     case 'đang xử lý':
                         $statusText = 'Đã duyệt';
-                        $statusColor = '#007BFF'; // màu xanh dương
+                        $statusColor = '#007BFF';
                         break;
                     case 'hoàn thành':
                         $statusText = 'Đã hoàn thành';
-                        $statusColor = '#28A745'; // màu xanh lá
+                        $statusColor = '#28A745';
                         break;
                     case 'hủy':
                         $statusText = 'Đã hủy';
-                        $statusColor = '#DC3545'; // màu đỏ
+                        $statusColor = '#DC3545';
                         break;
                     default:
                         $statusText = 'Không xác định';
-                        $statusColor = '#6C757D'; // màu xám
+                        $statusColor = '#6C757D';
                         break;
                 }
             @endphp
@@ -265,7 +281,16 @@
                     alt="{{ $item->item_type == 1 ? $item->dish->name : $item->combo->name }}">
                 <div class="item-details">
                     <p class="mb-0">{{ $item->item_type == 1 ? $item->dish->name : $item->combo->name }}</p>
-                    <small>{{ number_format($item->item_type == 1 ? $item->dish->price : $item->combo->price) }}đ</small>
+                    <div class="row">
+                        <div class="col-2">
+                            <small>{{ number_format($item->item_type == 1 ? $item->dish->price : $item->combo->price) }}đ</small>
+                        </div>
+                        <div class="col-2">
+                            @if ($item->status == 'chờ xử lý')
+                                <button class="delete-button">Hủy</button>
+                            @endif
+                        </div>
+                    </div>
                 </div>
                 <div class="item-controls">
                     <span class="mx-2 quantity" style="color: {{ $statusColor }}">{{ $statusText }}</span>
@@ -275,9 +300,6 @@
             </div>
         @endforeach
 
-        <div class="pagination">
-            {{ $pagedItems->links() }}
-        </div>
     </div>
 
     <div class="order-footer">
@@ -286,7 +308,7 @@
             <span class="total" id="btn-subb">{{ number_format($total, 0, ',', '.') }} đ</span>
         </div>
     </div>
-    @vite(['resources/js/menuHistoryUpdated.js','resources/js/notiRedirect.js'])
+    @vite(['resources/js/menuHistoryUpdated.js', 'resources/js/notiRedirect.js', 'resources/js/notiRedirectUsers.js'])
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
     </script>
@@ -325,6 +347,50 @@
                 });
             }
         });
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('.delete-button').on('click', function() {
+                var orderItem = $(this).closest('.order-item');
+                var itemId = orderItem.data('id');
+                var itemType = orderItem.data('type') == 'dish' ? 1 : 2;
+                var tableId = tableId;
+                var url = orderItem.data('type') == 'dish' ? '/deleteItem' : '/deleteItemm';
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: {
+                        table_id: "{{ $table->id }}",
+                        dish_id: itemId,
+                        dishType: itemType,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            showNotification('Hủy món thành công!', 'success');
+                            location.reload();
+                        } else {
+                            showNotification('Lỗi khi xóa', 'error');
+                        }
+                    },
+                    error: function(xhr) {
+                        alert('Không thể kết nối đến server. Vui lòng thử lại sau!');
+                    }
+                });
+            });
+        });
+
+        function showNotification(message, type = 'success') {
+            Swal.fire({
+                icon: type,
+                title: 'Thông báo',
+                text: message,
+                timer: 3000,
+                showConfirmButton: false,
+                toast: true,
+                position: 'top-end'
+            });
+        }
     </script>
 </body>
 

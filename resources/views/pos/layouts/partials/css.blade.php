@@ -44,8 +44,6 @@
 
 
 <style>
-
-    /*  */
     /* Print Dropdown Form Styles */
     .print-dropdown {
         position: absolute;

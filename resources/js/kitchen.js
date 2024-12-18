@@ -1,17 +1,16 @@
 import './bootstrap';
 
-// Function to generate a row template for a dish
-function generateRowTemplate(item, updatedAtKey, buttonClass, buttonTitle, buttonIcon) {
-    const { id, combo, dish, formatted_updated_at, quantity, count_cancel, order } = item;
+// Function to generate card templates for a dish
+function generateCardTemplate(item, updatedAtKey, buttonClass, buttonTitle, buttonIcon, buttonColor) {
+    const { id, combo, dish, formatted_created_at, formatted_updated_at, quantity, count_cancel, order } = item;
     const table = order.tables[0];
     const updatedAt = item[updatedAtKey];
-
-    // Cancel info
     let cancelInfo = count_cancel > 0
-        ? `Hủy <span class="text-danger">${count_cancel}</span> vào lúc ${formatted_updated_at}`
+        ? `<div class="row">
+                <p>Hủy <span class="text-danger">${count_cancel}</span> vào lúc ${formatted_updated_at}</p>
+           </div>`
         : '';
 
-    // Action button
     let actionButton = quantity > 0
         ? `<button class="btn ${buttonClass}" title="${buttonTitle}">
                 <i class="${buttonIcon}"></i>
@@ -20,49 +19,45 @@ function generateRowTemplate(item, updatedAtKey, buttonClass, buttonTitle, butto
                 <i class="fa-solid fa-trash"></i>
            </button>`;
 
-    // Return a single table row
     return `
-        <tr data-item-id="${id}" data-item-type="${item.item_type}" data-table-id="${table.id}">
-            <td><strong>${item.item_type == 2 ? combo?.name : dish?.name}</strong></td>
-            <td>${updatedAt}</td>
-            <td>${quantity}</td>
-            <td>${table.table_number}</td>
-            <td class="btn-group-custom">${actionButton}</td>
-        </tr>
-        ${count_cancel > 0 ? `<tr><td colspan="5"><p>Hủy <span class="text-danger">${count_cancel}</span> vào lúc ${formatted_updated_at}</p></td></tr>` : ''}
+        <div class="order-card row" data-item-id="${id}" data-item-type="${item.item_type}" data-table-id="${table.id}">
+            <div class="col-md-6">
+                <strong>${item.item_type == 2 ? combo?.name : dish?.name}</strong>
+                <p>${updatedAt}</p>
+            </div>
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-4">
+                        <strong>Số lượng</strong>
+                        <p>${quantity}</p>
+                    </div>
+                    <div class="col-md-4">
+                        <strong>Bàn</strong>
+                        <p>${table.table_number}</p>
+                    </div>
+                    <div class="col-md-4 btn-group-custom">
+                        ${actionButton}
+                    </div>
+                </div>
+                ${cancelInfo}
+            </div>
+        </div>
     `;
 }
 
-// Common function to update the UI
+// Common function to update the innerHTML of an element
 function updateUI(containerId, items, updatedAtKey, buttonClass, buttonTitle, buttonIcon) {
     const container = document.getElementById(containerId);
-
     if (container) {
-        // Create table structure
-        container.innerHTML = `
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Tên món</th>
-                        <th>Ngày cập nhật</th>
-                        <th>Số lượng</th>
-                        <th>Bàn</th>
-                        <th>Hành động</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${items.map(item =>
-                        generateRowTemplate(
-                            item,
-                            updatedAtKey,
-                            buttonClass,
-                            buttonTitle,
-                            buttonIcon
-                        )
-                    ).join('')}
-                </tbody>
-            </table>
-        `;
+        container.innerHTML = items.map(item =>
+            generateCardTemplate(
+                item,
+                updatedAtKey,
+                buttonClass,
+                buttonTitle,
+                buttonIcon
+            )
+        ).join('');
     }
 }
 
@@ -83,25 +78,11 @@ window.Echo.channel('kitchen')
             });
         }
 
-        updateUI(
-            'DangCheBien',
-            e.items,
-            'formatted_created_at',
-            'btn-danger cook-all',
-            'Chế biến toàn bộ',
-            'fa-solid fa-forward'
-        );
+        updateUI('DangCheBien', e.items, 'formatted_created_at', 'btn-danger cook-all', 'Chế biến toàn bộ', 'fa-solid fa-forward');
     });
 
 // Kitchen Provide Listener
 window.Echo.channel('kitchenn')
     .listen('ProvideDishes', (e) => {
-        updateUI(
-            'ChoCungUng',
-            e.items,
-            'formatted_updated_at',
-            'btn-success done-all',
-            'Cung ứng toàn bộ',
-            'fa-solid fa-forward'
-        );
+        updateUI('ChoCungUng', e.items, 'formatted_updated_at', 'btn-success done-all', 'Cung ứng toàn bộ', 'fa-solid fa-forward');
     });

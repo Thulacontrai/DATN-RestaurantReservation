@@ -2,7 +2,7 @@ import './bootstrap';
 
 window.Echo.channel('menuOrder')
     .listen('CartUpdated', (e) => {
-        if (TableId == e.tableId) {
+        if (tableId == e.tableId) {
             const cartTotalElement = document.querySelector("#cart-total");
             const cartQuantityElement = document.querySelector("#cart-quantity");
 

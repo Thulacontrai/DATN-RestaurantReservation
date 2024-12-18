@@ -45,7 +45,7 @@ class Order extends Model
     // Quan hệ với bảng Table (Bàn mà đơn hàng thuộc về)
     public function tables()
     {
-        return $this->belongsToMany(Table::class, 'orders_tables','order_id', 'table_id')
+        return $this->belongsToMany(Table::class, 'orders_tables')
             ->withPivot('start_time', 'end_time', 'status');
     }
     public function items()

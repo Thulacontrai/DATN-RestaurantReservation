@@ -44,7 +44,6 @@ window.Echo.channel('order')
     </div>
     <div class="row">
         <div class="col"><button class="btn btn-primary" id="editInformation">Sửa thông tin</button> </div>
-        <div class="col"><button class="btn btn-primary" id="combineTables">Gộp đơn</button> </div>
     </div >
 </div >
             <h4>Danh sách món</h4>
@@ -57,7 +56,7 @@ window.Echo.channel('order')
                 if (item.status == 'chờ xử lý') {
                     layoutTable.innerHTML += `
                     <div class="item-list" data-dish-id="${item.item_id}" data-dish-order="${item.order_id}" data-dish-status="${item.status}" data-dish-type="${item.item_type}">
-                        <div class="item-name d-flex justify-content-around">
+                        <div class="item-name d-flex" style="justify-content: space-between;">
                             <span class="text-dark" title="${item.status}">${item.item_type == 1 ? item.dish.name : item.combo.name}</span>
                             <div>
                                 <span>${item.informed}</span>
@@ -202,8 +201,6 @@ window.Echo.channel('orders')
     </div>
     <div class="row">
         <div class="col"><button class="btn btn-primary" id="editInformation">Sửa thông tin</button> </div>
-        <div class="col"><button class="btn btn-primary" id="switchTables">Chuyển bàn</button> </div>
-        <div class="col"><button class="btn btn-primary" id="combineTables">Gộp đơn</button> </div>
     </div >
 </div >
             <h4>Danh sách món</h4>
@@ -216,7 +213,7 @@ window.Echo.channel('orders')
                 if (item.status == 'chờ xử lý') {
                     layoutTable.innerHTML += `
                     <div class="item-list" data-dish-id="${item.item_id}" data-dish-order="${item.order_id}" data-dish-status="${item.status}" data-dish-type="${item.item_type}">
-                        <div class="item-name d-flex justify-content-around">
+                        <div class="item-name d-flex" style="justify-content: space-between;">
                             <span class="text-dark" title="${item.status}">${item.item_type == 1 ? item.dish.name : item.combo.name}</span>
                             <div>
                                 <span>${item.informed}</span>
