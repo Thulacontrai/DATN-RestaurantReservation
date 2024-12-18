@@ -44,7 +44,6 @@ window.Echo.channel('order')
     </div>
     <div class="row">
         <div class="col"><button class="btn btn-primary" id="editInformation">Sửa thông tin</button> </div>
-        <div class="col"><button class="btn btn-primary" id="combineTables">Gộp bàn</button> </div>
     </div >
 </div >
             <h4>Danh sách món</h4>
@@ -202,7 +201,6 @@ window.Echo.channel('orders')
     </div>
     <div class="row">
         <div class="col"><button class="btn btn-primary" id="editInformation">Sửa thông tin</button> </div>
-        <div class="col"><button class="btn btn-primary" id="combineTables">Gộp bàn</button> </div>
     </div >
 </div >
             <h4>Danh sách món</h4>

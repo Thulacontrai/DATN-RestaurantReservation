@@ -119,7 +119,7 @@
 
                     let url = "";
                     let bodyData = {
-                        table_id: TableId
+                        table_id: tableId
                     };
 
                     if (dishId) {
