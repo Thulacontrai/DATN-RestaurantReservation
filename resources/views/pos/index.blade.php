@@ -769,7 +769,7 @@
                 editInformation(selectedTableId);
             }
             if (event.target.id === 'combineTables') {
-                combineTables();
+                combineTables(selectedTableId);
             }
             const dishElement = event.target.closest(".item-list");
             if (dishElement) {
@@ -1225,6 +1225,7 @@
                 showNotification('Hãy chọn bàn trước khi thêm món', 'error')
             }
         }
+
         function editInformation(selectedTableId) {
             fetch('/checkTables', {
                     method: 'POST',
@@ -1430,6 +1431,7 @@
                     });
                 })
         }
+
         function showOrderDetails(tableId) {
             selectedTableId = tableId;
             fetch('/order-details/' + tableId, {
@@ -1498,10 +1500,99 @@
         }
 
         function combineTables() {
-
+            fetch('/checkOrders', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector(
+                                'meta[name="csrf-token"]')
+                            .getAttribute('content'),
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        table_id: selectedTableId
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error('Failed to fetch available tables');
+                    return response.json();
+                })
+                .then(data => {
+                    const availableTables = data.tables || [];
+                    const tableIds = data.tableIds || [];
+                    const users = data.users || [];
+                    const user = data.user || [];
+                    const phone = data.phone || [];
+                    const quantity = data.quantity || [];
+                    Swal.fire({
+                        title: `Bàn ${tableIds}`,
+                        html: `
+          <div class="container">
+            <div class="mb-3">
+              <label for="tableRoom" class="form-label">Chọn bàn muốn gộp</label><br>
+              <select id="tableRoom" class="form-select" multiple>
+                    ${availableTables.map(table => `
+                        <option value="${table.id}" ${tableIds.includes(table.id) ? 'selected' : ''}>
+                            Bàn ${table.table_number}
+                        </option>
+                    `).join('')}
+                </select>
+            </div>
+          </div>
+        `,
+                        showCancelButton: true,
+                        confirmButtonText: 'Xác nhận',
+                        cancelButtonText: 'Hủy',
+                        didOpen: () => {
+                            const $tableRoom = $('#tableRoom');
+                            $tableRoom.select2({
+                                placeholder: 'Chọn Phòng/Bàn',
+                                allowClear: true,
+                                dropdownParent: $('.swal2-container')
+                            });
+                        },
+                        preConfirm: () => {
+                            const tableRoom = $('#tableRoom').val();
+                            if (!tableRoom.length) {
+                                Swal.showValidationMessage('Vui lòng nhập đầy đủ thông tin');
+                                return false;
+                            }
+                            return {
+                                tableRoom,
+                            };
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            showNotification('Chỉnh sửa thành công');
+                            fetch(`/mergeTables/${selectedTableId}`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'X-CSRF-TOKEN': document.querySelector(
+                                                'meta[name="csrf-token"]')
+                                            .getAttribute('content'),
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({
+                                        table_id: result.value.tableRoom,
+                                    })
+                                })
+                                .then(response => {
+                                    if (!response.ok) throw new Error(
+                                        'Network response was not ok');
+                                    return response.json();
+                                })
+                                .then(data => {
+                                    selectedTableId = data.tableId;
+                                    showOrderDetails(data.tableId);
+                                })
+                                .catch(() => showNotification('Lỗi khi tạo đơn', 'error'));
+                        } else if (result.isDenied) {
+                            showNotification('Tạo đơn thất bại', 'error');
+                        }
+                    });
+                })
         }
 
-        
+
     });
 </script>
 @vite(['resources/js/posTable.js', 'resources/js/orderItem.js', 'resources/js/DishStatusUpdated.js'])

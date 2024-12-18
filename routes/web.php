@@ -212,6 +212,7 @@ Route::post('/reservation/cancel', [ReservationController::class, 'cancel'])->na
 Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
 Route::post('/create-order', [PosController::class, 'createOrder']);
 Route::post('/edit-order/{tableId}', [PosController::class, 'editOrder']);
+Route::post('/mergeTables/{tableId}', [PosController::class, 'mergeTables']);
 Route::post('/order-details/{tableId}', [PosController::class, 'orderDetails'])->name('order-details');
 Route::post('/add-dish-to-order', [PosController::class, 'addDishToOrder']);
 Route::post('/add-combo-to-order', [PosController::class, 'addComboToOrder']);
@@ -231,6 +232,8 @@ Route::get('/viewCheckOut/{table_number}', [PosController::class, 'viewCheckOut'
 Route::post('/check-payment-condition', [PosController::class, 'checkPaymentPondition'])->name('checkPaymentPondition');
 Route::get('/checkAvailableTables', [PosController::class, 'checkAvailableTables']);
 Route::post('/checkTables', [PosController::class, 'checkTables']);
+Route::post('/checkOrders', [PosController::class, 'checkOrders']);
+
 Route::middleware(['checkTableAndUser'])->group(function () {
     Route::get('/menu-order', [OrderController::class, 'menuOrder'])->name('menuOrder');
 });

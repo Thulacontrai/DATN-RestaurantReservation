@@ -91,12 +91,12 @@
         <span id="cart-total">Tổng số lượng ({{ $item->sum('quantity') }})</span>
         <span id="cart-quantity">{{ number_format($total, 0, ',', '.') }}đ</span>
     </a>
-    @vite(['resources/js/menuOrder.js', 'resources/js/DishStatus.js', 'resources/js/notiRedirect.js'])
+    @vite(['resources/js/menuOrder.js', 'resources/js/DishStatus.js', 'resources/js/notiRedirect.js', 'resources/js/notiRedirectUsers.js'])
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script>
-        let TableId = "{{ $table->id }}";
+        let tableId = "{{ $table->id }}";
         document.addEventListener("DOMContentLoaded", () => {
             function showNotification(message, type = 'success') {
                 Swal.fire({

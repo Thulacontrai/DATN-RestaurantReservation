@@ -9,6 +9,9 @@ use App\Events\ItemUpdated;
 use App\Events\MenuOrderUpdateItem;
 use App\Events\ProcessingDishes;
 use App\Events\MessageSent;
+use App\Events\NotifyAdminEvent;
+use App\Events\NotifyUserEvent;
+use App\Events\NotifyUsers;
 use App\Events\PosTableUpdated;
 use App\Events\ProvideDishes;
 use App\Events\UpdateComboStatus;
@@ -299,6 +302,44 @@ class PosController extends Controller
             }
         ])->get();
         broadcast(new MessageSent($tables))->toOthers();
+        broadcast(new NotifyUserEvent('Đơn của bạn đã được cập nhật từ Nhân viên POS'));
+        return response()->json([
+            'success' => 'success',
+            'tableId' => $table->id,
+        ]);
+    }
+    public function mergeTables(Request $request, $id)
+    {
+        $order = Table::find($id)->orders->where('status', 'pending')->first();
+        foreach ($order->tables as $table) {
+            $table->pivot->delete();
+            $table->status = 'Available';
+            $table->save();
+        }
+        $order->save();
+        foreach ($request->table_id as $id) {
+            $table = Table::findOrFail($id);
+            $order->tables()->attach(
+                $id,
+                ['start_time' => now()]
+            );
+            $table->update(['status' => 'Occupied']);
+        }
+        $tables = Table::with([
+            'orders' => function ($query) {
+                $query->where('orders.status', '!=', 'completed')
+                    ->where('orders.status', '!=', 'waiting')
+                    ->with([
+                        'reservation' => function ($query) {
+                            $query->select('id', 'user_name');
+                        },
+                        'customer' => function ($query) {
+                            $query->select('id', 'name');
+                        }
+                    ]);
+            }
+        ])->get();
+        broadcast(new MessageSent($tables))->toOthers();
         return response()->json([
             'success' => 'success',
             'tableId' => $table->id,
@@ -493,6 +534,12 @@ class PosController extends Controller
                 ->where('status', 'chưa yêu cầu')
                 ->where('item_type', '1')
                 ->first();
+            $total = OrderItem::where('order_id', $orderId)
+                ->where('status', 'chưa yêu cầu')
+                ->get()
+                ->sum(function ($item) {
+                    return $item->price * $item->quantity;
+                });
             broadcast(new MenuOrderUpdateItem([
                 'id' => $orderItem->item_id,
                 'type' => 'dish',
@@ -503,6 +550,8 @@ class PosController extends Controller
                 'table' => $request->table_id,
                 'total' => $total
             ]));
+            broadcast(new NotifyAdminEvent('Người dùng đã yêu cầu gọi món, thanh toán sẽ bị hủy!', $request->table_id));
+
             DB::commit();
             return response()->json([
                 'success' => true,
@@ -704,6 +753,12 @@ class PosController extends Controller
                 ->where('status', 'chưa yêu cầu')
                 ->where('item_type', '2')
                 ->first();
+            $total = OrderItem::where('order_id', $orderId)
+                ->where('status', 'chưa yêu cầu')
+                ->get()
+                ->sum(function ($item) {
+                    return $item->price * $item->quantity;
+                });
             broadcast(new MenuOrderUpdateItem([
                 'id' => $orderItem->item_id,
                 'type' => 'combo',
@@ -714,6 +769,7 @@ class PosController extends Controller
                 'table' => $request->table_id,
                 'total' => $total,
             ]));
+            broadcast(new NotifyAdminEvent('Người dùng đã yêu cầu gọi món, thanh toán sẽ bị hủy!', $request->table_id));
             DB::commit();
             return response()->json([
                 'success' => true,
@@ -843,6 +899,7 @@ class PosController extends Controller
                 ->get();
             broadcast(new ProcessingDishes($items, null))->toOthers();
             broadcast(new ProvideDishes($items1))->toOthers();
+            broadcast(new NotifyUsers('Người dùng đã yêu cầu thanh toán!', $tableId));
             if (!$isSuccess) {
                 return response()->json([
                     'redirect_url' => route('checkout.adminn', ['orderID' => $orderId])
@@ -873,6 +930,7 @@ class PosController extends Controller
             ->where('status', '!=', 'chưa yêu cầu')
             ->where('processing', '>', '0');
         $final = 0;
+        broadcast(new NotifyUsers('Người dùng đã yêu cầu thanh toán!', $tableId));
         return view(
             'pos.payment',
             compact('final', 'order', 'table', 'order_table', 'order_items')
@@ -2209,5 +2267,16 @@ class PosController extends Controller
             ->get(['id', 'table_number']);
         $users = User::where('phone', '!=', null)->get(['id', 'name', 'phone']);
         return response()->json(['tables' => $availableTables, 'users' => $users, 'tableIds' => $tableIds, 'user' => $user, 'phone' => $phone, 'quantity' => $quantity]);
+    }
+    public function checkOrders(Request $request)
+    {
+        $table = Table::find($request->table_id);
+        $tables = $table->orders->where('status', 'pending')->first()->tables;
+        $tableIds = $tables->pluck('id')->toArray();
+        $availableTables = Table::where('status', 'Occupied')
+            ->whereNotIn('id', $tableIds)
+            ->get(['id', 'table_number']);
+        $users = User::where('phone', '!=', null)->get(['id', 'name', 'phone']);
+        return response()->json(['tables' => $availableTables, 'users' => $users, 'tableIds' => $tableIds]);
     }
 }

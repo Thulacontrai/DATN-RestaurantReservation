@@ -7,6 +7,7 @@ use App\Events\ComboStatusUpdated;
 use App\Events\DishStatusUpdated;
 use App\Events\ItemUpdated;
 use App\Events\MenuOrderUpdateItem;
+use App\Events\NotifyAdminEvent;
 use App\Events\PosTableUpdated;
 use App\Events\PosTableUpdatedWithNoti;
 use App\Events\UpdateComboStatus;
@@ -298,6 +299,7 @@ class OrderController extends Controller
                             $dish->save();
                             broadcast(new DishStatusUpdated($dish));
                             broadcast(new UpdateDishStatus($dish));
+                            broadcast(new NotifyAdminEvent('Người dùng đã yêu cầu gọi món, thanh toán sẽ bị hủy!', $table));
                             return response()->json([
                                 'success' => false,
                             ]);
@@ -318,6 +320,7 @@ class OrderController extends Controller
                                 $combo->save();
                                 broadcast(new ComboStatusUpdated($combo));
                                 broadcast(new UpdateComboStatus($combo));
+                                broadcast(new NotifyAdminEvent('Người dùng đã yêu cầu gọi món, thanh toán sẽ bị hủy!', $table));
                                 return response()->json([
                                     'success' => false
                                 ]);
@@ -388,7 +391,8 @@ class OrderController extends Controller
                         broadcast(new ComboStatusUpdated($combo));
                         broadcast(new UpdateComboStatus($combo));
                     }
-                    $total = OrderItem::where('item_id', $item_id)
+                    $tableId = Table::find($table)->orders->where('status', 'pending')->first()->id;
+                    $total = OrderItem::where('order_id', $tableId)
                         ->where('status', 'chưa yêu cầu')
                         ->get()
                         ->sum(function ($item) {
@@ -401,7 +405,6 @@ class OrderController extends Controller
                         'table' => $table,
                         'total' => $total
                     ]));
-                    $tableId = Table::find($table)->orders->where('status', 'pending')->first()->id;
                     $item = OrderItem::where('order_id', $tableId)
                         ->where('status', 'chưa yêu cầu')
                         ->get();
@@ -410,6 +413,7 @@ class OrderController extends Controller
                         return $items->price * $items->quantity;
                     });
                     broadcast(new CartUpdated($countItems, $total, $table))->toOthers();
+                    broadcast(new NotifyAdminEvent('Người dùng đã yêu cầu gọi món, thanh toán sẽ bị hủy!', $table));
                     return response()->json(['success' => true]);
                 }
             } elseif ($action === 'remove') {
@@ -443,7 +447,9 @@ class OrderController extends Controller
                     broadcast(new ComboStatusUpdated($combo));
                     broadcast(new UpdateComboStatus($combo));
                 }
-                $total = OrderItem::where('item_id', $item_id)
+                $tableId = Table::find($table)->orders->where('status', 'pending')->first()->id;
+
+                $total = OrderItem::where('order_id', $tableId)
                     ->where('status', 'chưa yêu cầu')
                     ->get()
                     ->sum(function ($item) {
@@ -456,7 +462,6 @@ class OrderController extends Controller
                     'table' => $table,
                     'total' => $total
                 ]));
-                $tableId = Table::find($table)->orders->where('status', 'pending')->first()->id;
                 $item = OrderItem::where('order_id', $tableId)
                     ->where('status', 'chưa yêu cầu')
                     ->get();
@@ -469,7 +474,8 @@ class OrderController extends Controller
             }
 
             $item->save();
-            $total = OrderItem::where('item_id', $item_id)
+            $tableId = Table::find($table)->orders->where('status', 'pending')->first()->id;
+            $total = OrderItem::where('order_id', $tableId)
                 ->where('status', 'chưa yêu cầu')
                 ->get()
                 ->sum(function ($item) {
@@ -485,7 +491,6 @@ class OrderController extends Controller
                 'table' => $table,
                 'total' => $total
             ]));
-            $tableId = Table::find($table)->orders->where('status', 'pending')->first()->id;
             $item = OrderItem::where('order_id', $tableId)
                 ->where('status', 'chưa yêu cầu')
                 ->get();
@@ -504,16 +509,6 @@ class OrderController extends Controller
         $item = $order->items
             ->where('status', '!=', 'chưa yêu cầu')
         ;
-        $page = request()->get('page', 1); // Trang hiện tại
-        $perPage = 5; // Số lượng item trên mỗi trang
-        $offset = ($page - 1) * $perPage;
-        $pagedItems = new LengthAwarePaginator(
-            $item->slice($offset, $perPage)->values(), // Dữ liệu của trang hiện tại
-            $item->count(), // Tổng số lượng item
-            $perPage, // Số item trên mỗi trang
-            $page, // Trang hiện tại
-            ['path' => request()->url(), 'query' => request()->query()] // Cấu hình URL phân trang
-        );
         if ($item->count() == 0) {
             return redirect("menu-order?data=$id")->with('error', 'Vui lòng gọi món trước!');
         }
@@ -527,7 +522,7 @@ class OrderController extends Controller
                 return $item->price * $item->quantity;
             });
         $url = route('menuOrder', ['data' => $id]);
-        return view('client.menuHistory', compact('pagedItems', 'item', 'table', 'order', 'url', 'total'));
+        return view('client.menuHistory', compact('item', 'table', 'order', 'url', 'total'));
     }
     public function requestToOrder($id)
     {
@@ -600,6 +595,7 @@ class OrderController extends Controller
                 ->get();
             $orderItemArray = $orderItem->toArray();
             broadcast(new ItemUpdated($orderItemArray, 'Danh sách đã được cập nhật!', $id))->toOthers();
+            broadcast(new NotifyAdminEvent('Người dùng đã yêu cầu gọi món, thanh toán sẽ bị hủy!', $id));
         });
         return redirect()->route('menuHistory', $id);
     }
