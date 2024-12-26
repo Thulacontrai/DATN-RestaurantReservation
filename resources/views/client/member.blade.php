@@ -29,9 +29,9 @@
                     <!-- Side Menu -->
                     <div class=" profile col-lg-3  side-menu p-3 bg-dark text-light">
                         <div class="d-flex align-items-center mb-4">
-                            <div class="profile-circle bg-secondary text-white">
+                            {{-- <div class="profile-circle bg-secondary text-white">
                                 <!-- Profile Icon Placeholder -->
-                            </div>
+                            </div> --}}
                         </div>
                         <ul class="nav flex-column">
                             <li class="nav-item">
@@ -77,7 +77,7 @@
                                             <p class="text-white"><i class="bi bi-cash"></i>Cọc:
                                                 {{ number_format($reservation->deposit_amount ?? 0, 0, ',', '.') }} VNĐ</p>
                                         </div>
-                                        @if ($reservation->status == 'Refund')
+                                        @if ($reservation->status == 'Refund' || $reservation->status == 'Cancelled'|| $reservation->status == 'Pending Refund')
                                             <div class="col-4">
                                                 <p class="text-white"><i style="color:#3ca4ff" class="bi bi-cash"></i>Hoàn
                                                     tiền:
@@ -94,6 +94,7 @@
                                             'Pending' => 'status-pending',
                                             'Cancelled' => 'status-cancelled',
                                             'Refund' => 'status-refund',
+                                            'Checked-in'=>'status-checked-in',
                                             'Completed' => 'status-completed',
                                             'Pending Refund' => 'status-pending-refund', // Thêm class cho trạng thái 'Pending Refund'
                                         ];
@@ -103,6 +104,7 @@
                                             'Pending' => 'Chờ xử lý',
                                             'Cancelled' => 'Đã hủy',
                                             'Refund' => 'Đang hoàn tiền',
+                                            'Checked-in'=>'Đã nhận bàn',
                                             'Completed' => 'Đã hoàn thành',
                                             'Pending Refund' => 'Chờ hoàn cọc', // Thêm nhãn cho trạng thái 'Pending Refund'
                                         ];
@@ -116,7 +118,7 @@
 
 
                                         @if ($reservation->status == 'Pending' || $reservation->status == 'Confirmed')
-                                            <button class="btn btn-secondary edit-reservation-btn"
+                                            <button class=" btn-secondary rounded-md edit-reservation-btn"
                                                 data-id="{{ $reservation->id }}">Chỉnh sửa</button>
                                             @if ($reservation->deposit_amount > 0)
                                                 <button class="text-danger cancel-btn-new" data-toggle="modal"
@@ -235,7 +237,9 @@
                                                         aria-label="Close"></button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <form data-id="{{ $reservation->id }}" class="edit-reservation">
+                                                    <form data-id="{{ $reservation->id }}"  data-old-people-count="{{$reservation->guest_count}}"
+                                                        data-desposit-current="{{$reservation->deposit_amount}}"
+                                                         class="edit-reservation">
                                                         @csrf
                                                         <div class="form-group mb-3">
                                                             <label class="text-black" for="customer_name">Tên khách
@@ -276,12 +280,7 @@
                                                                     {{-- {{ number_format($reservation->guest_count * 100000, 0, ',', '.') }} VNĐ. --}}
                                                                 @endif
                                                             </p>
-                                                            <div class="qr-section"
-                                                                style="display: none; text-align: center;">
-                                                                <p>Quét mã QR để thanh toán:</p>
-                                                                <img src="" alt="QR Code" class="qr-code"
-                                                                    style="max-width: 200px; height: auto;">
-                                                            </div>
+                                    
                                                         </div>
 
                                                         <div class="form-group mb-3">
@@ -312,32 +311,8 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- Modal hiển thị thông báo -->
-                                    <div id="alertModal" class="modal alertModal" tabindex="-1">
-                                        {{-- <div class="modal-dialog modal-dialog-centered"> --}}
-                                        <div class="modal-dialog modal-content">
+                                 
 
-                                            <div class="modal-footer">
-
-                                                <p class="alertMessage"></p>
-
-                                                <button type="button" id="closePopup"
-                                                    class=" bg-secondary text-white closePopup"
-                                                    style="border:black">Đóng</button>
-                                                <button type="button" class="btn-primary confirm-submit">Xác
-                                                    nhận</button>
-                                            </div>
-
-                                        </div>
-                                    </div>
-
-                                    <!-- Popup lỗi khi chọn giờ không hợp lệ -->
-                                    {{-- <div id="errorPopup" class="modal" style="display: none;">
-                                        <div class="modal-content">
-                                            <span class="close" onclick="closePopup()">&times;</span>
-                                            <p>Giờ đặt bàn phải trong khoảng từ 11:00 đến 20:30. Vui lòng chọn lại.</p>
-                                        </div>
-                                    </div> --}}
 
                                 </div>
                             @endforeach
@@ -552,17 +527,9 @@
                 let depositSection = $(".deposit-section");
                 let depositMessage = $(".deposit-warning");
                 let depositInput = $(".deposit_amount");
-                const qrSection = depositSection.find(".qr-section");
-                const qrCode = qrSection.find(".qr-code");
 
                 // Tạo URL QR Code (thay đổi URL theo dịch vụ QR bạn sử dụng)
-                const qrPaymentURL =
-                    `https://api.qrserver.com/v1/create-qr-code/?data=Thanh+toan+${depositAmount}+VND&size=200x200`;
-                qrCode.attr("src", qrPaymentURL);
-
-                // Hiển thị QR Code
-                qrSection.show();
-
+              
                 // Nếu số lượng khách >= 6, hiển thị tiền cọc và thông báo
                 if (guestCount >= 6) {
                     depositAmount = guestCount * 100000;
@@ -577,7 +544,6 @@
                 } else {
                     depositSection.hide(); // Ẩn ô tiền cọc
                     depositMessage.text(''); // Xóa thông báo
-                    qrSection.hide();
                     depositInput.val('');
                 }
             });
@@ -596,8 +562,8 @@
                 const form = $(this);
                 const reservationId = form.data('id'); // Lấy ID đơn đặt bàn
                 const oldPeopleCount = form.data('old-people-count'); // Số lượng người ban đầu
-                const guest_count = parseInt(form.find('input[name="guest_count"]')
-                    .val()); // Số lượng khách mới
+                const desposit_current=parseInt(form.data('desposit-current')); //
+                const guest_count = parseInt(form.find('input[name="guest_count"]').val()); // Số lượng khách mới
                 const user_name = form.find('input[name="user_name"]').val(); // Tên khách hàng
                 const user_phone = form.find('input[name="user_phone"]').val(); // Số điện thoại
                 const reservation_date = form.find('input[name="reservation_date"]').val(); // Ngày đặt bàn
@@ -616,16 +582,30 @@
                     deposit_amount
                 };
 
-                let oldDeposit = oldPeopleCount * 100000; // Cọc ban đầu
+                let oldDeposit = desposit_current; // Cọc ban đầu
                 let newDeposit = guest_count * 100000; // Cọc mới
                 // Kiểm tra số lượng khách và yêu cầu cọc
+                // console.log(typeof(oldDeposit),typeof(newDeposit));
 
-                if ((guest_count >= 6 && oldPeopleCount < 6) || guest_count >= 6) {
-                    reservation.deposit_amount = newDeposit;
-                    Swal.fire({
+                if (guest_count === oldPeopleCount) {
+    // Trường hợp 1: Không thay đổi số lượng khách
+    // console.log("Số lượng khách không thay đổi, giữ nguyên tiền cọc.");
+    reservation.deposit_amount = oldDeposit; // Giữ nguyên cọc ban đầu
+    UpdateReser(reservation);
+
+} else if (guest_count >= 6 && oldPeopleCount >= 6) {
+    let newDepositAmount = oldDeposit + ((guest_count - oldPeopleCount) * 100000);
+    if(oldDeposit>newDepositAmount){
+        reservation.deposit_amount = oldDeposit;
+        UpdateReser(reservation);
+    }else{
+        reservation.deposit_amount = newDepositAmount-oldDeposit;
+        console.log(typeof(newDepositAmount));
+
+        Swal.fire({
                         title: 'Đang chờ thanh toán',
                         html: 'Vui lòng quét mã thanh toán...',
-                        imageUrl: `https://img.vietqr.io/image/MB-0964236835-compact2.png?amount=${reservation.deposit_amount}&addInfo=Thanh Toan Coc Don Dat Bat ${reservationId}`,
+                        imageUrl: `https://img.vietqr.io/image/MB-0964236835-compact2.png?amount=${reservation.deposit_amount}&addInfo=Thanh Toan Coc Don Dat Ban ${reservationId}`,
                         imageWidth: 400,
                         imageHeight: 450,
                         showConfirmButton: false,
@@ -638,7 +618,7 @@
                     var checkInterval = 1000;
                     var delayBeforeStart = 5000;
                     var desiredAmount = reservation.deposit_amount;
-                    var desiredDescription = `Thanh Toan Coc Don Dat Bat ${reservationId}`;
+                    var desiredDescription = `Thanh Toan Coc Don Dat Ban ${reservationId}`;
                     var transactionFound = false;
                     var intervalId;
 
@@ -663,15 +643,67 @@
                                     if (transaction['Giá trị'] == desiredAmount &&
                                         transaction['Mô tả'].includes(desiredDescription)) {
                                         foundTransaction = true;
-                                        Swal.fire({
-                                            position: "center",
-                                            icon: "success",
-                                            title: "Thanh toán thành công",
-                                            showConfirmButton: false,
-                                            timer: 2000
-                                        }).then(() => {
                                             UpdateReser(reservation);
-                                        });
+                                        clearInterval(intervalId);
+                                    }
+                                });
+
+                                if (!foundTransaction) {
+                                    console.log('Chưa tìm thấy giao dịch phù hợp.');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Có lỗi xảy ra:', error);
+                            });
+                    }
+    }
+    console.log("Số lượng khách thay đổi trong khoảng > 6. Cập nhật tiền cọc mới: " + newDepositAmount + " VNĐ.");
+
+} else if (guest_count > 6 && oldPeopleCount <= 6) {
+    // Trường hợp 3: Số lượng khách tăng từ <= 6 lên > 6
+    reservation.deposit_amount = newDeposit;
+    Swal.fire({
+                        title: 'Đang chờ thanh toán',
+                        html: 'Vui lòng quét mã thanh toán...',
+                        imageUrl: `https://img.vietqr.io/image/MB-0964236835-compact2.png?amount=${reservation.deposit_amount}&addInfo=Thanh Toan Coc Don Dat Ban ${reservationId}`,
+                        imageWidth: 400,
+                        imageHeight: 450,
+                        showConfirmButton: false,
+                        showCloseButton: true,
+                        didOpen: () => {
+                            Swal.showLoading();
+                            setTimeout(() => {}, 3000);
+                        }
+                    });
+                    var checkInterval = 1000;
+                    var delayBeforeStart = 5000;
+                    var desiredAmount = reservation.deposit_amount;
+                    var desiredDescription = `Thanh Toan Coc Don Dat Ban ${reservationId}`;
+                    var transactionFound = false;
+                    var intervalId;
+
+                    setTimeout(function() {
+                        intervalId = setInterval(function() {
+                            if (!transactionFound) {
+                                checkTransaction();
+                            }
+                        }, checkInterval);
+                    }, delayBeforeStart);
+
+                    function checkTransaction() {
+                        const url =
+                            'https://script.google.com/macros/s/AKfycbwsNblgurg5Wig7qUO0TNmDmwlJocExVGzMR5wCacLO1vJvRe9Zq9MW4sjrY0fdIdFv/exec';
+
+                        fetch(url)
+                            .then(response => response.json())
+                            .then(data => {
+                                const transactions = data.data;
+                                let foundTransaction = false;
+                                transactions.forEach(transaction => {
+                                    if (transaction['Giá trị'] == desiredAmount &&
+                                        transaction['Mô tả'].includes(desiredDescription)) {
+                                        foundTransaction = true;
+                                            UpdateReser(reservation);
                                         clearInterval(intervalId);
                                     }
                                 });
@@ -685,33 +717,23 @@
                             });
                     }
 
-                } else if (guest_count < 5 && oldPeopleCount >= 6) {
-                    // Nếu số lượng khách giảm xuống dưới 5 và ban đầu >= 6, xử lý hoàn trả cọc
-                    alert('Số lượng khách giảm xuống dưới 5, bạn sẽ được hoàn trả toàn bộ cọc: ' +
-                        oldDeposit + ' VNĐ.');
-                    // form.find('.deposit-section').hide();  // Ẩn phần cọc vì không còn yêu cầu cọc
-                    reservation.deposit_amount = 0; // Cập nhật cọc mới
-                    UpdateReser(reservation);
-                    // console.log(reservation);
-                } else if (guest_count >= 6 && oldPeopleCount >= 6) {
-                    // Nếu số lượng khách thay đổi từ >= 6 xuống <= 6, điều chỉnh cọc
-                    if (guest_count !== oldPeopleCount) {
-                        let refundAmount = oldDeposit - newDeposit;
-                        if (refundAmount > 0) {
-                            alert('Số lượng khách giảm xuống, bạn sẽ được hoàn lại cọc: ' + refundAmount +
-                                ' VNĐ.');
-                            reservation.deposit_amount = oldDeposit - refundAmount; // Cập nhật cọc mới
-                            // console.log(reservation);
-                        }
+} else if (guest_count <= 6 && oldPeopleCount > 6) {
+    // Trường hợp 4: Số lượng khách giảm xuống <= 6
+    console.log("Số lượng khách giảm xuống dưới hoặc bằng 6. Giữ nguyên tiền cọc: " + oldDeposit + " VNĐ.");
+    reservation.deposit_amount = oldDeposit; // Giữ nguyên cọc ban đầu
+    UpdateReser(reservation);
+} else if (guest_count < 6 && oldPeopleCount < 6) {
+    // Trường hợp 5: Số lượng khách thay đổi nhưng vẫn < 6
+    console.log("Số lượng khách thay đổi trong khoảng < 6. Giữ nguyên tiền cọc: " + oldDeposit + " VNĐ.");
+    reservation.deposit_amount = oldDeposit; // Giữ nguyên cọc ban đầu
+    UpdateReser(reservation);
+}
 
-                    }
-                } else {
-                    // Nếu số lượng khách không thay đổi (>= 6 hoặc dưới 5)
-                    // alert('ko cọc')
-                    reservation.deposit_amount = 0; // Cập nhật cọc mới
-                    UpdateReser(reservation);
-                }
 
+
+
+                
+           
                 // hàm nhận thông tin sau khi kiểm tra
                 function UpdateReser(reservation) {
                     // CSRF Token từ meta tag
@@ -730,11 +752,21 @@
                         .then(response => response.json())
                         .then(response => {
                             if (response.success) {
+                                Swal.fire({
+                                            position: "center",
+                                            icon: "success",
+                                            title:response.message,
+                                            showConfirmButton: false,
+                                            timer: 2000
+                                 })
                                 location.reload();
                             } else {
                                 Swal.fire({
+                                    position: "center",
                                     icon: "error",
-                                    text: "Có lỗi xảy ra vui lòng thử lại!"
+                                    title:response.message,
+                                    showConfirmButton: false,
+                                    timer: 33000
                                 });
                             }
                         })
@@ -750,6 +782,7 @@
                 // đóng popup cọc
                 $(document).ready(function() {
                     $('.closePopup').click(function() {
+                        
                         $('.alertModal').hide();
                         $('.modal-backdrop').hide();
                     });
@@ -792,14 +825,15 @@
                 $("#reservation-edit-form").modal("hide");
                 const reservationId = $(this).data(
                     'id');
-                // $(".reservation-edit-form-" + reservationId).hide();
+                    $("#reservation-edit-form").css("display", "none");
+                $(".reservation-edit-form-" + reservationId).hide();
 
                 // $(".details-" + reservationId).show();
             });
         });
     </script>
     {{-- validate --}}
-    <script>
+    {{-- <script>
         $(document).ready(function() {
             $(".edit-reservation").on("submit", function(e) {
                 e.preventDefault();
@@ -864,12 +898,12 @@
                     }
                 }
 
-                if (isValid) {
-                    this.submit();
-                }
+                // if (isValid) {
+                //     this.submit();
+                // }
             });
         });
-    </script>
+    </script> --}}
 
     {{-- rating --}}
     <script>

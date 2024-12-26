@@ -325,7 +325,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('tables/trash', [TableController::class, 'trash'])->name('tables.trash');
     Route::patch('table/{id}/restore', [TableController::class, 'restore'])->name('table.restore');
     Route::delete('table/{id}/force-delete', [TableController::class, 'forceDelete'])->name('table.forceDelete');
-
+    
+    Route::get('tableLayout',[ReservationController::class, 'tableLayout'])->name('tableLayout');
+    Route::get('getTable',[ReservationController::class, 'getTable'])->name('getTable');
+    Route::post('/reser-tables/update',[ReservationController::class, 'updateAssignTable'])->name('update-assignTable');
     /// xếp bàn cho khách
     Route::get('reservation/{reservationId}/assign-tables', [ReservationController::class, 'assignTables'])->name('reservation.assignTables');
     Route::get('reservation/assign-table', [ReservationController::class, 'assignTable'])->name('assignTable');
@@ -340,6 +343,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('reservationHistory', ReservationHistoryController::class);
     Route::put('/reservations/calendar/{id}', [ReservationController::class, 'updateCalendar']);
     Route::post('/reservations/cancel/{id}', [ReservationController::class, 'processReservationCancellation']);
+    Route::post('/reservations/confirm/{id}', [ReservationController::class, 'confirmReservation'])->name('confirmReservation');
 
 
 

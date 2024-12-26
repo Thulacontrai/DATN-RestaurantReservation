@@ -44,7 +44,7 @@ class MemberController extends Controller
             $bankList = $banks['data'];
             $bookingData = Reservation::where('customer_id', $member->id)
                 ->with('refund') // Eager load bản ghi hoàn tiền
-                ->orderBy('reservation_date', 'desc') // Sắp xếp theo ngày đặt
+                ->orderBy('created_at', 'desc') // Sắp xếp theo ngày đặt
                 ->paginate(3);
             // dd($bookingData);
         } catch (\Exception $e) {
@@ -101,21 +101,67 @@ class MemberController extends Controller
         // DB::beginTransaction();
 
 
-
+        $max_people_per_timeslot = 5; 
         // Xử lý và validate dữ liệu
         $validated = $request->all();
         // Cập nhật dữ liệu trong cơ sở dữ liệu
         $id = $request->reservationId;
-
+        $guest_count=$request->guest_count;
         // Tìm đơn đặt bàn theo ID
         $reservation = Reservation::findOrFail($id);
+         // Lấy thời gian hiện tại và thời gian check-in
+    $currentTime = Carbon::now();
+    $checkInTime = Carbon::parse($reservation->reservation_time);
+
+   // Kiểm tra nếu thời gian nhận bàn nằm trong quá khứ
+   if ($checkInTime->lessThanOrEqualTo($currentTime)) {
+    return response()->json([
+        'success' => false,
+        'message' => 'Không thể cập nhật đơn đặt bàn với thời gian nhận bàn trong quá khứ.'
+    ]);
+}
+
+// Tính khoảng cách thời gian
+$timeDifference = $checkInTime->diffInMinutes($currentTime);
+
+// Kiểm tra nếu còn dưới 2 tiếng (120 phút)
+if ($timeDifference < 120) {
+    return response()->json([
+        'success' => false,
+        'message' => 'Không thể cập nhật đơn đặt bàn, còn dưới 2 tiếng trước giờ nhận bàn.'
+    ]);
+}
         if (!$reservation) {
             return response()->json([
                 'success' => false,
                 'message' => 'Reservation not found.',
-            ], 404);
+            ]);
         }
 
+   // Lấy thông tin thời gian check-in và số lượng người từ request
+   $newCheckInTime = Carbon::parse($request->reservation_time);
+   $newNumberOfPeople = $request->guest_count;
+
+   // Xác định khung giờ (giả sử khung giờ là 2 tiếng mỗi slot)
+   $slotStartTime = $newCheckInTime->copy()->startOfHour();
+   $slotEndTime = $slotStartTime->copy()->addHours(2);
+
+   // Tính tổng số lượng người đã đặt trong khung giờ này
+   $totalPeopleInSlot = Reservation::whereBetween('reservation_time', [$slotStartTime, $slotEndTime])
+       ->sum('guest_count');
+
+   // Trừ số người của đơn hiện tại (nếu đang ở trong khung giờ cũ)
+   if ($reservation->reservation_time >= $slotStartTime && $reservation->reservation_time < $slotEndTime) {
+       $totalPeopleInSlot -= $reservation->guest_count;
+   }
+
+   // Kiểm tra khả năng nhận thêm đơn
+   if ($totalPeopleInSlot + $newNumberOfPeople > 150) {
+       return response()->json([
+            'success'=>false,
+           'message' => 'Khung giờ này đã đầy, không thể nhận thêm đơn. Số lượng người tối đa: 150.'
+       ]);
+   }
         // Cập nhật dữ liệu với validate
         $reservation->update($validated);
 
